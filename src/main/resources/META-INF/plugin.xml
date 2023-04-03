@@ -5,10 +5,10 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>Rabbit SQL Support</name>
+    <name>Rabbit SQL</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="chengyuxingo@gmail.com" url="https://github.com/chengyuxing/rabbit-sql-support">
+    <vendor email="chengyuxingo@gmail.com" url="https://github.com/chengyuxing/rabbit-sql-plugin">
         com.github.chengyuxing
     </vendor>
 
@@ -16,14 +16,16 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    <h3>rabbit-sql lib support</h3>
-    <b>some features following above:</b><br>
+    <h2>Rabbit-sql lib support</h2>
+    <p>Support for <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> ,go to homepage for some help.</p>
+    <h2>Features</h2>
     <ul>
-        <li>Support the identification of xql files.</li>
+        <li>Support the identification of xql(.xql) file type.</li>
         <li>Support dynamic sql expression script syntax highlight.</li>
-        <li>Typing <code>xql</code> to show sql expression script live templates.</li>
+        <li>Support dynamic sql expression script live templates.</li>
+        <li>Typing <code>xql</code> keyword to get suggestions auto complete in sql/xql file.</li>
     </ul>
-    <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql HomePage</a>
+    <a href="https://github.com/chengyuxing/rabbit-sql-plugin">Plugin Homepage</a>
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
