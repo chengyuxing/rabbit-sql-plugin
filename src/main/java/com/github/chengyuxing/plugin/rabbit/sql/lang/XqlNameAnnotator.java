@@ -5,8 +5,6 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.psi.*;
-import com.intellij.sql.psi.SqlExpression;
-import com.intellij.sql.psi.SqlVisitor;
 import org.jetbrains.annotations.NotNull;
 
 public class XqlNameAnnotator implements Annotator {
@@ -35,8 +33,6 @@ public class XqlNameAnnotator implements Annotator {
                                         .textAttributes(DefaultLanguageHighlighterColors.METADATA)
                                         .tooltip("<i>Quick</i> look sql definition.")
                                         .create();
-                            } else {
-                                new SqlVisitor().visitSqlExpression((SqlExpression) psiExpression);
                             }
                         }
                     }
