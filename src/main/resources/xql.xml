@@ -91,13 +91,13 @@
       <option name="SQL" value="true" />
     </context>
   </template>
-  <template name="xql:new" value="/*[$VAR$]*/&#10;$END$" description="create new sql block" toReformat="false" toShortenFQNames="true">
+  <template name="xql:new" value="/*[$VAR$]*/&#10;$END$&#10;;" description="create new sql block" toReformat="false" toShortenFQNames="true">
     <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="SQL" value="true" />
     </context>
   </template>
-  <template name="xql:new-template" value="/*{$VAR$}*/&#10;$END$" description="create new sql template block" toReformat="false" toShortenFQNames="true">
+  <template name="xql:new-template" value="/*{$VAR$}*/&#10;$END$&#10;;" description="create new sql template block" toReformat="false" toShortenFQNames="true">
     <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="SQL" value="true" />
