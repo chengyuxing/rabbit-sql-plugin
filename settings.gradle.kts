@@ -1,0 +1,1 @@
+rootProject.name = "rabbit-sql-plugin"

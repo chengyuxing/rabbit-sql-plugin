@@ -1,0 +1,57 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.github.chengyuxing.rabbit-sql-plugin</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>Rabbit SQL Support</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="chengyuxingo@gmail.com" url="https://github.com/chengyuxing/rabbit-sql-support">
+        com.github.chengyuxing
+    </vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description><![CDATA[
+    <h3>rabbit-sql lib support</h3>
+    <b>some features following above:</b><br>
+    <ul>
+        <li>Support the identification of xql files.</li>
+        <li>Support dynamic sql expression script syntax highlight.</li>
+        <li>Typing <code>xql</code> to show sql expression script live templates.</li>
+    </ul>
+    <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql HomePage</a>
+  ]]></description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.database</depends>
+    <depends>com.intellij.java</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType name="XQL"
+                  implementationClass="com.github.chengyuxing.plugin.rabbit.sql.lang.XqlFileType"
+                  fieldName="INSTANCE"
+                  language="SQL"
+                  extensions="xql"/>
+    </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <annotator language="SQL" implementationClass="com.github.chengyuxing.plugin.rabbit.sql.lang.XqlAnnotator"/>
+    </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <annotator language="JAVA"
+                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.lang.XqlNameAnnotator"/>
+    </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <defaultLiveTemplates file="xql.xml"/>
+        <liveTemplateContext implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlContext"/>
+    </extensions>
+    <actions>
+    </actions>
+</idea-plugin>

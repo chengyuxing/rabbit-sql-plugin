@@ -1,0 +1,54 @@
+{
+  parserClass="com.github.chengyuxing.plugin.rabbit.sql.lang.parser.XqlParser"
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+  psiClassPrefix="Xql"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.github.chengyuxing.plugin.rabbit.sql.lang.psi"
+  psiImplPackage="com.github.chengyuxing.plugin.rabbit.sql.lang.psi.impl"
+  elementTypeHolderClass="com.github.chengyuxing.plugin.rabbit.sql.lang.psi.XqlTypes"
+  elementTypeClass="com.github.chengyuxing.plugin.rabbit.sql.grammer.XqlElementType"
+  tokenTypeClass="com.github.chengyuxing.plugin.rabbit.sql.grammer.XqlTokenType"
+
+  tokens=[
+    SEMI=';'
+    EQ='='
+    LP='('
+    RP=')'
+
+    space='regexp:\s+'
+    comment='regexp://.*'
+    number='regexp:\d+(\.\d*)?'
+    id='regexp:\p{Alpha}\w*'
+    string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+
+    op_1='+'
+    op_2='-'
+    op_3='*'
+    op_4='/'
+    op_5='!'
+  ]
+}
+
+//ifBlock ::= ifStart ifEnd
+//ifStart ::= '--#if :'expression
+//ifEnd ::= '--#fi'
+//
+//chooseBlock ::= chooseStart chooseEnd
+//chooseStart ::= '--#choose :'expression
+//chooseEnd ::= '--#end'
+
+forExp ::= '--#'for id[','id] of ':'id {'|' pipe}* [delimiter string] [filter expression]
+
+pipe ::= id
+
+expression ::= comparator {logic comparator}?
+
+comparator ::= ':'key operator value
+
+
+key ::= id
+value ::= key | constants | number | string
+
+private operator ::= '>' | '<' | '>=' | '<=' | '=' | '==' | '<>' | '!=' | '~' | '!~' | '@' | '~@'
+private constants ::= true | false | null | blank
+private logic ::= '&&' | '||'
