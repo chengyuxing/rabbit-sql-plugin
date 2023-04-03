@@ -38,9 +38,9 @@ tasks {
     }
 
     signPlugin {
-        certificateChainFile.set(file("/Users/chengyuxing/chain.crt"))
-        privateKeyFile.set(file("/Users/chengyuxing/private.pem"))
-        password.set(System.getenv("chengyuxing"))
+        certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
+        privateKey.set(System.getenv("PRIVATE_KEY"))
+        password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
     }
 
     publishPlugin {
