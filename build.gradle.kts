@@ -4,14 +4,16 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "1.0"
+version = "1.1"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:7.0.19")
+    implementation("com.github.chengyuxing:rabbit-sql:7.0.21") {
+        exclude("org.slf4j", "slf4j-api")
+    }
 }
 
 // Configure Gradle IntelliJ Plugin
@@ -20,7 +22,7 @@ intellij {
     version.set("2022.1.4")
     type.set("IU") // Target IDE Platform
 
-    plugins.set(listOf("com.intellij.database:221.6008.13", "com.intellij.java"))
+    plugins.set(listOf("com.intellij.database", "com.intellij.java", "org.intellij.intelliLang"))
 }
 
 sourceSets["main"].java.srcDirs("src/main/gen")

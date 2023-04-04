@@ -25,14 +25,23 @@
         <li>Support dynamic sql expression script live templates.</li>
         <li>Typing <code>xql</code> keyword to get suggestions auto complete in sql/xql file.</li>
     </ul>
-    <a href="https://github.com/chengyuxing/rabbit-sql-plugin">Plugin Homepage</a>
   ]]></description>
+
+    <change-notes>
+        1. Support quick look sql definition when mouse over then sql name;
+        2. fixed sql name not matches occurs annotator error.
+    </change-notes>
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.database</depends>
     <depends>com.intellij.java</depends>
+
+    <projectListeners>
+        <listener class="com.github.chengyuxing.plugin.rabbit.sql.XqlFileListener"
+                  topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
+    </projectListeners>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
@@ -42,18 +51,21 @@
                   fieldName="INSTANCE"
                   language="SQL"
                   extensions="xql"/>
-    </extensions>
-    <extensions defaultExtensionNs="com.intellij">
         <annotator language="SQL" implementationClass="com.github.chengyuxing.plugin.rabbit.sql.lang.XqlAnnotator"/>
-    </extensions>
-    <extensions defaultExtensionNs="com.intellij">
         <annotator language="JAVA"
                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.lang.XqlNameAnnotator"/>
     </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlFileListenOnStartup"/>
+    </extensions>
+
     <extensions defaultExtensionNs="com.intellij">
         <defaultLiveTemplates file="xql.xml"/>
         <liveTemplateContext implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlContext"/>
     </extensions>
-    <actions>
-    </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup displayType="BALLOON" id="Rabbit-SQL Notification Group"/>
+    </extensions>
 </idea-plugin>
