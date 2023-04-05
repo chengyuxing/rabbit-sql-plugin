@@ -17,7 +17,7 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
     <h2>Rabbit-sql lib support</h2>
-    <p>Provides Support for <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> to JetBrains IDEA Ultimate.</p>
+    <p>Provides Support for <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> 7+ to JetBrains IDEA Ultimate.</p>
     <p>Help you easily to use <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> and XQL file.</p>
     <h2>Features</h2>
     <ul>
