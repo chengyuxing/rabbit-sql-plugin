@@ -63,6 +63,10 @@
         <intentionAction>
             <className>com.github.chengyuxing.plugin.rabbit.sql.action.CopySqlDefinition</className>
         </intentionAction>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.action.GotoSqlDefinition"/>
+        <codeInsight.lineMarkerProvider language="SQL"
+                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.action.GotoJavaCallable"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
