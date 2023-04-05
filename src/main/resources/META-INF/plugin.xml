@@ -37,6 +37,7 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.database</depends>
     <depends>com.intellij.java</depends>
+    <depends>org.intellij.intelliLang</depends>
 
     <projectListeners>
         <listener class="com.github.chengyuxing.plugin.rabbit.sql.XqlFileListener"
@@ -63,6 +64,10 @@
     <extensions defaultExtensionNs="com.intellij">
         <defaultLiveTemplates file="xql.xml"/>
         <liveTemplateContext implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlContext"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.intellij.intelliLang">
+        <injectionConfig config="rabbit-sql-injections.xml"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
