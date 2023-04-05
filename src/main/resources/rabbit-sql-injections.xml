@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<component name="LanguageInjectionConfiguration">
+    <injection language="SQL" injector-id="java">
+        <display-name>Baki (com.github.chengyuxing.sql.Baki)</display-name>
+        <ignore-pattern><![CDATA[^&[\s\S]+]]></ignore-pattern>
+        <place><![CDATA[
+            psiParameter()
+                    .ofMethod(0, psiMethod().withName("query")
+                            .withParameters("java.lang.String")
+                            .definedInClass("com.github.chengyuxing.sql.Baki"))
+            ]]></place>
+        <place><![CDATA[
+            psiParameter().
+                    ofMethod(0, psiMethod().withName("execute")
+                            .withParameters("java.lang.String")
+                            .definedInClass("com.github.chengyuxing.sql.Baki"))
+            ]]></place>
+        <place><![CDATA[
+            psiParameter().
+                    ofMethod(0, psiMethod().withName("execute")
+                            .withParameters("java.lang.String", "java.util.Map")
+                            .definedInClass("com.github.chengyuxing.sql.Baki"))
+            ]]></place>
+        <place><![CDATA[
+            psiParameter().
+                    ofMethod(0, psiMethod().withName("batchExecute")
+                            .withParameters("java.lang.String[]")
+                            .definedInClass("com.github.chengyuxing.sql.Baki"))
+            ]]></place>
+        <place><![CDATA[
+            psiParameter().
+                    ofMethod(0, psiMethod().withName("call")
+                            .withParameters("java.lang.String", "java.util.Map")
+                            .definedInClass("com.github.chengyuxing.sql.Baki"))
+            ]]></place>
+        <place><![CDATA[
+            psiParameter().
+                    ofMethod(0, psiMethod().withName("count")
+                            .withParameters("java.lang.String")
+                            .definedInClass("com.github.chengyuxing.sql.page.IPageable"))
+            ]]></place>
+        <place><![CDATA[
+            psiParameter().
+                    ofMethod(0, psiMethod().withName("disableDefaultPageSql")
+                            .withParameters("java.lang.String")
+                            .definedInClass("com.github.chengyuxing.sql.page.IPageable"))
+            ]]></place>
+    </injection>
+</component>
