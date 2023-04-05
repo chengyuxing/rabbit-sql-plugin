@@ -17,7 +17,8 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
     <h2>Rabbit-sql lib support</h2>
-    <p>Support for <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> ,go to homepage for some help.</p>
+    <p>Provides Support for <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> to JetBrains IDEA Ultimate.</p>
+    <p>Help you easily to use <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> and XQL file.</p>
     <h2>Features</h2>
     <ul>
         <li>Support the identification of xql(.xql) file type.</li>
@@ -25,15 +26,21 @@
         <li>Support dynamic sql expression script live templates(e.g: <code>xql:if</code>).</li>
         <li>Support quick look sql definition by name(e.g: <code>&my.users</code>).</li>
         <li>Baki interface Support inject SQL language(e.g: <code>.query("select ...")</code>).</li>
+        <li>Support java and xql file navigate each other.</li>
     </ul>
+    <h2>Getting Started</h2>
+    <p>Get more information from <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> homepage
+    and Springboot support <a href="https://github.com/chengyuxing/rabbit-sql-spring-boot-starter">document</a>.</p>
   ]]></description>
 
     <change-notes>
         <![CDATA[
             <ul>
-                <li>Support quick look sql definition when mouse over the sql name.</li>
+                <li>Support quick look sql definition by name(e.g: <code>&my.users</code>).</li>
                 <li>Baki interface Support inject SQL language(e.g: <code>query("select ...")</code>).</li>
+                <li>Support copy sql by sql name.(macOS: <code>Option + Enter</code>, Windows: <code>Alt + Enter</code>).</li>
             </ul>
+            Some bugs fixed.
         ]]>
     </change-notes>
 
