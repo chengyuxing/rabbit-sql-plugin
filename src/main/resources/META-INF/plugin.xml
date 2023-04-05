@@ -22,14 +22,19 @@
     <ul>
         <li>Support the identification of xql(.xql) file type.</li>
         <li>Support dynamic sql expression script syntax highlight.</li>
-        <li>Support dynamic sql expression script live templates.</li>
-        <li>Typing <code>xql</code> keyword to get suggestions auto complete in sql/xql file.</li>
+        <li>Support dynamic sql expression script live templates(e.g: <code>xql:if</code>).</li>
+        <li>Support quick look sql definition by name(e.g: <code>&my.users</code>).</li>
+        <li>Baki interface Support inject SQL language(e.g: <code>.query("select ...")</code>).</li>
     </ul>
   ]]></description>
 
     <change-notes>
-        1. Support quick look sql definition when mouse over then sql name;
-        2. fixed sql name not matches occurs annotator error.
+        <![CDATA[
+            <ul>
+                <li>Support quick look sql definition when mouse over the sql name.</li>
+                <li>Baki interface Support inject SQL language(e.g: <code>query("select ...")</code>).</li>
+            </ul>
+        ]]>
     </change-notes>
 
     <!-- Product and plugin compatibility requirements.
@@ -55,6 +60,9 @@
         <annotator language="SQL" implementationClass="com.github.chengyuxing.plugin.rabbit.sql.lang.XqlAnnotator"/>
         <annotator language="JAVA"
                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.lang.XqlNameAnnotator"/>
+        <intentionAction>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.action.CopySqlDefinition</className>
+        </intentionAction>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
