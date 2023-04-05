@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.lang;
 
+import com.github.chengyuxing.plugin.rabbit.sql.common.Store;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -11,7 +12,7 @@ import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiMethodCallExpression;
 import org.jetbrains.annotations.NotNull;
 
-import static com.github.chengyuxing.plugin.rabbit.sql.XqlFileListenOnStartup.xqlFileManager;
+import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 
 public class XqlNameAnnotator implements Annotator {
 
@@ -23,10 +24,10 @@ public class XqlNameAnnotator implements Annotator {
                     Object argv = ((PsiLiteralExpression) psiExpression).getValue();
                     if (argv != null) {
                         String sql = argv.toString();
-                        if (sql.matches("^&\\w+\\..+")) {
+                        if (sql.matches(SQL_NAME_PATTERN)) {
                             String sqlName = sql.substring(1);
-                            if (xqlFileManager.contains(sqlName)) {
-                                String sqlDefinition = xqlFileManager.get(sqlName);
+                            if (Store.INSTANCE.xqlFileManager.contains(sqlName)) {
+                                String sqlDefinition = Store.INSTANCE.xqlFileManager.get(sqlName);
                                 holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                                         .range(psiExpression)
                                         .textAttributes(DefaultLanguageHighlighterColors.METADATA)

@@ -25,8 +25,7 @@ public class XqlAnnotator implements Annotator {
         if (!(element instanceof PsiComment)) {
             return;
         }
-        PsiComment commentExpression = (PsiComment) element;
-        String value = commentExpression.getText();
+        String value = element.getText();
         if (value == null) {
             return;
         }
@@ -39,7 +38,7 @@ public class XqlAnnotator implements Annotator {
             return;
         }
 
-        PsiWhiteSpace whiteSpace = (PsiWhiteSpace) commentExpression.getPrevSibling();
+        PsiWhiteSpace whiteSpace = (PsiWhiteSpace) element.getPrevSibling();
         if (whiteSpace != null) {
             value = whiteSpace.getText() + value;
         }
