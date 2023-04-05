@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql;
 
+import com.github.chengyuxing.plugin.rabbit.sql.common.Store;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -10,9 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-
-import static com.github.chengyuxing.plugin.rabbit.sql.XqlFileListenOnStartup.xqlFileManager;
 
 public class XqlFileListener implements BulkFileListener {
     @Override
@@ -22,20 +22,30 @@ public class XqlFileListener implements BulkFileListener {
         events.stream().filter(vfe -> !vfe.isValid())
                 .filter(vfe -> {
                     VirtualFile vf = vfe.getFile();
-                    return vf != null && vf.getExtension() != null && vf.getExtension().equals("xql");
+                    return vf != null && vf.getExtension() != null;
                 }).forEach(vfe -> {
                     var vFile = vfe.getFile();
-                    boolean valid = vFile.isValid();
-                    if (valid) {
-                        xqlFileManager.add(vFile.getUrl());
-                        added.add(vFile.getName());
-                    } else {
-                        String alias = vFile.getNameWithoutExtension();
-                        xqlFileManager.remove(alias);
-                        deleted.add(vFile.getName());
+                    if (Objects.equals(vFile.getExtension(), "xql")) {
+                        boolean valid = vFile.isValid();
+                        if (valid) {
+                            Store.INSTANCE.xqlFileManager.add(vFile.getUrl());
+                            added.add(vFile.getName());
+                        } else {
+                            String alias = vFile.getNameWithoutExtension();
+                            Store.INSTANCE.xqlFileManager.remove(alias);
+                            deleted.add(vFile.getName());
+                        }
+                    } else if (Objects.equals(vFile.getExtension(), "java")) {
+                        boolean valid = vFile.isValid();
+                        if (valid) {
+                            Store.INSTANCE.projectJavas.add(vFile.toNioPath());
+                        }
                     }
                 });
-        xqlFileManager.init();
+        Store.INSTANCE.xqlFileManager.init();
+        // if file location changed, delete invalid file path.
+        Store.INSTANCE.refreshJavaFile();
+
         String message = "";
         if (!added.isEmpty()) {
             message = String.join(", ", added) + " updated!";
