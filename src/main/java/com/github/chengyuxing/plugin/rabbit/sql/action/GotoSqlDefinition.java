@@ -2,21 +2,20 @@ package com.github.chengyuxing.plugin.rabbit.sql.action;
 
 import com.github.chengyuxing.plugin.rabbit.sql.XqlFileListenOnStartup;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Store;
-import com.github.chengyuxing.plugin.rabbit.sql.lang.XqlIcons;
+import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiJavaTokenImpl;
 import com.intellij.psi.search.PsiShortNamesCache;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.stream.Stream;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 
@@ -48,14 +47,17 @@ public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
                         var files = shortNamesCache.getFilesByName(xqlFileName);
                         if (files.length > 0) {
                             PsiFile xqlFile = files[0];
-
-                            // 考虑下跳转到指定的行号
-                            // Command + 鼠标左键 支持跳转
-                            var markInfo = NavigationGutterIconBuilder.create(XqlIcons.FILE)
-                                    .setTarget(xqlFile)
-                                    .setTooltipText(xqlFileName + " -> " + sqlName)
-                                    .createLineMarkerInfo(element);
-                            result.add(markInfo);
+                            Stream.of(xqlFile.getChildren())
+                                    .filter(p -> p instanceof PsiComment)
+                                    .filter(p -> p.getText().matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/"))
+                                    .findFirst()
+                                    .ifPresent(psiComment -> {
+                                        var markInfo = NavigationGutterIconBuilder.create(XqlIcons.FILE)
+                                                .setTarget(psiComment)
+                                                .setTooltipText(xqlFileName + " -> " + sqlName)
+                                                .createLineMarkerInfo(element);
+                                        result.add(markInfo);
+                                    });
                         }
                     }
                 } catch (Exception e) {
