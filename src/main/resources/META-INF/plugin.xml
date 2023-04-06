@@ -36,11 +36,9 @@
     <change-notes>
         <![CDATA[
             <ul>
-                <li>Support quick look sql definition by name(e.g: <code>&my.users</code>).</li>
-                <li>Baki interface Support inject SQL language(e.g: <code>query("select ...")</code>).</li>
-                <li>Support copy sql by sql name.(macOS: <code>Option + Enter</code>, Windows: <code>Alt + Enter</code>).</li>
+                <li>java and xql line markers supports navigate to location where sql name is now.</li>
             </ul>
-            Some bugs fixed.
+            Some bugs fixed and code optimized.
         ]]>
     </change-notes>
 
