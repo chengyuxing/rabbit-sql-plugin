@@ -4,6 +4,7 @@ import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.sql.Keywords;
 import com.github.chengyuxing.sql.utils.SqlUtil;
+import com.intellij.openapi.diagnostic.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map;
 import static com.github.chengyuxing.sql.utils.SqlUtil.getAnnotationBlock;
 
 public class HtmlUtil {
+    private static final Logger log = Logger.getInstance(HtmlUtil.class);
 
     public static String toHtml(String sql) {
         return "<html lang=\"en\"><body><pre style='font-size:1em'>" + highlight(sql) + "</pre></body></html>";
@@ -77,7 +79,7 @@ public class HtmlUtil {
             }
             return colorfulSql;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return sql;
         }
     }

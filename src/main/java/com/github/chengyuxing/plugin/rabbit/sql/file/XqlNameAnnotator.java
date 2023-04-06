@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.lang;
+package com.github.chengyuxing.plugin.rabbit.sql.file;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.Store;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;

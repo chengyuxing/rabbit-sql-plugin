@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.grammer;
+package com.github.chengyuxing.plugin.rabbit.sql.language.grammer;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.sql.psi.SqlLanguage;

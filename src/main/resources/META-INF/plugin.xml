@@ -60,13 +60,13 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="XQL"
-                  implementationClass="com.github.chengyuxing.plugin.rabbit.sql.lang.XqlFileType"
+                  implementationClass="com.github.chengyuxing.plugin.rabbit.sql.file.XqlFileType"
                   fieldName="INSTANCE"
                   language="SQL"
                   extensions="xql"/>
-        <annotator language="SQL" implementationClass="com.github.chengyuxing.plugin.rabbit.sql.lang.XqlAnnotator"/>
+        <annotator language="SQL" implementationClass="com.github.chengyuxing.plugin.rabbit.sql.file.XqlAnnotator"/>
         <annotator language="JAVA"
-                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.lang.XqlNameAnnotator"/>
+                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.file.XqlNameAnnotator"/>
         <intentionAction>
             <className>com.github.chengyuxing.plugin.rabbit.sql.action.CopySqlDefinition</className>
         </intentionAction>
@@ -81,7 +81,7 @@
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <defaultLiveTemplates file="xql.xml"/>
+        <defaultLiveTemplates file="xql-live-templates.xml"/>
         <liveTemplateContext implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlContext"/>
     </extensions>
 

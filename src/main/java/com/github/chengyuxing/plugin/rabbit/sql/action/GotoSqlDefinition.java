@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.stream.Stream;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 
@@ -23,11 +22,11 @@ public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
     private static final Logger log = Logger.getInstance(XqlFileListenOnStartup.class);
 
     @Override
-    protected void collectNavigationMarkers(@NotNull PsiElement element, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
-        if (!(element instanceof PsiJavaTokenImpl) || !(element.getParent() instanceof PsiLiteralExpression)) {
+    protected void collectNavigationMarkers(@NotNull PsiElement javaElement, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
+        if (!(javaElement instanceof PsiJavaTokenImpl) || !(javaElement.getParent() instanceof PsiLiteralExpression)) {
             return;
         }
-        PsiLiteralExpression literalExpression = (PsiLiteralExpression) element.getParent();
+        PsiLiteralExpression literalExpression = (PsiLiteralExpression) javaElement.getParent();
         String sqlRef = literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
         if (sqlRef == null) {
             return;
@@ -42,22 +41,25 @@ public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
                     if (Store.INSTANCE.xqlFileManager.getFiles().containsKey(alias)) {
                         var xqlFilePath = Store.INSTANCE.xqlFileManager.getFiles().get(alias);
                         var xqlFileName = Path.of(xqlFilePath).getFileName().toString();
-                        Project project = element.getProject();
+                        Project project = javaElement.getProject();
                         PsiShortNamesCache shortNamesCache = PsiShortNamesCache.getInstance(project);
                         var files = shortNamesCache.getFilesByName(xqlFileName);
                         if (files.length > 0) {
                             PsiFile xqlFile = files[0];
-                            Stream.of(xqlFile.getChildren())
-                                    .filter(p -> p instanceof PsiComment)
-                                    .filter(p -> p.getText().matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/"))
-                                    .findFirst()
-                                    .ifPresent(psiComment -> {
-                                        var markInfo = NavigationGutterIconBuilder.create(XqlIcons.FILE)
-                                                .setTarget(psiComment)
-                                                .setTooltipText(xqlFileName + " -> " + sqlName)
-                                                .createLineMarkerInfo(element);
-                                        result.add(markInfo);
-                                    });
+                            xqlFile.acceptChildren(new PsiElementVisitor() {
+                                @Override
+                                public void visitElement(@NotNull PsiElement xqlPsiElement) {
+                                    if (xqlPsiElement instanceof PsiComment) {
+                                        if (xqlPsiElement.getText().matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/")) {
+                                            var markInfo = NavigationGutterIconBuilder.create(XqlIcons.FILE)
+                                                    .setTarget(xqlPsiElement)
+                                                    .setTooltipText(xqlFileName + " -> " + sqlName)
+                                                    .createLineMarkerInfo(javaElement);
+                                            result.add(markInfo);
+                                        }
+                                    }
+                                }
+                            });
                         }
                     }
                 } catch (Exception e) {
