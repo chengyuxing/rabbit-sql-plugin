@@ -51,7 +51,7 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                             .collect(Collectors.toList());
 
                     if (!founded.isEmpty()) {
-                        var markInfo = NavigationGutterIconBuilder.create(AllIcons.Actions.Diff)
+                        var markInfo = NavigationGutterIconBuilder.create(AllIcons.Actions.IntentionBulb)
                                 .setTargets(founded)
                                 .setTooltipText("Where I am!")
                                 .createLineMarkerInfo(element);
