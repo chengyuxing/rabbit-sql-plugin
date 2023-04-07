@@ -42,9 +42,6 @@ public class XqlFileListener implements BulkFileListener {
                         }
                     }
                 });
-        Store.INSTANCE.xqlFileManager.init();
-        // if file location changed, delete invalid file path.
-        Store.INSTANCE.refreshJavaFile();
 
         String message = "";
         if (!added.isEmpty()) {
@@ -59,5 +56,13 @@ public class XqlFileListener implements BulkFileListener {
         if (!message.equals("")) {
             Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", message, NotificationType.INFORMATION));
         }
+
+        Store.INSTANCE.reloadXqlFiles((success, error) -> {
+            if (!success) {
+                Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", error + "<br>Please change another name.", NotificationType.WARNING));
+            }
+        });
+        // if file location changed, delete invalid file path.
+        Store.INSTANCE.refreshJavaFiles();
     }
 }

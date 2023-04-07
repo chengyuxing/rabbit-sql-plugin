@@ -25,8 +25,13 @@ public class XqlFileListenOnStartup implements StartupActivity {
             Path src = basePath.resolve("src");
             findJava(src);
             findXql(src);
-            Store.INSTANCE.xqlFileManager.init();
-            Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file Manager initialized!", NotificationType.INFORMATION));
+            Store.INSTANCE.reloadXqlFiles((success, error) -> {
+                if (success) {
+                    Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", "XQL file Manager initialized!", NotificationType.INFORMATION));
+                } else {
+                    Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", error + "<br>Please change another name.", NotificationType.WARNING));
+                }
+            });
         }
     }
 
@@ -35,7 +40,7 @@ public class XqlFileListenOnStartup implements StartupActivity {
             try (Stream<Path> pathStream = Files.find(xqlRootPath, 15, (p, a) -> a.isRegularFile() && p.toString().endsWith(".xql"))) {
                 pathStream.forEach(p -> Store.INSTANCE.xqlFileManager.add(p.toUri().toString()));
             } catch (IOException e) {
-                log.error("find xql error.", e);
+                log.warn("find xql error.", e);
             }
         }
     }
@@ -45,7 +50,7 @@ public class XqlFileListenOnStartup implements StartupActivity {
             try (Stream<Path> pathStream = Files.find(rootPath, 15, (p, a) -> a.isRegularFile() && StringUtil.endsWiths(p.toString(), ".java", ".scala", ".kt"))) {
                 pathStream.forEach(Store.INSTANCE.projectJavas::add);
             } catch (IOException e) {
-                log.error("find java error.", e);
+                log.warn("find java error.", e);
             }
         }
     }
