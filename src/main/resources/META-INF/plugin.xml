@@ -28,12 +28,13 @@
         <li>Support quick look sql definition by name(e.g: <code>&my.users</code>).</li>
         <li>Baki interface Support inject SQL language(e.g: <code>.query("select ...")</code>).</li>
         <li>Support java and xql file navigate each other.</li>
+        <li>Support sql name suggestions auto complete in java string literal where start with <code>"&"</code>.</li>
     </ul>
     <h2>Getting Started</h2>
     <p>For working correct in your project, you need configure your own
     <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a> in ioc or
     anywhere for <a href="https://github.com/chengyuxing/rabbit-sql#bakidao">Baki</a> currently,
-    hope more feature in future.</p>
+    hope more features in the future.</p>
     <p>Get more information from <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> homepage
     and Springboot support <a href="https://github.com/chengyuxing/rabbit-sql-spring-boot-starter">document</a>.</p>
   ]]></description>
@@ -41,9 +42,11 @@
     <change-notes>
         <![CDATA[
             <ul>
-                <li>java and xql line markers supports navigate to location where sql name is now.</li>
+                <li>sql name reference quick navigate.</li>
+                <li>Support sql name suggestions auto complete in java string literal where start with <code>"&"</code>.</li>
+                <li>fixed XQLFileManager load error when duplicate sql name in same xql file.</li>
+                <li>some bug fixed and code optimized.</li>
             </ul>
-            fixed XQLFileManager load error when duplicate sql name in same xql file.
         ]]>
     </change-notes>
 

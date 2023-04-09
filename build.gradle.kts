@@ -4,16 +4,17 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "1.3"
+version = "1.4"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:7.0.21") {
+    implementation("com.github.chengyuxing:rabbit-sql:7.0.22") {
         exclude("org.slf4j", "slf4j-api")
     }
+    testImplementation("junit:junit:4.13.2")
 }
 
 // Configure Gradle IntelliJ Plugin

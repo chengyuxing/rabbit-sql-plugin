@@ -1,7 +1,5 @@
 # IDEA [rabbit-sql](https://github.com/chengyuxing/rabbit-sql) plugin
 
-<iframe width="384px" height="319px" src="https://plugins.jetbrains.com/embeddable/card/21403"></iframe>
-
 - Support the identification of xql(.xql) file type.
 - Support dynamic sql expression script syntax highlight.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
