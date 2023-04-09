@@ -48,22 +48,20 @@ public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
                             PsiFile xqlFile = files[0];
                             xqlFile.acceptChildren(new PsiElementVisitor() {
                                 @Override
-                                public void visitElement(@NotNull PsiElement xqlPsiElement) {
-                                    if (xqlPsiElement instanceof PsiComment) {
-                                        if (xqlPsiElement.getText().matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/")) {
-                                            var markInfo = NavigationGutterIconBuilder.create(XqlIcons.FILE)
-                                                    .setTarget(xqlPsiElement)
-                                                    .setTooltipText(xqlFileName + " -> " + sqlName)
-                                                    .createLineMarkerInfo(javaElement);
-                                            result.add(markInfo);
-                                        }
+                                public void visitComment(@NotNull PsiComment comment) {
+                                    if (comment.getText().matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/")) {
+                                        var markInfo = NavigationGutterIconBuilder.create(XqlIcons.XQL_FILE)
+                                                .setTarget(comment)
+                                                .setTooltipText(xqlFileName + " -> " + sqlName)
+                                                .createLineMarkerInfo(javaElement);
+                                        result.add(markInfo);
                                     }
                                 }
                             });
                         }
                     }
                 } catch (Exception e) {
-                    log.error(e);
+                    log.warn(e);
                 }
             }
         }

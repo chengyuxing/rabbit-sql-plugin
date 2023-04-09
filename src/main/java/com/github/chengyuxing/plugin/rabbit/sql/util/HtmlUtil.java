@@ -79,7 +79,7 @@ public class HtmlUtil {
             }
             return colorfulSql;
         } catch (Exception e) {
-            log.error(e);
+            log.warn(e);
             return sql;
         }
     }

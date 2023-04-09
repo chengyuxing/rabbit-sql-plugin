@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.file;
+package com.github.chengyuxing.plugin.rabbit.sql.psi;
 
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.intellij.lang.annotation.AnnotationHolder;

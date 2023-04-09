@@ -7,7 +7,6 @@ import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.java.PsiJavaTokenImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -49,15 +48,13 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                                 final List<PsiElement> psiElements = new ArrayList<>();
                                 psi.accept(new JavaRecursiveElementWalkingVisitor() {
                                     @Override
-                                    public void visitElement(@NotNull PsiElement javaPsiElement) {
-                                        if (javaPsiElement instanceof PsiJavaTokenImpl && javaPsiElement.getParent() instanceof PsiLiteralExpression) {
-                                            var literalExpression = (PsiLiteralExpression) javaPsiElement.getParent();
-                                            String v = literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
-                                            if (v != null && v.equals(sqlRef)) {
-                                                psiElements.add(javaPsiElement);
-                                            }
+                                    public void visitLiteralExpression(PsiLiteralExpression expression) {
+                                        String v = expression.getValue() instanceof String ? (String) expression.getValue() : null;
+                                        if (v != null && v.equals(sqlRef)) {
+                                            psiElements.add(expression);
                                         }
-                                        super.visitElement(javaPsiElement);
+                                        // unnecessary to do that anymore.
+                                        // super.visitElement(expression);
                                     }
                                 });
                                 return psiElements;
@@ -65,8 +62,9 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                             .collect(Collectors.toList());
 
                     if (!founded.isEmpty()) {
-                        var markInfo = NavigationGutterIconBuilder.create(AllIcons.Actions.Diff)
+                        var markInfo = NavigationGutterIconBuilder.create(AllIcons.Actions.DiagramDiff)
                                 .setTargets(founded)
+                                .setPopupTitle("Choose reference of sql name \"" + sqlName + "\" (" + founded.size() + " founded)")
                                 .setTooltipText("Where I am (" + founded.size() + " locations)!")
                                 .createLineMarkerInfo(xqlPsiElement);
                         result.add(markInfo);

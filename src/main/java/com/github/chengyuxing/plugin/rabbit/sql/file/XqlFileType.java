@@ -31,6 +31,6 @@ public class XqlFileType extends LanguageFileType {
 
     @Override
     public Icon getIcon() {
-        return XqlIcons.FILE;
+        return XqlIcons.XQL_FILE;
     }
 }

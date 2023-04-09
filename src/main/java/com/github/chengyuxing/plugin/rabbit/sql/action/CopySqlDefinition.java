@@ -32,7 +32,7 @@ public class CopySqlDefinition extends PsiElementBaseIntentionAction {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(new StringSelection(sqlDefinition), null);
         } catch (Exception e) {
-            log.error(e);
+            log.warn(e);
         }
     }
 
