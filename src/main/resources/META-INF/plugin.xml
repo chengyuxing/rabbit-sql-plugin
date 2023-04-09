@@ -19,6 +19,7 @@
     <h2>Rabbit-sql lib support</h2>
     <p>Provides Support for <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> 7+ to JetBrains IDEA Ultimate.</p>
     <p>Help you easily to use <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> and XQL file.</p>
+
     <h2>Features</h2>
     <ul>
         <li>Support the identification of xql(.xql) file type.</li>
@@ -29,6 +30,10 @@
         <li>Support java and xql file navigate each other.</li>
     </ul>
     <h2>Getting Started</h2>
+    <p>For working correct in your project, you need configure your own
+    <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a> in ioc or
+    anywhere for <a href="https://github.com/chengyuxing/rabbit-sql#bakidao">Baki</a> currently,
+    hope more feature in future.</p>
     <p>Get more information from <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> homepage
     and Springboot support <a href="https://github.com/chengyuxing/rabbit-sql-spring-boot-starter">document</a>.</p>
   ]]></description>
@@ -38,7 +43,7 @@
             <ul>
                 <li>java and xql line markers supports navigate to location where sql name is now.</li>
             </ul>
-            Some bugs fixed and code optimized.
+            fixed XQLFileManager load error when duplicate sql name in same xql file.
         ]]>
     </change-notes>
 
@@ -62,16 +67,23 @@
                   fieldName="INSTANCE"
                   language="SQL"
                   extensions="xql"/>
-        <annotator language="SQL" implementationClass="com.github.chengyuxing.plugin.rabbit.sql.file.XqlAnnotator"/>
+        <annotator language="SQL" implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlAnnotator"/>
         <annotator language="JAVA"
-                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.file.XqlNameAnnotator"/>
+                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlNameAnnotator"/>
         <intentionAction>
             <className>com.github.chengyuxing.plugin.rabbit.sql.action.CopySqlDefinition</className>
         </intentionAction>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="com.github.chengyuxing.plugin.rabbit.sql.action.GotoSqlDefinition"/>
+
         <codeInsight.lineMarkerProvider language="SQL"
                                         implementationClass="com.github.chengyuxing.plugin.rabbit.sql.action.GotoJavaCallable"/>
+
+        <psi.referenceContributor language="JAVA"
+                                  implementation="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlNameReferenceContributor"/>
+
+        <completion.confidence language="JAVA" order="before javaSkipAutopopupInStrings"
+                               implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlNameCompletionConfidence"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
