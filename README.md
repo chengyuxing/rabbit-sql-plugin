@@ -1,4 +1,4 @@
-# IDEA [rabbit-sql](https://github.com/chengyuxing/rabbit-sql) plugin
+# IDEA [rabbit-sql plugin](https://plugins.jetbrains.com/plugin/21403-rabbit-sql)
 
 - Support the identification of xql(.xql) file type.
 - Support dynamic sql expression script syntax highlight.
