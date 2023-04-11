@@ -17,7 +17,7 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
     <h2>Rabbit-sql lib support</h2>
-    <p>Provides Support for <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> 7+ to JetBrains IDEA Ultimate.</p>
+    <p>Provides Support for <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> 7.0.27+ to JetBrains IDEA Ultimate.</p>
     <p>Help you easily to use <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> and XQL file.</p>
 
     <h2>Features</h2>
@@ -29,6 +29,8 @@
         <li>Baki interface Support inject SQL language(e.g: <code>.query("select ...")</code>).</li>
         <li>Support java and xql file navigate each other.</li>
         <li>Support sql name suggestions auto complete in java string literal where start with <code>"&"</code>.</li>
+        <li>Create <code>${projectBaseDir}/src/main/resources/xql-file-manager.properties</code> to enable features above.</li>
+        <li>Toolbar menu: <strong>File | New | [Xql File | Xql File Manager Config]<strong></li>
     </ul>
     <h2>Getting Started</h2>
     <p>For working correct in your project, you need configure your own
@@ -42,10 +44,10 @@
     <change-notes>
         <![CDATA[
             <ul>
-                <li>sql name reference quick navigate.</li>
-                <li>Support sql name suggestions auto complete in java string literal where start with <code>"&"</code>.</li>
-                <li>fixed XQLFileManager load error when duplicate sql name in same xql file.</li>
-                <li>some bug fixed and code optimized.</li>
+                <li>For support all features, rabbit-sql version >= 7.0.27, rabbit-sql-spring-boot-starter version >= 2.1.17.</li>
+                <li>Add supports <code>xql-file-manager.properties<code> config file to create a relation for rabbit-sql and it's plugin.</li>
+                <li>Add file template see Toolbar menu: <strong>File | New | [Xql File | Xql File Manager Config]<strong></li>
+                <li>Some bug fixed and code optimized.</li>
             </ul>
         ]]>
     </change-notes>
@@ -58,8 +60,10 @@
     <depends>org.intellij.intelliLang</depends>
 
     <projectListeners>
-        <listener class="com.github.chengyuxing.plugin.rabbit.sql.XqlFileListener"
+        <listener class="com.github.chengyuxing.plugin.rabbit.sql.XqlFileChangeListener"
                   topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
+        <listener class="com.github.chengyuxing.plugin.rabbit.sql.XqlConfigLifecycleListener"
+                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </projectListeners>
 
     <!-- Extension points defined by the plugin.
@@ -89,9 +93,9 @@
                                implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlNameCompletionConfidence"/>
     </extensions>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <postStartupActivity implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlFileListenOnStartup"/>
-    </extensions>
+    <!--    <extensions defaultExtensionNs="com.intellij">-->
+    <!--        <postStartupActivity implementation="com.github.chengyuxing.plugin.rabbit.sql.InitXqlConfigOnStartup"/>-->
+    <!--    </extensions>-->
 
     <extensions defaultExtensionNs="com.intellij">
         <defaultLiveTemplates file="xql-live-templates.xml"/>

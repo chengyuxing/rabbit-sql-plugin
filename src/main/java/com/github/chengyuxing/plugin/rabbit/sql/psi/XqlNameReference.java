@@ -35,8 +35,9 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
             return ResolveResult.EMPTY_ARRAY;
         }
         try {
-            if (Store.INSTANCE.xqlFileManager.getFiles().containsKey(alias)) {
-                var xqlFilePath = Store.INSTANCE.xqlFileManager.getFiles().get(alias);
+            var allXqlFiles = Store.INSTANCE.allXqlFiles();
+            if (allXqlFiles.containsKey(alias)) {
+                var xqlFilePath = allXqlFiles.get(alias);
                 var xqlFileName = Path.of(xqlFilePath).getFileName().toString();
                 Project project = myElement.getProject();
                 PsiShortNamesCache shortNamesCache = PsiShortNamesCache.getInstance(project);

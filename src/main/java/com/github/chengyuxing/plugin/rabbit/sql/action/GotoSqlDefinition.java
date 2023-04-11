@@ -1,6 +1,5 @@
 package com.github.chengyuxing.plugin.rabbit.sql.action;
 
-import com.github.chengyuxing.plugin.rabbit.sql.XqlFileListenOnStartup;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Store;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
@@ -19,7 +18,7 @@ import java.util.Collection;
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 
 public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
-    private static final Logger log = Logger.getInstance(XqlFileListenOnStartup.class);
+    private static final Logger log = Logger.getInstance(GotoSqlDefinition.class);
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement javaElement, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
@@ -38,8 +37,9 @@ public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
                 var alias = sqlPart[0];
                 var sqlName = sqlPart[1];
                 try {
-                    if (Store.INSTANCE.xqlFileManager.getFiles().containsKey(alias)) {
-                        var xqlFilePath = Store.INSTANCE.xqlFileManager.getFiles().get(alias);
+                    var allXqlFiles = Store.INSTANCE.allXqlFiles();
+                    if (allXqlFiles.containsKey(alias)) {
+                        var xqlFilePath = allXqlFiles.get(alias);
                         var xqlFileName = Path.of(xqlFilePath).getFileName().toString();
                         Project project = javaElement.getProject();
                         PsiShortNamesCache shortNamesCache = PsiShortNamesCache.getInstance(project);

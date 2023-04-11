@@ -14,33 +14,29 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
-
-public class XqlFileListenOnStartup implements StartupActivity {
-    private static final Logger log = Logger.getInstance(XqlFileListenOnStartup.class);
+@Deprecated
+public class InitXqlConfigOnStartup implements StartupActivity {
+    private static final Logger log = Logger.getInstance(InitXqlConfigOnStartup.class);
 
     @Override
     public void runActivity(@NotNull Project project) {
         if (project.getBasePath() != null) {
             Path basePath = Path.of(project.getBasePath());
+            Store.INSTANCE.basePath.set(basePath);
             Path src = basePath.resolve("src");
-            findJava(src);
-            findXql(src);
-            Store.INSTANCE.reloadXqlFiles((success, error) -> {
-                if (success) {
-                    Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", "XQL file Manager initialized!", NotificationType.INFORMATION));
-                } else {
-                    Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", error + "<br>Please change another name.", NotificationType.WARNING));
-                }
-            });
-        }
-    }
 
-    private void findXql(Path xqlRootPath) {
-        if (Files.exists(xqlRootPath)) {
-            try (Stream<Path> pathStream = Files.find(xqlRootPath, 15, (p, a) -> a.isRegularFile() && p.toString().endsWith(".xql"))) {
-                pathStream.forEach(p -> Store.INSTANCE.xqlFileManager.add(p.toUri().toString()));
-            } catch (IOException e) {
-                log.warn("find xql error.", e);
+            if (Store.INSTANCE.xqlConfigExists()) {
+                findJava(src);
+                Store.INSTANCE.initXqlFiles((success, error) -> {
+                    if (success) {
+                        Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", "XQL file Manager initialized!", NotificationType.INFORMATION));
+                    } else {
+                        Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", error + "<br>Please change another name.", NotificationType.WARNING));
+                    }
+                });
+            } else {
+                Store.INSTANCE.clearAll();
+                Store.INSTANCE.projectJavas.clear();
             }
         }
     }

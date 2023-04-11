@@ -1,6 +1,5 @@
 package com.github.chengyuxing.plugin.rabbit.sql.action;
 
-import com.github.chengyuxing.plugin.rabbit.sql.XqlFileListenOnStartup;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Store;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.codeInspection.util.IntentionFamilyName;
@@ -22,7 +21,7 @@ import java.util.Objects;
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 
 public class CopySqlDefinition extends PsiElementBaseIntentionAction {
-    private static final Logger log = Logger.getInstance(XqlFileListenOnStartup.class);
+    private static final Logger log = Logger.getInstance(CopySqlDefinition.class);
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {

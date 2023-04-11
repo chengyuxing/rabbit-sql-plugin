@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.action;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.Store;
+import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
@@ -20,6 +21,9 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement xqlPsiElement, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
+        if (PsiUtil.xqlNotInFileManager(xqlPsiElement)) {
+            return;
+        }
         if (!(xqlPsiElement instanceof PsiComment)) {
             return;
         }
