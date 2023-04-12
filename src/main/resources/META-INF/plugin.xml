@@ -32,13 +32,6 @@
         <li>Create <code>${projectBaseDir}/src/main/resources/xql-file-manager.properties</code> to enable features above.</li>
         <li>Toolbar menu: <strong>File | New | [Xql File | Xql File Manager Config]<strong></li>
     </ul>
-    <h2>Getting Started</h2>
-    <p>For working correct in your project, you need configure your own
-    <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a> in ioc or
-    anywhere for <a href="https://github.com/chengyuxing/rabbit-sql#bakidao">Baki</a> currently,
-    hope more features in the future.</p>
-    <p>Get more information from <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> homepage
-    and Springboot support <a href="https://github.com/chengyuxing/rabbit-sql-spring-boot-starter">document</a>.</p>
   ]]></description>
 
     <change-notes>
