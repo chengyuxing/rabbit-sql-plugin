@@ -15,9 +15,12 @@ For support all features, rabbit-sql version >= 7.0.27, rabbit-sql-spring-boot-s
 
 ## Getting Started
 
-For working correct in your project, you need configure your
-own [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager) in ioc or anywhere
-for [Baki](https://github.com/chengyuxing/rabbit-sql#bakidao) currently, hope more features in the future.
+For working correctly in your project, some steps are required:
 
-Get more information from [rabbit-sql](https://github.com/chengyuxing/rabbit-sql) homepage
-and Springboot support [document](https://github.com/chengyuxing/rabbit-sql-spring-boot-starter).
+- **Rabbit-sql 7.0.27+** or **rabbit-sql-spring-boot-starter 2.1.17+**;
+- Configure your own [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager) in ioc;
+- Create `xql-file-manager.properties` in `${projectBaseDir}/src/main/resources/`;
+- Configure [Baki](https://github.com/chengyuxing/rabbit-sql#bakidao);
+
+Get more information from [Rabbit-sql](https://github.com/chengyuxing/rabbit-sql) homepage and Springboot
+support [document](https://github.com/chengyuxing/rabbit-sql-spring-boot-starter).
