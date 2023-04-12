@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.github.chengyuxing.sql.XQLFileManager;
+import com.github.chengyuxing.sql.exceptions.DuplicateException;
 import com.intellij.openapi.diagnostic.Logger;
 
 import java.nio.file.Files;
@@ -103,8 +104,11 @@ public enum Store {
                     xqlFileManager.clearFiles();
                 }
             }
+        } catch (DuplicateException e) {
+            reloaded.accept(false, "Warning: " + e.getMessage());
+            log.warn(e);
         } catch (Exception e) {
-            reloaded.accept(false, e.getMessage());
+            reloaded.accept(false, "Error:" + e.getMessage());
             log.warn(e);
         }
     }

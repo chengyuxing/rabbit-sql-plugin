@@ -53,14 +53,14 @@ public class XqlFileChangeListener implements BulkFileListener {
         if (xqlConfigChanged.get()) {
             Store.INSTANCE.initXqlFiles((success, error) -> {
                 if (!success) {
-                    Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", error + "<br>Please change another name.", NotificationType.WARNING));
+                    Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", error, NotificationType.WARNING));
                 }
             });
         }
         if (xqlFileChanged.get()) {
             Store.INSTANCE.reloadXqlFiles((success, error) -> {
                 if (!success) {
-                    Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", error + "<br>Please change another name.", NotificationType.WARNING));
+                    Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", error, NotificationType.WARNING));
                 }
             });
         }

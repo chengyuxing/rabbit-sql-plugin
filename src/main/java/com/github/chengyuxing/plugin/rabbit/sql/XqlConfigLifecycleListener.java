@@ -38,7 +38,7 @@ public class XqlConfigLifecycleListener implements ProjectManagerListener {
                     if (success) {
                         Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", "XQL file Manager initialized!", NotificationType.INFORMATION));
                     } else {
-                        Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", error + "<br>Please change another name.", NotificationType.WARNING));
+                        Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", error, NotificationType.WARNING));
                     }
                 });
                 log.info("project opened, found xql config, init!");
