@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 import static com.intellij.lang.documentation.DocumentationMarkup.*;
 
-public class QuickXqlDoc extends AbstractDocumentationProvider {
+public class XqlQuickDoc extends AbstractDocumentationProvider {
     @Override
     public @Nullable @Nls String generateHoverDoc(@NotNull PsiElement element, @Nullable PsiElement originalElement) {
         return generateDoc(element, originalElement);
