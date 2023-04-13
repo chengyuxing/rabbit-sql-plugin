@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 import static com.github.chengyuxing.sql.XQLFileManager.*;
 
-public class XqlAnnotator implements Annotator {
+public class XqlFileAnnotator implements Annotator {
     static final String[] XQL_PREFIXES = new String[]{IF, FI, FOR, END, CHOOSE, WHEN, CASE, SWITCH, BREAK, DEFAULT};
     static final String[] XQL_KEYWORDS = new String[]{"delimiter", "filter", "of"};
 

@@ -15,7 +15,7 @@ public class HtmlUtil {
     private static final Logger log = Logger.getInstance(HtmlUtil.class);
 
     public static String toHtml(String sql) {
-        return "<html lang=\"en\"><body><pre style='font-size:1em'>" + highlight(sql) + "</pre></body></html>";
+        return "<pre>" + highlight(sql) + "</pre>";
     }
 
     public static String highlight(String sql) {
@@ -84,7 +84,7 @@ public class HtmlUtil {
         }
     }
 
-    static String colorful(String word, Color color) {
+    public static String colorful(String word, Color color) {
         return "<code style='color:" + color.getCode() + "'>" + word + "</code>";
     }
 
@@ -93,7 +93,8 @@ public class HtmlUtil {
         NUMBER("#56A9B6"),
         FUNCTION("#B89E30"),
         STRING("#79A978"),
-        ANNOTATION("#7B7E84");
+        ANNOTATION("#7B7E84"),
+        HIGHLIGHT("#BBB529");
         private final String code;
 
         Color(String code) {

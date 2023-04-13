@@ -94,6 +94,7 @@ public enum Store {
                     xqlFileManager.setFilenames(filenames);
                     xqlFileManager.setCharset(properties.getProperty("charset", "UTF-8"));
                     xqlFileManager.setDelimiter(properties.getProperty("delimiter", ";"));
+                    xqlFileManager.setNamedParamPrefix(properties.getProperty("namedParamPrefix", ":").charAt(0));
                     xqlFileManager.init();
                     reloaded.accept(true, null);
                 } else {
