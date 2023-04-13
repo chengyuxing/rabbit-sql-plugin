@@ -11,6 +11,7 @@ import com.intellij.psi.search.PsiShortNamesCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -38,7 +39,7 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
             var allXqlFiles = Store.INSTANCE.allXqlFiles();
             if (allXqlFiles.containsKey(alias)) {
                 var xqlFilePath = allXqlFiles.get(alias);
-                var xqlFileName = Path.of(xqlFilePath).getFileName().toString();
+                var xqlFileName = Path.of(URI.create(xqlFilePath)).getFileName().toString();
                 Project project = myElement.getProject();
                 PsiShortNamesCache shortNamesCache = PsiShortNamesCache.getInstance(project);
                 var files = shortNamesCache.getFilesByName(xqlFileName);

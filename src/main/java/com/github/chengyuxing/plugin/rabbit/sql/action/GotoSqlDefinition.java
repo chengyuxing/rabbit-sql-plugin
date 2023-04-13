@@ -12,6 +12,7 @@ import com.intellij.psi.impl.source.tree.java.PsiJavaTokenImpl;
 import com.intellij.psi.search.PsiShortNamesCache;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.Collection;
 
@@ -33,14 +34,14 @@ public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
         if (sqlRef.matches(SQL_NAME_PATTERN)) {
             sqlRef = sqlRef.substring(1);
             if (Store.INSTANCE.xqlFileManager.contains(sqlRef)) {
-                var sqlPart = sqlRef.split("\\.");
-                var alias = sqlPart[0];
-                var sqlName = sqlPart[1];
+                var dotIdx = sqlRef.indexOf(".");
+                var alias = sqlRef.substring(0, dotIdx).trim();
+                var sqlName = sqlRef.substring(dotIdx + 1).trim();
                 try {
                     var allXqlFiles = Store.INSTANCE.allXqlFiles();
                     if (allXqlFiles.containsKey(alias)) {
                         var xqlFilePath = allXqlFiles.get(alias);
-                        var xqlFileName = Path.of(xqlFilePath).getFileName().toString();
+                        var xqlFileName = Path.of(URI.create(xqlFilePath)).getFileName().toString();
                         Project project = javaElement.getProject();
                         PsiShortNamesCache shortNamesCache = PsiShortNamesCache.getInstance(project);
                         var files = shortNamesCache.getFilesByName(xqlFileName);
