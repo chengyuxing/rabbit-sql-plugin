@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:7.1.0") {
+    implementation("com.github.chengyuxing:rabbit-sql:7.1.1") {
         exclude("org.slf4j", "slf4j-api")
     }
     testImplementation("junit:junit:4.13.2")

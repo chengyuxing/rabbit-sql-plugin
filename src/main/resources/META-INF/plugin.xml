@@ -37,7 +37,7 @@
     <change-notes>
         <![CDATA[
             <ul>
-                <li>For support all features, rabbit-sql version >= 7.0.27, rabbit-sql-spring-boot-starter version >= 2.1.17.</li>
+                <li>For support all features, rabbit-sql version >= 7.1.0, rabbit-sql-spring-boot-starter version >= 2.2.0.</li>
                 <li>Add supports <code>xql-file-manager.properties</code> config file to create a relation for rabbit-sql and it's plugin.</li>
                 <li>Add file template see Toolbar menu: <strong>File | New | [Xql File | Xql File Manager Config]</strong></li>
                 <li>Some bug fixed and code optimized.</li>
