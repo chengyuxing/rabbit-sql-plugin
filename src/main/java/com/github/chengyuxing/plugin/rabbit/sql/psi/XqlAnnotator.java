@@ -1,7 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.psi;
 
 import com.github.chengyuxing.common.utils.StringUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -23,9 +22,6 @@ public class XqlAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (PsiUtil.xqlNotInFileManager(element)) {
-            return;
-        }
         if (!(element instanceof PsiComment)) {
             return;
         }
