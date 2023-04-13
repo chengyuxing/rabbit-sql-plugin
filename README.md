@@ -1,7 +1,5 @@
 # IDEA [rabbit-sql plugin](https://plugins.jetbrains.com/plugin/21403-rabbit-sql)
 
-For support all features, rabbit-sql version >= 7.0.27, rabbit-sql-spring-boot-starter version >= 2.1.17.
-
 - Support the identification of xql(.xql) file type.
 - Support dynamic sql expression script syntax highlight.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
