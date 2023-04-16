@@ -1,13 +1,13 @@
 package com.github.chengyuxing.plugin.rabbit.sql.psi;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.Store;
+import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
-import com.intellij.psi.search.PsiShortNamesCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,10 +18,12 @@ import java.util.concurrent.atomic.AtomicReference;
 public class XqlNameReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
     private static final Logger log = Logger.getInstance(XqlNameReference.class);
     private final String key;
+    private final ResourceCache.Resource resource;
 
     public XqlNameReference(@NotNull PsiElement element, TextRange rangeInElement) {
         super(element, rangeInElement);
         key = element.getText().substring(rangeInElement.getStartOffset(), rangeInElement.getEndOffset());
+        resource = ResourceCache.getInstance().getResource(element);
     }
 
     @Override
@@ -36,27 +38,29 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
             return ResolveResult.EMPTY_ARRAY;
         }
         try {
-            var allXqlFiles = Store.INSTANCE.allXqlFiles();
+            Project project = myElement.getProject();
+
+            if (resource == null) return ResolveResult.EMPTY_ARRAY;
+
+            var allXqlFiles = resource.getXqlFileManager().allFiles();
             if (allXqlFiles.containsKey(alias)) {
                 var xqlFilePath = allXqlFiles.get(alias);
-                var xqlFileName = Path.of(URI.create(xqlFilePath)).getFileName().toString();
-                Project project = myElement.getProject();
-                PsiShortNamesCache shortNamesCache = PsiShortNamesCache.getInstance(project);
-                var files = shortNamesCache.getFilesByName(xqlFileName);
-                if (files.length > 0) {
-                    PsiFile xqlFile = files[0];
-                    AtomicReference<PsiElement> elem = new AtomicReference<>(null);
-                    xqlFile.acceptChildren(new PsiElementVisitor() {
-                        @Override
-                        public void visitComment(@NotNull PsiComment comment) {
-                            if (comment.getText().matches("/\\*\\s*\\[\\s*(" + name + ")\\s*]\\s*\\*/")) {
-                                elem.set(comment);
-                            }
+                var xqlPath = Path.of(URI.create(xqlFilePath));
+                var vf = VirtualFileManager.getInstance().findFileByNioPath(xqlPath);
+                if (vf == null) return ResolveResult.EMPTY_ARRAY;
+                var xqlFile = PsiManager.getInstance(project).findFile(vf);
+                if (xqlFile == null) return ResolveResult.EMPTY_ARRAY;
+                AtomicReference<PsiElement> elem = new AtomicReference<>(null);
+                xqlFile.acceptChildren(new PsiElementVisitor() {
+                    @Override
+                    public void visitComment(@NotNull PsiComment comment) {
+                        if (comment.getText().matches("/\\*\\s*\\[\\s*(" + name + ")\\s*]\\s*\\*/")) {
+                            elem.set(comment);
                         }
-                    });
-                    if (elem.get() != null) {
-                        return new ResolveResult[]{new PsiElementResolveResult(elem.get())};
                     }
+                });
+                if (elem.get() != null) {
+                    return new ResolveResult[]{new PsiElementResolveResult(elem.get())};
                 }
             }
         } catch (Exception e) {
@@ -73,7 +77,10 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
 
     @Override
     public Object @NotNull [] getVariants() {
-        return Store.INSTANCE.xqlFileManager.names()
+        if (resource == null) {
+            return new Object[]{0};
+        }
+        return resource.getXqlFileManager().names()
                 .stream()
                 .map(name -> LookupElementBuilder.create(name)
                         .withIcon(XqlIcons.XQL_ITEM)

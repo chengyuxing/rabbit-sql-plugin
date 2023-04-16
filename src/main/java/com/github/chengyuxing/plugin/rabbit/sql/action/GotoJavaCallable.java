@@ -1,7 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.action;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.Store;
-import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
@@ -21,9 +20,6 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement xqlPsiElement, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
-        if (PsiUtil.xqlNotInFileManager(xqlPsiElement)) {
-            return;
-        }
         if (!(xqlPsiElement instanceof PsiComment)) {
             return;
         }
@@ -39,10 +35,11 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
             if (xqlFile != null) {
                 var alias = xqlFile.getVirtualFile().getNameWithoutExtension();
                 String sqlPath = alias + "." + sqlName;
-                if (Store.INSTANCE.xqlFileManager.contains(sqlPath)) {
-                    final var sqlRef = "&" + sqlPath;
+                var resource = ResourceCache.getInstance().getResource(xqlFile);
+                if (resource != null && resource.getXqlFileManager().contains(sqlPath)) {
                     var project = xqlPsiElement.getProject();
-                    List<PsiElement> founded = Store.INSTANCE.projectJavas.stream()
+                    final var sqlRef = "&" + sqlPath;
+                    List<PsiElement> founded = resource.getJavas().stream()
                             .map(p -> VirtualFileManager.getInstance().findFileByNioPath(p))
                             .filter(Objects::nonNull)
                             .map(vf -> PsiManager.getInstance(project).findFile(vf))

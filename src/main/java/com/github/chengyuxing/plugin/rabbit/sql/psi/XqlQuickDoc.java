@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.psi;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.Store;
+import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.psi.PsiComment;
@@ -38,15 +38,17 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
         }
         if (sqlRef.matches(SQL_NAME_PATTERN)) {
             String sqlName = sqlRef.substring(1);
-            if (Store.INSTANCE.xqlFileManager.contains(sqlName)) {
-                String sqlDefinition = Store.INSTANCE.xqlFileManager.get(sqlName);
+            var resource = ResourceCache.getInstance().getResource(originalElement);
+            if (resource != null && resource.getXqlFileManager().contains(sqlName)) {
+                var xqlFileManager = resource.getXqlFileManager();
+                String sqlDefinition = xqlFileManager.get(sqlName);
                 String sqlContent = HtmlUtil.toHtml(sqlDefinition);
                 String xqlFile = element.getContainingFile().getName();
 
-                var params = Store.INSTANCE.xqlFileManager.getSqlTranslator().getPreparedSql(sqlDefinition, Collections.emptyMap())
+                var params = xqlFileManager.getSqlTranslator().getPreparedSql(sqlDefinition, Collections.emptyMap())
                         .getItem2()
                         .stream()
-                        .map(name -> Store.INSTANCE.xqlFileManager.getNamedParamPrefix() + name)
+                        .map(name -> xqlFileManager.getNamedParamPrefix() + name)
                         .distinct()
                         .collect(Collectors.joining(" "));
 
@@ -76,7 +78,8 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
         }
         if (sqlRef.matches(SQL_NAME_PATTERN)) {
             String sqlName = sqlRef.substring(1);
-            if (Store.INSTANCE.xqlFileManager.contains(sqlName)) {
+            var resource = ResourceCache.getInstance().getResource(originalElement);
+            if (resource != null && resource.getXqlFileManager().contains(sqlName)) {
                 String xqlFile = element.getContainingFile().getName();
                 return xqlFile + "<br>" + element.getText() + " -> " + sqlRef;
             }

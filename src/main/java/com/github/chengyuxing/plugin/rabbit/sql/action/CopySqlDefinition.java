@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.action;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.Store;
+import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
@@ -27,7 +27,8 @@ public class CopySqlDefinition extends PsiElementBaseIntentionAction {
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
         var sqlName = Objects.requireNonNull(((PsiLiteralExpression) element.getParent()).getValue()).toString().substring(1);
         try {
-            var sqlDefinition = Store.INSTANCE.xqlFileManager.get(sqlName);
+            var resource = ResourceCache.getInstance().getResource(element);
+            var sqlDefinition = resource.getXqlFileManager().get(sqlName);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(new StringSelection(sqlDefinition), null);
         } catch (Exception e) {
@@ -47,7 +48,10 @@ public class CopySqlDefinition extends PsiElementBaseIntentionAction {
         }
         if (sqlRef.matches(SQL_NAME_PATTERN)) {
             String sqlName = sqlRef.substring(1);
-            return Store.INSTANCE.xqlFileManager.contains(sqlName);
+            var resource = ResourceCache.getInstance().getResource(element);
+            if (resource != null) {
+                return resource.getXqlFileManager().contains(sqlName);
+            }
         }
         return false;
     }
