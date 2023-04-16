@@ -37,8 +37,8 @@
     <change-notes>
         <![CDATA[
             <ul>
-                <li>Sql name quick doc instead of tooltip.</li>
-                <li>Some bug fixed and code optimized.</li>
+                <li>Fixed xql file manager resource shared bugs in multi opened projects.</li>
+                <li>Fixed open second or more projects occurs xql file manager init fired many times.</li>
             </ul>
         ]]>
     </change-notes>
@@ -85,6 +85,8 @@
 
         <lang.documentationProvider language="JAVA"
                                     implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlQuickDoc"/>
+
+        <iconProvider implementation="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlFileManagerIconProvider"/>
     </extensions>
 
     <!--    <extensions defaultExtensionNs="com.intellij">-->
