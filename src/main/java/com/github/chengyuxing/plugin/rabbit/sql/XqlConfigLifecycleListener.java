@@ -1,58 +1,61 @@
 package com.github.chengyuxing.plugin.rabbit.sql;
 
-import com.github.chengyuxing.common.utils.StringUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.common.Store;
+import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
+import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
+import com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
+import com.intellij.openapi.roots.ProjectRootManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class XqlConfigLifecycleListener implements ProjectManagerListener {
     private static final Logger log = Logger.getInstance(XqlConfigLifecycleListener.class);
+    private static final Set<Project> openedProjects = new HashSet<>();
 
     @Override
     public void projectClosing(@NotNull Project project) {
-        Store.INSTANCE.clearAll();
-        Store.INSTANCE.projectJavas.clear();
-        log.info("project closing, clear all cache! ");
+        openedProjects.remove(project);
+        Arrays.stream(ProjectRootManager.getInstance(project).getContentSourceRoots()).forEach(vf -> {
+            var xqlFileManager = vf.toNioPath().resolve(Constants.CONFIG_NAME);
+            if (XqlUtil.xqlFileManagerExists(xqlFileManager)) {
+                ResourceCache resourceCache = ResourceCache.getInstance();
+                resourceCache.clear(xqlFileManager);
+                log.info("clear cache of relation: " + xqlFileManager);
+            }
+        });
     }
 
     @Override
     public void projectOpened(@NotNull Project project) {
-        if (project.getBasePath() != null) {
-            Path basePath = Path.of(project.getBasePath());
-            Store.INSTANCE.basePath.set(basePath);
-            Path src = basePath.resolve("src");
-
-            if (Store.INSTANCE.xqlConfigExists()) {
-                findJava2Cache(src);
-                Store.INSTANCE.initXqlFiles((success, error) -> {
-                    if (success) {
-                        Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", "XQL file Manager initialized!", NotificationType.INFORMATION));
-                    } else {
-                        Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", error, NotificationType.WARNING));
-                    }
-                });
-                log.info("project opened, found xql config, init!");
-            }
-        }
-    }
-
-    private void findJava2Cache(Path rootPath) {
-        if (Files.exists(rootPath)) {
-            try (Stream<Path> pathStream = Files.find(rootPath, 15, (p, a) -> a.isRegularFile() && StringUtil.endsWiths(p.toString(), ".java", ".scala", ".kt"))) {
-                pathStream.forEach(Store.INSTANCE.projectJavas::add);
-            } catch (IOException e) {
-                log.warn("find java error.", e);
-            }
+        // e.g
+        // file:///Users/chengyuxing/IdeaProjects/sbp-test1/src/test/java
+        // file:///Users/chengyuxing/IdeaProjects/sbp-test1/src/main/resources
+        // file:///Users/chengyuxing/IdeaProjects/sbp-test1/src/main/java
+        if (!openedProjects.contains(project)) {
+            openedProjects.add(project);
+            Arrays.stream(ProjectRootManager.getInstance(project).getContentSourceRoots()).forEach(vf -> {
+                var xqlFileManager = vf.toNioPath().resolve(Constants.CONFIG_NAME);
+                if (XqlUtil.xqlFileManagerExists(xqlFileManager)) {
+                    log.info("project opened: " + xqlFileManager + ", found xql config, init!");
+                    ResourceCache resourceCache = ResourceCache.getInstance();
+                    resourceCache.initJavas(xqlFileManager);
+                    resourceCache.initXqlFileManager(xqlFileManager, (success, msg) -> {
+                        if (success) {
+                            Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", "XQL file Manager initialized!", NotificationType.INFORMATION), project);
+                        } else {
+                            Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", msg, NotificationType.WARNING), project);
+                        }
+                    });
+                }
+            });
         }
     }
 }
