@@ -8,17 +8,22 @@
 - Support java and xql file navigate each other.
 - Support copy sql by sql name.(macOS: `Option + Enter`, Windows: `Alt + Enter`).
 - Support sql name suggestions auto complete in java string literal where start with `"&"`.
-- Create `${projectBaseDir}/src/main/resources/xql-file-manager.properties` to enable features above.
+- Create `xql-file-manager.properties` in `/src/main/resources` and register xql file to enable some features above.
 - Toolbar menu: **File | New | [Xql File | Xql File Manager Config]**
 
 ## Getting Started
 
-For working correctly in your project, some steps are required:
+### For working correctly in your project, some steps are required:
 
-- **Rabbit-sql 7.1.0+** or **rabbit-sql-spring-boot-starter 2.2.0+**;
-- Configure your own [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager) in ioc;
-- Create `xql-file-manager.properties` in `${projectBaseDir}/src/main/resources/`;
-- Configure [Baki](https://github.com/chengyuxing/rabbit-sql#bakidao);
+1. **Rabbit-sql 7.1.0+** or **rabbit-sql-spring-boot-starter 2.2.0+**;
+2. Create `xql-file-manager.properties` in source root: `.../src/main/resources/`;
+3. Register your xql files on property: `filenames` or `files`;
+4. Configure your own [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
+5. Configure [BakiDao#setXqlFileManager](https://github.com/chengyuxing/rabbit-sql#bakidao);
 
-Get more information from [Rabbit-sql](https://github.com/chengyuxing/rabbit-sql) homepage and Springboot
-support [document](https://github.com/chengyuxing/rabbit-sql-spring-boot-starter).
+### Springboot support:
+
+Just **2nd** step is required.
+
+Get more information from [Rabbit-sql](https://github.com/chengyuxing/rabbit-sql) homepage
+and [Springboot support document](https://github.com/chengyuxing/rabbit-sql-spring-boot-starter).
