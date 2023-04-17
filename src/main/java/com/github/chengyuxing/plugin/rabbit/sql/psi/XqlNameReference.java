@@ -78,7 +78,7 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
     @Override
     public Object @NotNull [] getVariants() {
         if (resource == null) {
-            return new Object[]{0};
+            return new Object[0];
         }
         return resource.getXqlFileManager().names()
                 .stream()

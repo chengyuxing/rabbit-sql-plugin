@@ -3,10 +3,15 @@ package com.github.chengyuxing.plugin.rabbit.sql.common;
 import com.github.chengyuxing.common.io.TypedProperties;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.exceptions.DuplicateException;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 
@@ -14,10 +19,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -63,6 +65,10 @@ public class ResourceCache {
         }
     }
 
+    public void clearAll() {
+        cache.clear();
+    }
+
     public void clear(Path xqlFileManagerLocation) {
         var key = getModuleBaseDir(xqlFileManagerLocation);
         if (cache.containsKey(key)) {
@@ -90,6 +96,28 @@ public class ResourceCache {
     public Resource getResource(PsiElement element) {
         var key = PsiUtil.getModuleDir(element);
         return cache.get(key);
+    }
+
+    public void initXqlFileManager(Project project) {
+        // e.g
+        // file:///Users/chengyuxing/IdeaProjects/sbp-test1/src/test/java
+        // file:///Users/chengyuxing/IdeaProjects/sbp-test1/src/main/resources
+        // file:///Users/chengyuxing/IdeaProjects/sbp-test1/src/main/java
+        Stream.of(ProjectRootManager.getInstance(project).getContentSourceRoots()).forEach(vf -> {
+            var xqlFileManager = vf.toNioPath().resolve(Constants.CONFIG_NAME);
+            if (XqlUtil.xqlFileManagerExists(xqlFileManager)) {
+                log.info("project opened: " + xqlFileManager + ", found xql config, init!");
+                ResourceCache resourceCache = ResourceCache.getInstance();
+                resourceCache.initJavas(xqlFileManager);
+                resourceCache.initXqlFileManager(xqlFileManager, (success, msg) -> {
+                    if (success) {
+                        Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", "XQL file Manager initialized!", NotificationType.INFORMATION), project);
+                    } else {
+                        Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", msg, NotificationType.WARNING), project);
+                    }
+                });
+            }
+        });
     }
 
     public void initXqlFileManager(Path xqlFileManagerLocation, BiConsumer<Boolean, String> reloaded) {
