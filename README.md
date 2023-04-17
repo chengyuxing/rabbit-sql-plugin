@@ -27,5 +27,3 @@ Just **2nd** step is required.
 
 Get more information from [Rabbit-sql](https://github.com/chengyuxing/rabbit-sql) homepage
 and [Springboot support document](https://github.com/chengyuxing/rabbit-sql-spring-boot-starter).
-
-<iframe width="384px" height="319px" src="https://plugins.jetbrains.com/embeddable/card/21403"></iframe>
