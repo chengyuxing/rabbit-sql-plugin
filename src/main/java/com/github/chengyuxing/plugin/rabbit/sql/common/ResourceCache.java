@@ -116,6 +116,8 @@ public class ResourceCache {
                                 var abPath = resourceRoot.resolve(path);
                                 if (Files.exists(abPath)) {
                                     files.put(k, abPath.toUri().toString());
+                                } else {
+                                    reloaded.accept(false, path + " not exists.");
                                 }
                             }
                         });
@@ -123,7 +125,13 @@ public class ResourceCache {
                 var filenames = properties.getSet("filenames", new HashSet<>())
                         .stream()
                         .map(resourceRoot::resolve)
-                        .filter(Files::exists)
+                        .filter(p -> {
+                            var exists = Files.exists(p);
+                            if (!exists) {
+                                reloaded.accept(false, p.getFileName() + " not exists.");
+                            }
+                            return exists;
+                        })
                         .map(p -> p.toUri().toString())
                         .collect(Collectors.toSet());
 

@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 public class XqlFileChangeListener implements BulkFileListener {
-    private static final Logger log = Logger.getInstance(XqlConfigLifecycleListener.class);
+    private static final Logger log = Logger.getInstance(XqlFileChangeListener.class);
 
     @Override
     public void before(@NotNull List<? extends @NotNull VFileEvent> events) {
@@ -34,7 +34,7 @@ public class XqlFileChangeListener implements BulkFileListener {
             if (vFile.getName().equals(Constants.CONFIG_NAME)) {
                 ResourceCache resourceCache = ResourceCache.getInstance();
                 resourceCache.clear(vFile.toNioPath());
-                log.warn(vFile.toNioPath() + " removed, xql resource cache cleared!");
+                log.warn(vFile.toNioPath() + ", xql resource cache cleared!");
             }
         });
     }
@@ -99,7 +99,7 @@ public class XqlFileChangeListener implements BulkFileListener {
         }
 
         if (!javas.isEmpty()) {
-            xqlFiles.forEach(vf -> Stream.of(ProjectManager.getInstance().getOpenProjects())
+            javas.forEach(vf -> Stream.of(ProjectManager.getInstance().getOpenProjects())
                     .forEach(p -> {
                         var isBelongsProject = ProjectRootManager.getInstance(p).getFileIndex().isInContent(vf);
                         if (isBelongsProject) {
