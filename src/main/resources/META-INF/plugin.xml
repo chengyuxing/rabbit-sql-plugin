@@ -37,6 +37,7 @@
     <change-notes>
         <![CDATA[
             <ul>
+                <li>Special icon for <code>xql-file-manager.properties</code></li>
                 <li>Fixed xql file manager resource shared bugs in multi opened projects.</li>
                 <li>Fixed open second or more projects occurs xql file manager init fired many times.</li>
             </ul>

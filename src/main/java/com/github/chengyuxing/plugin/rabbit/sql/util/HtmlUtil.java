@@ -44,7 +44,7 @@ public class HtmlUtil {
                         maybeKeywords.set(i, colorful(key, Color.STRING));
                         // symbol '*' highlight
                     } else if (key.contains("*") && !key.contains("/*") && !key.contains("*/")) {
-                        maybeKeywords.set(i, key.replace("*", colorful(key, Color.KEYWORD)));
+                        maybeKeywords.set(i, key.replace("*", colorful(key, Color.HIGHLIGHT)));
                     }
                 }
                 sb.append(maybeKeywords.get(i));

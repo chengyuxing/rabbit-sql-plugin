@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div class='definition'>
+    <pre>/*[helloSql]*/</pre>
+</div>
+<div class='content'><pre><code style='color:#CC7832'>select</code> <code style='color:#CC7832'>*</code>
+<code style='color:#CC7832'>from</code> test.region t
+<code style='color:#CC7832'>where</code> t.enable = <code style='color:#CC7832'>true</code>
+<code style='color:#7B7E84'>--#if :a <> blank</code>
+  <code style='color:#CC7832'>and</code> t.a = :a
+<code style='color:#7B7E84'>  --#if :a1 <> blank</code>
+  <code style='color:#CC7832'>and</code> t.a1 = :a1
+  <code style='color:#CC7832'>and</code> t.a1 = :a1
+  <code style='color:#CC7832'>and</code> t.a1 = :a1
+<code style='color:#7B7E84'>  --#fi</code>
+<code style='color:#7B7E84'>  --#if :a2 <> blank</code>
+  <code style='color:#CC7832'>and</code> t.a2 = :a2
+<code style='color:#7B7E84'>  --#choose</code>
+<code style='color:#7B7E84'>  --#when :xx <> blank</code>
+  <code style='color:#CC7832'>and</code> t.xx = :xx
+<code style='color:#7B7E84'>  --#break</code>
+<code style='color:#7B7E84'>  --#default</code>
+  <code style='color:#CC7832'>and</code> t.zz = :zz
+<code style='color:#7B7E84'>  --#break</code>
+<code style='color:#7B7E84'>  --#end</code>
+<code style='color:#7B7E84'>  --#fi</code>
+<code style='color:#7B7E84'>--#fi</code>
+<code style='color:#7B7E84'>--#choose</code>
+<code style='color:#7B7E84'>  --#when :x <> blank</code>
+  <code style='color:#CC7832'>and</code> t.x = :x
+<code style='color:#7B7E84'>  --#break</code>
+<code style='color:#7B7E84'>  --#when :y <> <code style='color:#CC7832'>false</code></code>
+  <code style='color:#CC7832'>and</code> t.y = :y
+<code style='color:#7B7E84'>  --#break</code>
+<code style='color:#7B7E84'>--#end</code>
+<code style='color:#7B7E84'>--#switch :<code style='color:#CC7832'>name</code></code>
+<code style='color:#7B7E84'>  --#case blank</code>
+  <code style='color:#CC7832'>and</code> t.name = blank
+<code style='color:#7B7E84'>  --#break</code>
+<code style='color:#7B7E84'>  --#case <code style='color:#79A978'>'chengyuxing'</code></code>
+  <code style='color:#CC7832'>and</code> t.name = <code style='color:#79A978'>'chengyuxing'</code>
+<code style='color:#7B7E84'>  --#break</code>
+<code style='color:#7B7E84'>  --#default</code>
+  <code style='color:#CC7832'>and</code> t.name = <code style='color:#79A978'>'unset'</code>
+<code style='color:#7B7E84'>--#break</code>
+<code style='color:#7B7E84'>--#end</code></pre>
+</div>
+<table class='sections'>
+    <tr>
+        <td valign='top' class='section'><p>Parameters:</td>
+        <td valign='top'><p>:a :a1 :a2 :xx :zz :x :y :name</td>
+    <tr>
+        <td valign='top' class='section'><p>Defined in:</td>
+        <td valign='top'><p>home.xql</td>
+</table>
+</body>
+</html>
