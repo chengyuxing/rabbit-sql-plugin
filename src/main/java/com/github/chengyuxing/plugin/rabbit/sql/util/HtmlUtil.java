@@ -18,7 +18,9 @@ public class HtmlUtil {
         return "<pre>" + highlight(sql) + "</pre>";
     }
 
-    public static String highlight(String sql) {
+    public static String highlight(String sqlString) {
+        var sql = sqlString.replace(">", "&gt;")
+                .replace("<", "&lt;");
         try {
             Pair<String, Map<String, String>> r = SqlUtil.replaceSqlSubstr(sql);
             String rSql = r.getItem1();

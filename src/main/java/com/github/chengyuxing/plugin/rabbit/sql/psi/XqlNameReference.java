@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
+import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,7 +79,7 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
     @Override
     public Object @NotNull [] getVariants() {
         if (resource == null) {
-            return new Object[0];
+            return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
         }
         return resource.getXqlFileManager().names()
                 .stream()
