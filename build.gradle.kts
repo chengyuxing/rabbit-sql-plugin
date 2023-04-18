@@ -4,14 +4,14 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "1.7"
+version = "1.8"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:7.1.2") {
+    implementation("com.github.chengyuxing:rabbit-sql:7.1.3") {
         exclude("org.slf4j", "slf4j-api")
     }
     testImplementation("junit:junit:4.13.2")

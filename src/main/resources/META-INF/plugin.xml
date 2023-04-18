@@ -36,6 +36,10 @@
 
     <change-notes>
         <![CDATA[
+            <h3>1.8</h3>
+            <ul>
+                <li>Fixed quick doc highlight sql show the wrong element.</li>
+            </ul>
             <h3>1.7</h3>
             <ul>
                 <li>Special icon for <code>xql-file-manager.properties</code></li>

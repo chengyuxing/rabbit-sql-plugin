@@ -23,7 +23,7 @@
 
 ### Springboot support:
 
-Just **2nd** step is required.
+Just **2nd** and **3rd** step are required.
 
 Get more information from [Rabbit-sql](https://github.com/chengyuxing/rabbit-sql) homepage
 and [Springboot support document](https://github.com/chengyuxing/rabbit-sql-spring-boot-starter).
