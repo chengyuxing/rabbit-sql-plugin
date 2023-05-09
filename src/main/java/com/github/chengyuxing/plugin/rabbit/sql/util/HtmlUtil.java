@@ -93,7 +93,7 @@ public class HtmlUtil {
     public enum Color {
         KEYWORD("#CC7832"),
         NUMBER("#56A9B6"),
-        FUNCTION("#B89E30"),
+        FUNCTION("#CBA400"),
         STRING("#79A978"),
         ANNOTATION("#7B7E84"),
         HIGHLIGHT("#BBB529");
