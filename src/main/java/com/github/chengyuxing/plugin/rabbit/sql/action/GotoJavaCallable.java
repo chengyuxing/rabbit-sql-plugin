@@ -33,7 +33,14 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
             var sqlName = m.group("name");
             var xqlFile = xqlPsiElement.getContainingFile();
             if (xqlFile != null) {
-                var alias = xqlFile.getVirtualFile().getNameWithoutExtension();
+                if (!xqlFile.isPhysical()) {
+                    xqlFile = xqlFile.getOriginalFile();
+                }
+                var xqlVf = xqlFile.getVirtualFile();
+                if (xqlVf == null) {
+                    return;
+                }
+                var alias = xqlVf.getNameWithoutExtension();
                 String sqlPath = alias + "." + sqlName;
                 var resource = ResourceCache.getInstance().getResource(xqlFile);
                 if (resource != null && resource.getXqlFileManager().contains(sqlPath)) {

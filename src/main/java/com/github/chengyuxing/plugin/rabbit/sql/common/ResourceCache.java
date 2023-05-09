@@ -52,6 +52,7 @@ public class ResourceCache {
 
     public void clearJavas(Path xqlFileManagerLocation) {
         var key = getModuleBaseDir(xqlFileManagerLocation);
+        if (key == null) return;
         if (cache.containsKey(key)) {
             cache.get(key).javas.clear();
         }
@@ -59,6 +60,7 @@ public class ResourceCache {
 
     public void clearXqlFiles(Path xqlFileManagerLocation) {
         var key = getModuleBaseDir(xqlFileManagerLocation);
+        if (key == null) return;
         if (cache.containsKey(key)) {
             cache.get(key).xqlFileManager.clearFiles();
             cache.get(key).xqlFileManager.clearSqlResources();
@@ -71,6 +73,7 @@ public class ResourceCache {
 
     public void clear(Path xqlFileManagerLocation) {
         var key = getModuleBaseDir(xqlFileManagerLocation);
+        if (key == null) return;
         if (cache.containsKey(key)) {
             var resource = cache.get(key);
             resource.xqlFileManager.clearFiles();
