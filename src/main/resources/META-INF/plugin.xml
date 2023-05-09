@@ -36,6 +36,12 @@
 
     <change-notes>
         <![CDATA[
+            <h3>1.9</h3>
+            <ul>
+                <li>Fixed sql name suggestion auto complete with case-insensitive.</li>
+                <li>Fixed plugin runtime error when build xql navigator and file is only in memory.</li>
+                <li>Fixed some other bugs and code optimized.</li>
+            </ul>
             <h3>1.8</h3>
             <ul>
                 <li>Fixed quick doc highlight sql show the wrong element.</li>
