@@ -82,19 +82,25 @@ public class ResourceCache {
 
     public Resource getResource(Path xqlFileManagerLocation) {
         var key = getModuleBaseDir(xqlFileManagerLocation);
+        if (key == null) return null;
         return cache.get(key);
     }
 
     public Resource getResource(Project project, VirtualFile virtualFile) {
-        return cache.get(PsiUtil.getModuleDir(project, virtualFile));
+        var key = PsiUtil.getModuleDir(project, virtualFile);
+        if (key == null) return null;
+        return cache.get(key);
     }
 
     public Resource getResource(Project project, PsiElement element) {
-        return cache.get(PsiUtil.getModuleDir(project, element));
+        var key = PsiUtil.getModuleDir(project, element);
+        if (key == null) return null;
+        return cache.get(key);
     }
 
     public Resource getResource(PsiElement element) {
         var key = PsiUtil.getModuleDir(element);
+        if (key == null) return null;
         return cache.get(key);
     }
 
