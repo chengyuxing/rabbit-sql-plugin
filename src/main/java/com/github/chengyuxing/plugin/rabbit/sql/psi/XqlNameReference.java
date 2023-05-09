@@ -86,7 +86,7 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
                 .map(name -> LookupElementBuilder.create(name)
                         .withIcon(XqlIcons.XQL_ITEM)
                         .withTypeText(name.substring(0, name.indexOf(".")) + ".xql")
-                        .withCaseSensitivity(false))
+                        .withCaseSensitivity(true))
                 .toArray();
     }
 }
