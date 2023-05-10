@@ -32,6 +32,19 @@
         <li>Create <code>xql-file-manager.properties</code> in <code>/src/main/resources</code> and register xql file to enable some features above.</li>
         <li>Toolbar menu: <strong>File | New | [Xql File | Xql File Manager Config]</strong></li>
     </ul>
+    <h2>Getting Started</h2>
+    <p>For working correctly in your project, some steps are required:</p>
+    <ol>
+        <li><strong>Rabbit-sql 7.1.0+</strong> or <strong>rabbit-sql-spring-boot-starter 2.2.0+</strong>;</li>
+        <li>Create <code>xql-file-manager.properties</code> in source root: <code>.../src/main/resources/</code>;</li>
+        <li>Register your xql files on property: <code>filenames</code> or <code>files</code>;</li>
+        <li>Configure your own <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
+        <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#bakidao">BakiDao#setXqlFileManager</a>;</li>
+    </ol>
+    <h3>Springboot support:</h3>
+    <p>Just <strong>2nd and 3rd</strong> steps are required.</p>
+    <p>Get more information from <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> homepage
+    and <a href="https://github.com/chengyuxing/rabbit-sql-spring-boot-starter">Springboot support document</a>.</p>
   ]]></description>
 
     <change-notes>
