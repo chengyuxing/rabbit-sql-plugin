@@ -62,23 +62,19 @@ public class XqlFileChangeListener implements BulkFileListener {
             }
         });
 
-        if (xqlConfig.get() == null) {
-            xqlFiles.clear();
-            javas.clear();
-            return;
-        }
-
         ResourceCache resourceCache = ResourceCache.getInstance();
 
-        log.debug(Constants.CONFIG_NAME + " changed.");
-        resourceCache.initXqlFileManager(xqlConfig.get().toNioPath(), (success, msg) -> {
-            if (!success) {
-                Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", msg, NotificationType.WARNING));
-                log.debug("reload xql file manager failed!");
-            } else {
-                log.debug("reload xql file manager success!");
-            }
-        });
+        if (xqlConfig.get() != null) {
+            log.debug(Constants.CONFIG_NAME + " changed.");
+            resourceCache.initXqlFileManager(xqlConfig.get().toNioPath(), (success, msg) -> {
+                if (!success) {
+                    Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", msg, NotificationType.WARNING));
+                    log.debug("reload xql file manager failed!");
+                } else {
+                    log.debug("reload xql file manager success!");
+                }
+            });
+        }
 
         if (!xqlFiles.isEmpty()) {
             xqlFiles.forEach(vf -> Stream.of(ProjectManager.getInstance().getOpenProjects())
