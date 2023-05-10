@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.psi;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -45,19 +46,31 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                 String sqlContent = HtmlUtil.toHtml(sqlDefinition);
                 String xqlFile = element.getContainingFile().getName();
 
-                var params = xqlFileManager.getSqlTranslator().getPreparedSql(sqlDefinition, Collections.emptyMap())
+                String doc = DEFINITION_START + element.getText() + DEFINITION_END +
+                        CONTENT_START + sqlContent + CONTENT_END +
+                        SECTIONS_START;
+
+                var prepareParams = xqlFileManager.getSqlTranslator().getPreparedSql(sqlDefinition, Collections.emptyMap())
                         .getItem2()
                         .stream()
                         .map(name -> xqlFileManager.getNamedParamPrefix() + name)
                         .distinct()
-                        .collect(Collectors.joining(" "));
+                        .collect(Collectors.joining(" "))
+                        .trim();
 
-                return DEFINITION_START + element.getText() + DEFINITION_END +
-                        CONTENT_START + sqlContent + CONTENT_END +
-                        SECTIONS_START +
-                        SECTION_HEADER_START + "Parameters: " + SECTION_SEPARATOR + "<p>" + params + SECTION_END +
-                        SECTION_HEADER_START + "Defined in: " + SECTION_SEPARATOR + "<p>" + xqlFile + SECTION_END +
+                if (!prepareParams.equals("")) {
+                    doc += SECTION_HEADER_START + "Prepare parameters: " + SECTION_SEPARATOR + "<p>" + prepareParams + SECTION_END;
+                }
+
+                var tempParams = StringUtil.getTemplateParameters(sqlDefinition);
+                if (!tempParams.isEmpty()) {
+                    doc += SECTION_HEADER_START + "Template parameters: " + SECTION_SEPARATOR + "<p>" + String.join(" ", tempParams) + SECTION_END;
+                }
+
+                doc += SECTION_HEADER_START + "Defined in: " + SECTION_SEPARATOR + "<p>" + xqlFile + SECTION_END +
                         SECTIONS_END;
+
+                return doc;
             }
         }
         return null;

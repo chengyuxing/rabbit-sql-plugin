@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.tests;
 
+import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import org.junit.Test;
 
 import java.net.URI;
@@ -16,7 +17,7 @@ public class MyCode {
 
     @Test
     public void test2() {
-        var p = Path.of("src");
-        System.out.println(p.resolve(Path.of("main", "resource")));
+        StringUtil.getTemplateParameters("select ${:name} from users where ${cnd.user}")
+                .forEach(System.out::println);
     }
 }
