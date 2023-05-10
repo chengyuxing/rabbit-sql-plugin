@@ -50,11 +50,12 @@ public class XqlFileChangeListener implements BulkFileListener {
             return vf != null && vf.getExtension() != null;
         }).forEach(vfe -> {
             var vFile = vfe.getFile();
+            var ext = vFile.getExtension();
             if (vFile.getName().equals(Constants.CONFIG_NAME)) {
                 xqlConfig.set(vFile);
-            } else if (Objects.equals(vFile.getExtension(), "xql")) {
+            } else if (Objects.equals(ext, "xql")) {
                 xqlFiles.add(vFile);
-            } else if (Objects.equals(vFile.getExtension(), "java")) {
+            } else if (Objects.equals(ext, "java") || Objects.equals(ext, "kt") || Objects.equals(ext, "scala")) {
                 boolean valid = vFile.isValid();
                 if (valid) {
                     javas.add(vFile);

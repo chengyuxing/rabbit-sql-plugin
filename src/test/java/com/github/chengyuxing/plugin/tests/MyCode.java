@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.tests;
 
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+import com.github.chengyuxing.sql.utils.SqlTranslator;
 import org.junit.Test;
 
 import java.net.URI;
@@ -17,7 +18,7 @@ public class MyCode {
 
     @Test
     public void test2() {
-        StringUtil.getTemplateParameters("select ${:name} from users where ${cnd.user}")
+        StringUtil.getTemplateParameters(new SqlTranslator(':'), "select ${:name} from users where ${cnd.user}")
                 .forEach(System.out::println);
     }
 }

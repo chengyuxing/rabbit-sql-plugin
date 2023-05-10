@@ -49,6 +49,12 @@
 
     <change-notes>
         <![CDATA[
+            <h3>1.10</h3>
+            <ul>
+                <li>Quick doc support show template parameters.</li>
+                <li>Fixed xql file changed not trigger refreshing.</li>
+                <li>Update getting started doc.</li>
+            </ul>
             <h3>1.9</h3>
             <ul>
                 <li>Fixed sql name suggestion auto complete with case-insensitive.</li>
