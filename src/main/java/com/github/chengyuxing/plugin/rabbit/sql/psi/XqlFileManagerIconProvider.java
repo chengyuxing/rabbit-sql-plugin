@@ -13,8 +13,13 @@ public class XqlFileManagerIconProvider extends IconProvider {
     @Override
     public @Nullable Icon getIcon(@NotNull PsiElement element, int flags) {
         var psiFile = element.getContainingFile();
-        if (psiFile != null && psiFile.getName().equals(Constants.CONFIG_NAME)) {
-            return XqlIcons.XQL_FILE_MANAGER;
+        if (psiFile != null) {
+            if (psiFile.getName().equals(Constants.YML_CONFIG_NAME)) {
+                return XqlIcons.XQL_FILE_MANAGER_YML;
+            }
+            if (psiFile.getName().equals(Constants.PROPERTIES_CONFIG_NAME)) {
+                return XqlIcons.XQL_FILE_MANAGER_PROPERTIES;
+            }
         }
         return null;
     }
