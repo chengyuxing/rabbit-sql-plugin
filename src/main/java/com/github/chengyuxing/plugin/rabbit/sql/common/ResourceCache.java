@@ -1,10 +1,10 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
-import com.github.chengyuxing.common.io.TypedProperties;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
+import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.github.chengyuxing.sql.exceptions.DuplicateException;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -12,17 +12,18 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil.getModuleBaseDir;
@@ -50,27 +51,6 @@ public class ResourceCache {
         return instance;
     }
 
-    public void clearJavas(Path xqlFileManagerLocation) {
-        var key = getModuleBaseDir(xqlFileManagerLocation);
-        if (key == null) return;
-        if (cache.containsKey(key)) {
-            cache.get(key).javas.clear();
-        }
-    }
-
-    public void clearXqlFiles(Path xqlFileManagerLocation) {
-        var key = getModuleBaseDir(xqlFileManagerLocation);
-        if (key == null) return;
-        if (cache.containsKey(key)) {
-            cache.get(key).xqlFileManager.clearFiles();
-            cache.get(key).xqlFileManager.clearSqlResources();
-        }
-    }
-
-    public void clearAll() {
-        cache.clear();
-    }
-
     public void clear(Path xqlFileManagerLocation) {
         var key = getModuleBaseDir(xqlFileManagerLocation);
         if (key == null) return;
@@ -81,24 +61,6 @@ public class ResourceCache {
             resource.javas.clear();
             cache.remove(key);
         }
-    }
-
-    public Resource getResource(Path xqlFileManagerLocation) {
-        var key = getModuleBaseDir(xqlFileManagerLocation);
-        if (key == null) return null;
-        return cache.get(key);
-    }
-
-    public Resource getResource(Project project, VirtualFile virtualFile) {
-        var key = PsiUtil.getModuleDir(project, virtualFile);
-        if (key == null) return null;
-        return cache.get(key);
-    }
-
-    public Resource getResource(Project project, PsiElement element) {
-        var key = PsiUtil.getModuleDir(project, element);
-        if (key == null) return null;
-        return cache.get(key);
     }
 
     public Resource getResource(PsiElement element) {
@@ -140,50 +102,26 @@ public class ResourceCache {
                     cache.put(baseDir, new Resource());
                 }
 
-                var properties = new TypedProperties();
-                properties.load(Files.newInputStream(xqlFileManagerLocation));
-
-                log.info("init xql file manager: load " + xqlFileManagerLocation + " " + properties);
+                var config = new XQLFileManagerConfig(xqlFileManagerLocation.toUri().toString());
+                var xqlFileManager = cache.get(baseDir).getXqlFileManager();
+                config.copyStateTo(xqlFileManager);
 
                 Map<String, String> files = new HashMap<>();
-                properties.getMap("files", new HashMap<>())
-                        .forEach((k, v) -> {
-                            var path = v.trim();
-                            if (!path.equals("")) {
-                                var abPath = resourceRoot.resolve(path);
-                                if (Files.exists(abPath)) {
-                                    files.put(k, abPath.toUri().toString());
-                                } else {
-                                    reloaded.accept(false, path + " not exists.");
-                                }
-                            }
-                        });
 
-                var filenames = properties.getSet("filenames", new HashSet<>())
-                        .stream()
-                        .map(resourceRoot::resolve)
-                        .filter(p -> {
-                            var exists = Files.exists(p);
-                            if (!exists) {
-                                reloaded.accept(false, p.getFileName() + " not exists.");
-                            }
-                            return exists;
-                        })
-                        .map(p -> p.toUri().toString())
-                        .collect(Collectors.toSet());
-
-                log.info("read files: " + files);
-                log.info("read filenames: " + filenames);
-
-                var xqlFileManager = cache.get(baseDir).getXqlFileManager();
+                xqlFileManager.allFiles().forEach((k, v) -> {
+                    var path = v.trim();
+                    if (!path.equals("")) {
+                        var abPath = resourceRoot.resolve(path);
+                        if (Files.exists(abPath)) {
+                            files.put(k, abPath.toUri().toString());
+                        } else {
+                            reloaded.accept(false, path + " not exists.");
+                        }
+                    }
+                });
                 xqlFileManager.clearSqlResources();
                 xqlFileManager.clearFiles();
-
                 xqlFileManager.setFiles(files);
-                xqlFileManager.setFilenames(filenames);
-                xqlFileManager.setCharset(properties.getProperty("charset", "UTF-8"));
-                xqlFileManager.setDelimiter(properties.getProperty("delimiter", ";"));
-                xqlFileManager.setNamedParamPrefix(properties.getProperty("namedParamPrefix", ":").charAt(0));
                 xqlFileManager.init();
                 reloaded.accept(true, null);
             }

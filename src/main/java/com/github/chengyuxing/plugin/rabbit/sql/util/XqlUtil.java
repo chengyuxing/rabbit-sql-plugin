@@ -17,7 +17,7 @@ public class XqlUtil {
     }
 
     public static boolean xqlFileManagerExists(Path xqlFileManagerLocation) {
-        if (!xqlFileManagerLocation.endsWith(Path.of("src", "main", "resources", Constants.CONFIG_NAME))) {
+        if (!xqlFileManagerLocation.endsWith(Constants.CONFIG_PATH)) {
             return false;
         }
         if (!Files.exists(xqlFileManagerLocation)) {

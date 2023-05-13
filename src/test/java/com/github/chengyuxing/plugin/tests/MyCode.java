@@ -21,4 +21,10 @@ public class MyCode {
         StringUtil.getTemplateParameters(new SqlTranslator(':'), "select ${:name} from users where ${cnd.user}")
                 .forEach(System.out::println);
     }
+
+    @Test
+    public void test3() {
+        Path path = Path.of("/Users/chengyuxing/IdeaProjects/rabbit-sql-plugin/src/main/resources/plugin.xml");
+        System.out.println(path.toUri());
+    }
 }

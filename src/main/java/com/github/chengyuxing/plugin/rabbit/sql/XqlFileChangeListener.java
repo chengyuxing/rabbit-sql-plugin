@@ -85,7 +85,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                             var baseDir = PsiUtil.getModuleDir(p, vf);
                             if (baseDir != null) {
                                 log.debug("xql file changed: ", p, ": ", xqlFiles);
-                                var xqlFileManager = baseDir.resolve(Path.of("src", "main", "resources", Constants.CONFIG_NAME));
+                                var xqlFileManager = baseDir.resolve(Constants.CONFIG_PATH);
                                 resourceCache.initXqlFileManager(xqlFileManager, (success, msg) -> {
                                     if (!success) {
                                         Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", msg, NotificationType.WARNING));
