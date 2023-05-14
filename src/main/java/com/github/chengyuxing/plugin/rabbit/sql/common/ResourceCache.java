@@ -6,6 +6,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.github.chengyuxing.sql.exceptions.DuplicateException;
+import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -130,6 +131,9 @@ public class ResourceCache {
             log.warn(e);
         } catch (UncheckedIOException e) {
             log.warn("xql file removed!");
+        } catch (YamlDeserializeException e) {
+            reloaded.accept(false, "xql-file-manager.yml config content invalid.");
+            log.warn(e);
         } catch (Exception e) {
             reloaded.accept(false, "Error:" + e.getMessage());
             log.error(e);
@@ -170,8 +174,13 @@ public class ResourceCache {
     }
 
     public static class Resource {
-        private final XQLFileManager xqlFileManager = new XQLFileManager();
-        private final Set<Path> javas = new HashSet<>();
+        private final XQLFileManager xqlFileManager;
+        private final Set<Path> javas;
+
+        public Resource() {
+            this.xqlFileManager = new XQLFileManager();
+            this.javas = new HashSet<>();
+        }
 
         public XQLFileManager getXqlFileManager() {
             return xqlFileManager;
