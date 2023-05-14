@@ -41,7 +41,7 @@
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#bakidao">BakiDao#setXqlFileManager</a>;</li>
     </ol>
     <h3>Springboot support:</h3>
-    <p>Just <strong>1，2，3</strong> steps are required.</p>
+    <p>Just <strong>1,2,3</strong> steps are required.</p>
     <p>Get more information from <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> homepage
     and <a href="https://github.com/chengyuxing/rabbit-sql-spring-boot-starter">Springboot support document</a>.</p>
   ]]></description>

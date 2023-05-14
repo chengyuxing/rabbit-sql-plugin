@@ -25,7 +25,7 @@
 
 ### Springboot 支持:
 
-只有第1,2,3步是必须的.
+只有第1，2，3步是必须的.
 
 从 [rabbit-sql](https://github.com/chengyuxing/rabbit-sql) 主页
 和 [Springboot 支持文档](https://github.com/chengyuxing/rabbit-sql-spring-boot-starter) 获取更多的帮助信息。
