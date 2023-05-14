@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "1.12"
+version = "1.11"
 
 repositories {
     mavenCentral()
