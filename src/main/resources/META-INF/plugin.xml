@@ -48,6 +48,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>1.12</h3>
+            <ul>
+                <li>Update <code>xql-file-manager.yml</code> icon</li>
+                <li>Fixed load <code>xql-file-manager.yml</code> error when property is empty.</li>
+            </ul>
             <h3>1.11</h3>
             <ul>
                 <li>Add support for <code>xql-file-manager.yml</code></li>
