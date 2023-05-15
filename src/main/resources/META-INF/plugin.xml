@@ -48,10 +48,6 @@
 
     <change-notes>
         <![CDATA[
-            <h3>1.12</h3>
-            <ul>
-                <li>Add icon for <code>xql-file-manager[-.]*.yml</code> format.</li>
-            </ul>
             <h3>1.11</h3>
             <ul>
                 <li>Add support for <code>xql-file-manager.yml</code></li>
@@ -60,6 +56,7 @@
                 <li><code>rabbit-sql</code> version >= 7.1.12 is required.</li>
                 <li><code>rabbit-sql-spring-boot-starter</code> version >= 2.2.14 is required.</li>
                 <li>Update <code>xql-file-manager.yml</code> icon</li>
+                <li>Add icon for <code>xql-file-manager[-.]*.yml</code> format.</li>
                 <li>Fixed load <code>xql-file-manager.yml</code> error when property value is empty.</li>
             </ul>
             <h3>1.10</h3>
