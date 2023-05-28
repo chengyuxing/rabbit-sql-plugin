@@ -32,9 +32,8 @@ public class XqlFileChangeListener implements BulkFileListener {
         }).forEach(vfe -> {
             var vFile = vfe.getFile();
             if (vFile.getName().equals(Constants.CONFIG_NAME)) {
-                System.out.println(vFile.isValid());
                 ResourceCache resourceCache = ResourceCache.getInstance();
-//                resourceCache.clear(vFile.toNioPath());
+                resourceCache.clear(vFile.toNioPath());
                 log.warn(vFile.toNioPath() + ", xql resource cache cleared!");
             }
         });

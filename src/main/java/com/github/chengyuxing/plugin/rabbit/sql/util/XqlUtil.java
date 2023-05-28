@@ -19,6 +19,13 @@ public class XqlUtil {
         return null;
     }
 
+    public static Path getModuleBaseDirUnchecked(Path xqlFileManagerLocation) {
+        if (!xqlFileManagerLocation.endsWith(Constants.CONFIG_PATH)) {
+            return null;
+        }
+        return xqlFileManagerLocation.getParent().getParent().getParent().getParent();
+    }
+
     public static boolean xqlFileManagerExists(Path xqlFileManagerLocation) {
         if (!xqlFileManagerLocation.endsWith(Constants.CONFIG_PATH)) {
             return false;
