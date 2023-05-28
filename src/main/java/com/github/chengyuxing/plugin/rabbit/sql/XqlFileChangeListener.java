@@ -32,8 +32,9 @@ public class XqlFileChangeListener implements BulkFileListener {
         }).forEach(vfe -> {
             var vFile = vfe.getFile();
             if (vFile.getName().equals(Constants.CONFIG_NAME)) {
+                System.out.println(vFile.isValid());
                 ResourceCache resourceCache = ResourceCache.getInstance();
-                resourceCache.clear(vFile.toNioPath());
+//                resourceCache.clear(vFile.toNioPath());
                 log.warn(vFile.toNioPath() + ", xql resource cache cleared!");
             }
         });
@@ -67,7 +68,10 @@ public class XqlFileChangeListener implements BulkFileListener {
 
         if (xqlConfig.get() != null) {
             log.debug(Constants.CONFIG_NAME + " changed.");
-            resourceCache.initXqlFileManager(xqlConfig.get().toNioPath(), (success, msg) -> {
+            var xqlConfigPath = xqlConfig.get().toNioPath();
+            resourceCache.initJavas(xqlConfigPath);
+            resourceCache.refreshJavas(xqlConfigPath);
+            resourceCache.initXqlFileManager(xqlConfigPath, (success, msg) -> {
                 if (!success) {
                     Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", msg, NotificationType.WARNING));
                     log.debug("reload xql file manager failed!");
