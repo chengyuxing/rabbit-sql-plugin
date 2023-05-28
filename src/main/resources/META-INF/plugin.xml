@@ -164,9 +164,9 @@
         <iconProvider implementation="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlFileManagerIconProvider"/>
     </extensions>
 
-    <!--    <extensions defaultExtensionNs="com.intellij">-->
-    <!--        <postStartupActivity implementation="com.github.chengyuxing.plugin.rabbit.sql.InitXqlConfigOnStartup"/>-->
-    <!--    </extensions>-->
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="com.github.chengyuxing.plugin.rabbit.sql.InitXqlConfigOnStartup"/>
+    </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
         <defaultLiveTemplates file="xql-live-templates.xml"/>

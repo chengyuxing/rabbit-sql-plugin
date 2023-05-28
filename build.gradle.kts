@@ -7,11 +7,12 @@ group = "com.github.chengyuxing"
 version = "1.11"
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:7.1.13") {
+    implementation("com.github.chengyuxing:rabbit-sql:7.1.16") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.yaml", "snakeyaml")
     }

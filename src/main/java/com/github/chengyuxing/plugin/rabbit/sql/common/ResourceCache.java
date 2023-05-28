@@ -28,6 +28,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil.getModuleBaseDir;
+import static com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil.getModuleBaseDirUnchecked;
 
 public class ResourceCache {
     private static final Logger log = Logger.getInstance(ResourceCache.class);
@@ -54,6 +55,10 @@ public class ResourceCache {
 
     public void clear(Path xqlFileManagerLocation) {
         var key = getModuleBaseDir(xqlFileManagerLocation);
+        // perhaps config is removed or renamed to others.
+        if (key == null) {
+            key = getModuleBaseDirUnchecked(xqlFileManagerLocation);
+        }
         if (key == null) return;
         if (cache.containsKey(key)) {
             var resource = cache.get(key);

@@ -67,7 +67,10 @@ public class XqlFileChangeListener implements BulkFileListener {
 
         if (xqlConfig.get() != null) {
             log.debug(Constants.CONFIG_NAME + " changed.");
-            resourceCache.initXqlFileManager(xqlConfig.get().toNioPath(), (success, msg) -> {
+            var xqlConfigPath = xqlConfig.get().toNioPath();
+            resourceCache.initJavas(xqlConfigPath);
+            resourceCache.refreshJavas(xqlConfigPath);
+            resourceCache.initXqlFileManager(xqlConfigPath, (success, msg) -> {
                 if (!success) {
                     Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", msg, NotificationType.WARNING));
                     log.debug("reload xql file manager failed!");
