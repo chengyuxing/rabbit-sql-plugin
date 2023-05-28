@@ -56,7 +56,7 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                                 final List<PsiElement> psiElements = new ArrayList<>();
                                 psi.accept(new JavaRecursiveElementWalkingVisitor() {
                                     @Override
-                                    public void visitLiteralExpression(PsiLiteralExpression expression) {
+                                    public void visitLiteralExpression(@NotNull PsiLiteralExpression expression) {
                                         String v = expression.getValue() instanceof String ? (String) expression.getValue() : null;
                                         if (v != null && v.equals(sqlRef)) {
                                             psiElements.add(expression);

@@ -9,13 +9,12 @@ import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.roots.ProjectRootManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Stream;
+
+import static com.github.chengyuxing.plugin.rabbit.sql.common.Globals.openedProjects;
 
 public class XqlConfigLifecycleListener implements ProjectManagerListener {
     private static final Logger log = Logger.getInstance(XqlConfigLifecycleListener.class);
-    private static final Set<Project> openedProjects = new HashSet<>();
 
     @Override
     public void projectClosing(@NotNull Project project) {
@@ -28,13 +27,5 @@ public class XqlConfigLifecycleListener implements ProjectManagerListener {
                 log.info("clear cache of relation: " + xqlFileManager);
             }
         });
-    }
-
-    @Override
-    public void projectOpened(@NotNull Project project) {
-        if (!openedProjects.contains(project)) {
-            openedProjects.add(project);
-            ResourceCache.getInstance().initXqlFileManager(project);
-        }
     }
 }

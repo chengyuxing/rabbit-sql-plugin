@@ -26,13 +26,12 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
 
     @Override
     public @Nullable @Nls String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
-        if (!(originalElement instanceof PsiJavaTokenImpl) || !(originalElement.getParent() instanceof PsiLiteralExpression)) {
+        if (!(originalElement instanceof PsiJavaTokenImpl) || !(originalElement.getParent() instanceof PsiLiteralExpression literalExpression)) {
             return null;
         }
         if (!(element instanceof PsiComment)) {
             return null;
         }
-        PsiLiteralExpression literalExpression = (PsiLiteralExpression) originalElement.getParent();
         String sqlRef = literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
         if (sqlRef == null) {
             return null;
@@ -79,13 +78,12 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
 
     @Override
     public @Nullable @Nls String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
-        if (!(originalElement instanceof PsiLiteralExpression)) {
+        if (!(originalElement instanceof PsiLiteralExpression literalExpression)) {
             return null;
         }
         if (!(element instanceof PsiComment)) {
             return null;
         }
-        PsiLiteralExpression literalExpression = (PsiLiteralExpression) originalElement;
         String sqlRef = literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
         if (sqlRef == null) {
             return null;

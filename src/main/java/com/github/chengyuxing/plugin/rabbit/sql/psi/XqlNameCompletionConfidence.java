@@ -11,10 +11,9 @@ import org.jetbrains.annotations.NotNull;
 public class XqlNameCompletionConfidence extends CompletionConfidence {
     @Override
     public @NotNull ThreeState shouldSkipAutopopup(@NotNull PsiElement contextElement, @NotNull PsiFile psiFile, int offset) {
-        if (!(contextElement instanceof PsiJavaTokenImpl) || !(contextElement.getParent() instanceof PsiLiteralExpression)) {
+        if (!(contextElement instanceof PsiJavaTokenImpl) || !(contextElement.getParent() instanceof PsiLiteralExpression literalExpression)) {
             return ThreeState.UNSURE;
         }
-        PsiLiteralExpression literalExpression = (PsiLiteralExpression) contextElement.getParent();
         String sqlRef = literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
         if (sqlRef == null) {
             return ThreeState.UNSURE;

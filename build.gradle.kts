@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:7.1.13") {
+    implementation("com.github.chengyuxing:rabbit-sql:7.1.14") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.yaml", "snakeyaml")
     }
@@ -22,7 +22,7 @@ dependencies {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2022.1.4")
+    version.set("2023.1")
     type.set("IU") // Target IDE Platform
 
     plugins.set(listOf("com.intellij.database", "com.intellij.java", "org.intellij.intelliLang"))
@@ -33,12 +33,12 @@ sourceSets["main"].java.srcDirs("src/main/gen")
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
     }
 
     patchPluginXml {
-        sinceBuild.set("221")
+        sinceBuild.set("231")
         untilBuild.set("231.*")
     }
 

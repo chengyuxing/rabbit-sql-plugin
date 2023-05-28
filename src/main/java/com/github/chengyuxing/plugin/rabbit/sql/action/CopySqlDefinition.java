@@ -38,10 +38,9 @@ public class CopySqlDefinition extends PsiElementBaseIntentionAction {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        if (!(element instanceof PsiJavaTokenImpl) || !(element.getParent() instanceof PsiLiteralExpression)) {
+        if (!(element instanceof PsiJavaTokenImpl) || !(element.getParent() instanceof PsiLiteralExpression literalExpression)) {
             return false;
         }
-        PsiLiteralExpression literalExpression = (PsiLiteralExpression) element.getParent();
         String sqlRef = literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
         if (sqlRef == null) {
             return false;

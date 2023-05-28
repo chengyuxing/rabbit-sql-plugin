@@ -27,4 +27,10 @@ public class MyCode {
         Path path = Path.of("/Users/chengyuxing/IdeaProjects/rabbit-sql-plugin/src/main/resources/plugin.xml");
         System.out.println(path.toUri());
     }
+
+    @Test
+    public void test4() {
+        var sql = "select id, name from user where id = :id";
+        var insert = "insert into user (id, desc) values (1,'cyx')";
+    }
 }

@@ -15,8 +15,7 @@ public class XqlNameAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (element instanceof PsiLiteralExpression) {
-            PsiLiteralExpression literalExpression = (PsiLiteralExpression) element;
+        if (element instanceof PsiLiteralExpression literalExpression) {
             String sqlRef = literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
             if (sqlRef == null) {
                 return;

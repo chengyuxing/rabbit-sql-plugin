@@ -144,6 +144,7 @@
         <annotator language="JAVA"
                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlNameAnnotator"/>
         <intentionAction>
+            <language>JAVA</language>
             <className>com.github.chengyuxing.plugin.rabbit.sql.action.CopySqlDefinition</className>
         </intentionAction>
         <codeInsight.lineMarkerProvider language="JAVA"
@@ -164,13 +165,13 @@
         <iconProvider implementation="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlFileManagerIconProvider"/>
     </extensions>
 
-    <!--    <extensions defaultExtensionNs="com.intellij">-->
-    <!--        <postStartupActivity implementation="com.github.chengyuxing.plugin.rabbit.sql.InitXqlConfigOnStartup"/>-->
-    <!--    </extensions>-->
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="com.github.chengyuxing.plugin.rabbit.sql.InitXqlConfigOnStartup"/>
+    </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
         <defaultLiveTemplates file="xql-live-templates.xml"/>
-        <liveTemplateContext implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlContext"/>
+        <liveTemplateContext contextId="SQL" implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlContext"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.intellij.intelliLang">

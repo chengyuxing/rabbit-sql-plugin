@@ -23,10 +23,9 @@ public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement javaElement, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
-        if (!(javaElement instanceof PsiJavaTokenImpl) || !(javaElement.getParent() instanceof PsiLiteralExpression)) {
+        if (!(javaElement instanceof PsiJavaTokenImpl) || !(javaElement.getParent() instanceof PsiLiteralExpression literalExpression)) {
             return;
         }
-        PsiLiteralExpression literalExpression = (PsiLiteralExpression) javaElement.getParent();
         String sqlRef = literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
         if (sqlRef == null) {
             return;
