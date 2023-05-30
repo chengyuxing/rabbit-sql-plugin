@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.action;
+package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;

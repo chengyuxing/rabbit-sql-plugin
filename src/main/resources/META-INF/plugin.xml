@@ -145,28 +145,38 @@
                   fieldName="INSTANCE"
                   language="SQL"
                   extensions="xql"/>
-        <annotator language="SQL" implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlFileAnnotator"/>
+        <annotator language="SQL"
+                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlFileAnnotator"/>
         <annotator language="JAVA"
-                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlNameAnnotator"/>
+                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameAnnotator"/>
         <intentionAction>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.action.CopySqlDefinition</className>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinition</className>
         </intentionAction>
         <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.action.GotoSqlDefinition"/>
+                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoSqlDefinition"/>
 
         <codeInsight.lineMarkerProvider language="SQL"
-                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.action.GotoJavaCallable"/>
+                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoJavaCallable"/>
 
         <psi.referenceContributor language="JAVA"
-                                  implementation="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlNameReferenceContributor"/>
+                                  implementation="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameReferenceContributor"/>
 
         <completion.confidence language="JAVA" order="before javaSkipAutopopupInStrings"
-                               implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlNameCompletionConfidence"/>
+                               implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameCompletionConfidence"/>
 
         <lang.documentationProvider language="JAVA"
-                                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlQuickDoc"/>
+                                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlQuickDoc"/>
 
-        <iconProvider implementation="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlFileManagerIconProvider"/>
+        <iconProvider implementation="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlFileManagerIconProvider"/>
+
+        <!--要不改为存在xql-file-manager.yml才显示工具条-->
+        <!--        <toolWindow factoryClass="com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow"-->
+        <!--                    id="XQL File Manager"-->
+        <!--                    anchor="right"/>-->
+
+        <intentionAction>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialog</className>
+        </intentionAction>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">

@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.psi;
+package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.intellij.codeInsight.completion.CompletionConfidence;
 import com.intellij.psi.PsiElement;

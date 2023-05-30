@@ -8,7 +8,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
@@ -20,6 +19,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
+
+import static com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil.projectContains;
 
 public class XqlFileChangeListener implements BulkFileListener {
     private static final Logger log = Logger.getInstance(XqlFileChangeListener.class);
@@ -83,15 +84,14 @@ public class XqlFileChangeListener implements BulkFileListener {
         if (!xqlFiles.isEmpty()) {
             xqlFiles.forEach(vf -> Stream.of(ProjectManager.getInstance().getOpenProjects())
                     .forEach(p -> {
-                        var isBelongsProject = ProjectRootManager.getInstance(p).getFileIndex().isInContent(vf);
-                        if (isBelongsProject) {
+                        if (projectContains(p, vf)) {
                             var baseDir = PsiUtil.getModuleDir(p, vf);
                             if (baseDir != null) {
                                 log.debug("xql file changed: ", p, ": ", xqlFiles);
                                 var xqlFileManager = baseDir.resolve(Constants.CONFIG_PATH);
                                 resourceCache.initXqlFileManager(xqlFileManager, (success, msg) -> {
                                     if (!success) {
-                                        Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", msg, NotificationType.WARNING));
+                                        Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", msg, NotificationType.WARNING), p);
                                         log.debug("reload xql file manager failed!");
                                     } else {
                                         log.debug("reload xql file manager success!");
@@ -105,8 +105,7 @@ public class XqlFileChangeListener implements BulkFileListener {
         if (!javas.isEmpty()) {
             javas.forEach(vf -> Stream.of(ProjectManager.getInstance().getOpenProjects())
                     .forEach(p -> {
-                        var isBelongsProject = ProjectRootManager.getInstance(p).getFileIndex().isInContent(vf);
-                        if (isBelongsProject) {
+                        if (projectContains(p, vf)) {
                             var baseDir = PsiUtil.getModuleDir(p, vf);
                             if (baseDir != null) {
                                 log.debug("add new java file to cache: ", p, ": ", vf);

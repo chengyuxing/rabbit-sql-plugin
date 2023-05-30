@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.psi;
+package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;

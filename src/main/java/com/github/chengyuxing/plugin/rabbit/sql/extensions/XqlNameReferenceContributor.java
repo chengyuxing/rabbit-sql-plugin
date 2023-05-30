@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.psi;
+package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.PlatformPatterns;
