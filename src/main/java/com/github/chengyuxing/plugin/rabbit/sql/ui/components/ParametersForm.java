@@ -7,6 +7,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 import com.github.chengyuxing.common.script.Comparators;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.JBUI;
 import net.miginfocom.swing.MigLayout;
 
@@ -87,7 +88,7 @@ public class ParametersForm extends JPanel {
         //======== this ========
         setBorder(null);
         setMinimumSize(new Dimension(58, 22));
-        setPreferredSize(new Dimension(320, 160));
+        setPreferredSize(new Dimension(370, 190));
         setLayout(new MigLayout(
             "fill,insets 0,hidemode 3,align left top",
             // columns
@@ -109,10 +110,10 @@ public class ParametersForm extends JPanel {
             paramsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             paramsTable.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
             paramsTable.setRowHeight(30);
-            paramsTable.setRowSelectionAllowed(false);
+            paramsTable.setSelectionBackground(null);
             scrollPane1.setViewportView(paramsTable);
         }
-        add(scrollPane1, "cell 0 0,aligny top,growy 0,hmin 100");
+        add(scrollPane1, "cell 0 0,aligny top,growy 0,hmin 80");
 
         //======== scrollPane2 ========
         {

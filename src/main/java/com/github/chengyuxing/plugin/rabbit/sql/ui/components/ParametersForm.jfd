@@ -11,7 +11,7 @@ new FormModel {
 			name: "this"
 			"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
 			"minimumSize": new java.awt.Dimension( 58, 22 )
-			"preferredSize": new java.awt.Dimension( 370, 220 )
+			"preferredSize": new java.awt.Dimension( 370, 190 )
 			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 				name: "scrollPane1"
 				"border": new javax.swing.border.LineBorder( new java.awt.Color( 50, 50, 50, 255 ), 1, false )
@@ -25,7 +25,7 @@ new FormModel {
 					"selectionMode": 0
 					"font": new java.awt.Font( "JetBrains Mono", 0, 14 )
 					"rowHeight": 30
-					"rowSelectionAllowed": false
+					"selectionBackground": sfield com.jformdesigner.model.FormObject NULL_VALUE
 				} )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
 				"value": "cell 0 0,aligny top,growy 0,hmin 80"
