@@ -44,7 +44,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                 var xqlFileManager = resource.getXqlFileManager();
                 var sqlTranslator = xqlFileManager.getSqlTranslator();
                 String sqlDefinition = xqlFileManager.get(sqlName);
-                String sqlContent = HtmlUtil.toHtml(sqlDefinition);
+                String sqlContent = HtmlUtil.toHighlightSqlHtml(sqlDefinition);
                 String xqlFile = element.getContainingFile().getName();
 
                 String doc = DEFINITION_START + element.getText() + DEFINITION_END +

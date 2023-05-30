@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.tests;
 
+import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.utils.SqlTranslator;
 import org.junit.Test;
@@ -7,6 +8,7 @@ import org.junit.Test;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class MyCode {
     @Test
@@ -26,5 +28,11 @@ public class MyCode {
     public void test3() {
         Path path = Path.of("/Users/chengyuxing/IdeaProjects/rabbit-sql-plugin/src/main/resources/plugin.xml");
         System.out.println(path.toUri());
+    }
+
+    @Test
+    public void test4() {
+        var a = ReflectUtil.json2Obj("[{\"a\":\"cyx\"}]", List.class);
+        System.out.println(a);
     }
 }

@@ -35,7 +35,12 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     @Override
     protected void doOKAction() {
         var data = parametersForm.getData();
-        var finalSql = xqlFileManager.dynamicCalc(sql, data, false);
-        parametersForm.setSqlHtml(HtmlUtil.toHtml(finalSql));
+        if (parametersForm.getErrors().isEmpty()) {
+            var finalSql = xqlFileManager.dynamicCalc(sql, data, false);
+            parametersForm.setSqlHtml(HtmlUtil.toHighlightSqlHtml(finalSql));
+            return;
+        }
+        String msg = String.join("\n", parametersForm.getErrors());
+        parametersForm.setSqlHtml(HtmlUtil.toHtml(msg, HtmlUtil.Color.DANGER));
     }
 }

@@ -14,8 +14,12 @@ import static com.github.chengyuxing.sql.utils.SqlUtil.getAnnotationBlock;
 public class HtmlUtil {
     private static final Logger log = Logger.getInstance(HtmlUtil.class);
 
-    public static String toHtml(String sql) {
+    public static String toHighlightSqlHtml(String sql) {
         return "<pre>" + highlight(sql) + "</pre>";
+    }
+
+    public static String toHtml(String s, Color color) {
+        return "<pre style='color:" + color.getCode() + "'>" + s + "</pre>";
     }
 
     public static String highlight(String sqlString) {
@@ -96,6 +100,7 @@ public class HtmlUtil {
         FUNCTION("#E4B20F"),
         STRING("#79A978"),
         ANNOTATION("#7B7E84"),
+        DANGER("#E56068"),
         HIGHLIGHT("#BBB529");
         private final String code;
 

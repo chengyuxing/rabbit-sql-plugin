@@ -5,9 +5,10 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.script.Comparators;
+import com.github.chengyuxing.common.utils.ReflectUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.JBUI;
 import net.miginfocom.swing.MigLayout;
 
@@ -15,6 +16,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,7 @@ import java.util.Map;
  */
 public class ParametersForm extends JPanel {
     private final List<String> parameterNames;
+    private final List<String> errors = new ArrayList<>();
 
     public ParametersForm(List<String> parameterNames) {
         this.parameterNames = parameterNames;
@@ -31,7 +34,12 @@ public class ParametersForm extends JPanel {
         buildTableData();
     }
 
+    public List<String> getErrors() {
+        return errors;
+    }
+
     public Map<String, ?> getData() {
+        errors.clear();
         if (paramsTable.isEditing()) {
             paramsTable.getCellEditor().stopCellEditing();
         }
@@ -40,8 +48,20 @@ public class ParametersForm extends JPanel {
         var map = new HashMap<String, Object>();
         data.forEach(row -> {
             var k = row.get(0).toString();
-            var v = Comparators.valueOf(row.get(1));
-            map.put(k, v);
+            var v = row.get(1);
+            if (v != null) {
+                var sv = v.toString().trim();
+                if (sv.startsWith("[") && sv.endsWith("]")) {
+                    try {
+                        v = ReflectUtil.json2Obj(sv, List.class);
+                    } catch (Exception e) {
+                        errors.add("JSON array of parameter '" + k + "' serialized error.");
+                        errors.addAll(ExceptionUtil.getCauseMessages(e));
+                    }
+                }
+            }
+            var objV = Comparators.valueOf(v);
+            map.put(k, objV);
         });
         return map;
     }

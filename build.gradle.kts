@@ -17,6 +17,7 @@ dependencies {
         exclude("org.yaml", "snakeyaml")
     }
     implementation("org.yaml:snakeyaml:2.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.1")
     testImplementation("junit:junit:4.13.2")
 }
 
