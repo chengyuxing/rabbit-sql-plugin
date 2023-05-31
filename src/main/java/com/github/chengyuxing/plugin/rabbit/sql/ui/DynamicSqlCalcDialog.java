@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ParametersForm;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class DynamicSqlCalcDialog extends DialogWrapper {
@@ -23,6 +25,8 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         this.parametersForm = new ParametersForm(paramsMapping);
         setTitle("Parameters");
         init();
+        Optional.ofNullable(getButton(getOKAction())).ifPresent(a -> a.setText("Execute"));
+        Optional.ofNullable(getButton(getCancelAction())).ifPresent(a -> a.setText("Close"));
     }
 
     public String getSql() {
@@ -38,9 +42,16 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     protected void doOKAction() {
         var data = parametersForm.getData();
         if (parametersForm.getErrors().isEmpty()) {
-            var finalSql = xqlFileManager.dynamicCalc(sql, data, false);
-            parametersForm.setSqlHtml(HtmlUtil.toHighlightSqlHtml(finalSql));
-            autoHeight(finalSql);
+            try {
+                var finalSql = xqlFileManager.dynamicCalc(sql, data, false);
+                parametersForm.setSqlHtml(HtmlUtil.toHighlightSqlHtml(finalSql));
+                autoHeight(finalSql);
+            } catch (Exception e) {
+                var errors = ExceptionUtil.getCauseMessages(e);
+                var msg = String.join("\n", errors);
+                parametersForm.setSqlHtml(HtmlUtil.toHtml(msg, HtmlUtil.Color.DANGER));
+                autoHeight(msg);
+            }
             return;
         }
         String msg = String.join("\n", parametersForm.getErrors());

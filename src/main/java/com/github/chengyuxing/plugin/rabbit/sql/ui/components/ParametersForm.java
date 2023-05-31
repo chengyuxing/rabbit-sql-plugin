@@ -131,6 +131,7 @@ public class ParametersForm extends JPanel {
             paramsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             paramsTable.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
             paramsTable.setRowHeight(30);
+            paramsTable.setSelectionForeground(null);
             paramsTable.setSelectionBackground(null);
             scrollPane1.setViewportView(paramsTable);
         }
