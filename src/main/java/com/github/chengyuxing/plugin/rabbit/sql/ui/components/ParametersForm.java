@@ -9,6 +9,8 @@ import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.JBUI;
 import net.miginfocom.swing.MigLayout;
 
@@ -29,7 +31,7 @@ public class ParametersForm extends JPanel {
     public ParametersForm(Map<String, Set<String>> paramsMapping) {
         this.paramsMapping = paramsMapping;
         initComponents();
-        buildTableData();
+        customInit();
     }
 
     public List<String> getErrors() {
@@ -68,7 +70,7 @@ public class ParametersForm extends JPanel {
         sqlContent.setText(sql);
     }
 
-    private void buildTableData() {
+    private void customInit() {
         var params = paramsMapping.keySet().stream()
                 .distinct()
                 .map(name -> new Object[]{name, ""})
@@ -99,15 +101,15 @@ public class ParametersForm extends JPanel {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
-        scrollPane1 = new JScrollPane();
-        paramsTable = new JTable();
-        scrollPane2 = new JScrollPane();
+        scrollPane1 = new JBScrollPane();
+        paramsTable = new JBTable();
+        scrollPane2 = new JBScrollPane();
         sqlContent = new JTextPane();
 
         //======== this ========
         setBorder(null);
         setMinimumSize(new Dimension(58, 22));
-        setPreferredSize(new Dimension(370, 190));
+        setPreferredSize(new Dimension(420, 115));
         setLayout(new MigLayout(
             "fill,insets 0,hidemode 3,align left top",
             // columns
@@ -132,7 +134,7 @@ public class ParametersForm extends JPanel {
             paramsTable.setSelectionBackground(null);
             scrollPane1.setViewportView(paramsTable);
         }
-        add(scrollPane1, "cell 0 0,aligny top,growy 0,hmin 80");
+        add(scrollPane1, "cell 0 0,grow,hmin 100");
 
         //======== scrollPane2 ========
         {
