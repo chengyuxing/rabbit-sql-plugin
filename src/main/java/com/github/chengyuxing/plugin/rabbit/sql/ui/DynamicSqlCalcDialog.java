@@ -7,18 +7,19 @@ import com.intellij.openapi.ui.DialogWrapper;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DynamicSqlCalcDialog extends DialogWrapper {
     private final String sql;
     private final XQLFileManager xqlFileManager;
     private final ParametersForm parametersForm;
 
-    public DynamicSqlCalcDialog(String sql, XQLFileManager xqlFileManager, List<String> parameterNames) {
+    public DynamicSqlCalcDialog(String sql, XQLFileManager xqlFileManager, Map<String, Set<String>> paramsMapping) {
         super(true);
         this.sql = sql;
         this.xqlFileManager = xqlFileManager;
-        this.parametersForm = new ParametersForm(parameterNames);
+        this.parametersForm = new ParametersForm(paramsMapping);
         setTitle("Parameters");
         init();
     }

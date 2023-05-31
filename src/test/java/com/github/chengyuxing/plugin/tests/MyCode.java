@@ -1,14 +1,20 @@
 package com.github.chengyuxing.plugin.tests;
 
 import com.github.chengyuxing.common.utils.ReflectUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.utils.SqlTranslator;
 import org.junit.Test;
+import p.B.S;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.*;
+
+import static com.github.chengyuxing.sql.XQLFileManagerConfig.*;
 
 public class MyCode {
     @Test
@@ -34,5 +40,14 @@ public class MyCode {
     public void test4() {
         var a = ReflectUtil.json2Obj("[{\"a\":\"cyx\"}]", List.class);
         System.out.println(a);
+    }
+
+    @Test
+    public void test5() throws IOException {
+        String sql = Files.readString(Path.of("/Users/chengyuxing/IdeaProjects/rabbit-sql-plugin/src/test/resources/data.sql"));
+        var keyMapping = StringUtil.getParamsMappingInfo(new SqlTranslator(':'), sql);
+        keyMapping.forEach((k, v) -> {
+            System.out.println(k + ":" + v);
+        });
     }
 }

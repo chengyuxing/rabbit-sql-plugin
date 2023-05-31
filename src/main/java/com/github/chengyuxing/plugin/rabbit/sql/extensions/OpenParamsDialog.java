@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
+import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
 import com.intellij.openapi.application.ApplicationManager;
@@ -27,8 +28,8 @@ public class OpenParamsDialog extends CopySqlDefinition {
             var xqlFileManager = resource.getXqlFileManager();
             var sqlDefinition = xqlFileManager.get(sqlName);
             ApplicationManager.getApplication().invokeLater(() -> {
-                var parametersNames = xqlFileManager.getSqlTranslator().getPreparedSql(sqlDefinition, Map.of()).getItem2();
-                new DynamicSqlCalcDialog(sqlDefinition, xqlFileManager, parametersNames).showAndGet();
+                var paramsMapping = StringUtil.getParamsMappingInfo(xqlFileManager.getSqlTranslator(), sqlDefinition);
+                new DynamicSqlCalcDialog(sqlDefinition, xqlFileManager, paramsMapping).showAndGet();
             });
         } catch (Exception e) {
             log.warn(e);

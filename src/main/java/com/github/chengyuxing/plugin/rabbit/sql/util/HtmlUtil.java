@@ -101,6 +101,7 @@ public class HtmlUtil {
         STRING("#79A978"),
         ANNOTATION("#7B7E84"),
         DANGER("#E56068"),
+        LIGHT("#B4BBC3"),
         HIGHLIGHT("#BBB529");
         private final String code;
 

@@ -16,20 +16,18 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author chengyuxing
  */
 public class ParametersForm extends JPanel {
-    private final List<String> parameterNames;
+    private final Map<String, Set<String>> paramsMapping;
     private final List<String> errors = new ArrayList<>();
 
-    public ParametersForm(List<String> parameterNames) {
-        this.parameterNames = parameterNames;
+    public ParametersForm(Map<String, Set<String>> paramsMapping) {
+        this.paramsMapping = paramsMapping;
         initComponents();
         buildTableData();
     }
@@ -71,7 +69,7 @@ public class ParametersForm extends JPanel {
     }
 
     private void buildTableData() {
-        var params = parameterNames.stream()
+        var params = paramsMapping.keySet().stream()
                 .distinct()
                 .map(name -> new Object[]{name, ""})
                 .toArray(i -> new Object[i][2]);
@@ -83,6 +81,7 @@ public class ParametersForm extends JPanel {
         };
         paramsTable.setModel(model);
         model.setDataVector(params, new Object[]{"", ""});
+        paramsTable.getColumnModel().getColumn(0).setCellRenderer(new FieldInfoRender(paramsMapping));
         paramsTable.getColumnModel().getColumn(1).setCellEditor(buildParamsEditor());
         paramsTable.getColumnModel().getColumn(1).setCellRenderer(new PlaceholderRender("<blank>"));
         paramsTable.setTableHeader(null);
