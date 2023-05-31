@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
+import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ParametersForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -39,9 +40,23 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         if (parametersForm.getErrors().isEmpty()) {
             var finalSql = xqlFileManager.dynamicCalc(sql, data, false);
             parametersForm.setSqlHtml(HtmlUtil.toHighlightSqlHtml(finalSql));
+            autoHeight(finalSql);
             return;
         }
         String msg = String.join("\n", parametersForm.getErrors());
         parametersForm.setSqlHtml(HtmlUtil.toHtml(msg, HtmlUtil.Color.DANGER));
+        autoHeight(msg);
+    }
+
+    private void autoHeight(String content) {
+        var defaultSize = getPreferredSize();
+        var basicHeight = defaultSize.height;
+        var maxContentHeight = 239;
+        var minContentHeight = 100;
+        var lineCount = StringUtil.countOfContains(content, "\n");
+        var contentHeight = lineCount * 21 + 35;
+        contentHeight = Math.max(minContentHeight, contentHeight);
+        contentHeight = Math.min(contentHeight, maxContentHeight);
+        setSize(defaultSize.width, basicHeight + contentHeight);
     }
 }

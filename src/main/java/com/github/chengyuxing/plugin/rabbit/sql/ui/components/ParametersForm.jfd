@@ -28,7 +28,7 @@ new FormModel {
 					"selectionBackground": sfield com.jformdesigner.model.FormObject NULL_VALUE
 				} )
 			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
-				"value": "cell 0 0,grow,hmin 100"
+				"value": "cell 0 0,grow,height 200"
 			} )
 			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 				name: "scrollPane2"

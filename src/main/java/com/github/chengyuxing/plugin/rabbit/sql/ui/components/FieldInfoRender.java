@@ -24,7 +24,7 @@ public class FieldInfoRender extends DefaultTableCellRenderer {
 
         if (value != null && !value.equals("")) {
             var parts = keyInfoMapping.get(value.toString());
-            var richText = "<html>" + value + "&nbsp;&nbsp;" + String.join(", ", parts) + "</html>";
+            var richText = "<html><pre>" + value + "&nbsp;&nbsp;" + String.join(", ", parts) + "</pre></html>";
             return super.getTableCellRendererComponent(table, richText, isSelected, hasFocus, row, column);
         }
         return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
