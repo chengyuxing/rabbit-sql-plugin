@@ -11,19 +11,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 public class DynamicSqlCalcDialog extends DialogWrapper {
+    private final String sqlName;
     private final String sql;
     private final XQLFileManager xqlFileManager;
     private final ParametersForm parametersForm;
 
-    public DynamicSqlCalcDialog(String sql, XQLFileManager xqlFileManager, Map<String, Set<String>> paramsMapping) {
+    public DynamicSqlCalcDialog(String sqlName, XQLFileManager xqlFileManager) {
         super(true);
-        this.sql = sql;
+        this.sqlName = sqlName;
         this.xqlFileManager = xqlFileManager;
+        this.sql = this.xqlFileManager.get(sqlName);
+        var paramsMapping = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.getParamsMappingInfo(this.xqlFileManager.getSqlTranslator(), sql);
         this.parametersForm = new ParametersForm(paramsMapping);
         setTitle("Parameters");
         createDefaultActions();
@@ -58,7 +59,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         var data = parametersForm.getData();
         if (data.getItem2().isEmpty()) {
             try {
-                var finalSql = xqlFileManager.dynamicCalc(sql, data.getItem1(), false);
+                var finalSql = xqlFileManager.get(sqlName, data.getItem1(), false);
                 parametersForm.setSqlHtml(HtmlUtil.toHighlightSqlHtml(finalSql));
                 autoHeight(finalSql);
             } catch (Exception e) {
