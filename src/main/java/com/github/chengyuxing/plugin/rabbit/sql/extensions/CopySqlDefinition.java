@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.util.Objects;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 
@@ -25,8 +24,8 @@ public class CopySqlDefinition extends PsiElementBaseIntentionAction {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
-        var sqlName = Objects.requireNonNull(((PsiLiteralExpression) element.getParent()).getValue()).toString().substring(1);
         try {
+            @SuppressWarnings("DataFlowIssue") var sqlName = ((PsiLiteralExpression) element.getParent()).getValue().toString().substring(1);
             var resource = ResourceCache.getInstance().getResource(element);
             var sqlDefinition = resource.getXqlFileManager().get(sqlName);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

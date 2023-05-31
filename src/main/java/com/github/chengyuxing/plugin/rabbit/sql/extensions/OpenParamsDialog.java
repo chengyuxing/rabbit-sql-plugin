@@ -14,16 +14,13 @@ import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.Objects;
-
 public class OpenParamsDialog extends CopySqlDefinition {
     private static final Logger log = Logger.getInstance(CopySqlDefinition.class);
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
-        var sqlName = Objects.requireNonNull(((PsiLiteralExpression) element.getParent()).getValue()).toString().substring(1);
         try {
+            @SuppressWarnings("DataFlowIssue") var sqlName = ((PsiLiteralExpression) element.getParent()).getValue().toString().substring(1);
             var resource = ResourceCache.getInstance().getResource(element);
             var xqlFileManager = resource.getXqlFileManager();
             var sqlDefinition = xqlFileManager.get(sqlName);
