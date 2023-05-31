@@ -5,6 +5,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.script.Comparators;
+import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.intellij.openapi.ui.ComboBox;
@@ -26,7 +27,6 @@ import java.util.*;
  */
 public class ParametersForm extends JPanel {
     private final Map<String, Set<String>> paramsMapping;
-    private final List<String> errors = new ArrayList<>();
 
     public ParametersForm(Map<String, Set<String>> paramsMapping) {
         this.paramsMapping = paramsMapping;
@@ -34,18 +34,14 @@ public class ParametersForm extends JPanel {
         customInit();
     }
 
-    public List<String> getErrors() {
-        return errors;
-    }
-
-    public Map<String, ?> getData() {
-        errors.clear();
+    public Pair<Map<String, ?>, List<String>> getData() {
         if (paramsTable.isEditing()) {
             paramsTable.getCellEditor().stopCellEditing();
         }
         var model = (DefaultTableModel) paramsTable.getModel();
         var data = model.getDataVector();
         var map = new HashMap<String, Object>();
+        var errors = new ArrayList<String>();
         data.forEach(row -> {
             var k = row.get(0).toString();
             var v = row.get(1);
@@ -63,7 +59,7 @@ public class ParametersForm extends JPanel {
             var objV = Comparators.valueOf(v);
             map.put(k, objV);
         });
-        return map;
+        return Pair.of(map, errors);
     }
 
     public void setSqlHtml(String sql) {
@@ -72,7 +68,6 @@ public class ParametersForm extends JPanel {
 
     private void customInit() {
         var params = paramsMapping.keySet().stream()
-                .distinct()
                 .map(name -> new Object[]{name, ""})
                 .toArray(i -> new Object[i][2]);
         DefaultTableModel model = new DefaultTableModel() {

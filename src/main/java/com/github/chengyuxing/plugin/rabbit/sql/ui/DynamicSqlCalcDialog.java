@@ -50,15 +50,15 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
 
     @Override
     protected void setHelpTooltip(@NotNull JButton helpButton) {
-        helpButton.setToolTipText("Show raw sql");
+        helpButton.setToolTipText("Show raw sql.");
     }
 
     @Override
     protected void doOKAction() {
         var data = parametersForm.getData();
-        if (parametersForm.getErrors().isEmpty()) {
+        if (data.getItem2().isEmpty()) {
             try {
-                var finalSql = xqlFileManager.dynamicCalc(sql, data, false);
+                var finalSql = xqlFileManager.dynamicCalc(sql, data.getItem1(), false);
                 parametersForm.setSqlHtml(HtmlUtil.toHighlightSqlHtml(finalSql));
                 autoHeight(finalSql);
             } catch (Exception e) {
@@ -69,7 +69,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             }
             return;
         }
-        String msg = String.join("\n", parametersForm.getErrors());
+        String msg = String.join("\n", data.getItem2());
         parametersForm.setSqlHtml(HtmlUtil.toHtml(msg, HtmlUtil.Color.DANGER));
         autoHeight(msg);
     }
