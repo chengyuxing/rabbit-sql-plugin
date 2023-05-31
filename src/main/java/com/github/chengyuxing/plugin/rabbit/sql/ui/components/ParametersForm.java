@@ -145,7 +145,7 @@ public class ParametersForm extends JPanel {
             sqlContent.setContentType("text/html");
             sqlContent.setFont(new Font("JetBrains Mono", Font.PLAIN, 13));
             sqlContent.setEditable(false);
-            sqlContent.setMargin(JBUI.insets(5));
+            sqlContent.setMargin(JBUI.insets(3,10));
             scrollPane2.setViewportView(sqlContent);
         }
         add(scrollPane2, "cell 0 1,aligny top,grow 100 0,hmin 200");

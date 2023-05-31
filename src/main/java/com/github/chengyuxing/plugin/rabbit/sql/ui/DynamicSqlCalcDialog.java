@@ -6,6 +6,8 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.openapi.ui.DialogWrapper;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -24,18 +26,31 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         this.xqlFileManager = xqlFileManager;
         this.parametersForm = new ParametersForm(paramsMapping);
         setTitle("Parameters");
+        createDefaultActions();
         init();
         Optional.ofNullable(getButton(getOKAction())).ifPresent(a -> a.setText("Execute"));
         Optional.ofNullable(getButton(getCancelAction())).ifPresent(a -> a.setText("Close"));
     }
 
-    public String getSql() {
-        return sql;
-    }
-
     @Override
     protected @Nullable JComponent createCenterPanel() {
         return parametersForm;
+    }
+
+    @Override
+    protected void doHelpAction() {
+        parametersForm.setSqlHtml(HtmlUtil.toHighlightSqlHtml(sql));
+        autoHeight(sql);
+    }
+
+    @Override
+    protected @NonNls @Nullable String getHelpId() {
+        return "help";
+    }
+
+    @Override
+    protected void setHelpTooltip(@NotNull JButton helpButton) {
+        helpButton.setToolTipText("Show raw sql");
     }
 
     @Override
@@ -65,7 +80,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         var maxContentHeight = 239;
         var minContentHeight = 100;
         var lineCount = StringUtil.countOfContains(content, "\n");
-        var contentHeight = lineCount * 21 + 35;
+        var contentHeight = lineCount * 21 + 39;
         contentHeight = Math.max(minContentHeight, contentHeight);
         contentHeight = Math.min(contentHeight, maxContentHeight);
         setSize(defaultSize.width, basicHeight + contentHeight);
