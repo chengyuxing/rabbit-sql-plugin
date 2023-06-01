@@ -51,7 +51,7 @@
             <h3>1.13</h3>
             <ul>
                 <li>Support [<strong>Test dynamic sql</strong>] action at sql name.(e.g: <code>&my.query</code>)</li>
-                <li>Fixed plugin not working on Trust a new project.</li>
+                <li>Fixed plugin not working on trust a new project.</li>
                 <li>Some bugs fixed.</li>
             </ul>
             <h3>1.12</h3>
