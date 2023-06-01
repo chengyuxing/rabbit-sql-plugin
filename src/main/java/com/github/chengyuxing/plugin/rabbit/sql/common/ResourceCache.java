@@ -27,13 +27,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
+import static com.github.chengyuxing.plugin.rabbit.sql.common.Globals.openedProjects;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil.getModuleBaseDir;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil.getModuleBaseDirUnchecked;
 
 public class ResourceCache {
     private static final Logger log = Logger.getInstance(ResourceCache.class);
     private static volatile ResourceCache instance;
-
     /**
      * key: module dir, value: resource which be owned by project
      */
@@ -80,6 +80,13 @@ public class ResourceCache {
         // file:///Users/chengyuxing/IdeaProjects/sbp-test1/src/test/java
         // file:///Users/chengyuxing/IdeaProjects/sbp-test1/src/main/resources
         // file:///Users/chengyuxing/IdeaProjects/sbp-test1/src/main/java
+        var sourceRoots = ProjectRootManager.getInstance(project).getContentSourceRoots();
+        if (sourceRoots.length == 0) {
+            return;
+        }
+        if (openedProjects.contains(project)) {
+            return;
+        }
         Stream.of(ProjectRootManager.getInstance(project).getContentSourceRoots()).forEach(vf -> {
             var xqlFileManager = vf.toNioPath().resolve(Constants.CONFIG_NAME);
             if (XqlUtil.xqlFileManagerExists(xqlFileManager)) {
@@ -88,6 +95,7 @@ public class ResourceCache {
                 resourceCache.initJavas(xqlFileManager);
                 resourceCache.initXqlFileManager(xqlFileManager, (success, msg) -> {
                     if (success) {
+                        openedProjects.add(project);
                         Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", "XQL file Manager initialized!", NotificationType.INFORMATION), project);
                     } else {
                         Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", msg, NotificationType.WARNING), project);

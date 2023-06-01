@@ -51,6 +51,7 @@
             <h3>1.13</h3>
             <ul>
                 <li>Support [<strong>Test dynamic sql</strong>] action at sql name.(e.g: <code>&my.query</code>)</li>
+                <li>Fixed plugin not working on Trust a new project.</li>
                 <li>Some bugs fixed.</li>
             </ul>
             <h3>1.12</h3>
@@ -140,6 +141,8 @@
                   topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
         <listener class="com.github.chengyuxing.plugin.rabbit.sql.XqlConfigLifecycleListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
+        <listener class="com.github.chengyuxing.plugin.rabbit.sql.ProjectReadyListener"
+                  topic="com.intellij.openapi.project.DumbService$DumbModeListener"/>
     </projectListeners>
 
     <!-- Extension points defined by the plugin.
@@ -155,7 +158,10 @@
         <annotator language="JAVA"
                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameAnnotator"/>
         <intentionAction>
+            <!--Copy sql definition-->
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinition</className>
+            <!--Test dynamic sql-->
+            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialog</className>
         </intentionAction>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoSqlDefinition"/>
@@ -177,15 +183,11 @@
         <!--        <toolWindow factoryClass="com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow"-->
         <!--                    id="XQL File Manager"-->
         <!--                    anchor="right"/>-->
-
-        <intentionAction>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialog</className>
-        </intentionAction>
     </extensions>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <postStartupActivity implementation="com.github.chengyuxing.plugin.rabbit.sql.InitXqlConfigOnStartup"/>
-    </extensions>
+    <!--    <extensions defaultExtensionNs="com.intellij">-->
+    <!--        <postStartupActivity implementation="com.github.chengyuxing.plugin.rabbit.sql.InitXqlConfigOnStartup"/>-->
+    <!--    </extensions>-->
 
     <extensions defaultExtensionNs="com.intellij">
         <defaultLiveTemplates file="xql-live-templates.xml"/>
