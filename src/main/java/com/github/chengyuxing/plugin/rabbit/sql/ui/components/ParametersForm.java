@@ -7,6 +7,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 import com.github.chengyuxing.common.script.Comparators;
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.utils.ReflectUtil;
+import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.JBColor;
@@ -27,9 +28,11 @@ import java.util.*;
  */
 public class ParametersForm extends JPanel {
     private final Map<String, Set<String>> paramsMapping;
+    private final Map<String, Object> paramsHistory;
 
-    public ParametersForm(Map<String, Set<String>> paramsMapping) {
+    public ParametersForm(Map<String, Set<String>> paramsMapping, Map<String, Object> paramsHistory) {
         this.paramsMapping = paramsMapping;
+        this.paramsHistory = paramsHistory;
         initComponents();
         customInit();
     }
@@ -54,6 +57,15 @@ public class ParametersForm extends JPanel {
                         errors.add("JSON array of parameter '" + k + "' serialized error.");
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
+                } else if (sv.startsWith("{") && sv.endsWith("}")) {
+                    try {
+                        v = ReflectUtil.json2Obj(sv, Map.class);
+                    } catch (Exception e) {
+                        errors.add("JSON object of parameter '" + k + "' serialized error.");
+                        errors.addAll(ExceptionUtil.getCauseMessages(e));
+                    }
+                } else if (StringUtil.isNumeric(sv)) {
+                    v = Double.parseDouble(sv);
                 }
             }
             var objV = Comparators.valueOf(v);
@@ -68,7 +80,7 @@ public class ParametersForm extends JPanel {
 
     private void customInit() {
         var params = paramsMapping.keySet().stream()
-                .map(name -> new Object[]{name, ""})
+                .map(name -> new Object[]{name, paramsHistory.getOrDefault(name, "")})
                 .toArray(i -> new Object[i][2]);
         DefaultTableModel model = new DefaultTableModel() {
             @Override

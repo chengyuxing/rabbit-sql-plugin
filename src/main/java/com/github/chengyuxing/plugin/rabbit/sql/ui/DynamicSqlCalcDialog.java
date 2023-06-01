@@ -1,5 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
+import com.github.chengyuxing.common.script.Comparators;
+import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ParametersForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
@@ -11,21 +13,26 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class DynamicSqlCalcDialog extends DialogWrapper {
     private final String sqlName;
     private final String sql;
+    private final Map<String, Object> paramsHistory;
     private final XQLFileManager xqlFileManager;
     private final ParametersForm parametersForm;
 
-    public DynamicSqlCalcDialog(String sqlName, XQLFileManager xqlFileManager) {
+    public DynamicSqlCalcDialog(String sqlName, Map<String, Object> paramsHistory, XQLFileManager xqlFileManager) {
         super(true);
         this.sqlName = sqlName;
         this.xqlFileManager = xqlFileManager;
         this.sql = this.xqlFileManager.get(sqlName);
+        this.paramsHistory = paramsHistory;
         var paramsMapping = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.getParamsMappingInfo(this.xqlFileManager.getSqlTranslator(), sql);
-        this.parametersForm = new ParametersForm(paramsMapping);
+        this.parametersForm = new ParametersForm(paramsMapping, paramsHistory);
         setTitle("Parameters");
         createDefaultActions();
         init();
@@ -42,6 +49,22 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     protected void doHelpAction() {
         parametersForm.setSqlHtml(HtmlUtil.toHighlightSqlHtml(sql));
         autoHeight(sql);
+    }
+
+    @Override
+    public void disposeIfNeeded() {
+        var data = parametersForm.getData().getItem1();
+        var cache = new HashMap<String, Object>();
+        data.forEach((k, v) -> {
+            if (v == Comparators.ValueType.BLANK) {
+                cache.put(k, "");
+            } else if (v instanceof Collection || v instanceof Map) {
+                cache.put(k, ReflectUtil.obj2Json(v));
+            } else {
+                cache.put(k, v.toString());
+            }
+        });
+        paramsHistory.putAll(cache);
     }
 
     @Override
