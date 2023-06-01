@@ -103,6 +103,7 @@ public class ParametersForm extends JPanel {
         cbx.addItem("true");
         cbx.addItem("false");
         cbx.setEditable(true);
+        cbx.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
         return new DefaultCellEditor(cbx);
     }
 
