@@ -107,6 +107,11 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         var contentHeight = lineCount * 21 + 39;
         contentHeight = Math.max(minContentHeight, contentHeight);
         contentHeight = Math.min(contentHeight, maxContentHeight);
-        setSize(defaultSize.width, basicHeight + contentHeight);
+        var height = basicHeight + contentHeight;
+        var width = defaultSize.width;
+        var userSize = getSize();
+        var userHeight = Math.max(height, userSize.getHeight());
+        var userWidth = Math.max(width, userSize.getWidth());
+        setSize((int) userWidth, (int) userHeight);
     }
 }
