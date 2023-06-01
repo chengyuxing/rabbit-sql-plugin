@@ -22,7 +22,8 @@ public class OpenParamsDialog extends CopySqlDefinition {
             @SuppressWarnings("DataFlowIssue") var sqlName = ((PsiLiteralExpression) element.getParent()).getValue().toString().substring(1);
             var resource = ResourceCache.getInstance().getResource(element);
             var xqlFileManager = resource.getXqlFileManager();
-            ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlName, xqlFileManager).showAndGet());
+            var paramsHistory = resource.getParamsHistory();
+            ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlName, paramsHistory, xqlFileManager).showAndGet());
         } catch (Exception e) {
             log.warn(e);
         }

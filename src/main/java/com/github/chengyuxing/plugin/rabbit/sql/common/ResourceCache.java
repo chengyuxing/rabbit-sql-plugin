@@ -181,10 +181,16 @@ public class ResourceCache {
     public static class Resource {
         private final XQLFileManager xqlFileManager;
         private final Set<Path> javas;
+        private final Map<String, Object> paramsHistory;
 
         public Resource() {
             this.xqlFileManager = new XQLFileManager();
             this.javas = new HashSet<>();
+            this.paramsHistory = new HashMap<>();
+        }
+
+        public Map<String, Object> getParamsHistory() {
+            return paramsHistory;
         }
 
         public XQLFileManager getXqlFileManager() {
