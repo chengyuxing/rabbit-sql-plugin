@@ -7,8 +7,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.github.chengyuxing.common.script.SimpleScriptParser.*;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.colorful;
-import static com.github.chengyuxing.sql.XQLFileManagerConfig.*;
 
 public class StringUtil {
     public static Set<String> getTemplateParameters(SqlTranslator sqlTranslator, String str) {

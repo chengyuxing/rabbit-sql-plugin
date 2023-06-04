@@ -43,7 +43,7 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
 
             if (resource == null) return ResolveResult.EMPTY_ARRAY;
 
-            var allXqlFiles = resource.getXqlFileManager().allFiles();
+            var allXqlFiles = resource.getXqlFileManager().getFiles();
             if (allXqlFiles.containsKey(alias)) {
                 var xqlFilePath = allXqlFiles.get(alias);
                 var xqlPath = Path.of(URI.create(xqlFilePath));

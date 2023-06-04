@@ -18,6 +18,7 @@ dependencies {
     }
     implementation("org.yaml:snakeyaml:2.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.15.1")
+    implementation("io.reactivex.rxjava3:rxjava:3.1.6")
     testImplementation("junit:junit:4.13.2")
 }
 

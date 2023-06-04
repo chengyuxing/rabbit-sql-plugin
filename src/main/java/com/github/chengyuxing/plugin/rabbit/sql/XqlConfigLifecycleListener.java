@@ -11,18 +11,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
-import static com.github.chengyuxing.plugin.rabbit.sql.common.Globals.openedProjects;
 
 public class XqlConfigLifecycleListener implements ProjectManagerListener {
     private static final Logger log = Logger.getInstance(XqlConfigLifecycleListener.class);
 
     @Override
     public void projectClosing(@NotNull Project project) {
-        openedProjects.remove(project);
+        ResourceCache resourceCache = ResourceCache.getInstance();
         Stream.of(ProjectRootManager.getInstance(project).getContentSourceRoots()).forEach(vf -> {
             var xqlFileManager = vf.toNioPath().resolve(Constants.CONFIG_NAME);
             if (XqlUtil.xqlFileManagerExists(xqlFileManager)) {
-                ResourceCache resourceCache = ResourceCache.getInstance();
                 resourceCache.clear(xqlFileManager);
                 log.info("clear cache of relation: " + xqlFileManager);
             }

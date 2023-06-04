@@ -13,10 +13,6 @@
 #  data: !path [ *basePath, data.xql ]
 #  other: another.xql
 
-#filenames:
-#  - data.xql
-#  - system.xql
-
 # xql文件中各sql片段解析分隔符，默认是 ';' 。
 # https://github.com/chengyuxing/rabbit-sql#options
 delimiter: ;

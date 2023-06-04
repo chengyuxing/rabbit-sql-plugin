@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.github.chengyuxing.sql.XQLFileManager.*;
+import static com.github.chengyuxing.common.script.SimpleScriptParser.*;
 
 public class XqlFileAnnotator implements Annotator {
     static final String[] XQL_PREFIXES = new String[]{IF, FI, FOR, END, CHOOSE, WHEN, CASE, SWITCH, BREAK, DEFAULT};

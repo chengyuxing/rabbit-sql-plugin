@@ -54,9 +54,9 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                 var prepareParams = sqlTranslator.getPreparedSql(sqlDefinition, Collections.emptyMap())
                         .getItem2()
                         .stream()
-                        .map(name -> xqlFileManager.getNamedParamPrefix() + name)
+                        .map(name -> "<code>" + xqlFileManager.getNamedParamPrefix() + name + "</code>")
                         .distinct()
-                        .collect(Collectors.joining(" "))
+                        .collect(Collectors.joining("&nbsp;&nbsp;"))
                         .trim();
 
                 if (!prepareParams.equals("")) {
@@ -65,7 +65,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
 
                 var tempParams = StringUtil.getTemplateParameters(sqlTranslator, sqlDefinition);
                 if (!tempParams.isEmpty()) {
-                    doc += SECTION_HEADER_START + "Template parameters: " + SECTION_SEPARATOR + "<p>" + String.join(" ", tempParams) + SECTION_END;
+                    doc += SECTION_HEADER_START + "Template parameters: " + SECTION_SEPARATOR + "<p>" + String.join("  ", tempParams) + SECTION_END;
                 }
 
                 doc += SECTION_HEADER_START + "Defined in: " + SECTION_SEPARATOR + "<p>" + xqlFile + SECTION_END +

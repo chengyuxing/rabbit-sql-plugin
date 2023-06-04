@@ -39,7 +39,7 @@ public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
                 var alias = sqlRef.substring(0, dotIdx).trim();
                 var sqlName = sqlRef.substring(dotIdx + 1).trim();
                 try {
-                    var allXqlFiles = resource.getXqlFileManager().allFiles();
+                    var allXqlFiles = resource.getXqlFileManager().getFiles();
                     if (allXqlFiles.containsKey(alias)) {
                         var xqlFilePath = allXqlFiles.get(alias);
                         var xqlPath = Path.of(URI.create(xqlFilePath));
