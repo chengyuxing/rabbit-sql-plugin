@@ -54,9 +54,9 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                 var prepareParams = sqlTranslator.getPreparedSql(sqlDefinition, Collections.emptyMap())
                         .getItem2()
                         .stream()
-                        .map(name -> "<code>" + xqlFileManager.getNamedParamPrefix() + name + "</code>")
+                        .map(name -> xqlFileManager.getNamedParamPrefix() + name)
                         .distinct()
-                        .collect(Collectors.joining("&nbsp;&nbsp;"))
+                        .collect(Collectors.joining("  "))
                         .trim();
 
                 if (!prepareParams.equals("")) {
