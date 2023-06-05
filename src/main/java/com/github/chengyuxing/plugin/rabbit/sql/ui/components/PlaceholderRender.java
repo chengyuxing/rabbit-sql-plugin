@@ -32,11 +32,11 @@ public class PlaceholderRender extends DefaultTableCellRenderer {
             var valueCom = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             var typedValue = Comparators.valueOf(value);
             if (typedValue instanceof Comparators.ValueType) {
-                valueCom.setForeground(JBColor.ORANGE);
+                valueCom.setForeground(new JBColor(new Color(0xCC7832), new Color(0x1D31BC)));
             } else if (StringUtil.isNumeric(typedValue)) {
-                valueCom.setForeground(JBColor.CYAN);
+                valueCom.setForeground(new JBColor(new Color(0x56A9B6), new Color(0x364fed)));
             } else if (Comparators.isString(typedValue)) {
-                valueCom.setForeground(JBColor.GREEN);
+                valueCom.setForeground(new JBColor(new Color(0x79A978), new Color(0x097c52)));
             }
             valueCom.setBackground(null);
             return valueCom;
