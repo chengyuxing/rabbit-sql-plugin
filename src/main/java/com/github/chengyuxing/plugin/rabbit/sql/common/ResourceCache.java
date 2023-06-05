@@ -7,6 +7,7 @@ import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
 import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -134,8 +135,10 @@ public class ResourceCache {
 
         private void showMessage(Set<Message> messages) {
             messages.forEach(message -> {
-                var n = new Notification("Rabbit-SQL Notification Group", "XQL file manager", message.getText(), message.getType());
-                Notifications.Bus.notify(n, project);
+                if (message.getType() != NotificationType.INFORMATION) {
+                    var n = new Notification("Rabbit-SQL Notification Group", "XQL file manager", message.getText(), message.getType());
+                    Notifications.Bus.notify(n, project);
+                }
             });
         }
 
