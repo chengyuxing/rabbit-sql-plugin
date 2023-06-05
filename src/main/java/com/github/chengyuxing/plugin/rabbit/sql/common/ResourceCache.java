@@ -120,7 +120,7 @@ public class ResourceCache {
             this.count = new AtomicInteger(0);
             this.updateListener = BehaviorSubject.create();
             this.disposable = this.updateListener
-                    .throttleLast(1700, TimeUnit.MILLISECONDS)
+                    .throttleLast(700, TimeUnit.MILLISECONDS)
                     .subscribe(s -> {
                         if (!Files.exists(xqlFileManagerLocation)) {
                             xqlFileManager.clearResources();

@@ -139,6 +139,10 @@
     <projectListeners>
         <listener class="com.github.chengyuxing.plugin.rabbit.sql.ProjectReadyListener"
                   topic="com.intellij.openapi.project.DumbService$DumbModeListener"/>
+        <listener class="com.github.chengyuxing.plugin.rabbit.sql.XqlFileChangeListener"
+                  topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
+        <listener class="com.github.chengyuxing.plugin.rabbit.sql.XqlConfigLifecycleListener"
+                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </projectListeners>
 
     <!-- Extension points defined by the plugin.
