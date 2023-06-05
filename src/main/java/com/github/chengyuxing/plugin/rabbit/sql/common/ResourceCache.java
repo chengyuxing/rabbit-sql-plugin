@@ -104,8 +104,8 @@ public class ResourceCache {
         private final Project project;
         private final Path xqlFileManagerLocation;
         private final Path module;
-        private final BehaviorSubject<String> projectBehaviorSubject;
-        private final Disposable updateListener;
+        private final BehaviorSubject<String> updateListener;
+        private final Disposable disposable;
         private final XQLFileManager xqlFileManager;
         private final Map<String, Object> paramsHistory;
         private final AtomicInteger count;
@@ -117,8 +117,8 @@ public class ResourceCache {
             this.xqlFileManager = new XQLFileManager();
             this.paramsHistory = new HashMap<>();
             this.count = new AtomicInteger(0);
-            projectBehaviorSubject = BehaviorSubject.create();
-            updateListener = projectBehaviorSubject
+            this.updateListener = BehaviorSubject.create();
+            this.disposable = this.updateListener
                     .throttleLast(1700, TimeUnit.MILLISECONDS)
                     .subscribe(s -> {
                         if (!Files.exists(xqlFileManagerLocation)) {
@@ -180,11 +180,11 @@ public class ResourceCache {
         }
 
         public void fire(String message) {
-            projectBehaviorSubject.onNext(message + "(" + count.incrementAndGet() + ")");
+            updateListener.onNext(message + "(" + count.incrementAndGet() + ")");
         }
 
         public void stopListener() {
-            updateListener.dispose();
+            disposable.dispose();
         }
 
         public Map<String, Object> getParamsHistory() {
