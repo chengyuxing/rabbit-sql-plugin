@@ -34,9 +34,9 @@ public class PlaceholderRender extends DefaultTableCellRenderer {
             if (typedValue instanceof Comparators.ValueType) {
                 valueCom.setForeground(new JBColor(new Color(0xCC7832), new Color(0x1D31BC)));
             } else if (StringUtil.isNumeric(typedValue)) {
-                valueCom.setForeground(new JBColor(new Color(0x56A9B6), new Color(0x364fed)));
+                valueCom.setForeground(new JBColor(new Color(0x56A9B6), new Color(0x364FED)));
             } else if (Comparators.isString(typedValue)) {
-                valueCom.setForeground(new JBColor(new Color(0x79A978), new Color(0x097c52)));
+                valueCom.setForeground(new JBColor(new Color(0x79A978), new Color(0x097C52)));
             }
             valueCom.setBackground(null);
             return valueCom;
