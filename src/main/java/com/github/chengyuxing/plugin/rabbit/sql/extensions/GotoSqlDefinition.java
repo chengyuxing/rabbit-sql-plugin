@@ -45,7 +45,7 @@ public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
                         var xqlPath = Path.of(URI.create(xqlFilePath));
 
                         var vf = VirtualFileManager.getInstance().findFileByNioPath(xqlPath);
-                        if (vf == null) return;
+                        if (vf == null || !vf.isValid()) return;
                         Project project = javaElement.getProject();
                         var xqlFile = PsiManager.getInstance(project).findFile(vf);
                         if (xqlFile == null) return;
