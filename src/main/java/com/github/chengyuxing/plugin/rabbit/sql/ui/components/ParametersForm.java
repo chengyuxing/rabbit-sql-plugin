@@ -65,7 +65,11 @@ public class ParametersForm extends JPanel {
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
                 } else if (StringUtil.isNumeric(sv)) {
-                    v = Double.parseDouble(sv);
+                    if (sv.contains(".")) {
+                        v = Double.parseDouble(sv);
+                    } else {
+                        v = Integer.parseInt(sv);
+                    }
                 }
             }
             var objV = Comparators.valueOf(v);
@@ -117,7 +121,7 @@ public class ParametersForm extends JPanel {
         //======== this ========
         setBorder(null);
         setMinimumSize(new Dimension(58, 22));
-        setPreferredSize(new Dimension(420, 115));
+        setPreferredSize(new Dimension(470, 115));
         setLayout(new MigLayout(
             "fill,insets 0,hidemode 3,align left top",
             // columns

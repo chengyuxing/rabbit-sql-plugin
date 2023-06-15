@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
+import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceCache;
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
 import com.intellij.codeInspection.util.IntentionFamilyName;
@@ -21,9 +22,8 @@ public class OpenParamsDialog extends CopySqlDefinition {
         try {
             @SuppressWarnings("DataFlowIssue") var sqlName = ((PsiLiteralExpression) element.getParent()).getValue().toString().substring(1);
             var resource = ResourceCache.getInstance().getResource(element);
-            var xqlFileManager = resource.getXqlFileManager();
-            var paramsHistory = resource.getParamsHistory();
-            ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlName, paramsHistory, xqlFileManager).showAndGet());
+            var dsResource = DatasourceCache.getInstance().getResource(project);
+            ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlName, resource, dsResource).showAndGet());
         } catch (Exception e) {
             log.warn(e);
         }
