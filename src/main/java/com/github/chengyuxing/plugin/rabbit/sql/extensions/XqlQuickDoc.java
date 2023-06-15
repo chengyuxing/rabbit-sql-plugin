@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
@@ -51,7 +50,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                         CONTENT_START + sqlContent + CONTENT_END +
                         SECTIONS_START;
 
-                var prepareParams = sqlTranslator.getPreparedSql(sqlDefinition, Collections.emptyMap())
+                var prepareParams = sqlTranslator.getPreparedSql(sqlDefinition)
                         .getItem2()
                         .stream()
                         .map(name -> xqlFileManager.getNamedParamPrefix() + name)

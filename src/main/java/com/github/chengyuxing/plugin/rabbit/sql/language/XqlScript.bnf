@@ -1,0 +1,32 @@
+{
+    parserClass="com.github.chengyuxing.plugin.rabbit.sql.language.parser.XqlScriptParser"
+
+    extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+    psiClassPrefix="XqlScript"
+    psiImplClassSuffix="Impl"
+    psiPackage="com.github.chengyuxing.plugin.rabbit.sql.language.psi"
+    psiImplPackage="com.github.chengyuxing.plugin.rabbit.sql.language.psi.impl"
+
+    elementTypeHolderClass="com.github.chengyuxing.plugin.rabbit.sql.language.psi.XqlScriptTypes"
+    elementTypeClass="com.github.chengyuxing.plugin.rabbit.sql.language.psi.XqlScriptElementType"
+    tokenTypeClass="com.github.chengyuxing.plugin.rabbit.sql.language.psi.XqlScriptTokenType"
+
+    tokens=[
+        space='regexp:\s+'
+        number='regexp:\d+(\.\d*)?'
+        id='regexp:\p{Alpha}\w*'
+        string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+      ]
+}
+
+expression ::= tags_*
+
+private tags_::= (forExp|ifExp)
+
+forExp ::= for id[','id] of value SQL end
+
+ifExp ::= if value op constants SQL fi
+
+private op ::= '>' | '<' | '>=' | '<=' | '=' | '==' | '<>' | '!=' | '~' | '!~' | '@' | '~@'
+private constants ::= string | number | blank | null | true | false

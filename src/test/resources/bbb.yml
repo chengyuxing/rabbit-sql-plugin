@@ -1,0 +1,27 @@
+# 创建者： $USER ，时间： $DATE $TIME
+# 配置 'src/main/resources/xql-file-manager.yml' 可启用 rabbit-sql 插件功能。
+# 你可以使用 yaml 的所有语法功能，例如：锚。
+# 扩展功能:
+# !path --使用斜杠 / 连接所有 list 的项
+# !join --连接所有 list 的项
+# https://github.com/chengyuxing/rabbit-sql#xqlfilemanager
+
+#constants:
+#  base: &basePath pgsql
+
+files:
+#  data: !path [ *basePath, data.xql ]
+#  other: another.xql
+
+# xql文件中各sql片段解析分隔符，默认是 ';' 。
+# https://github.com/chengyuxing/rabbit-sql#options
+#delimiter: ;
+
+# UTF-8 是默认编码。
+#charset: UTF-8
+
+#named-param-prefix: ':'
+#pipes:
+#highlight-sql: false
+#check-period: 30
+#check-modified: false

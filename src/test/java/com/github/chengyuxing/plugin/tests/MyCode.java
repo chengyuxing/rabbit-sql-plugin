@@ -1,22 +1,20 @@
 package com.github.chengyuxing.plugin.tests;
 
+import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.utils.ReflectUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.common.Message;
-import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PathUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlTranslator;
 import org.junit.Test;
-import p.B.S;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-
-import static com.github.chengyuxing.sql.XQLFileManagerConfig.*;
+import java.util.List;
 
 public class MyCode {
     @Test
@@ -63,5 +61,17 @@ public class MyCode {
     @Test
     public void test35() {
         System.out.println(Files.exists(Path.of("")));
+    }
+
+    @Test
+    public void test36() {
+        XQLFileManager xqlFileManager = new XQLFileManager("bbb.yml");
+        System.out.println(xqlFileManager);
+    }
+
+    @Test
+    public void test37() {
+        var sql = new FileResource("data.sql").readString(StandardCharsets.UTF_8);
+        System.out.println(StringUtil.isTemplateKeyInForExpression(sql, "user.age"));
     }
 }
