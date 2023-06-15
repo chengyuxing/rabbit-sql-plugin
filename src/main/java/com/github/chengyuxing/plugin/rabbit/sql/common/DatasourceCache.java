@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
+import com.github.chengyuxing.common.tuple.Pair;
 import com.intellij.database.console.JdbcConsole;
 import com.intellij.database.console.session.DatabaseSessionManager;
 import com.intellij.database.dataSource.DatabaseConnectionPoint;
@@ -7,8 +8,11 @@ import com.intellij.database.dataSource.LocalDataSourceManager;
 import com.intellij.database.model.DasDataSource;
 import com.intellij.database.psi.DataSourceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Iconable;
 
+import javax.swing.*;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -106,13 +110,14 @@ public class DatasourceCache {
             return null;
         }
 
-        public List<String> getConfiguredDatabases() {
-            return DataSourceManager.getManagers(project).stream()
+        public Map<String, Icon> getConfiguredDatabases() {
+            Map<String, Icon> dsInfo = new LinkedHashMap<>();
+            DataSourceManager.getManagers(project).stream()
                     .filter(dsm -> dsm instanceof LocalDataSourceManager)
                     .flatMap(dsm -> dsm.getDataSources().stream())
                     .filter(ds -> ds.getConnectionConfig() != null)
-                    .map(DasDataSource::getName)
-                    .collect(Collectors.toList());
+                    .forEach(ds -> dsInfo.put(ds.getName(), ds.getIcon(Iconable.ICON_FLAG_VISIBILITY)));
+            return dsInfo;
         }
     }
 }

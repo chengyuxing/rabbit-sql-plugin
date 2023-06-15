@@ -5,6 +5,7 @@ import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceCache;
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.components.IconListCellRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ParametersForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
@@ -69,7 +70,9 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         var panel = new JPanel();
         datasourceList.addItem("<Configured database>");
         if (datasourceResource != null) {
-            datasourceResource.getConfiguredDatabases().forEach(datasourceList::addItem);
+            var dsInfo = datasourceResource.getConfiguredDatabases();
+            datasourceList.setRenderer(new IconListCellRenderer(dsInfo));
+            dsInfo.forEach((k, v) -> datasourceList.addItem(k));
             datasourceList.setSwingPopup(false);
             panel.add(datasourceList);
         }
