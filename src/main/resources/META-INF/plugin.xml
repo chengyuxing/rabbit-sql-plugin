@@ -48,6 +48,10 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.0.0</h3>
+            <ul>
+                <li>Support IDEA IU 2022.2.5+</li>
+            </ul>
             <h3>1.14</h3>
             <ul>
                 <li>Sql language injections support baki v7.1.20+</li>

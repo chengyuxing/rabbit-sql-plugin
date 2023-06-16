@@ -39,29 +39,31 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
             return ResolveResult.EMPTY_ARRAY;
         }
         try {
-            Project project = myElement.getProject();
+            if (myElement.isValid()) {
+                Project project = myElement.getProject();
 
-            if (resource == null) return ResolveResult.EMPTY_ARRAY;
+                if (resource == null) return ResolveResult.EMPTY_ARRAY;
 
-            var allXqlFiles = resource.getXqlFileManager().getFiles();
-            if (allXqlFiles.containsKey(alias)) {
-                var xqlFilePath = allXqlFiles.get(alias);
-                var xqlPath = Path.of(URI.create(xqlFilePath));
-                var vf = VirtualFileManager.getInstance().findFileByNioPath(xqlPath);
-                if (vf == null) return ResolveResult.EMPTY_ARRAY;
-                var xqlFile = PsiManager.getInstance(project).findFile(vf);
-                if (xqlFile == null) return ResolveResult.EMPTY_ARRAY;
-                AtomicReference<PsiElement> elem = new AtomicReference<>(null);
-                xqlFile.acceptChildren(new PsiElementVisitor() {
-                    @Override
-                    public void visitComment(@NotNull PsiComment comment) {
-                        if (comment.getText().matches("/\\*\\s*\\[\\s*(" + name + ")\\s*]\\s*\\*/")) {
-                            elem.set(comment);
+                var allXqlFiles = resource.getXqlFileManager().getFiles();
+                if (allXqlFiles.containsKey(alias)) {
+                    var xqlFilePath = allXqlFiles.get(alias);
+                    var xqlPath = Path.of(URI.create(xqlFilePath));
+                    var vf = VirtualFileManager.getInstance().findFileByNioPath(xqlPath);
+                    if (vf == null) return ResolveResult.EMPTY_ARRAY;
+                    var xqlFile = PsiManager.getInstance(project).findFile(vf);
+                    if (xqlFile == null) return ResolveResult.EMPTY_ARRAY;
+                    AtomicReference<PsiElement> elem = new AtomicReference<>(null);
+                    xqlFile.acceptChildren(new PsiElementVisitor() {
+                        @Override
+                        public void visitComment(@NotNull PsiComment comment) {
+                            if (comment.getText().matches("/\\*\\s*\\[\\s*(" + name + ")\\s*]\\s*\\*/")) {
+                                elem.set(comment);
+                            }
                         }
+                    });
+                    if (elem.get() != null) {
+                        return new ResolveResult[]{new PsiElementResolveResult(elem.get())};
                     }
-                });
-                if (elem.get() != null) {
-                    return new ResolveResult[]{new PsiElementResolveResult(elem.get())};
                 }
             }
         } catch (Exception e) {

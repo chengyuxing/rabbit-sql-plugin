@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "1.14"
+version = "2.0.0"
 
 repositories {
     mavenLocal()
@@ -25,7 +25,7 @@ dependencies {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2022.1.4")
+    version.set("2022.2.5")
     type.set("IU") // Target IDE Platform
 
     plugins.set(listOf("com.intellij.database", "com.intellij.java", "org.intellij.intelliLang"))
@@ -36,12 +36,12 @@ sourceSets["main"].java.srcDirs("src/main/gen")
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
     }
 
     patchPluginXml {
-        sinceBuild.set("221")
+        sinceBuild.set("222")
         untilBuild.set("231.*")
     }
 
