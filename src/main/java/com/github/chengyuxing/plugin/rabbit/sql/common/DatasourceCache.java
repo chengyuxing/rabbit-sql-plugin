@@ -1,11 +1,9 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
-import com.github.chengyuxing.common.tuple.Pair;
 import com.intellij.database.console.JdbcConsole;
 import com.intellij.database.console.session.DatabaseSessionManager;
 import com.intellij.database.dataSource.DatabaseConnectionPoint;
 import com.intellij.database.dataSource.LocalDataSourceManager;
-import com.intellij.database.model.DasDataSource;
 import com.intellij.database.psi.DataSourceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
@@ -13,10 +11,8 @@ import com.intellij.openapi.util.Iconable;
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class DatasourceCache {
     private static volatile DatasourceCache instance;

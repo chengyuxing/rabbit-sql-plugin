@@ -72,6 +72,6 @@ public class MyCode {
     @Test
     public void test37() {
         var sql = new FileResource("data.sql").readString(StandardCharsets.UTF_8);
-        System.out.println(StringUtil.isTemplateKeyInForExpression(sql, "user.age"));
+        System.out.println(StringUtil.isTemplateKeyInForExpression(sql, "user.name"));
     }
 }

@@ -119,16 +119,16 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                 // named parameter sql
                 // select ... from tb where id = :id and ${temp}
                 var finalSql = xqlFileManager.get(sqlName, data.getItem1(), false);
-                var idx = datasourceList.getSelectedIndex();
                 // generate raw sql.
                 var args = parseArgs2Raw(data.getItem1());
                 var rawSql = xqlFileManager.getSqlTranslator()
                         .generateSql(finalSql, args, false)
                         .getItem1();
                 // execute sql
+                var idx = datasourceList.getSelectedIndex();
                 if (datasourceResource != null && idx > 0) {
-                    var name = datasourceList.getItemAt(idx);
-                    var console = datasourceResource.getConsole(name);
+                    var db = datasourceList.getItemAt(idx);
+                    var console = datasourceResource.getConsole(db);
                     if (console != null) {
                         var request = new ExecuteRequest(console, rawSql, DataRequest.newConstraints(), null);
                         console.getMessageBus().getDataProducer().processRequest(request);

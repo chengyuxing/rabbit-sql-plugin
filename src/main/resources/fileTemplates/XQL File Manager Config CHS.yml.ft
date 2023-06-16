@@ -9,7 +9,7 @@
 #constants:
 #  base: &basePath pgsql
 
-files:
+files:#[[$END$]]#
 #  data: !path [ *basePath, data.xql ]
 #  other: another.xql
 
