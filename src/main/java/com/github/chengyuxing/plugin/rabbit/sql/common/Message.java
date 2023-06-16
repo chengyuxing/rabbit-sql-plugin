@@ -57,8 +57,4 @@ public class Message {
         result = 31 * result + getType().hashCode();
         return result;
     }
-
-    public enum TYPE {
-        ERROR, INFO, WARNING
-    }
 }
