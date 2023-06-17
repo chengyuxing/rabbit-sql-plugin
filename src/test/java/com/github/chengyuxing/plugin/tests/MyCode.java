@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.tests;
 
+import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PathUtil;
@@ -73,5 +74,13 @@ public class MyCode {
     public void test37() {
         var sql = new FileResource("data.sql").readString(StandardCharsets.UTF_8);
         System.out.println(StringUtil.isTemplateKeyInForExpression(sql, "user.name"));
+    }
+
+    @Test
+    public void test38() throws IOException {
+        var a = JSON.std.anyFrom("[{\"name\":\"cyx\"},{\"name\":\"jackson\"},{\"name\":\"ikun\"}]");
+        var b = JSON.std.anyFrom("{\"id\":1}");
+        System.out.println(a);
+        System.out.println(b);
     }
 }

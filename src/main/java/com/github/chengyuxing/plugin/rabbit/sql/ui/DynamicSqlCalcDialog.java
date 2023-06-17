@@ -1,7 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
+import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.script.Comparators;
-import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceCache;
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,7 +94,10 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             if (v == Comparators.ValueType.BLANK) {
                 cache.put(k, "");
             } else if (v instanceof Collection || v instanceof Map) {
-                cache.put(k, ReflectUtil.obj2Json(v));
+                try {
+                    cache.put(k, JSON.std.asString(v));
+                } catch (IOException ignore) {
+                }
             } else {
                 cache.put(k, v.toString());
             }
