@@ -8,7 +8,6 @@
 语言: [English](README.md) | 简体中文
 
 - 支持识别 xql（`.xql`） 文件类型；
-- 支持动态sql表达式脚本语法高亮；
 - 支持动态sql表达式脚本 live templates（例如：`xql:if`）；
 - 支持通过sql名字快速查看sql语句（例如：`&my.users`）；
 - `Baki` 接口支持注入sql语言（例如：`.query（"select ..."）`）；

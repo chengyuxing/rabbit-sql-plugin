@@ -8,7 +8,6 @@
 Language: English | [简体中文](README.chs.md)
 
 - Support the identification of xql(`.xql`) file type.
-- Support dynamic sql expression script syntax highlight.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
 - Support quick look sql definition by name(e.g: `&my.users`).
 - `Baki` interface Support inject SQL language(e.g: `.query("select ...")`).
