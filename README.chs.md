@@ -7,6 +7,8 @@
 
 语言: [English](README.md) | 简体中文
 
+IDEA 旗舰版最低支持 **2022.2.*** 。
+
 - 支持识别 xql（`.xql`） 文件类型；
 - 支持动态sql表达式脚本 live templates（例如：`xql:if`）；
 - 支持通过sql名字快速查看sql语句（例如：`&my.users`）；

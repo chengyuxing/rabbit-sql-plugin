@@ -7,6 +7,8 @@
 
 Language: English | [简体中文](README.chs.md)
 
+IDEA IU **2022.2.*** is required.
+
 - Support the identification of xql(`.xql`) file type.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
 - Support quick look sql definition by name(e.g: `&my.users`).
