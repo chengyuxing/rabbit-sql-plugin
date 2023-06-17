@@ -18,7 +18,7 @@ IDEA 旗舰版版本兼容 2022.2.* - 2023.1.* 。
 - 鼠标点击sql名支持测试动态sql.(macOS:<kbd>Option</kbd> + <kbd>Enter</kbd> , Windows: <kbd>Alt</kbd> + <kbd>Enter</kbd>) > <kbd>Test dynamic sql</kbd> )；
 - java文件中字符串字面量以 `&` 开头支持sql名自动完成提示建议；
 - 在 `/src/main/resources` 目录下创建文件 `xql-file-manager.yml` 并配置xql文件可以开启支持以上全部功能；
-- 工具栏菜单: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd> | <kbd>XQL File Manager CHS</kbd>。
+- **工具栏菜单**: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd> | <kbd>XQL File Manager CHS</kbd>。
 
 ## 安装
 
@@ -32,8 +32,9 @@ IDEA 旗舰版版本兼容 2022.2.* - 2023.1.* 。
 1. **rabbit-sql 7.1.12+** 或 **rabbit-sql-spring-boot-starter 2.2.14+**；
 2. 在源文件根目录: `.../src/main/resources/` 下创建 `xql-file-manager.yml`；
 3. 为属性: `files` 配置你的xql文件；
-4. 配置 [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
-5. 配置 [BakiDao#setXqlFileManager](https://github.com/chengyuxing/rabbit-sql#bakidao);
+4. 每当修改了 `xql` 文件或 `xql-file-manager.yml` 时，按 <kbd>Ctrl</kbd> + <kbd>s</kbd> 来触发更新缓存；
+5. 配置 [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
+6. 配置 [BakiDao#setXqlFileManager](https://github.com/chengyuxing/rabbit-sql#bakidao);
 
 ### Springboot 支持:
 
@@ -48,8 +49,6 @@ IDEA 旗舰版版本兼容 2022.2.* - 2023.1.* 。
 [badge:version]:https://img.shields.io/jetbrains/plugin/v/21403
 [badge:downloads]:https://img.shields.io/jetbrains/plugin/d/21403
 [badge:license]:https://img.shields.io/github/license/chengyuxing/rabbit-sql-plugin
-
-
 
 [homepage]:https://plugins.jetbrains.com/plugin/21403-rabbit-sql
 [versions]:https://plugins.jetbrains.com/plugin/21403-rabbit-sql/versions
