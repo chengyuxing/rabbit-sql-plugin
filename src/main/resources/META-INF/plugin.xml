@@ -21,18 +21,17 @@
     <p>Easily to use <a href="https://github.com/chengyuxing/rabbit-sql">rabbit-sql</a> and <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQL</a> file.</p>
     <h2>Features</h2>
     <ul>
-        <li>Support the identification of xql(.xql) file type.</li>
-        <li>Support dynamic sql expression script syntax highlight.</li>
+        <li>Support the identification of xql(`.xql`) file type.</li>
         <li>Support dynamic sql expression script live templates(e.g: <code>xql:if</code>).</li>
-        <li>Support quick look sql definition by name(e.g: <code>&my.users</code>).</li>
+        <li>Support intention action <kbd>Test Dynamic sql</kbd> and <kbd>Copy sql definition</kbd> by sql name(e.g: <code>&my.users</code>).</li>
+        <li>Support quick look sql definition by sql name(e.g: <code>&my.users</code>).</li>
         <li>Baki interface Support inject SQL language(e.g: <code>.query("select ...")</code>).</li>
         <li>Support java and xql file navigate each other.</li>
         <li>Support sql name suggestions auto complete in java string literal where start with <code>"&"</code>.</li>
         <li>Create <code>xql-file-manager.yml</code> in <code>/src/main/resources</code> and register xql file to enable some features above.</li>
-        <li>Toolbar menu: <strong>File | New | [Xql File | Xql File Manager Config]</strong></li>
+        <li>Toolbar menu: <kbd>File</kbd> &gt; <kbd>New</kbd> &gt; <kbd>Xql File</kbd> | <kbd>Xql File Manager</kbd> | <kbd>Xql File Manager CHS</kbd></li>
     </ul>
     <h2>Getting Started</h2>
-    <p>For working correctly in your project, some steps are required:</p>
     <ol>
         <li><strong>rabbit-sql 7.1.12+</strong> or <strong>rabbit-sql-spring-boot-starter 2.2.14+</strong>;</li>
         <li>Create <code>xql-file-manager.yml</code> in source root: <code>.../src/main/resources/</code>;</li>
@@ -41,7 +40,7 @@
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#bakidao">BakiDao#setXqlFileManager</a>;</li>
     </ol>
     <h3>Springboot support:</h3>
-    <p>Just <strong>1,2,3</strong> steps are required.</p>
+    <p>Just <strong>1, 2, 3</strong> steps are required.</p>
     <p>Get more information from <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> homepage
     and <a href="https://github.com/chengyuxing/rabbit-sql-spring-boot-starter">Springboot support document</a>.</p>
   ]]></description>
