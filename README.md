@@ -23,13 +23,9 @@ IDEA IU 2022.2.* - 2023.1.* is required.
 ## Installation
 
 - Installing from IDEA plugin marketplace:
-
   - <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search and find <b>"rabbit sql"</b></kbd> > <kbd>Install Plugin</kbd>.
-
 - Installing manually: 
-
   - Download from [plugin repository][versions] ;
-
   - <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd> > choose installation package. (no need to unzip)
 
 ## Getting Started
