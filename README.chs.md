@@ -20,6 +20,13 @@ IDEA 旗舰版版本兼容 2022.2.* - 2023.1.* 。
 - 在 `/src/main/resources` 目录下创建文件 `xql-file-manager.yml` 并配置xql文件可以开启支持以上全部功能；
 - 工具栏菜单: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd> | <kbd>XQL File Manager CHS</kbd>。
 
+## 安装
+
+- 通过IDEA插件商店进行安装：
+  - <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search and find <b>"rabbit sql"</b></kbd> > <kbd>Install Plugin</kbd>；
+- 通过插件[资源库][versions]手动下载安装：
+  - <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd> > 选择插件安装包（不需要解压）。
+
 ## 开始使用
 
 1. **rabbit-sql 7.1.12+** 或 **rabbit-sql-spring-boot-starter 2.2.14+**；

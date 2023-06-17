@@ -20,6 +20,18 @@ IDEA IU 2022.2.* - 2023.1.* is required.
 - Create `xql-file-manager.yml` in `/src/main/resources` and register xql file to enable some features above.
 - ToolBar menu: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd> | <kbd>XQL File Manager CHS</kbd>
 
+## Installation
+
+- Installing from IDEA plugin marketplace:
+
+  - <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search and find <b>"rabbit sql"</b></kbd> > <kbd>Install Plugin</kbd>.
+
+- Installing manually: 
+
+  - Download from [plugin repository][versions] ;
+
+  - <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd> > choose installation package. (no need to unzip)
+
 ## Getting Started
 
 1. **Rabbit-sql 7.1.12+** or **rabbit-sql-spring-boot-starter 2.2.14+**;
