@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class XqlContext extends TemplateContextType {
     protected XqlContext() {
-        super("Rabbit SQL(.xql)");
+        super("SQL", "Rabbit SQL(.xql)");
     }
 
     @Override
