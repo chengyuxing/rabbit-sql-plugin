@@ -1,7 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.github.chengyuxing.sql.XQLFileManager;
-import com.github.chengyuxing.sql.XQLFileManagerConfig;
 
 import java.nio.file.Path;
 
