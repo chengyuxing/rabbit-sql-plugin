@@ -4,3 +4,4 @@
 * e.g: "xql:new" will be create a sql fragment.
 */
 
+#[[$END$]]#

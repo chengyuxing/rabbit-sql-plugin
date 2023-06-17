@@ -36,7 +36,7 @@
     <ol>
         <li><strong>rabbit-sql 7.1.12+</strong> or <strong>rabbit-sql-spring-boot-starter 2.2.14+</strong>;</li>
         <li>Create <code>xql-file-manager.yml</code> in source root: <code>.../src/main/resources/</code>;</li>
-        <li>Register your xql files on property: <code>filenames</code> or <code>files</code>;</li>
+        <li>Register your xql files on property: <code>files</code>;</li>
         <li>Configure your own <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#bakidao">BakiDao#setXqlFileManager</a>;</li>
     </ol>
@@ -48,6 +48,28 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.0.0</h3>
+            <ul>
+                <li>Support IDEA IU 2022.2.5+</li>
+            </ul>
+            <h3>1.14</h3>
+            <ul>
+                <li>Sql language injections support baki v7.1.20+</li>
+                <li><strong>Test dynamic sql</strong> support execute dynamic sql by choose configured database.</li>
+                <li><strong>Test dynamic sql</strong> support display query result.</li>
+                <li>Some bugs fixed and updates.</li>
+            </ul>
+            <h3>1.13</h3>
+            <ul>
+                <li>Support [<strong>Test dynamic sql</strong>] action at sql name.(e.g: <code>&my.query</code>)</li>
+                <li>Fixed plugin not working on trust a new project.</li>
+                <li>Some bugs fixed.</li>
+            </ul>
+            <h3>1.12</h3>
+            <ul>
+                <li>Optimized java and xql file update event.</li>
+                <li>Some bugs fixed.</li>
+            </ul>
             <h3>1.11</h3>
             <ul>
                 <li>Add support for <code>xql-file-manager.yml</code></li>
@@ -126,6 +148,8 @@
     <depends>org.intellij.intelliLang</depends>
 
     <projectListeners>
+        <listener class="com.github.chengyuxing.plugin.rabbit.sql.ProjectReadyListener"
+                  topic="com.intellij.openapi.project.DumbService$DumbModeListener"/>
         <listener class="com.github.chengyuxing.plugin.rabbit.sql.XqlFileChangeListener"
                   topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
         <listener class="com.github.chengyuxing.plugin.rabbit.sql.XqlConfigLifecycleListener"
@@ -140,45 +164,46 @@
                   fieldName="INSTANCE"
                   language="SQL"
                   extensions="xql"/>
-        <annotator language="SQL" implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlFileAnnotator"/>
+        <annotator language="SQL"
+                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlFileAnnotator"/>
         <annotator language="JAVA"
-                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlNameAnnotator"/>
-        <intentionAction>
-            <language>JAVA</language>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.action.CopySqlDefinition</className>
+                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameAnnotator"/>
+        <!--Copy sql definition-->
+        <intentionAction id="CopySqlDefinition">
+            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinition</className>
+        </intentionAction>
+        <!--Test dynamic sql-->
+        <intentionAction id="TestDynamicSql">
+            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialog</className>
         </intentionAction>
         <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.action.GotoSqlDefinition"/>
+                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoSqlDefinition"/>
 
         <codeInsight.lineMarkerProvider language="SQL"
-                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.action.GotoJavaCallable"/>
+                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoJavaCallable"/>
 
         <psi.referenceContributor language="JAVA"
-                                  implementation="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlNameReferenceContributor"/>
+                                  implementation="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameReferenceContributor"/>
 
         <completion.confidence language="JAVA" order="before javaSkipAutopopupInStrings"
-                               implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlNameCompletionConfidence"/>
+                               implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameCompletionConfidence"/>
 
         <lang.documentationProvider language="JAVA"
-                                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlQuickDoc"/>
-
-        <iconProvider implementation="com.github.chengyuxing.plugin.rabbit.sql.psi.XqlFileManagerIconProvider"/>
-    </extensions>
-
-    <extensions defaultExtensionNs="com.intellij">
-        <postStartupActivity implementation="com.github.chengyuxing.plugin.rabbit.sql.InitXqlConfigOnStartup"/>
+                                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlQuickDoc"/>
+        <iconProvider implementation="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlFileManagerIconProvider"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
         <defaultLiveTemplates file="xql-live-templates.xml"/>
-        <liveTemplateContext contextId="SQL" implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlContext"/>
+        <liveTemplateContext implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlContext"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.intellij.intelliLang">
-        <injectionConfig config="rabbit-sql-injections.xml"/>
+        <injectionConfig id="sqlInBaki" config="rabbit-sql-injections.xml"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <notificationGroup displayType="BALLOON" id="Rabbit-SQL Notification Group"/>
+        <notificationGroup toolWindowId="Rabbit-SQL Notification" displayType="BALLOON"
+                           id="Rabbit-SQL Notification Group"/>
     </extensions>
 </idea-plugin>

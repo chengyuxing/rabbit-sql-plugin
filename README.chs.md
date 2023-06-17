@@ -19,7 +19,7 @@
 
 1. **rabbit-sql 7.1.12+** 或 **rabbit-sql-spring-boot-starter 2.2.14+**；
 2. 在源文件根目录: `.../src/main/resources/` 下创建 `xql-file-manager.yml`；
-3. 为属性: `filenames` or `files` 配置你的xql文件；
+3. 为属性: `files` 配置你的xql文件；
 4. 配置 [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
 5. 配置 [BakiDao#setXqlFileManager](https://github.com/chengyuxing/rabbit-sql#bakidao);
 

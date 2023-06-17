@@ -1,22 +1,21 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
-import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.PathUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
-import com.github.chengyuxing.sql.exceptions.DuplicateException;
 import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -24,8 +23,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
-import java.util.stream.Stream;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil.getModuleBaseDir;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil.getModuleBaseDirUnchecked;
@@ -33,7 +32,6 @@ import static com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil.getModuleBas
 public class ResourceCache {
     private static final Logger log = Logger.getInstance(ResourceCache.class);
     private static volatile ResourceCache instance;
-
     /**
      * key: module dir, value: resource which be owned by project
      */
@@ -61,11 +59,10 @@ public class ResourceCache {
         }
         if (key == null) return;
         if (cache.containsKey(key)) {
-            var resource = cache.get(key);
+            var resource = cache.remove(key);
             resource.xqlFileManager.clearFiles();
-            resource.xqlFileManager.clearSqlResources();
-            resource.javas.clear();
-            cache.remove(key);
+            resource.xqlFileManager.clearResources();
+            resource.stopListener();
         }
     }
 
@@ -75,124 +72,123 @@ public class ResourceCache {
         return cache.get(key);
     }
 
-    public void initXqlFileManager(Project project) {
-        // e.g
-        // file:///Users/chengyuxing/IdeaProjects/sbp-test1/src/test/java
-        // file:///Users/chengyuxing/IdeaProjects/sbp-test1/src/main/resources
-        // file:///Users/chengyuxing/IdeaProjects/sbp-test1/src/main/java
-        Stream.of(ProjectRootManager.getInstance(project).getContentSourceRoots()).forEach(vf -> {
-            var xqlFileManager = vf.toNioPath().resolve(Constants.CONFIG_NAME);
-            if (XqlUtil.xqlFileManagerExists(xqlFileManager)) {
-                log.info("project opened: " + xqlFileManager + ", found xql config, init!");
-                ResourceCache resourceCache = ResourceCache.getInstance();
-                resourceCache.initJavas(xqlFileManager);
-                resourceCache.initXqlFileManager(xqlFileManager, (success, msg) -> {
-                    if (success) {
-                        Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", "XQL file Manager initialized!", NotificationType.INFORMATION), project);
-                    } else {
-                        Notifications.Bus.notify(new Notification("Rabbit-SQL Notification Group", "XQL file manager", msg, NotificationType.WARNING), project);
-                    }
-                });
-            }
-        });
+    public Resource getResource(Project project, VirtualFile virtualFile) {
+        var key = PsiUtil.getModuleDir(project, virtualFile);
+        if (key == null) return null;
+        return cache.get(key);
     }
 
-    public void initXqlFileManager(Path xqlFileManagerLocation, BiConsumer<Boolean, String> reloaded) {
-        try {
-            var baseDir = getModuleBaseDir(xqlFileManagerLocation);
-            if (baseDir != null) {
-                // ...src/main/resources
-                var resourceRoot = xqlFileManagerLocation.getParent();
-
-                if (!cache.containsKey(baseDir)) {
-                    cache.put(baseDir, new Resource());
-                }
-
-                var config = new XQLFileManagerConfig(xqlFileManagerLocation.toUri().toString());
-                var xqlFileManager = cache.get(baseDir).getXqlFileManager();
-                config.copyStateTo(xqlFileManager);
-
-                Map<String, String> files = new HashMap<>();
-
-                xqlFileManager.allFiles().forEach((k, v) -> {
-                    var path = v.trim();
-                    if (!path.equals("")) {
-                        var abPath = resourceRoot.resolve(path);
-                        if (Files.exists(abPath)) {
-                            files.put(k, abPath.toUri().toString());
-                        } else {
-                            reloaded.accept(false, path + " not exists.");
-                        }
-                    }
-                });
-                xqlFileManager.clearSqlResources();
-                xqlFileManager.clearFiles();
-                xqlFileManager.setFiles(files);
-                xqlFileManager.init();
-                reloaded.accept(true, null);
-            }
-        } catch (DuplicateException e) {
-            reloaded.accept(false, "Warning: " + e.getMessage());
-            log.warn(e);
-        } catch (UncheckedIOException e) {
-            log.warn("xql file removed!");
-        } catch (YamlDeserializeException e) {
-            reloaded.accept(false, "xql-file-manager.yml config content invalid.");
-            log.warn(e);
-        } catch (Exception e) {
-            reloaded.accept(false, "Error:" + e.getMessage());
-            log.error(e);
-        }
+    public void removeResource(Project project, VirtualFile virtualFile) {
+        var key = PsiUtil.getModuleDir(project, virtualFile);
+        if (key == null) return;
+        if (!cache.containsKey(key)) return;
+        var res = cache.remove(key);
+        res.xqlFileManager.clearFiles();
+        res.xqlFileManager.clearResources();
+        res.stopListener();
     }
 
-    public void addJava(Path xqlFileManagerLocation, Path java) {
-        var baseDir = getModuleBaseDir(xqlFileManagerLocation);
-        if (baseDir != null && cache.containsKey(baseDir)) {
-            cache.get(baseDir).getJavas().add(java);
-        }
-    }
-
-    public void refreshJavas(Path xqlFileManagerLocation) {
-        var baseDir = getModuleBaseDir(xqlFileManagerLocation);
-        if (baseDir != null && cache.containsKey(baseDir)) {
-            cache.get(baseDir).getJavas().removeIf(p -> !Files.exists(p));
-        }
-    }
-
-    public void initJavas(Path xqlFileManagerLocation) {
-        var baseDir = getModuleBaseDir(xqlFileManagerLocation);
-        if (baseDir != null) {
-            // ...src
-            if (!cache.containsKey(baseDir)) {
-                cache.put(baseDir, new Resource());
-            }
-
-            var sourceRoot = xqlFileManagerLocation.getParent().getParent().getParent();
-            if (Files.exists(sourceRoot)) {
-                try (Stream<Path> pathStream = Files.find(sourceRoot, 15, (p, a) -> a.isRegularFile() && StringUtil.endsWiths(p.toString(), ".java", ".scala", ".kt"))) {
-                    pathStream.forEach(cache.get(baseDir).getJavas()::add);
-                } catch (IOException e) {
-                    log.error("find java error.", e);
-                }
+    public void createResource(Project project, Path xqlFileManager) {
+        var module = XqlUtil.getModuleBaseDir(xqlFileManager);
+        if (module != null) {
+            if (!cache.containsKey(module)) {
+                var resource = new Resource(project, xqlFileManager);
+                cache.put(module, resource);
+                resource.fire("do create new resource: " + xqlFileManager);
+            } else {
+                cache.get(module).fire("reload a exists resource: " + xqlFileManager);
             }
         }
     }
 
     public static class Resource {
+        private final Project project;
+        private final Path xqlFileManagerLocation;
+        private final Path module;
+        private final BehaviorSubject<String> updateListener;
+        private final Disposable disposable;
         private final XQLFileManager xqlFileManager;
-        private final Set<Path> javas;
+        private final AtomicInteger count;
 
-        public Resource() {
+        public Resource(Project project, Path xqlFileManagerLocation) {
+            this.project = project;
+            this.xqlFileManagerLocation = xqlFileManagerLocation;
+            this.module = PathUtil.backward(this.xqlFileManagerLocation, 4).getFileName();
             this.xqlFileManager = new XQLFileManager();
-            this.javas = new HashSet<>();
+            this.count = new AtomicInteger(0);
+            this.updateListener = BehaviorSubject.create();
+            this.disposable = this.updateListener
+                    .throttleLast(700, TimeUnit.MILLISECONDS)
+                    .subscribe(s -> {
+                        if (!Files.exists(xqlFileManagerLocation)) {
+                            xqlFileManager.clearResources();
+                            xqlFileManager.clearFiles();
+                        } else {
+                            var result = initXqlFileManager();
+                            showMessage(result);
+                        }
+                    });
+        }
+
+        private void showMessage(Set<Message> messages) {
+            messages.forEach(message -> {
+                if (message.getType() != NotificationType.INFORMATION) {
+                    var n = new Notification("Rabbit-SQL Notification Group", "XQL file manager", message.getText(), message.getType());
+                    Notifications.Bus.notify(n, project);
+                }
+            });
+        }
+
+        private Set<Message> initXqlFileManager() {
+            Set<Message> messages = new HashSet<>();
+            try {
+                var config = new XQLFileManagerConfig(xqlFileManagerLocation.toUri().toString());
+                config.copyStateTo(xqlFileManager);
+                Map<String, String> existsFiles = new HashMap<>();
+                // classpath filename parse to filesystem path.
+                for (Map.Entry<String, String> next : xqlFileManager.getFiles().entrySet()) {
+                    var alias = next.getKey();
+                    var v = next.getValue();
+                    var path = v.trim();
+                    if (!path.equals("")) {
+                        var resourceRoot = xqlFileManagerLocation.getParent();
+                        var abPath = resourceRoot.resolve(path);
+                        if (Files.exists(abPath)) {
+                            if (existsFiles.containsValue(v)) {
+                                messages.add(Message.warning("[" + v + "] already configured, do not again!"));
+                            } else {
+                                var uri = abPath.toUri().toString();
+                                existsFiles.put(alias, uri);
+                            }
+                        } else {
+                            messages.add(Message.warning(path + " not exists."));
+                        }
+                    }
+                }
+                xqlFileManager.clearFiles();
+                xqlFileManager.setFiles(existsFiles);
+                xqlFileManager.init();
+                messages.add(Message.info("Config of [" + module + "] initialized!"));
+            } catch (YamlDeserializeException e) {
+                messages.add(Message.warning("xql-file-manager.yml config content invalid."));
+                log.warn(e);
+            } catch (Exception e) {
+                messages.add(Message.warning("Error:" + e.getMessage()));
+                log.warn(e);
+            }
+            return messages;
+        }
+
+        public void fire(String message) {
+            updateListener.onNext(message + "(" + count.incrementAndGet() + ")");
+        }
+
+        public void stopListener() {
+            disposable.dispose();
         }
 
         public XQLFileManager getXqlFileManager() {
             return xqlFileManager;
-        }
-
-        public Set<Path> getJavas() {
-            return javas;
         }
     }
 }

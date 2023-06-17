@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.0"
+version = "2.0.0"
 
 repositories {
     mavenLocal()
@@ -12,18 +12,20 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:7.1.16") {
+    implementation("com.github.chengyuxing:rabbit-sql:7.2.0") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.yaml", "snakeyaml")
     }
     implementation("org.yaml:snakeyaml:2.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.1")
+    implementation("io.reactivex.rxjava3:rxjava:3.1.6")
     testImplementation("junit:junit:4.13.2")
 }
 
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2023.1")
+    version.set("2022.2.5")
     type.set("IU") // Target IDE Platform
 
     plugins.set(listOf("com.intellij.database", "com.intellij.java", "org.intellij.intelliLang"))
@@ -39,7 +41,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("231")
+        sinceBuild.set("222")
         untilBuild.set("231.*")
     }
 

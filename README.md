@@ -19,7 +19,7 @@ Language: English | [简体中文](README.chs.md)
 
 1. **Rabbit-sql 7.1.12+** or **rabbit-sql-spring-boot-starter 2.2.14+**;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
-3. Register your xql files on property: `filenames` or `files`;
+3. Register your xql files on property: `files`;
 4. Configure [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
 5. Configure [BakiDao#setXqlFileManager](https://github.com/chengyuxing/rabbit-sql#bakidao);
 

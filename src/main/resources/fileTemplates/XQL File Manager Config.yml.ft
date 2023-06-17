@@ -9,20 +9,16 @@
 #constants:
 #  base: &basePath pgsql
 
-#files:
+files:#[[$END$]]#
 #  data: !path [ *basePath, data.xql ]
 #  other: another.xql
 
-#filenames:
-#  - data.xql
-#  - system.xql
-
 # Multi sql fragment delimiter symbol in xql file, ';' is default.
 # https://github.com/chengyuxing/rabbit-sql#options
-delimiter: ;
+#delimiter: ;
 
 # UTF-8 is the default.
-charset: UTF-8
+#charset: UTF-8
 
 #named-param-prefix: ':'
 #pipes:

@@ -1,0 +1,51 @@
+JFDML JFormDesigner: "8.0.5.0.268" Java: "17.0.6" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+			"$layoutConstraints": "fill,insets 0,hidemode 3,align left top"
+			"$columnConstraints": "[fill]"
+			"$rowConstraints": "[233,grow,center][]"
+		} ) {
+			name: "this"
+			"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+			"minimumSize": new java.awt.Dimension( 58, 22 )
+			"preferredSize": new java.awt.Dimension( 370, 190 )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane1"
+				"border": new javax.swing.border.LineBorder( new java.awt.Color( 50, 50, 50, 255 ), 1, false )
+				add( new FormComponent( "javax.swing.JTable" ) {
+					name: "paramsTable"
+					"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+					"showHorizontalLines": false
+					"showVerticalLines": false
+					"intercellSpacing": new java.awt.Dimension( 0, 0 )
+					"fillsViewportHeight": true
+					"selectionMode": 0
+					"font": new java.awt.Font( "JetBrains Mono", 0, 14 )
+					"rowHeight": 30
+					"selectionBackground": sfield com.jformdesigner.model.FormObject NULL_VALUE
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 0,grow,height 200"
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane2"
+				"border": new javax.swing.border.LineBorder( new java.awt.Color( 50, 50, 50, 255 ), 1, false )
+				add( new FormComponent( "javax.swing.JTextPane" ) {
+					name: "sqlContent"
+					"contentType": "text/html"
+					"font": new java.awt.Font( "JetBrains Mono", 0, 13 )
+					"editable": false
+					"margin": new java.awt.Insets( 5, 5, 5, 5 )
+				} )
+			}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+				"value": "cell 0 1,aligny top,grow 100 0,hmin 200"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 400, 300 )
+		} )
+	}
+}

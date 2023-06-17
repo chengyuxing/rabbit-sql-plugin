@@ -1,10 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
-import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
-import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiFile;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,7 +11,7 @@ public class XqlUtil {
 
     public static Path getModuleBaseDir(Path xqlFileManagerLocation) {
         if (xqlFileManagerExists(xqlFileManagerLocation)) {
-            return xqlFileManagerLocation.getParent().getParent().getParent().getParent();
+            return PathUtil.backward(xqlFileManagerLocation, 4);
         }
         return null;
     }
@@ -23,7 +20,7 @@ public class XqlUtil {
         if (!xqlFileManagerLocation.endsWith(Constants.CONFIG_PATH)) {
             return null;
         }
-        return xqlFileManagerLocation.getParent().getParent().getParent().getParent();
+        return PathUtil.backward(xqlFileManagerLocation, 4);
     }
 
     public static boolean xqlFileManagerExists(Path xqlFileManagerLocation) {
@@ -35,23 +32,5 @@ public class XqlUtil {
             return false;
         }
         return true;
-    }
-
-    public static boolean isXqlFileManagerConfig(PsiFile psiFile) {
-        if (psiFile == null) return false;
-        if (!psiFile.isPhysical()) return false;
-        if (!psiFile.isValid()) return false;
-        var vf = psiFile.getVirtualFile();
-        if (vf == null) return false;
-        var path = vf.getFileSystem().getNioPath(vf);
-        if (path == null) return false;
-        var config = new XQLFileManagerConfig();
-        try {
-            config.loadYaml(new FileResource(path.toUri().toString()));
-            return true;
-        } catch (Exception e) {
-            log.warn(e);
-            return false;
-        }
     }
 }
