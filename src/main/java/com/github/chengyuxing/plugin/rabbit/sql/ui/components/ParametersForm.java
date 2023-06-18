@@ -4,9 +4,9 @@
 
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
+import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.script.Comparators;
 import com.github.chengyuxing.common.tuple.Pair;
-import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.intellij.openapi.ui.ComboBox;
@@ -52,14 +52,14 @@ public class ParametersForm extends JPanel {
                 var sv = v.toString().trim();
                 if (sv.startsWith("[") && sv.endsWith("]")) {
                     try {
-                        v = ReflectUtil.json2Obj(sv, List.class);
+                        v = JSON.std.listFrom(sv);
                     } catch (Exception e) {
                         errors.add("JSON array of parameter '" + k + "' serialized error.");
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
                 } else if (sv.startsWith("{") && sv.endsWith("}")) {
                     try {
-                        v = ReflectUtil.json2Obj(sv, Map.class);
+                        v = JSON.std.mapFrom(sv);
                     } catch (Exception e) {
                         errors.add("JSON object of parameter '" + k + "' serialized error.");
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
