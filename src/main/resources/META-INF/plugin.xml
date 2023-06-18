@@ -26,7 +26,7 @@
         <li>Support intention action <kbd>Test Dynamic sql</kbd> and <kbd>Copy sql definition</kbd> by sql name(e.g: <code>&my.users</code>).</li>
         <li>Support quick look sql definition by sql name(e.g: <code>&my.users</code>).</li>
         <li>Baki interface Support inject SQL language(e.g: <code>.query("select ...")</code>).</li>
-        <li>Support java and xql file navigate each other.</li>
+        <li>Support java and xql file references to navigate each other.</li>
         <li>Support sql name suggestions auto complete in java string literal where start with <code>"&"</code>.</li>
         <li>Create <code>xql-file-manager.yml</code> in <code>/src/main/resources</code> and register xql file to enable some features above.</li>
         <li>Toolbar menu: <kbd>File</kbd> &gt; <kbd>New</kbd> &gt; <kbd>Xql File</kbd> | <kbd>Xql File Manager</kbd> | <kbd>Xql File Manager CHS</kbd></li>
@@ -50,6 +50,7 @@
             <h3>2.0.0</h3>
             <ul>
                 <li>Support IDEA IU 2022.2.5+</li>
+                <li>Some bugs fixed and updates.</li>
             </ul>
             <h3>1.14</h3>
             <ul>
