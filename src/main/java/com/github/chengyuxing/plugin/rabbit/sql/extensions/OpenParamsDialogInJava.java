@@ -14,8 +14,8 @@ import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-public class OpenParamsDialog extends CopySqlDefinition {
-    private static final Logger log = Logger.getInstance(OpenParamsDialog.class);
+public class OpenParamsDialogInJava extends CopySqlDefinition {
+    private static final Logger log = Logger.getInstance(OpenParamsDialogInJava.class);
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {

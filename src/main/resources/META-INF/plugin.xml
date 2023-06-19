@@ -47,6 +47,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.0.1</h3>
+            <ul>
+                <li>Support intention action <strong>Test dynamic sql</strong> in xql file's sql name which configured in `xql-file-manager.yml`.</li>
+                <li>Support show sql name error highlight if sql definition not exists.</li>
+            </ul>
             <h3>2.0.0</h3>
             <ul>
                 <li>Support IDEA IU 2022.2.5+</li>
@@ -168,13 +173,17 @@
                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlFileAnnotator"/>
         <annotator language="JAVA"
                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameAnnotator"/>
-        <!--Copy sql definition-->
+        <!--Java:Copy sql definition-->
         <intentionAction id="CopySqlDefinition">
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinition</className>
         </intentionAction>
+        <!--Xql:Copy sql definition-->
+        <intentionAction>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInXql</className>
+        </intentionAction>
         <!--Test dynamic sql-->
         <intentionAction id="TestDynamicSql">
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialog</className>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInJava</className>
         </intentionAction>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoSqlDefinition"/>

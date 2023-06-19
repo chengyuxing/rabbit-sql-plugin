@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
+import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
@@ -27,7 +28,7 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
         if (sqlNameTag == null) {
             return;
         }
-        var pattern = Pattern.compile("/\\*\\s*\\[\\s*(?<name>\\S+)\\s*]\\s*\\*/");
+        var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
         var m = pattern.matcher(sqlNameTag);
         if (m.find()) {
             var sqlName = m.group("name");
