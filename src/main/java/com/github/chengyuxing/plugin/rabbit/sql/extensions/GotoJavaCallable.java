@@ -41,6 +41,9 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                 if (xqlVf == null) {
                     return;
                 }
+                if (!Objects.equals(xqlVf.getExtension(), "xql")) {
+                    return;
+                }
                 var resource = ResourceCache.getInstance().getResource(xqlFile);
                 if (resource != null) {
                     var xqlFileManager = resource.getXqlFileManager();

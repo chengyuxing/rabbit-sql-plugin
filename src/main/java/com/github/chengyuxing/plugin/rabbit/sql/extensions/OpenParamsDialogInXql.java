@@ -16,6 +16,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class OpenParamsDialogInXql extends PsiElementBaseIntentionAction {
@@ -56,6 +57,9 @@ public class OpenParamsDialogInXql extends PsiElementBaseIntentionAction {
             var sqlName = m.group("name");
             var xqlFile = element.getContainingFile();
             if (xqlFile == null || !xqlFile.isPhysical() || !xqlFile.isValid()) {
+                return false;
+            }
+            if (!Objects.equals(xqlFile.getVirtualFile().getExtension(), "xql")) {
                 return false;
             }
             var resource = ResourceCache.getInstance().getResource(xqlFile);
