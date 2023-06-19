@@ -21,7 +21,7 @@
     <p>Easily to use <a href="https://github.com/chengyuxing/rabbit-sql">rabbit-sql</a> and <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQL</a> file.</p>
     <h2>Features</h2>
     <ul>
-        <li>Support the identification of xql(`.xql`) file type.</li>
+        <li>Support the identification of xql(<code>.xql</code>) file type.</li>
         <li>Support dynamic sql expression script live templates(e.g: <code>xql:if</code>).</li>
         <li>Support intention action <kbd>Test Dynamic sql</kbd> and <kbd>Copy sql definition</kbd> by sql name(e.g: <code>&my.users</code>).</li>
         <li>Support quick look sql definition by sql name(e.g: <code>&my.users</code>).</li>
@@ -51,6 +51,7 @@
             <ul>
                 <li>Support intention action [<strong>Test dynamic sql</strong>] in xql file's sql name which configured in <code>xql-file-manager.yml</code>.</li>
                 <li>Support show sql name error highlight if sql definition not exists.</li>
+                <li>Some codes optimized.</li>
             </ul>
             <h3>2.0.0</h3>
             <ul>
