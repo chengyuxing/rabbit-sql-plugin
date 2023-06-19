@@ -166,7 +166,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             } else if (v == Comparators.ValueType.FALSE) {
                 cache.put(k, false);
             } else if (v instanceof String) {
-                cache.put(k, com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.getString(v));
+                cache.put(k, Comparators.getString(v));
             } else {
                 cache.put(k, v);
             }

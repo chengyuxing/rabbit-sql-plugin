@@ -7,7 +7,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.chengyuxing.common.script.Comparators.isQuote;
 import static com.github.chengyuxing.common.script.SimpleScriptParser.*;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.colorful;
 
@@ -100,16 +99,5 @@ public class StringUtil {
             }
         }
         return false;
-    }
-
-    public static String getString(Object value) {
-        if (value == null) {
-            return null;
-        }
-        String s = value.toString();
-        if (isQuote(s)) {
-            return s.substring(1, s.length() - 1);
-        }
-        return s;
     }
 }
