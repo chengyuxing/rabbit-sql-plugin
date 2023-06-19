@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 import static com.github.chengyuxing.common.script.SimpleScriptParser.*;
 
 public class XqlFileAnnotator implements Annotator {
-    static final String[] XQL_PREFIXES = new String[]{IF, FI, FOR, END, CHOOSE, WHEN, CASE, SWITCH, BREAK, DEFAULT};
     static final String[] XQL_KEYWORDS = new String[]{"delimiter", "filter", "of"};
 
     @Override
@@ -109,7 +108,7 @@ public class XqlFileAnnotator implements Annotator {
     }
 
     String getTag(String prefix) {
-        for (String keyword : XQL_PREFIXES) {
+        for (String keyword : TAGS) {
             if (StringUtil.startsWithIgnoreCase(prefix, keyword)) {
                 return keyword;
             }
