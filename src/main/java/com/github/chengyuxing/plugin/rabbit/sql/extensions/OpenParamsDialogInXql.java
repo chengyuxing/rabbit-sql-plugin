@@ -26,14 +26,13 @@ public class OpenParamsDialogInXql extends PsiElementBaseIntentionAction {
         var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
         var m = pattern.matcher(sqlNameTag);
         if (m.find()) {
-            var sqlName = m.group("name");
             var xqlFile = element.getContainingFile();
             var xqlVf = xqlFile.getVirtualFile();
             var resource = ResourceCache.getInstance().getResource(xqlFile);
             var xqlFileManager = resource.getXqlFileManager();
             for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
                 if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
-                    var sqlPath = file.getKey() + "." + sqlName;
+                    var sqlPath = file.getKey() + "." + m.group("name");
                     var dsResource = DatasourceCache.getInstance().getResource(project);
                     ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlPath, resource, dsResource).showAndGet());
                     return;
@@ -54,20 +53,20 @@ public class OpenParamsDialogInXql extends PsiElementBaseIntentionAction {
         var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
         var m = pattern.matcher(sqlNameTag);
         if (m.find()) {
-            var sqlName = m.group("name");
             var xqlFile = element.getContainingFile();
             if (xqlFile == null || !xqlFile.isPhysical() || !xqlFile.isValid()) {
                 return false;
             }
-            if (!Objects.equals(xqlFile.getVirtualFile().getExtension(), "xql")) {
+            var xqlVf = xqlFile.getVirtualFile();
+            if (!Objects.equals(xqlVf.getExtension(), "xql")) {
                 return false;
             }
             var resource = ResourceCache.getInstance().getResource(xqlFile);
             if (resource != null) {
                 var xqlFileManager = resource.getXqlFileManager();
                 for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
-                    if (file.getValue().equals(xqlFile.getVirtualFile().toNioPath().toUri().toString())) {
-                        var sqlPath = file.getKey() + "." + sqlName;
+                    if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
+                        var sqlPath = file.getKey() + "." + m.group("name");
                         if (resource.getXqlFileManager().contains(sqlPath)) {
                             return true;
                         }
