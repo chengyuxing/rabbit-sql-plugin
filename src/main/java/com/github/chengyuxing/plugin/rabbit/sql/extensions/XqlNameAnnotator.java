@@ -23,11 +23,18 @@ public class XqlNameAnnotator implements Annotator {
             if (sqlRef.matches(SQL_NAME_PATTERN)) {
                 String sqlName = sqlRef.substring(1);
                 var resource = ResourceCache.getInstance().getResource(element);
-                if (resource != null && resource.getXqlFileManager().contains(sqlName)) {
-                    holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-                            .range(element)
-                            .textAttributes(DefaultLanguageHighlighterColors.METADATA)
-                            .create();
+                if (resource != null) {
+                    if (resource.getXqlFileManager().contains(sqlName)) {
+                        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                                .range(element)
+                                .textAttributes(DefaultLanguageHighlighterColors.METADATA)
+                                .create();
+                    } else {
+                        holder.newSilentAnnotation(HighlightSeverity.ERROR)
+                                .tooltip("Cannot find sql definition.")
+                                .range(element)
+                                .create();
+                    }
                 }
             }
         }
