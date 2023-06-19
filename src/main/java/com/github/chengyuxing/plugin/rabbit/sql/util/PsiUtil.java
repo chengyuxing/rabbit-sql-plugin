@@ -2,15 +2,12 @@ package com.github.chengyuxing.plugin.rabbit.sql.util;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 
 import java.nio.file.Path;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 public class PsiUtil {
     public static Path getModuleDir(Project project, VirtualFile virtualFile) {
@@ -41,11 +38,5 @@ public class PsiUtil {
 
     public static boolean projectContains(Project project, VirtualFile virtualFile) {
         return ProjectRootManager.getInstance(project).getFileIndex().isInContent(virtualFile);
-    }
-
-    public static Optional<Project> getProject(VirtualFile virtualFile) {
-        return Stream.of(ProjectManager.getInstance().getOpenProjects())
-                .findFirst()
-                .filter(p -> ProjectRootManager.getInstance(p).getFileIndex().isInContent(virtualFile));
     }
 }

@@ -21,7 +21,7 @@ public class XqlConfigLifecycleListener implements ProjectManagerListener {
         for (var vf : ProjectRootManager.getInstance(project).getContentSourceRoots()) {
             var xqlFileManager = vf.toNioPath().resolve(Constants.CONFIG_NAME);
             if (XqlUtil.xqlFileManagerExists(xqlFileManager)) {
-                resourceCache.clear(xqlFileManager);
+                resourceCache.removeResource(xqlFileManager);
                 log.info("clear cache of relation: " + xqlFileManager);
             }
         }
