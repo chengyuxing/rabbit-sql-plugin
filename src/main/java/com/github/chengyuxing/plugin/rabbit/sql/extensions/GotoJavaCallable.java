@@ -59,7 +59,6 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                                             .filter(vf -> vf != null && vf.isValid())
                                             .map(vf -> PsiManager.getInstance(project).findFile(vf))
                                             .filter(Objects::nonNull)
-                                            .filter(psi -> psi.getText().contains(sqlRef))
                                             .map(psi -> {
                                                 final List<PsiElement> psiElements = new ArrayList<>();
                                                 psi.accept(new JavaRecursiveElementWalkingVisitor() {

@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -30,7 +31,7 @@ public class XqlFileAnnotator implements Annotator {
             return;
         }
         // sql name highlight
-        if (value.matches(Constants.SQL_NAME_ANNOTATION_PATTERN) || value.matches("/\\*\\s*\\{\\s*(?<part>\\S+)\\s*}\\s*\\*/")) {
+        if (value.matches(Constants.SQL_NAME_ANNOTATION_PATTERN) || value.matches(XQLFileManager.PART_PATTERN.pattern())) {
             holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                     .range(element.getTextRange())
                     .textAttributes(DefaultLanguageHighlighterColors.METADATA)
