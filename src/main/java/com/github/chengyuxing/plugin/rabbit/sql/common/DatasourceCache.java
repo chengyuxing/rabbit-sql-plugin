@@ -54,9 +54,40 @@ public class DatasourceCache {
         return cache.get(project);
     }
 
+    public record DatabaseId(String name, String id) {
+        public static DatabaseId of(String name, String id) {
+            return new DatabaseId(name, id);
+        }
+
+        public static DatabaseId empty(String placeholder) {
+            return of(placeholder, "");
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof DatabaseId that)) return false;
+
+            if (!name().equals(that.name())) return false;
+            return id().equals(that.id());
+        }
+
+        @Override
+        public int hashCode() {
+            int result = name().hashCode();
+            result = 31 * result + id().hashCode();
+            return result;
+        }
+    }
+
     public static class Resource {
         private final Project project;
-        private final Map<String, JdbcConsole> consoles;
+        private final Map<DatabaseId, JdbcConsole> consoles;
         private final Map<String, Object> paramsHistory;
 
         public Resource(Project project) {
@@ -69,15 +100,15 @@ public class DatasourceCache {
             return paramsHistory;
         }
 
-        public JdbcConsole getConsole(String name) {
-            if (name == null) return null;
-            if (consoles.containsKey(name)) {
-                var console = consoles.get(name);
+        public JdbcConsole getConsole(DatabaseId id) {
+            if (id == null) return null;
+            if (consoles.containsKey(id)) {
+                var console = consoles.get(id);
                 if (!console.isValid()) {
-                    consoles.remove(name);
+                    consoles.remove(id);
                 }
             }
-            if (!consoles.containsKey(name)) {
+            if (!consoles.containsKey(id)) {
                 DataSourceManager.getManagers(project).stream()
                         .filter(dsm -> dsm instanceof LocalDataSourceManager)
                         .findFirst()
@@ -86,33 +117,34 @@ public class DatasourceCache {
                             for (var ds : dss) {
                                 var cfg = ds.getConnectionConfig();
                                 if (cfg != null) {
-                                    var k = ds.getName();
-                                    if (name.equals(k)) {
+                                    if (id.equals(DatabaseId.of(ds.getName(), ds.getUniqueId()))) {
                                         var session = DatabaseSessionManager.openSession(project, (DatabaseConnectionPoint) cfg, "Rabbit-SQ-Plugin");
+                                        // in case execute dml in production mode
+                                        session.setAutoCommit(false);
                                         var v = JdbcConsole.newConsole(project)
                                                 .fromDataSource(ds)
                                                 .useSession(session)
                                                 .build();
-                                        consoles.put(k, v);
+                                        consoles.put(id, v);
                                         break;
                                     }
                                 }
                             }
                         });
             }
-            if (consoles.containsKey(name)) {
-                return consoles.get(name);
+            if (consoles.containsKey(id)) {
+                return consoles.get(id);
             }
             return null;
         }
 
-        public Map<String, Icon> getConfiguredDatabases() {
-            Map<String, Icon> dsInfo = new LinkedHashMap<>();
+        public Map<DatabaseId, Icon> getConfiguredDatabases() {
+            Map<DatabaseId, Icon> dsInfo = new LinkedHashMap<>();
             DataSourceManager.getManagers(project).stream()
                     .filter(dsm -> dsm instanceof LocalDataSourceManager)
                     .flatMap(dsm -> dsm.getDataSources().stream())
                     .filter(ds -> ds.getConnectionConfig() != null)
-                    .forEach(ds -> dsInfo.put(ds.getName(), ds.getIcon(Iconable.ICON_FLAG_VISIBILITY)));
+                    .forEach(ds -> dsInfo.put(DatabaseId.of(ds.getName(), ds.getUniqueId()), ds.getIcon(Iconable.ICON_FLAG_VISIBILITY)));
             return dsInfo;
         }
     }
