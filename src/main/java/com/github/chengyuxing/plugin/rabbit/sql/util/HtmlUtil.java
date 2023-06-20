@@ -29,7 +29,7 @@ public class HtmlUtil {
         try {
             Pair<String, Map<String, String>> r = SqlUtil.replaceSqlSubstr(sql);
             String rSql = r.getItem1();
-            Pair<List<String>, List<String>> x = StringUtil.regexSplit(rSql, "(?<sp>[\\s,\\[\\]()::;])", "sp");
+            Pair<List<String>, List<String>> x = StringUtil.regexSplit(rSql, "(?<sp>[\\s,\\[\\]():;])", "sp");
             List<String> maybeKeywords = x.getItem1();
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < maybeKeywords.size(); i++) {
