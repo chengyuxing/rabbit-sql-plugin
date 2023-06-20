@@ -32,7 +32,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     private final XQLFileManager xqlFileManager;
     private final DatasourceCache.Resource datasourceResource;
     private final ParametersForm parametersForm;
-    private final ComboBox<String> datasourceList;
+    private final ComboBox<DatasourceCache.DatabaseId> datasourceList;
 
     public DynamicSqlCalcDialog(String sqlName, ResourceCache.Resource resource, DatasourceCache.Resource datasourceResource) {
         super(true);
@@ -71,7 +71,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     @Override
     protected @Nullable JPanel createSouthAdditionalPanel() {
         var panel = new JPanel();
-        datasourceList.addItem("<Configured database>");
+        datasourceList.addItem(DatasourceCache.DatabaseId.empty("<Configured database>"));
         if (datasourceResource != null) {
             var dsInfo = datasourceResource.getConfiguredDatabases();
             datasourceList.setRenderer(new IconListCellRenderer(dsInfo));

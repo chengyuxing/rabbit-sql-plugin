@@ -27,7 +27,13 @@ public class OpenParamsDialogInXql extends PsiElementBaseIntentionAction {
         var m = pattern.matcher(sqlNameTag);
         if (m.find()) {
             var xqlFile = element.getContainingFile();
+            if (xqlFile == null || !xqlFile.isValid() || !xqlFile.isPhysical()) {
+                return;
+            }
             var xqlVf = xqlFile.getVirtualFile();
+            if (xqlVf == null) {
+                return;
+            }
             var resource = ResourceCache.getInstance().getResource(xqlFile);
             var xqlFileManager = resource.getXqlFileManager();
             for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
@@ -58,6 +64,9 @@ public class OpenParamsDialogInXql extends PsiElementBaseIntentionAction {
                 return false;
             }
             var xqlVf = xqlFile.getVirtualFile();
+            if (xqlVf == null) {
+                return false;
+            }
             if (!Objects.equals(xqlVf.getExtension(), "xql")) {
                 return false;
             }
@@ -74,6 +83,11 @@ public class OpenParamsDialogInXql extends PsiElementBaseIntentionAction {
                 }
             }
         }
+        return false;
+    }
+
+    @Override
+    public boolean startInWriteAction() {
         return false;
     }
 
