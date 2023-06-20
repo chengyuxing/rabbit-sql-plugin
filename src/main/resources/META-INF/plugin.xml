@@ -52,8 +52,9 @@
                 <li>Support intention action [<strong>Test dynamic sql</strong>] in xql file's sql name which configured in <code>xql-file-manager.yml</code>.</li>
                 <li>Support show sql name error highlight if sql definition not exists.</li>
                 <li>Parameters dialog '_' as parameter default placeholder.</li>
-                <li>[<code>Test dynamic sql</code>]: Configured database cache fixed bugs when same name founded.</li>
-                <li>[<code>Test dynamic sql</code>]: Set Transaction Mode to Manual as default.</li>
+                <li>[<strong>Test dynamic sql</strong>]: Configured database cache fixed bugs when same name founded.</li>
+                <li>[<strong>Test dynamic sql</strong>]: Set Transaction Mode to Manual as default.</li>
+                <li>Fixed [<strong>CopySqlDefinition</strong>] automatic trigger when hover the menu item.</li>
                 <li>Some optimized.</li>
             </ul>
             <h3>2.0.0</h3>
