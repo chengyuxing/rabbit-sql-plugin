@@ -179,14 +179,17 @@
                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameAnnotator"/>
         <!--Java:Copy sql definition-->
         <intentionAction id="CopySqlDefinition">
+            <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinition</className>
         </intentionAction>
         <!--Xql:Copy sql definition-->
         <intentionAction>
+            <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInXql</className>
         </intentionAction>
         <!--Test dynamic sql-->
         <intentionAction id="TestDynamicSql">
+            <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInJava</className>
         </intentionAction>
         <codeInsight.lineMarkerProvider language="JAVA"
