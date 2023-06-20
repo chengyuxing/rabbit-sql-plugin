@@ -7,17 +7,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.chengyuxing.common.script.Comparators.isQuote;
 import static com.github.chengyuxing.common.script.SimpleScriptParser.*;
+import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.colorful;
 
 public class StringUtil {
     public static Set<String> getTemplateParameters(SqlTranslator sqlTranslator, String str) {
         var sql = SqlUtil.removeAnnotationBlock(str);
-        String[] lines = sql.split("\n");
+        String[] lines = sql.split(NEW_LINE);
         if (lines.length > 0) {
             var cleanedSql = Stream.of(lines).filter(line -> !line.trim().startsWith("--"))
-                    .collect(Collectors.joining("\n"));
+                    .collect(Collectors.joining(NEW_LINE));
             var m = sqlTranslator.getSTR_TEMP_PATTERN().matcher(cleanedSql);
             var params = new HashSet<String>();
             while (m.find()) {
@@ -33,7 +33,7 @@ public class StringUtil {
 
     public static Map<String, Set<String>> getParamsMappingInfo(SqlTranslator sqlTranslator, String sql) {
         var p = sqlTranslator.getPARAM_PATTERN();
-        String[] lines = sql.split("\n");
+        String[] lines = sql.split(NEW_LINE);
         var keyMapping = new LinkedHashMap<String, Set<String>>();
         for (String line : lines) {
             var tl = line.trim();
@@ -58,8 +58,9 @@ public class StringUtil {
             while (m.find()) {
                 var key = m.group("name");
                 if (!keyMapping.containsKey(key)) {
-                    var parts = new HashSet<String>();
-                    keyMapping.put(key, parts);
+                    keyMapping.put(key, Collections.singleton("_"));
+                } else {
+                    keyMapping.get(key).add("_");
                 }
             }
             var tempP = sqlTranslator.getSTR_TEMP_PATTERN();
@@ -100,16 +101,5 @@ public class StringUtil {
             }
         }
         return false;
-    }
-
-    public static String getString(Object value) {
-        if (value == null) {
-            return null;
-        }
-        String s = value.toString();
-        if (isQuote(s)) {
-            return s.substring(1, s.length() - 1);
-        }
-        return s;
     }
 }

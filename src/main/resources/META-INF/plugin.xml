@@ -21,7 +21,7 @@
     <p>Easily to use <a href="https://github.com/chengyuxing/rabbit-sql">rabbit-sql</a> and <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQL</a> file.</p>
     <h2>Features</h2>
     <ul>
-        <li>Support the identification of xql(`.xql`) file type.</li>
+        <li>Support the identification of xql(<code>.xql</code>) file type.</li>
         <li>Support dynamic sql expression script live templates(e.g: <code>xql:if</code>).</li>
         <li>Support intention action <kbd>Test Dynamic sql</kbd> and <kbd>Copy sql definition</kbd> by sql name(e.g: <code>&my.users</code>).</li>
         <li>Support quick look sql definition by sql name(e.g: <code>&my.users</code>).</li>
@@ -47,6 +47,13 @@
 
     <change-notes>
         <![CDATA[
+            <h3>1.14.2</h3>
+            <ul>
+                <li>Support intention action [<strong>Test dynamic sql</strong>] in xql file's sql name which configured in <code>xql-file-manager.yml</code>.</li>
+                <li>Support show sql name error highlight if sql definition not exists.</li>
+                <li>Parameters dialog '_' as default placeholder.</li>
+                <li>Some optimized.</li>
+            </ul>
             <h3>1.14.1</h3>
             <ul>
                 <li>Some bugs fixed and updates.</li>
@@ -167,13 +174,17 @@
                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlFileAnnotator"/>
         <annotator language="JAVA"
                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameAnnotator"/>
-        <!--Copy sql definition-->
+        <!--Java:Copy sql definition-->
         <intentionAction id="CopySqlDefinition">
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinition</className>
         </intentionAction>
+        <!--Xql:Copy sql definition-->
+        <intentionAction>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInXql</className>
+        </intentionAction>
         <!--Test dynamic sql-->
         <intentionAction id="TestDynamicSql">
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialog</className>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInJava</className>
         </intentionAction>
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoSqlDefinition"/>

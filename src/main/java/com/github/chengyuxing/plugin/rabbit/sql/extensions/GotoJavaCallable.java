@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
+import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
@@ -27,7 +28,7 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
         if (sqlNameTag == null) {
             return;
         }
-        var pattern = Pattern.compile("/\\*\\s*\\[\\s*(?<name>\\S+)\\s*]\\s*\\*/");
+        var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
         var m = pattern.matcher(sqlNameTag);
         if (m.find()) {
             var sqlName = m.group("name");
@@ -38,6 +39,9 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                 }
                 var xqlVf = xqlFile.getVirtualFile();
                 if (xqlVf == null) {
+                    return;
+                }
+                if (!Objects.equals(xqlVf.getExtension(), "xql")) {
                     return;
                 }
                 var resource = ResourceCache.getInstance().getResource(xqlFile);
@@ -55,7 +59,6 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                                             .filter(vf -> vf != null && vf.isValid())
                                             .map(vf -> PsiManager.getInstance(project).findFile(vf))
                                             .filter(Objects::nonNull)
-                                            .filter(psi -> psi.getText().contains(sqlRef))
                                             .map(psi -> {
                                                 final List<PsiElement> psiElements = new ArrayList<>();
                                                 psi.accept(new JavaRecursiveElementWalkingVisitor() {

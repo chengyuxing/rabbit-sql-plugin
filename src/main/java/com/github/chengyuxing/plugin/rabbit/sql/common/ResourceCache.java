@@ -51,21 +51,6 @@ public class ResourceCache {
         return instance;
     }
 
-    public void clear(Path xqlFileManagerLocation) {
-        var key = getModuleBaseDir(xqlFileManagerLocation);
-        // perhaps config is removed or renamed to others.
-        if (key == null) {
-            key = getModuleBaseDirUnchecked(xqlFileManagerLocation);
-        }
-        if (key == null) return;
-        if (cache.containsKey(key)) {
-            var resource = cache.remove(key);
-            resource.xqlFileManager.clearFiles();
-            resource.xqlFileManager.clearResources();
-            resource.stopListener();
-        }
-    }
-
     public Resource getResource(PsiElement element) {
         var key = PsiUtil.getModuleDir(element);
         if (key == null) return null;
@@ -78,13 +63,26 @@ public class ResourceCache {
         return cache.get(key);
     }
 
+    public void removeResource(Path xqlFileManagerLocation) {
+        var key = getModuleBaseDir(xqlFileManagerLocation);
+        // perhaps config is removed or renamed to others.
+        if (key == null) {
+            key = getModuleBaseDirUnchecked(xqlFileManagerLocation);
+        }
+        if (key == null) return;
+        if (cache.containsKey(key)) {
+            var resource = cache.remove(key);
+            resource.xqlFileManager.close();
+            resource.stopListener();
+        }
+    }
+
     public void removeResource(Project project, VirtualFile virtualFile) {
         var key = PsiUtil.getModuleDir(project, virtualFile);
         if (key == null) return;
         if (!cache.containsKey(key)) return;
         var res = cache.remove(key);
-        res.xqlFileManager.clearFiles();
-        res.xqlFileManager.clearResources();
+        res.xqlFileManager.close();
         res.stopListener();
     }
 

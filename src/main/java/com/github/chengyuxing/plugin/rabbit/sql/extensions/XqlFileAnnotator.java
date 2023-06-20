@@ -1,6 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -17,7 +19,6 @@ import java.util.regex.Pattern;
 import static com.github.chengyuxing.common.script.SimpleScriptParser.*;
 
 public class XqlFileAnnotator implements Annotator {
-    static final String[] XQL_PREFIXES = new String[]{IF, FI, FOR, END, CHOOSE, WHEN, CASE, SWITCH, BREAK, DEFAULT};
     static final String[] XQL_KEYWORDS = new String[]{"delimiter", "filter", "of"};
 
     @Override
@@ -30,7 +31,7 @@ public class XqlFileAnnotator implements Annotator {
             return;
         }
         // sql name highlight
-        if (value.matches("/\\*\\s*\\[\\s*(?<name>\\S+)\\s*]\\s*\\*/") || value.matches("/\\*\\s*\\{\\s*(?<part>\\S+)\\s*}\\s*\\*/")) {
+        if (value.matches(Constants.SQL_NAME_ANNOTATION_PATTERN) || value.matches(XQLFileManager.PART_PATTERN.pattern())) {
             holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                     .range(element.getTextRange())
                     .textAttributes(DefaultLanguageHighlighterColors.METADATA)
@@ -108,7 +109,7 @@ public class XqlFileAnnotator implements Annotator {
     }
 
     String getTag(String prefix) {
-        for (String keyword : XQL_PREFIXES) {
+        for (String keyword : TAGS) {
             if (StringUtil.startsWithIgnoreCase(prefix, keyword)) {
                 return keyword;
             }
