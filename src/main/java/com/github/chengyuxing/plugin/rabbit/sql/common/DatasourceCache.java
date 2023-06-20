@@ -118,7 +118,7 @@ public class DatasourceCache {
                                 var cfg = ds.getConnectionConfig();
                                 if (cfg != null) {
                                     if (id.equals(DatabaseId.of(ds.getName(), ds.getUniqueId()))) {
-                                        var session = DatabaseSessionManager.openSession(project, (DatabaseConnectionPoint) cfg, "Rabbit-SQ-Plugin");
+                                        var session = DatabaseSessionManager.openSession(project, (DatabaseConnectionPoint) cfg, "Rabbit-SQL-Plugin");
                                         // in case execute dml in production mode
                                         session.setAutoCommit(false);
                                         var v = JdbcConsole.newConsole(project)
