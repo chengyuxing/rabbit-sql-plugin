@@ -13,7 +13,7 @@ IDEA IU 2022.2.* - 2023.1.* is required.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
 - Support quick look sql definition by name(e.g: `&my.users`).
 - `Baki` interface support inject SQL language(e.g: `.query("select ...")`).
-- Support java and xql file references navigate each other.
+- Support java and xql file references to navigate each other.
 - Support copy sql by focus in sql name.(macOS:<kbd>Option</kbd> + <kbd>Enter</kbd> , Windows: <kbd>Alt</kbd> + <kbd>Enter</kbd>) > <kbd>Copy sql definition</kbd> .
 - Support test dynamic SQL by focus in sql name.(macOS:<kbd>Option</kbd> + <kbd>Enter</kbd> , Windows: <kbd>Alt</kbd> + <kbd>Enter</kbd>) > <kbd>Test dynamic sql</kbd> .
 - Support sql name suggestions auto complete in java string literal where start with `"&"`.
