@@ -55,6 +55,11 @@ public class CopySqlDefinition extends PsiElementBaseIntentionAction {
     }
 
     @Override
+    public boolean startInWriteAction() {
+        return false;
+    }
+
+    @Override
     public @NotNull @IntentionFamilyName String getFamilyName() {
         return "Copy sql definition";
     }
