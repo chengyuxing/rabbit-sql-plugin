@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
+
 public class DynamicSqlCalcDialog extends DialogWrapper {
     private final String sqlName;
     private final String sql;
@@ -144,14 +146,14 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                 autoHeight(rawSql);
             } catch (Exception e) {
                 var errors = ExceptionUtil.getCauseMessages(e);
-                var msg = String.join("\n", errors);
+                var msg = String.join(NEW_LINE, errors);
                 parametersForm.setSqlHtml(HtmlUtil.toHtml(msg, HtmlUtil.Color.DANGER));
                 autoHeight(msg);
             }
             return;
         }
         // show error messages
-        String msg = String.join("\n", data.getItem2());
+        String msg = String.join(NEW_LINE, data.getItem2());
         parametersForm.setSqlHtml(HtmlUtil.toHtml(msg, HtmlUtil.Color.DANGER));
         autoHeight(msg);
     }
@@ -179,7 +181,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         var basicHeight = defaultSize.height;
         var maxContentHeight = 239;
         var minContentHeight = 100;
-        var lineCount = StringUtil.countOfContains(content, "\n");
+        var lineCount = StringUtil.countOfContains(content, NEW_LINE);
         var contentHeight = lineCount * 21 + 39;
         contentHeight = Math.max(minContentHeight, contentHeight);
         contentHeight = Math.min(contentHeight, maxContentHeight);

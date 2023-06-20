@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import java.util.List;
 import java.util.Map;
 
+import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 import static com.github.chengyuxing.sql.utils.SqlUtil.getAnnotationBlock;
 
 public class HtmlUtil {
@@ -65,7 +66,7 @@ public class HtmlUtil {
                 colorfulSql = colorfulSql.replace(key, colorful(subStr.get(key), Color.STRING));
             }
             // resolve single annotation
-            String[] sqlLine = colorfulSql.split("\n");
+            String[] sqlLine = colorfulSql.split(NEW_LINE);
             for (int i = 0; i < sqlLine.length; i++) {
                 String line = sqlLine[i];
                 if (line.trim().startsWith("--")) {
@@ -75,7 +76,7 @@ public class HtmlUtil {
                     sqlLine[i] = line.substring(0, idx) + colorful(line.substring(idx), Color.ANNOTATION);
                 }
             }
-            colorfulSql = String.join("\n", sqlLine);
+            colorfulSql = String.join(NEW_LINE, sqlLine);
             // resolve block annotation
             if (colorfulSql.contains("/*") && colorfulSql.contains("*/")) {
                 List<String> annotations = getAnnotationBlock(colorfulSql);
