@@ -58,8 +58,9 @@ public class StringUtil {
             while (m.find()) {
                 var key = m.group("name");
                 if (!keyMapping.containsKey(key)) {
-                    var parts = new HashSet<String>();
-                    keyMapping.put(key, parts);
+                    keyMapping.put(key, Collections.singleton("_"));
+                } else {
+                    keyMapping.get(key).add("_");
                 }
             }
             var tempP = sqlTranslator.getSTR_TEMP_PATTERN();
