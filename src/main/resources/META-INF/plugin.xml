@@ -51,7 +51,7 @@
             <ul>
                 <li>Support intention action [<strong>Test dynamic sql</strong>] in xql file's sql name which configured in <code>xql-file-manager.yml</code>.</li>
                 <li>Support show sql name error highlight if sql definition not exists.</li>
-                <li>Some codes optimized.</li>
+                <li>Some optimized.</li>
             </ul>
             <h3>2.0.0</h3>
             <ul>
