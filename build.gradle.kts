@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.0.1"
+version = "2.0.1.beta1"
 
 repositories {
     mavenLocal()
@@ -17,7 +17,6 @@ dependencies {
         exclude("org.yaml", "snakeyaml")
     }
     implementation("org.yaml:snakeyaml:2.0")
-    implementation("io.reactivex.rxjava3:rxjava:3.1.6")
     testImplementation("junit:junit:4.13.2")
 }
 
