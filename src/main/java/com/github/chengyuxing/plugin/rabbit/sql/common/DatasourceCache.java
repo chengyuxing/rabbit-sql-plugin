@@ -39,8 +39,7 @@ public class DatasourceCache {
         if (project == null) return;
         if (cache.containsKey(project)) {
             var resource = cache.remove(project);
-            resource.paramsHistory.clear();
-            resource.consoles.forEach((k, v) -> v.dispose());
+            resource.close();
         }
     }
 
@@ -85,7 +84,7 @@ public class DatasourceCache {
         }
     }
 
-    public static class Resource {
+    public static class Resource implements AutoCloseable {
         private final Project project;
         private final Map<DatabaseId, JdbcConsole> consoles;
         private final Map<String, Object> paramsHistory;
@@ -146,6 +145,12 @@ public class DatasourceCache {
                     .filter(ds -> ds.getConnectionConfig() != null)
                     .forEach(ds -> dsInfo.put(DatabaseId.of(ds.getName(), ds.getUniqueId()), ds.getIcon(Iconable.ICON_FLAG_VISIBILITY)));
             return dsInfo;
+        }
+
+        @Override
+        public void close() {
+            consoles.forEach((i, c) -> c.dispose());
+            paramsHistory.clear();
         }
     }
 }

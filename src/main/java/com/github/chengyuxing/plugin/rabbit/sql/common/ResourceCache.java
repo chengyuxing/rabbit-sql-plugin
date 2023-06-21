@@ -7,7 +7,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -67,7 +66,7 @@ public class ResourceCache {
         if (key == null) return;
         if (cache.containsKey(key)) {
             var resource = cache.remove(key);
-            resource.xqlFileManager.close();
+            resource.close();
         }
     }
 
@@ -76,7 +75,7 @@ public class ResourceCache {
         if (key == null) return;
         if (!cache.containsKey(key)) return;
         var res = cache.remove(key);
-        res.xqlFileManager.close();
+        res.close();
     }
 
     public void createResource(Project project, Path xqlFileManager) {
@@ -92,25 +91,21 @@ public class ResourceCache {
         }
     }
 
-    public static class Resource {
-        private final Project project;
+    public static class Resource implements AutoCloseable {
         private final Path xqlFileManagerLocation;
         private final Path module;
         private final XQLFileManager xqlFileManager;
+        private final NotificationExecutor notificationExecutor;
 
         public Resource(Project project, Path xqlFileManagerLocation) {
-            this.project = project;
             this.xqlFileManagerLocation = xqlFileManagerLocation;
             this.module = PathUtil.backward(this.xqlFileManagerLocation, 4).getFileName();
             this.xqlFileManager = new XQLFileManager();
-        }
-
-        private void showMessage(Set<Message> messages) {
-            messages.forEach(message -> {
-                if (message.getType() != NotificationType.INFORMATION) {
-                    NotificationUtil.showMessage(project, message.getText(), message.getType());
-                }
-            });
+            this.notificationExecutor = new NotificationExecutor(messages -> {
+                messages.forEach(m -> {
+                    NotificationUtil.showMessage(project, m.getText(), m.getType());
+                });
+            }, 1000);
         }
 
         private Set<Message> initXqlFileManager() {
@@ -128,10 +123,10 @@ public class ResourceCache {
                         var resourceRoot = xqlFileManagerLocation.getParent();
                         var abPath = resourceRoot.resolve(path);
                         if (Files.exists(abPath)) {
-                            if (existsFiles.containsValue(v)) {
-                                messages.add(Message.warning("[" + v + "] already configured, do not again!"));
+                            var uri = abPath.toUri().toString();
+                            if (existsFiles.containsValue(uri)) {
+                                messages.add(Message.warning("[" + path + "] already configured, do not again!"));
                             } else {
-                                var uri = abPath.toUri().toString();
                                 existsFiles.put(alias, uri);
                             }
                         } else {
@@ -155,12 +150,18 @@ public class ResourceCache {
 
         public void fire(String message) {
             var result = initXqlFileManager();
-            showMessage(result);
+            notificationExecutor.addMessages(result);
             log.debug(message);
         }
 
         public XQLFileManager getXqlFileManager() {
             return xqlFileManager;
+        }
+
+        @Override
+        public void close() {
+            xqlFileManager.close();
+            notificationExecutor.close();
         }
     }
 }

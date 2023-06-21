@@ -83,4 +83,8 @@ public class MyCode {
         System.out.println(a);
         System.out.println(b);
     }
+
+    public static void main(String[] args) {
+
+    }
 }
