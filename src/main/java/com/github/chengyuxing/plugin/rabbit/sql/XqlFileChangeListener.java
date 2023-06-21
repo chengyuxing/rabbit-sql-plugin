@@ -31,7 +31,10 @@ public class XqlFileChangeListener implements BulkFileListener {
                 if (vf.getName().equals(Constants.CONFIG_NAME)) {
                     // 内容修改、文件创建
                     if (projectContains(project, vf)) {
-                        resourceCache.createResource(project, vf.toNioPath());
+                        var resource = resourceCache.createResource(project, vf.toNioPath());
+                        if (resource != null) {
+                            resource.fire(true);
+                        }
                         // 文件被删除
                     } else if (!vf.isValid()) {
                         var res = vf.getParent();
@@ -60,11 +63,11 @@ public class XqlFileChangeListener implements BulkFileListener {
                             resource = resourceCache.getResource(project, vf.getParent());
                         }
                         if (resource != null)
-                            resource.fire("xql file removed or update: " + vf);
+                            resource.fire(true);
                     } else if (!vf.isValid()) {
                         ResourceCache.Resource resource = resourceCache.getResource(project, vf.getParent());
                         if (resource != null)
-                            resource.fire("xql file removed: " + vf);
+                            resource.fire(true);
                     }
                 }
             }
