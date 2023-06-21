@@ -78,17 +78,16 @@ public class ResourceCache {
         res.close();
     }
 
-    public void createResource(Project project, Path xqlFileManager) {
+    public Resource createResource(Project project, Path xqlFileManager) {
         var module = XqlUtil.getModuleBaseDir(xqlFileManager);
         if (module != null) {
             if (!cache.containsKey(module)) {
                 var resource = new Resource(project, xqlFileManager);
                 cache.put(module, resource);
-                resource.fire("do create new resource: " + xqlFileManager);
-            } else {
-                cache.get(module).fire("reload a exists resource: " + xqlFileManager);
             }
+            return cache.get(module);
         }
+        return null;
     }
 
     public static class Resource implements AutoCloseable {
@@ -101,11 +100,9 @@ public class ResourceCache {
             this.xqlFileManagerLocation = xqlFileManagerLocation;
             this.module = PathUtil.backward(this.xqlFileManagerLocation, 4).getFileName();
             this.xqlFileManager = new XQLFileManager();
-            this.notificationExecutor = new NotificationExecutor(messages -> {
-                messages.forEach(m -> {
-                    NotificationUtil.showMessage(project, m.getText(), m.getType());
-                });
-            }, 1000);
+            this.notificationExecutor = new NotificationExecutor(messages ->
+                    messages.forEach(m ->
+                            NotificationUtil.showMessage(project, m.getText(), m.getType())), 1500);
         }
 
         private Set<Message> initXqlFileManager() {
@@ -130,28 +127,33 @@ public class ResourceCache {
                                 existsFiles.put(alias, uri);
                             }
                         } else {
-                            messages.add(Message.warning(path + " not exists."));
+                            messages.add(Message.warning("[" + path + "] not exists."));
                         }
                     }
                 }
                 xqlFileManager.clearFiles();
                 xqlFileManager.setFiles(existsFiles);
                 xqlFileManager.init();
-                messages.add(Message.info("Config of [" + module + "] initialized!"));
+                messages.add(Message.info("[" + module + "] xql resources updated!"));
             } catch (YamlDeserializeException e) {
-                messages.add(Message.error("xql-file-manager.yml config content invalid."));
+                messages.add(Message.error("[" + module + "] xql-file-manager.yml config content invalid."));
                 log.warn(e);
             } catch (Exception e) {
-                messages.add(Message.error("Error:" + e.getMessage()));
+                messages.add(Message.error("[" + module + "] error:" + e.getMessage()));
                 log.warn(e);
             }
             return messages;
         }
 
-        public void fire(String message) {
-            var result = initXqlFileManager();
-            notificationExecutor.addMessages(result);
-            log.debug(message);
+        public void fire(boolean showNotification) {
+            var res = initXqlFileManager();
+            if (showNotification) {
+                notificationExecutor.addMessages(res);
+            }
+        }
+
+        public void fire() {
+            fire(false);
         }
 
         public XQLFileManager getXqlFileManager() {

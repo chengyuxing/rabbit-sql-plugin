@@ -22,7 +22,10 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
         for (var vf : ProjectRootManager.getInstance(project).getContentSourceRoots()) {
             var xqlFileManager = vf.toNioPath().resolve(Constants.CONFIG_NAME);
             if (XqlUtil.xqlFileManagerExists(xqlFileManager)) {
-                resourceCache.createResource(project, xqlFileManager);
+                var resource = resourceCache.createResource(project, xqlFileManager);
+                if (resource != null) {
+                    resource.fire();
+                }
             }
         }
     }
