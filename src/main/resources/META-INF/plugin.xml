@@ -47,6 +47,14 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.0.2</h3>
+            <ul>
+                <li>XQL file line marker search scope optimized.</li>
+                <li>XQL file line marker info text optimized.</li>
+                <li>Listener of parse xql file optimized.</li>
+                <li>Add show notifications when xql parsing.</li>
+                <li>Some optimized.</li>
+            </ul>
             <h3>2.0.1</h3>
             <ul>
                 <li>Support intention action [<strong>Test dynamic sql</strong>] in xql file's sql name which configured in <code>xql-file-manager.yml</code>.</li>
