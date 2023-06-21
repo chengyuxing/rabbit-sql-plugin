@@ -52,7 +52,7 @@
                 <li>XQL file line marker search scope optimized.</li>
                 <li>XQL file line marker info text optimized.</li>
                 <li>Listener of parse xql file optimized.</li>
-                <li>Add show notifications when xql parsing.</li>
+                <li>Add show notifications when xql updated.</li>
                 <li>Some optimized.</li>
             </ul>
             <h3>2.0.1</h3>
