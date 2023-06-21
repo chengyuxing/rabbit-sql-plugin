@@ -1,20 +1,16 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
+import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PathUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,8 +19,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil.getModuleBaseDir;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil.getModuleBaseDirUnchecked;
@@ -72,8 +66,7 @@ public class ResourceCache {
         if (key == null) return;
         if (cache.containsKey(key)) {
             var resource = cache.remove(key);
-            resource.xqlFileManager.close();
-            resource.stopListener();
+            resource.close();
         }
     }
 
@@ -82,8 +75,7 @@ public class ResourceCache {
         if (key == null) return;
         if (!cache.containsKey(key)) return;
         var res = cache.remove(key);
-        res.xqlFileManager.close();
-        res.stopListener();
+        res.close();
     }
 
     public void createResource(Project project, Path xqlFileManager) {
@@ -99,42 +91,21 @@ public class ResourceCache {
         }
     }
 
-    public static class Resource {
-        private final Project project;
+    public static class Resource implements AutoCloseable {
         private final Path xqlFileManagerLocation;
         private final Path module;
-        private final BehaviorSubject<String> updateListener;
-        private final Disposable disposable;
         private final XQLFileManager xqlFileManager;
-        private final AtomicInteger count;
+        private final NotificationExecutor notificationExecutor;
 
         public Resource(Project project, Path xqlFileManagerLocation) {
-            this.project = project;
             this.xqlFileManagerLocation = xqlFileManagerLocation;
             this.module = PathUtil.backward(this.xqlFileManagerLocation, 4).getFileName();
             this.xqlFileManager = new XQLFileManager();
-            this.count = new AtomicInteger(0);
-            this.updateListener = BehaviorSubject.create();
-            this.disposable = this.updateListener
-                    .throttleLast(700, TimeUnit.MILLISECONDS)
-                    .subscribe(s -> {
-                        if (!Files.exists(xqlFileManagerLocation)) {
-                            xqlFileManager.clearResources();
-                            xqlFileManager.clearFiles();
-                        } else {
-                            var result = initXqlFileManager();
-                            showMessage(result);
-                        }
-                    });
-        }
-
-        private void showMessage(Set<Message> messages) {
-            messages.forEach(message -> {
-                if (message.getType() != NotificationType.INFORMATION) {
-                    var n = new Notification("Rabbit-SQL Notification Group", "XQL file manager", message.getText(), message.getType());
-                    Notifications.Bus.notify(n, project);
-                }
-            });
+            this.notificationExecutor = new NotificationExecutor(messages -> {
+                messages.forEach(m -> {
+                    NotificationUtil.showMessage(project, m.getText(), m.getType());
+                });
+            }, 1000);
         }
 
         private Set<Message> initXqlFileManager() {
@@ -152,10 +123,10 @@ public class ResourceCache {
                         var resourceRoot = xqlFileManagerLocation.getParent();
                         var abPath = resourceRoot.resolve(path);
                         if (Files.exists(abPath)) {
-                            if (existsFiles.containsValue(v)) {
-                                messages.add(Message.warning("[" + v + "] already configured, do not again!"));
+                            var uri = abPath.toUri().toString();
+                            if (existsFiles.containsValue(uri)) {
+                                messages.add(Message.warning("[" + path + "] already configured, do not again!"));
                             } else {
-                                var uri = abPath.toUri().toString();
                                 existsFiles.put(alias, uri);
                             }
                         } else {
@@ -168,25 +139,29 @@ public class ResourceCache {
                 xqlFileManager.init();
                 messages.add(Message.info("Config of [" + module + "] initialized!"));
             } catch (YamlDeserializeException e) {
-                messages.add(Message.warning("xql-file-manager.yml config content invalid."));
+                messages.add(Message.error("xql-file-manager.yml config content invalid."));
                 log.warn(e);
             } catch (Exception e) {
-                messages.add(Message.warning("Error:" + e.getMessage()));
+                messages.add(Message.error("Error:" + e.getMessage()));
                 log.warn(e);
             }
             return messages;
         }
 
         public void fire(String message) {
-            updateListener.onNext(message + "(" + count.incrementAndGet() + ")");
-        }
-
-        public void stopListener() {
-            disposable.dispose();
+            var result = initXqlFileManager();
+            notificationExecutor.addMessages(result);
+            log.debug(message);
         }
 
         public XQLFileManager getXqlFileManager() {
             return xqlFileManager;
+        }
+
+        @Override
+        public void close() {
+            xqlFileManager.close();
+            notificationExecutor.close();
         }
     }
 }
