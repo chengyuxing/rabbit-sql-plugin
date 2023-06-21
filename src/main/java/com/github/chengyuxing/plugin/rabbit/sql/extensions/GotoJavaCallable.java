@@ -8,10 +8,8 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
-import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.*;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -87,28 +85,23 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                                 if (!founded.isEmpty()) {
                                     var markInfo = NavigationGutterIconBuilder.create(AllIcons.Actions.DiagramDiff)
                                             .setTargets(founded)
-                                            .setCellRenderer(new Computable<>() {
+                                            .setCellRenderer(() -> new DefaultPsiElementCellRenderer() {
                                                 @Override
-                                                public PsiElementListCellRenderer<?> compute() {
-                                                    return new DefaultPsiElementCellRenderer() {
-                                                        @Override
-                                                        protected Icon getIcon(PsiElement element) {
-                                                            return AllIcons.Nodes.Class;
-                                                        }
+                                                protected Icon getIcon(PsiElement element) {
+                                                    return AllIcons.Nodes.Class;
+                                                }
 
-                                                        @Override
-                                                        public String getContainerText(PsiElement element, String name) {
-                                                            var className = PsiUtil.getClassName(element);
-                                                            if (className != null) {
-                                                                var method = PsiUtil.findMethod(element);
-                                                                if (!method.equals("")) {
-                                                                    method = "#" + method;
-                                                                }
-                                                                return className + method;
-                                                            }
-                                                            return super.getContainerText(element, name);
+                                                @Override
+                                                public String getContainerText(PsiElement element, String name) {
+                                                    var className = PsiUtil.getClassName(element);
+                                                    if (className != null) {
+                                                        var method = PsiUtil.findMethod(element);
+                                                        if (!method.equals("")) {
+                                                            method = "#" + method;
                                                         }
-                                                    };
+                                                        return className + method;
+                                                    }
+                                                    return super.getContainerText(element, name);
                                                 }
                                             })
                                             .setPopupTitle("Choose reference of sql name \"" + sqlName + "\" (" + founded.size() + " founded)")
