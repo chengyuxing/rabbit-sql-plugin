@@ -1,8 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
-import com.github.chengyuxing.common.utils.ResourceUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
+import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
@@ -98,20 +98,13 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
 
                                                         @Override
                                                         public String getContainerText(PsiElement element, String name) {
-                                                            var psi = element.getContainingFile();
-                                                            if (psi != null) {
-                                                                var vf = psi.getVirtualFile();
-                                                                if (vf != null && Objects.equals(vf.getExtension(), "java")) {
-                                                                    var path = vf.getPath();
-                                                                    var packagePos = path.indexOf("src/main/java/");
-                                                                    if (packagePos != -1) {
-                                                                        return ResourceUtil.path2package(path.substring(packagePos + 14, path.length() - 5));
-                                                                    }
-                                                                    packagePos = path.indexOf("src/test/java/");
-                                                                    if (packagePos != -1) {
-                                                                        return ResourceUtil.path2package(path.substring(packagePos + 14, path.length() - 5));
-                                                                    }
+                                                            var className = PsiUtil.getClassName(element);
+                                                            if (className != null) {
+                                                                var method = PsiUtil.findMethod(element);
+                                                                if (!method.equals("")) {
+                                                                    method = "#" + method;
                                                                 }
+                                                                return className + method;
                                                             }
                                                             return super.getContainerText(element, name);
                                                         }
