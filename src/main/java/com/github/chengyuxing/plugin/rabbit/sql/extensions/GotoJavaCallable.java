@@ -1,18 +1,23 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
+import com.github.chengyuxing.common.utils.ResourceUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.util.DefaultPsiElementCellRenderer;
+import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.*;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -82,6 +87,37 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                                 if (!founded.isEmpty()) {
                                     var markInfo = NavigationGutterIconBuilder.create(AllIcons.Actions.DiagramDiff)
                                             .setTargets(founded)
+                                            .setCellRenderer(new Computable<>() {
+                                                @Override
+                                                public PsiElementListCellRenderer<?> compute() {
+                                                    return new DefaultPsiElementCellRenderer() {
+                                                        @Override
+                                                        protected Icon getIcon(PsiElement element) {
+                                                            return AllIcons.Nodes.Class;
+                                                        }
+
+                                                        @Override
+                                                        public String getContainerText(PsiElement element, String name) {
+                                                            var psi = element.getContainingFile();
+                                                            if (psi != null) {
+                                                                var vf = psi.getVirtualFile();
+                                                                if (vf != null && Objects.equals(vf.getExtension(), "java")) {
+                                                                    var path = vf.getPath();
+                                                                    var packagePos = path.indexOf("src/main/java/");
+                                                                    if (packagePos != -1) {
+                                                                        return ResourceUtil.path2package(path.substring(packagePos + 14, path.length() - 5));
+                                                                    }
+                                                                    packagePos = path.indexOf("src/test/java/");
+                                                                    if (packagePos != -1) {
+                                                                        return ResourceUtil.path2package(path.substring(packagePos + 14, path.length() - 5));
+                                                                    }
+                                                                }
+                                                            }
+                                                            return super.getContainerText(element, name);
+                                                        }
+                                                    };
+                                                }
+                                            })
                                             .setPopupTitle("Choose reference of sql name \"" + sqlName + "\" (" + founded.size() + " founded)")
                                             .setTooltipText("Where I am (" + founded.size() + " locations)!")
                                             .createLineMarkerInfo(xqlPsiElement);
