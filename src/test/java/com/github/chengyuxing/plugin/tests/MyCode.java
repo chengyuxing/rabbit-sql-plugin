@@ -9,13 +9,22 @@ import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlTranslator;
 import org.junit.Test;
 
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.ToolProvider;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 
 public class MyCode {
     @Test
@@ -84,7 +93,26 @@ public class MyCode {
         System.out.println(b);
     }
 
+    @Test
+    public void testLoadClass() throws ClassNotFoundException, MalformedURLException {
+        Class<?> clazz = new MyClassLoader().findClass("/Users/chengyuxing/IdeaProjects/rabbit-sql-plugin/out/production/classes/com/github/chengyuxing/plugin/rabbit/sql/extensions/XqlQuickDoc.class");
+        System.out.println(clazz);
+    }
+
     public static void main(String[] args) {
 
+    }
+
+    static class MyClassLoader extends ClassLoader {
+        @Override
+        protected Class<?> findClass(String name) {
+            var res = new FileResource("file:" + name);
+            try {
+                var bytes = res.readBytes();
+                return defineClass("com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlQuickDoc", bytes, 0, bytes.length);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
