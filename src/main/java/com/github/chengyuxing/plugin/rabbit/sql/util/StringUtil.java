@@ -28,7 +28,7 @@ public class StringUtil {
             }
             return params;
         }
-        return Collections.emptySet();
+        return Set.of();
     }
 
     public static Map<String, Set<String>> getParamsMappingInfo(SqlTranslator sqlTranslator, String sql) {
@@ -58,7 +58,7 @@ public class StringUtil {
             while (m.find()) {
                 var key = m.group("name");
                 if (!keyMapping.containsKey(key)) {
-                    keyMapping.put(key, Collections.singleton("_"));
+                    keyMapping.put(key, Set.of("_"));
                 } else {
                     keyMapping.get(key).add("_");
                 }
@@ -74,7 +74,7 @@ public class StringUtil {
                     if (!keyMapping.containsKey(key)) {
                         var temp = tempM.group(0).replace(key, "*");
                         var coloredTemp = colorful(temp.substring(0, temp.indexOf("*")), HtmlUtil.Color.ANNOTATION) + colorful("_", HtmlUtil.Color.LIGHT) + colorful(temp.substring(temp.indexOf("*") + 1), HtmlUtil.Color.ANNOTATION);
-                        keyMapping.put(key, Collections.singleton(coloredTemp));
+                        keyMapping.put(key, Set.of(coloredTemp));
                     }
                 }
             }
