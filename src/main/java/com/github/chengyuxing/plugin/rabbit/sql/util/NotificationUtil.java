@@ -12,7 +12,6 @@ public class NotificationUtil {
     }
 
     public static void showMessage(Project project, String message, NotificationType type) {
-        var notice = new Notification("Rabbit-SQL Notification Group", "XQL file manager", message, type);
-        Notifications.Bus.notify(notice, project);
+        showMessage(project, "XQL file manager", message, type);
     }
 }
