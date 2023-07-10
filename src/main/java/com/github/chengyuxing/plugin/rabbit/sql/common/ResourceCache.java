@@ -99,7 +99,12 @@ public class ResourceCache {
         public Resource(Project project, Path xqlFileManagerLocation) {
             this.xqlFileManagerLocation = xqlFileManagerLocation;
             this.module = PathUtil.backward(this.xqlFileManagerLocation, 4).getFileName();
-            this.xqlFileManager = new XQLFileManager();
+            this.xqlFileManager = new XQLFileManager() {
+                @Override
+                protected void loadPipes() {
+                    notificationExecutor.addMessage(Message.warning("[" + module + "] plugin is not support load custom pipes, but pipes worked on your project!"));
+                }
+            };
             this.notificationExecutor = new NotificationExecutor(messages ->
                     messages.forEach(m ->
                             NotificationUtil.showMessage(project, m.getText(), m.getType())), 1500);

@@ -47,6 +47,10 @@
 
     <change-notes>
         <![CDATA[
+            <h3>1.14.5</h3>
+            <ul>
+                <li>Fixed error: <code>xql-file-manager.yml</code> configure pipes property.</li>
+            </ul>
             <h3>1.14.4</h3>
             <ul>
                 <li>Update rabbit-sql version: support v7.2.6+.</li>
