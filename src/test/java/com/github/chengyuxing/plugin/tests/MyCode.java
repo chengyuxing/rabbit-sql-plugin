@@ -6,25 +6,17 @@ import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PathUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
-import com.github.chengyuxing.sql.utils.SqlTranslator;
+import com.github.chengyuxing.sql.utils.SqlGenerator;
 import org.junit.Test;
 
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.ToolProvider;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Locale;
 
 public class MyCode {
     @Test
@@ -36,7 +28,7 @@ public class MyCode {
 
     @Test
     public void test2() {
-        StringUtil.getTemplateParameters(new SqlTranslator(':'), "select ${:name} from users where ${cnd.user}")
+        StringUtil.getTemplateParameters(new SqlGenerator(':'), "select ${:name} from users where ${cnd.user}")
                 .forEach(System.out::println);
     }
 
@@ -55,7 +47,7 @@ public class MyCode {
     @Test
     public void test5() throws IOException {
         String sql = Files.readString(Path.of("/Users/chengyuxing/IdeaProjects/rabbit-sql-plugin/src/test/resources/data.sql"));
-        var keyMapping = StringUtil.getParamsMappingInfo(new SqlTranslator(':'), sql);
+        var keyMapping = StringUtil.getParamsMappingInfo(new SqlGenerator(':'), sql);
         keyMapping.forEach((k, v) -> {
             System.out.println(k + ":" + v);
         });

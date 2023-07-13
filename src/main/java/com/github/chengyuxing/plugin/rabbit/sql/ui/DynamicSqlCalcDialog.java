@@ -41,7 +41,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         this.xqlFileManager = resource.getXqlFileManager();
         this.sql = this.xqlFileManager.get(sqlName);
         this.paramsHistory = datasourceResource.getParamsHistory();
-        var paramsMapping = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.getParamsMappingInfo(this.xqlFileManager.getSqlTranslator(), sql);
+        var paramsMapping = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.getParamsMappingInfo(this.xqlFileManager.getSqlGenerator(), sql);
         this.parametersForm = new ParametersForm(paramsMapping, paramsHistory);
         this.datasourceList = new ComboBox<>();
         setTitle("Parameters");
@@ -127,7 +127,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                 var finalSql = xqlFileManager.get(sqlName, data.getItem1(), false);
                 // generate raw sql.
                 var args = parseArgs2Raw(data.getItem1());
-                var rawSql = xqlFileManager.getSqlTranslator()
+                var rawSql = xqlFileManager.getSqlGenerator()
                         .generateSql(finalSql, args, false)
                         .getItem1();
                 // execute sql

@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
-import com.github.chengyuxing.sql.utils.SqlTranslator;
+import com.github.chengyuxing.sql.utils.SqlGenerator;
 import com.github.chengyuxing.sql.utils.SqlUtil;
 
 import java.util.*;
@@ -12,13 +12,13 @@ import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.colorful;
 
 public class StringUtil {
-    public static Set<String> getTemplateParameters(SqlTranslator sqlTranslator, String str) {
+    public static Set<String> getTemplateParameters(SqlGenerator sqlGenerator, String str) {
         var sql = SqlUtil.removeAnnotationBlock(str);
         String[] lines = sql.split(NEW_LINE);
         if (lines.length > 0) {
             var cleanedSql = Stream.of(lines).filter(line -> !line.trim().startsWith("--"))
                     .collect(Collectors.joining(NEW_LINE));
-            var m = sqlTranslator.getSTR_TEMP_PATTERN().matcher(cleanedSql);
+            var m = sqlGenerator.getSTR_TEMP_PATTERN().matcher(cleanedSql);
             var params = new HashSet<String>();
             while (m.find()) {
                 var key = m.group("key");
@@ -31,8 +31,8 @@ public class StringUtil {
         return Set.of();
     }
 
-    public static Map<String, Set<String>> getParamsMappingInfo(SqlTranslator sqlTranslator, String sql) {
-        var p = sqlTranslator.getPARAM_PATTERN();
+    public static Map<String, Set<String>> getParamsMappingInfo(SqlGenerator sqlGenerator, String sql) {
+        var p = sqlGenerator.getPARAM_PATTERN();
         String[] lines = sql.split(NEW_LINE);
         var keyMapping = new LinkedHashMap<String, Set<String>>();
         for (String line : lines) {
@@ -63,7 +63,7 @@ public class StringUtil {
                     keyMapping.get(key).add("_");
                 }
             }
-            var tempP = sqlTranslator.getSTR_TEMP_PATTERN();
+            var tempP = sqlGenerator.getSTR_TEMP_PATTERN();
             var tempM = tempP.matcher(line);
             if (tempM.find()) {
                 var key = tempM.group("key");
