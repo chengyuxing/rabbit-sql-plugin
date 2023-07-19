@@ -248,7 +248,9 @@
     <actions>
         <action id="com.github.chengyuxing.plugin.rabbit.sql.extensions.ReloadConfigAction"
                 class="com.github.chengyuxing.plugin.rabbit.sql.extensions.ReloadConfigAction"
-                text="Reload XQL File Manager" description="Commit all files and reload XQL File Manager.">
+                text="Reload XQL File Manager"
+                description="Commit all files and reload XQL File Manager."
+                icon="AllIcons.Actions.ForceRefresh">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
     </actions>
