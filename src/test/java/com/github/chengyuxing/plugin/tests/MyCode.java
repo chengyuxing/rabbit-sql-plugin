@@ -5,7 +5,7 @@ import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PathUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
-import com.github.chengyuxing.sql.utils.SqlTranslator;
+import com.github.chengyuxing.sql.utils.SqlGenerator;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ public class MyCode {
 
     @Test
     public void test2() {
-        StringUtil.getTemplateParameters(new SqlTranslator(':'), "select ${:name} from users where ${cnd.user}")
+        StringUtil.getTemplateParameters(new SqlGenerator(':'), "select ${:name} from users where ${cnd.user}")
                 .forEach(System.out::println);
     }
 
@@ -45,7 +45,7 @@ public class MyCode {
     @Test
     public void test5() throws IOException {
         String sql = Files.readString(Path.of("/Users/chengyuxing/IdeaProjects/rabbit-sql-plugin/src/test/resources/data.sql"));
-        var keyMapping = StringUtil.getParamsMappingInfo(new SqlTranslator(':'), sql);
+        var keyMapping = StringUtil.getParamsMappingInfo(new SqlGenerator(':'), sql);
         keyMapping.forEach((k, v) -> {
             System.out.println(k + ":" + v);
         });
