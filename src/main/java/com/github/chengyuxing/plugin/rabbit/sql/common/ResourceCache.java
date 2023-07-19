@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil.getModuleBaseDir;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil.getModuleBaseDirUnchecked;
@@ -43,6 +44,10 @@ public class ResourceCache {
             }
         }
         return instance;
+    }
+
+    public void foreach(BiConsumer<Path, Resource> consumer) {
+        cache.forEach(consumer);
     }
 
     public Resource getResource(PsiElement element) {
