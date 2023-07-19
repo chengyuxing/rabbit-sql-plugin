@@ -33,7 +33,7 @@
     </ul>
     <h2>Getting Started</h2>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.1.12+</strong> or <strong>rabbit-sql-spring-boot-starter 2.2.14+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.3.0+</strong> or <strong>rabbit-sql-spring-boot-starter 2.4.0+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in source root: <code>.../src/main/resources/</code>;</li>
         <li>Register xql files on property: <code>files</code>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
