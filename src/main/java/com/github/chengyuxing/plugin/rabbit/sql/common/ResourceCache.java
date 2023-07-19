@@ -1,9 +1,9 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
-import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.PathUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil;
+import com.github.chengyuxing.common.script.IPipe;
+import com.github.chengyuxing.common.utils.ReflectUtil;
+import com.github.chengyuxing.common.utils.ResourceUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.*;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
@@ -92,22 +92,54 @@ public class ResourceCache {
 
     public static class Resource implements AutoCloseable {
         private final Path xqlFileManagerLocation;
+        private final Path modulePath;
         private final Path module;
-        private final XQLFileManager xqlFileManager;
         private final NotificationExecutor notificationExecutor;
+        private final XQLFileManager xqlFileManager;
 
         public Resource(Project project, Path xqlFileManagerLocation) {
             this.xqlFileManagerLocation = xqlFileManagerLocation;
-            this.module = PathUtil.backward(this.xqlFileManagerLocation, 4).getFileName();
-            this.xqlFileManager = new XQLFileManager() {
-                @Override
-                protected void loadPipes() {
-                    notificationExecutor.addMessage(Message.warning("[" + module + "] plugin is not support load custom pipes, but pipes worked on your project!"));
-                }
-            };
+            this.modulePath = PathUtil.backward(this.xqlFileManagerLocation, 4);
+            this.module = modulePath.getFileName();
             this.notificationExecutor = new NotificationExecutor(messages ->
                     messages.forEach(m ->
                             NotificationUtil.showMessage(project, m.getText(), m.getType())), 1500);
+            this.xqlFileManager = new XQLFileManager() {
+                private final Path classesPath = modulePath.resolve(Path.of("target", "classes"));
+
+                @Override
+                protected void loadPipes() {
+                    Thread currentThread = Thread.currentThread();
+                    ClassLoader originalClassLoader = currentThread.getContextClassLoader();
+                    ClassLoader pluginClassLoader = this.getClass().getClassLoader();
+                    try {
+                        currentThread.setContextClassLoader(pluginClassLoader);
+                        if (!pipes.isEmpty()) {
+                            ClassFileLoader loader = ClassFileLoader.of(pluginClassLoader, classesPath);
+                            for (Map.Entry<String, String> e : pipes.entrySet()) {
+                                var pipeName = e.getKey();
+                                var pipeClassName = e.getValue();
+                                var pipeClassPath = classesPath.resolve(ResourceUtil.package2path(pipeClassName) + ".class");
+                                if (!Files.exists(pipeClassPath)) {
+                                    notificationExecutor.addMessage(Message.warning("[" + module + "] pipe '" + pipeClassName + "' not found, maybe should re-compile project."));
+                                    continue;
+                                }
+                                try {
+                                    var pipeClass = loader.findClass(pipeClassName);
+                                    if (pipeClass == null) {
+                                        continue;
+                                    }
+                                    pipeInstances.put(pipeName, (IPipe<?>) ReflectUtil.getInstance(pipeClass));
+                                } catch (Exception ex) {
+                                    notificationExecutor.addMessage(Message.warning("[" + module + "] load pipe '" + pipeClassName + "' error: " + ex.getMessage()));
+                                }
+                            }
+                        }
+                    } finally {
+                        currentThread.setContextClassLoader(originalClassLoader);
+                    }
+                }
+            };
         }
 
         private Set<Message> initXqlFileManager() {

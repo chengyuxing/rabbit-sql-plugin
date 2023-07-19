@@ -4,13 +4,14 @@ import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PathUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -86,25 +87,14 @@ public class MyCode {
     }
 
     @Test
-    public void testLoadClass() throws ClassNotFoundException, MalformedURLException {
-        Class<?> clazz = new MyClassLoader().findClass("/Users/chengyuxing/IdeaProjects/rabbit-sql-plugin/out/production/classes/com/github/chengyuxing/plugin/rabbit/sql/extensions/XqlQuickDoc.class");
-        System.out.println(clazz);
+    public void testFile() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+        var path = Path.of("/Users/chengyuxing/IdeaProjects/sbp-test1")
+                .resolve(Path.of("target", "classes"));
+        Class<?> clazz = ClassFileLoader.of(ClassLoader.getSystemClassLoader(), path).findClass("org.example.pipes.Big");
+        System.out.println(ReflectUtil.getInstance(clazz));
     }
 
-    public static void main(String[] args) {
-
-    }
-
-    static class MyClassLoader extends ClassLoader {
-        @Override
-        protected Class<?> findClass(String name) {
-            var res = new FileResource("file:" + name);
-            try {
-                var bytes = res.readBytes();
-                return defineClass("com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlQuickDoc", bytes, 0, bytes.length);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    public static void main(String[] args) throws ClassNotFoundException {
+        ClassLoader.getSystemClassLoader().loadClass("com.github.chengyuxing.common.script.IPipe");
     }
 }
