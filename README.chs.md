@@ -29,13 +29,13 @@ IDEA 旗舰版版本兼容 2022.2.* - 2023.1.* 。
 
 ## 开始使用
 
-1. 项目中引入 **rabbit-sql 7.1.12+** 或 **rabbit-sql-spring-boot-starter 2.2.14+**；
+1. 项目中引入 **rabbit-sql 7.3.0+** 或 **rabbit-sql-spring-boot-starter 2.4.0+**；
 2. 在源文件根目录: `.../src/main/resources/` 下创建 `xql-file-manager.yml`；
 3. 为属性: `files` 配置你的xql文件；
 4. 配置 [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
 5. 配置 [BakiDao#setXqlFileManager](https://github.com/chengyuxing/rabbit-sql#bakidao);
 
-> 每当修改了 `xql` 文件或 `xql-file-manager.yml` 时，按 <kbd>Ctrl</kbd> + <kbd>s</kbd> 来触发更新缓存；
+> 每当修改了 `xql` 文件或 `xql-file-manager.yml` 时，按 <kbd>Ctrl</kbd> + <kbd>s</kbd> 或者 <kbd>Tools</kbd> > <kbd>Reload XQL File Manager</kbd> 来触发更新缓存；
 >
 > :warning: 插件仅支持解析 xql 文件。
 

@@ -14,9 +14,7 @@ public class ReloadConfigAction extends AnAction {
         var project = e.getProject();
         if (Objects.nonNull(project)) {
             FileDocumentManager.getInstance().saveAllDocuments();
-            ResourceCache.getInstance().foreach((p, r) -> {
-                r.fire(true);
-            });
+            ResourceCache.getInstance().foreach((p, r) -> r.fire(true));
         }
     }
 }

@@ -47,6 +47,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.0.5</h3>
+            <ul>
+                <li>Feature: <code>xql-file-manager.yml</code> support configure pipes property.</li>
+                <li>Feature: Menu Tools add action: <b>Reload XQL File Manager</b></li>
+            </ul>
             <h3>2.0.4</h3>
             <ul>
                 <li>Fixed error: <code>xql-file-manager.yml</code> configure pipes property.</li>
