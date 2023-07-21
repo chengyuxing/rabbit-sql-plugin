@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -71,6 +72,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     @Override
     protected @Nullable JPanel createSouthAdditionalPanel() {
         var panel = new JPanel();
+        panel.setLayout(new BorderLayout());
         datasourceList.addItem(DatasourceCache.DatabaseId.empty("<Configured database>"));
         if (datasourceResource != null) {
             var dsInfo = datasourceResource.getConfiguredDatabases();
