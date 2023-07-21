@@ -61,7 +61,7 @@ public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
                             }
                         });
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     log.warn(e);
                 }
             }

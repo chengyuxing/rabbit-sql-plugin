@@ -24,7 +24,7 @@ public class OpenParamsDialogInJava extends CopySqlDefinition {
             var resource = ResourceCache.getInstance().getResource(element);
             var dsResource = DatasourceCache.getInstance().getResource(project);
             ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlName, resource, dsResource).showAndGet());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.warn(e);
         }
     }

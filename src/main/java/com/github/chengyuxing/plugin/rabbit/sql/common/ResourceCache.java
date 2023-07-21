@@ -135,7 +135,7 @@ public class ResourceCache {
                                         continue;
                                     }
                                     pipeInstances.put(pipeName, (IPipe<?>) ReflectUtil.getInstance(pipeClass));
-                                } catch (Exception ex) {
+                                } catch (Throwable ex) {
                                     notificationExecutor.addMessage(Message.warning("[" + module + "] load pipe '" + pipeClassName + "' error: " + ex.getMessage()));
                                 }
                             }
