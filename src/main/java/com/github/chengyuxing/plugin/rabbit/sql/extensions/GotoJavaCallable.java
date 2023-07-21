@@ -109,7 +109,7 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                                             .createLineMarkerInfo(xqlPsiElement);
                                     result.add(markInfo);
                                 }
-                            } catch (Exception e) {
+                            } catch (Throwable e) {
                                 log.warn(e);
                             }
                         }

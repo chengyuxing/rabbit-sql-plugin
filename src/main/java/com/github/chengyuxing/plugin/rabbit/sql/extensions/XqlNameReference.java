@@ -66,7 +66,7 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.warn(e);
         }
         return ResolveResult.EMPTY_ARRAY;
