@@ -2,9 +2,11 @@ package com.github.chengyuxing.plugin.tests;
 
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.io.FileResource;
+import com.github.chengyuxing.common.script.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PathUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.SimpleJavaCompiler;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
@@ -12,7 +14,10 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -94,7 +99,21 @@ public class MyCode {
         System.out.println(ReflectUtil.getInstance(clazz));
     }
 
-    public static void main(String[] args) throws ClassNotFoundException {
-        ClassLoader.getSystemClassLoader().loadClass("com.github.chengyuxing.common.script.IPipe");
+    @Test
+    public void testx() throws MalformedURLException, ClassNotFoundException {
+        URLClassLoader classLoader = new URLClassLoader(new URL[]{new URL("file:/Users/chengyuxing/IdeaProjects/sbp-test1/target/classes/org/example/pipes")});
+        Class<?> clazz = classLoader.loadClass("org.example.pipes.Big");
+        System.out.println(clazz);
+    }
+
+    @Test
+    public void test23() {
+
+    }
+
+    public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Class<?> clazz = SimpleJavaCompiler.getInstance().compile("org.example.pipes.Big", Path.of("/Users/chengyuxing/IdeaProjects/sbp-test1/src/main/java/org/example/pipes/Big.java"));
+        IPipe<?> pipe = (IPipe<?>) clazz.getConstructor().newInstance();
+        System.out.println(pipe.transform(175));
     }
 }
