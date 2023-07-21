@@ -11,6 +11,7 @@ import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.JBSplitter;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.JBUI;
@@ -34,7 +35,8 @@ public class ParametersForm extends JPanel {
         this.paramsMapping = paramsMapping;
         this.paramsHistory = paramsHistory;
         initComponents();
-        customInit();
+        initCustomComponents();
+        initComponentConfigs();
     }
 
     public Pair<Map<String, ?>, List<String>> getData() {
@@ -80,9 +82,21 @@ public class ParametersForm extends JPanel {
 
     public void setSqlHtml(String sql) {
         sqlContent.setText(sql);
+        if (!scrollPane2.isVisible()) {
+            scrollPane2.setVisible(true);
+        }
     }
 
-    private void customInit() {
+    private void initCustomComponents() {
+        var splitter = new JBSplitter();
+        splitter.setOrientation(true);
+        splitter.setProportion(0.4f);
+        splitter.setFirstComponent(scrollPane1);
+        splitter.setSecondComponent(scrollPane2);
+        add(splitter, "cell 0 0,grow");
+    }
+
+    private void initComponentConfigs() {
         var params = paramsMapping.keySet().stream()
                 .map(name -> new Object[]{name, paramsHistory.getOrDefault(name, "")})
                 .toArray(i -> new Object[i][2]);
@@ -123,12 +137,11 @@ public class ParametersForm extends JPanel {
         setMinimumSize(new Dimension(58, 22));
         setPreferredSize(new Dimension(470, 115));
         setLayout(new MigLayout(
-            "fill,insets 0,hidemode 3,align left top",
-            // columns
-            "[fill]",
-            // rows
-            "[233,grow,center]" +
-            "[]"));
+                "insets 0,hidemode 3",
+                // columns
+                "[grow 1,fill]",
+                // rows
+                "[grow 1,fill]"));
 
         //======== scrollPane1 ========
         {
@@ -147,12 +160,11 @@ public class ParametersForm extends JPanel {
             paramsTable.setSelectionBackground(null);
             scrollPane1.setViewportView(paramsTable);
         }
-        add(scrollPane1, "cell 0 0,grow,hmin 100");
 
         //======== scrollPane2 ========
         {
             scrollPane2.setBorder(new LineBorder(new JBColor(new Color(0xD2D2D2), new Color(0x323232))));
-
+            scrollPane2.setVisible(false);
             //---- sqlContent ----
             sqlContent.setContentType("text/html");
             sqlContent.setFont(new Font("JetBrains Mono", Font.PLAIN, 13));
@@ -160,7 +172,6 @@ public class ParametersForm extends JPanel {
             sqlContent.setMargin(JBUI.insets(3,10));
             scrollPane2.setViewportView(sqlContent);
         }
-        add(scrollPane2, "cell 0 1,aligny top,grow 100 0,hmin 200");
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
 
