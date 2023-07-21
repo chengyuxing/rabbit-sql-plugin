@@ -72,7 +72,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     @Override
     protected @Nullable JPanel createSouthAdditionalPanel() {
         var panel = new JPanel();
-        panel.setLayout(new BorderLayout());
+        panel.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 0));
         datasourceList.addItem(DatasourceCache.DatabaseId.empty("<Configured database>"));
         if (datasourceResource != null) {
             var dsInfo = datasourceResource.getConfiguredDatabases();
