@@ -32,17 +32,19 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     private final Map<String, Object> paramsHistory;
     private final XQLFileManager xqlFileManager;
     private final DatasourceCache.Resource datasourceResource;
+    private final ResourceCache.Resource resource;
     private final ParametersForm parametersForm;
     private final ComboBox<DatasourceCache.DatabaseId> datasourceList;
 
     public DynamicSqlCalcDialog(String sqlName, ResourceCache.Resource resource, DatasourceCache.Resource datasourceResource) {
         super(true);
         this.sqlName = sqlName;
+        this.resource = resource;
         this.datasourceResource = datasourceResource;
-        this.xqlFileManager = resource.getXqlFileManager();
+        this.xqlFileManager = this.resource.getXqlFileManager();
         this.sql = this.xqlFileManager.get(sqlName);
         this.paramsHistory = datasourceResource.getParamsHistory();
-        var paramsMapping = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.getParamsMappingInfo(this.xqlFileManager.getSqlGenerator(), sql);
+        var paramsMapping = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.getParamsMappingInfo(this.resource.getSqlGenerator(), sql);
         this.parametersForm = new ParametersForm(paramsMapping, paramsHistory);
         this.datasourceList = new ComboBox<>();
         setTitle("Parameters");
@@ -129,7 +131,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                 var finalSql = xqlFileManager.get(sqlName, data.getItem1(), false);
                 // generate raw sql.
                 var args = parseArgs2Raw(data.getItem1());
-                var rawSql = xqlFileManager.getSqlGenerator()
+                var rawSql = resource.getSqlGenerator()
                         .generateSql(finalSql, args, false)
                         .getItem1();
                 // execute sql

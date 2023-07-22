@@ -33,8 +33,9 @@ public class MyCode {
     }
 
     @Test
-    public void test2() {
-        StringUtil.getTemplateParameters(new SqlGenerator(':'), "select ${:name} from users where ${cnd.user}")
+    public void test2() throws IOException {
+        String sql = Files.readString(Path.of("/Users/chengyuxing/IdeaProjects/rabbit-sql-plugin/src/test/resources/data.sql"));
+        StringUtil.getTemplateParameters(sql)
                 .forEach(System.out::println);
     }
 

@@ -41,7 +41,6 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
             var resource = ResourceCache.getInstance().getResource(originalElement);
             if (resource != null && resource.getXqlFileManager().contains(sqlName)) {
                 var xqlFileManager = resource.getXqlFileManager();
-                var sqlGenerator = xqlFileManager.getSqlGenerator();
                 String sqlDefinition = xqlFileManager.get(sqlName);
                 String sqlContent = HtmlUtil.toHighlightSqlHtml(sqlDefinition);
                 String xqlFile = element.getContainingFile().getName();
@@ -50,7 +49,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                         CONTENT_START + sqlContent + CONTENT_END +
                         SECTIONS_START;
 
-                var prepareParams = sqlGenerator.getPreparedSql(sqlDefinition, Map.of())
+                var prepareParams = resource.getSqlGenerator().getPreparedSql(sqlDefinition, Map.of())
                         .getItem2()
                         .stream()
                         .map(name -> xqlFileManager.getNamedParamPrefix() + name)
@@ -62,7 +61,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                     doc += SECTION_HEADER_START + "Prepare parameters: " + SECTION_SEPARATOR + "<p>" + prepareParams + SECTION_END;
                 }
 
-                var tempParams = StringUtil.getTemplateParameters(sqlGenerator, sqlDefinition);
+                var tempParams = StringUtil.getTemplateParameters(sqlDefinition);
                 if (!tempParams.isEmpty()) {
                     doc += SECTION_HEADER_START + "Template parameters: " + SECTION_SEPARATOR + "<p>" + String.join("  ", tempParams) + SECTION_END;
                 }

@@ -7,6 +7,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.*;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
+import com.github.chengyuxing.sql.utils.SqlGenerator;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -101,6 +102,7 @@ public class ResourceCache {
         private final Path module;
         private final NotificationExecutor notificationExecutor;
         private final XQLFileManager xqlFileManager;
+        private SqlGenerator sqlGenerator = new SqlGenerator(':');
 
         public Resource(Project project, Path xqlFileManagerLocation) {
             this.xqlFileManagerLocation = xqlFileManagerLocation;
@@ -200,6 +202,13 @@ public class ResourceCache {
 
         public XQLFileManager getXqlFileManager() {
             return xqlFileManager;
+        }
+
+        public SqlGenerator getSqlGenerator() {
+            if (sqlGenerator.getNamedParamPrefix().charAt(0) != xqlFileManager.getNamedParamPrefix()) {
+                sqlGenerator = new SqlGenerator(xqlFileManager.getNamedParamPrefix());
+            }
+            return sqlGenerator;
         }
 
         @Override
