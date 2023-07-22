@@ -12,18 +12,19 @@ import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.colorful;
 
 public class StringUtil {
-    public static Set<String> getTemplateParameters(SqlGenerator sqlGenerator, String str) {
+    public static Set<String> getTemplateParameters(String str) {
         var sql = SqlUtil.removeAnnotationBlock(str);
         String[] lines = sql.split(NEW_LINE);
         if (lines.length > 0) {
             var cleanedSql = Stream.of(lines).filter(line -> !line.trim().startsWith("--"))
                     .collect(Collectors.joining(NEW_LINE));
-            var m = sqlGenerator.getSTR_TEMP_PATTERN().matcher(cleanedSql);
+            var m = SqlUtil.FMT.getPattern().matcher(cleanedSql);
             var params = new HashSet<String>();
             while (m.find()) {
                 var key = m.group("key");
-                if (!isTemplateKeyInForExpression(sql, key)) {
-                    params.add("${" + m.group("key") + "}");
+                var holder = m.group(0);
+                if (!isTemplateKeyInForExpression(sql, holder)) {
+                    params.add("${" + key + "}");
                 }
             }
             return params;
@@ -63,11 +64,12 @@ public class StringUtil {
                     keyMapping.get(key).add("_");
                 }
             }
-            var tempP = sqlGenerator.getSTR_TEMP_PATTERN();
+            var tempP = SqlUtil.FMT.getPattern();
             var tempM = tempP.matcher(line);
-            if (tempM.find()) {
+            while (tempM.find()) {
                 var key = tempM.group("key");
-                if (!isTemplateKeyInForExpression(sql, key)) {
+                var holder = tempM.group(0);
+                if (!isTemplateKeyInForExpression(sql, holder)) {
                     if (key.contains(".")) {
                         key = key.substring(0, key.indexOf("."));
                     }
@@ -93,7 +95,13 @@ public class StringUtil {
                 if (end > 0) {
                     end = start + end + 8;
                     var forLoop = sql.substring(start, end);
-                    if (forLoop.contains(key)) {
+                    var forVars = sql.substring(start + 4, sql.indexOf(" of :")).trim().split(",");
+                    var itemName = forVars[0].trim();
+                    var itemIdx = "---";
+                    if (forVars.length > 1) {
+                        itemIdx = forVars[1].trim();
+                    }
+                    if (forLoop.contains(key) && (key.contains(itemName) || key.contains(itemIdx))) {
                         return true;
                     }
                     return isTemplateKeyInForExpression(sql.substring(end), key);
