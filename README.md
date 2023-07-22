@@ -30,7 +30,7 @@ IDEA IU 2022.2.* - 2023.1.* is required.
 
 ## Getting Started
 
-1. Add dependency **Rabbit-sql 7.3.0+** or **rabbit-sql-spring-boot-starter 2.4.0+** to your project;
+1. Add dependency **Rabbit-sql 7.4.0+** or **rabbit-sql-spring-boot-starter 2.5.0+** to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 4. Configure [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
