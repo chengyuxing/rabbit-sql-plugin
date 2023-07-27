@@ -38,7 +38,7 @@
     </ul>
     <h2>Getting Started</h2>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.5.2+</strong> or <strong>rabbit-sql-spring-boot-starter 2.5.3+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.5.3+</strong> or <strong>rabbit-sql-spring-boot-starter 2.5.4+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in source root: <code>.../src/main/resources/</code>;</li>
         <li>Register xql files on property: <code>files</code>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
@@ -52,6 +52,15 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.1.1</h3>
+            <ul>
+                <li>rabbit sql updated to 7.5.3+ and rabbit-sql-spring-boot-starter 2.5.4+.</li>
+                <li>Cancel error highlight.</li>
+                <li>quick doc optimized.</li>
+                <li>Fixed dynamic sql compare number bug.</li>
+                <li>Fixed dynamic sql property chains find value bug.</li>
+                <li>Update plugin description.</li>
+            </ul>
             <h3>2.1.0</h3>
             <ul>
                 <li>rabbit-sql 7.5.2+ and rabbit-sql-spring-boot-starter 2.5.3+ is required.</li>
