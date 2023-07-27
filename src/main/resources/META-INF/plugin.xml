@@ -29,7 +29,12 @@
         <li>Support java and xql file references to navigate each other.</li>
         <li>Support sql name suggestions auto complete in java string literal where start with <code>"&"</code>.</li>
         <li>Create <code>xql-file-manager.yml</code> in <code>/src/main/resources</code> and register xql file to enable some features above.</li>
-        <li>Toolbar menu: <kbd>File</kbd> &gt; <kbd>New</kbd> &gt; <kbd>Xql File</kbd> | <kbd>Xql File Manager</kbd> | <kbd>Xql File Manager CHS</kbd></li>
+        <li>Toolbar menu:
+            <ul>
+                <li><kbd>File</kbd> &gt; <kbd>New</kbd> &gt; <kbd>Xql File</kbd> | <kbd>Xql File Manager</kbd> | <kbd>Xql File Manager CHS</kbd></li>
+                <li><kbd>Tools</kbd> &gt; <kbd>Reload XQL File Manager</kbd></li>
+            </ul>
+        </li>
     </ul>
     <h2>Getting Started</h2>
     <ol>
