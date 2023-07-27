@@ -29,11 +29,6 @@ public class XqlNameAnnotator implements Annotator {
                                 .range(element)
                                 .textAttributes(DefaultLanguageHighlighterColors.METADATA)
                                 .create();
-                    } else {
-                        holder.newSilentAnnotation(HighlightSeverity.ERROR)
-                                .tooltip("Cannot find sql definition.")
-                                .range(element)
-                                .create();
                     }
                 }
             }
