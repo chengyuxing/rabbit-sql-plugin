@@ -69,10 +69,6 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                     doc += SECTION_HEADER_START + "Template parameters: " + SECTION_SEPARATOR + "<p>" + String.join("  ", tempParams) + SECTION_END;
                 }
 
-                doc += SECTION_HEADER_START
-                        + "Tips:" + SECTION_SEPARATOR + "<p>" + StringUtil.TIPS
-                        + SECTION_END;
-
                 doc += SECTION_HEADER_START + "Defined in: " + SECTION_SEPARATOR + "<p>" + xqlFile + SECTION_END +
                         SECTIONS_END;
 
