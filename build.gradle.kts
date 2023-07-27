@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.0.6"
+version = "2.1.0"
 
 repositories {
     mavenLocal()
@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:7.4.0") {
+    implementation("com.github.chengyuxing:rabbit-sql:7.5.2") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.yaml", "snakeyaml")
     }

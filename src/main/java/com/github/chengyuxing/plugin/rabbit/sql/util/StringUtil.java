@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
 import com.github.chengyuxing.sql.utils.SqlUtil;
 
@@ -58,6 +59,10 @@ public class StringUtil {
             }
             while (m.find()) {
                 var key = m.group("name");
+                // ignore for local variables
+                if (key.startsWith(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY + ".")) {
+                    continue;
+                }
                 if (!keyMapping.containsKey(key)) {
                     keyMapping.put(key, Set.of("_"));
                 } else {
@@ -88,10 +93,10 @@ public class StringUtil {
         if (!sql.contains(key)) {
             return false;
         }
-        if (sql.contains("#for") && sql.contains("#end")) {
-            var start = sql.indexOf("#for");
+        if (com.github.chengyuxing.common.utils.StringUtil.containsAllIgnoreCase(sql, FOR, DONE)) {
+            var start = com.github.chengyuxing.common.utils.StringUtil.indexOfIgnoreCase(sql, FOR);
             if (start > 0) {
-                var end = sql.substring(start + 4).indexOf("#end");
+                var end = com.github.chengyuxing.common.utils.StringUtil.indexOfIgnoreCase(sql.substring(start + 4), DONE);
                 if (end > 0) {
                     end = start + end + 8;
                     var forLoop = sql.substring(start, end);

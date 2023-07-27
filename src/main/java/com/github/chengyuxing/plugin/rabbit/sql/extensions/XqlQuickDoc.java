@@ -3,6 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -49,9 +50,11 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                         CONTENT_START + sqlContent + CONTENT_END +
                         SECTIONS_START;
 
-                var prepareParams = resource.getSqlGenerator().getPreparedSql(sqlDefinition, Map.of())
+                var prepareParams = resource.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of())
                         .getItem2()
                         .stream()
+                        // ignore for local variables.
+                        .filter(name -> !name.startsWith(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY + "."))
                         .map(name -> xqlFileManager.getNamedParamPrefix() + name)
                         .distinct()
                         .collect(Collectors.joining("  "))

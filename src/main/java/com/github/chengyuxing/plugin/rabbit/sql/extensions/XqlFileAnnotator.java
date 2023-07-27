@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
+import com.github.chengyuxing.common.script.Patterns;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -19,7 +20,7 @@ import java.util.regex.Pattern;
 import static com.github.chengyuxing.common.script.SimpleScriptParser.*;
 
 public class XqlFileAnnotator implements Annotator {
-    static final String[] XQL_KEYWORDS = new String[]{"delimiter", "filter", "of"};
+    static final String[] XQL_KEYWORDS = new String[]{"delimiter", "of", "open", "close"};
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
@@ -93,7 +94,7 @@ public class XqlFileAnnotator implements Annotator {
     }
 
     void highlightVarName(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content) {
-        Pattern p = Pattern.compile("\\s(?<var>:[a-zA-Z_][\\w_]*)(\\s|\\W)");
+        Pattern p = Pattern.compile("\\s(?<var>:"+ Patterns.VAR_KEY_PATTERN +")(\\s|\\W)");
         Matcher m = p.matcher(content);
         while (m.find()) {
             String var = m.group("var");
