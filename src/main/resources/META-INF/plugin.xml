@@ -49,7 +49,7 @@
         <![CDATA[
             <h3>2.1.0</h3>
             <ul>
-                <li>rabbit-sql 7.5.0+ and rabbit-sql-spring-boot-starter 2.5.3+ is required.</li>
+                <li>rabbit-sql 7.5.2+ and rabbit-sql-spring-boot-starter 2.5.3+ is required.</li>
                 <li>Dynamic sql remove #for...#end block, not support <code>filter</code> anymore.</li>
                 <li>Feature: Dynamic sql support <a href="https://github.com/chengyuxing/rabbit-sql#example-3">#for...#done</a> block.</li>
                 <li><code>xql:for-xxx</code> live template update.</li>
