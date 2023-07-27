@@ -128,12 +128,14 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             try {
                 // named parameter sql
                 // select ... from tb where id = :id and ${temp}
-                var finalSql = xqlFileManager.get(sqlName, data.getItem1(), false);
+                var result = xqlFileManager.get(sqlName, data.getItem1());
+                var finalSql = result.getItem1();
+                var forVars = result.getItem2();
                 // generate raw sql.
                 var args = parseArgs2Raw(data.getItem1());
+                args.put(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY, forVars);
                 var rawSql = resource.getSqlGenerator()
-                        .generateSql(finalSql, args, false)
-                        .getItem1();
+                        .generateSql(finalSql, args);
                 // execute sql
                 var idx = datasourceList.getSelectedIndex();
                 if (datasourceResource != null && idx > 0) {
@@ -162,7 +164,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         autoHeight(msg);
     }
 
-    private Map<String, ?> parseArgs2Raw(Map<String, ?> args) {
+    private Map<String, Object> parseArgs2Raw(Map<String, ?> args) {
         var cache = new HashMap<String, Object>();
         args.forEach((k, v) -> {
             if (v == Comparators.ValueType.BLANK || v == Comparators.ValueType.NULL) {

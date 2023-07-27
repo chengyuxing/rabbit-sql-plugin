@@ -3,6 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -50,22 +51,28 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                         CONTENT_START + sqlContent + CONTENT_END +
                         SECTIONS_START;
 
-                var prepareParams = resource.getSqlGenerator().getPreparedSql(sqlDefinition, Map.of())
+                var prepareParams = resource.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of())
                         .getItem2()
                         .stream()
+                        // ignore for local variables.
+                        .filter(name -> !name.startsWith(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY + "."))
                         .map(name -> xqlFileManager.getNamedParamPrefix() + name)
                         .distinct()
                         .collect(Collectors.joining("  "))
                         .trim();
 
                 if (!prepareParams.equals("")) {
-                    doc += SECTION_HEADER_START + "Prepare parameters: " + SECTION_SEPARATOR + "<p>" + prepareParams + SECTION_END;
+                    doc += SECTION_HEADER_START + "Named parameters: " + SECTION_SEPARATOR + "<p>" + prepareParams + SECTION_END;
                 }
 
                 var tempParams = StringUtil.getTemplateParameters(sqlDefinition);
                 if (!tempParams.isEmpty()) {
                     doc += SECTION_HEADER_START + "Template parameters: " + SECTION_SEPARATOR + "<p>" + String.join("  ", tempParams) + SECTION_END;
                 }
+
+                doc += SECTION_HEADER_START
+                        + "Tips:" + SECTION_SEPARATOR + "<p>" + StringUtil.TIPS
+                        + SECTION_END;
 
                 doc += SECTION_HEADER_START + "Defined in: " + SECTION_SEPARATOR + "<p>" + xqlFile + SECTION_END +
                         SECTIONS_END;

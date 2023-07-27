@@ -23,7 +23,13 @@
             ]]></place>
         <place><![CDATA[
             psiParameter().
-                    ofMethod(0, psiMethod().withName("batchExecute")
+                    ofMethod(0, psiMethod().withName("executeBatch")
+                            .withParameters("java.lang.String", "java.util.Collection")
+                            .definedInClass("com.github.chengyuxing.sql.Baki"))
+            ]]></place>
+        <place><![CDATA[
+            psiParameter().
+                    ofMethod(0, psiMethod().withName("executeBatch")
                             .withParameters("java.lang.String[]")
                             .definedInClass("com.github.chengyuxing.sql.Baki"))
             ]]></place>
@@ -45,19 +51,5 @@
                             .withParameters("java.lang.String")
                             .definedInClass("com.github.chengyuxing.sql.page.IPageable"))
             ]]></place>
-        <place>
-            <![CDATA[
-            psiParameter().ofMethod(0, psiMethod().withName("of")
-                    .withParameters("java.lang.String", "java.lang.String[]")
-                    .definedInClass("com.github.chengyuxing.sql.Baki"))
-            ]]>
-        </place>
-        <place>
-            <![CDATA[
-            psiParameter().ofMethod(1, psiMethod().withName("of")
-                    .withParameters("java.lang.String", "java.lang.String[]")
-                    .definedInClass("com.github.chengyuxing.sql.Baki"))
-            ]]>
-        </place>
     </injection>
 </component>
