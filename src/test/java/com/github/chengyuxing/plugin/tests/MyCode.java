@@ -46,12 +46,6 @@ public class MyCode {
     }
 
     @Test
-    public void test4() {
-        var a = ReflectUtil.json2Obj("[{\"a\":\"cyx\"}]", List.class);
-        System.out.println(a);
-    }
-
-    @Test
     public void test5() throws IOException {
         String sql = Files.readString(Path.of("/Users/chengyuxing/IdeaProjects/rabbit-sql-plugin/src/test/resources/data.sql"));
         var keyMapping = StringUtil.getParamsMappingInfo(new SqlGenerator(':'), sql);
@@ -81,7 +75,7 @@ public class MyCode {
     @Test
     public void test37() {
         var sql = new FileResource("data.sql").readString(StandardCharsets.UTF_8);
-        System.out.println(StringUtil.isTemplateKeyInForExpression(sql, "user.name"));
+//        System.out.println(StringUtil.isVarKeyInForExpression(sql, "user.name"));
     }
 
     @Test

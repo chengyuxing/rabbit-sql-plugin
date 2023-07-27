@@ -13,6 +13,7 @@ import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.colorful;
 
 public class StringUtil {
+    public static final String TIPS = "Ignore local variables from the #for...#done block and property chains(e.g: user.id).";
     public static Set<String> getTemplateParameters(String str) {
         var sql = SqlUtil.removeAnnotationBlock(str);
         String[] lines = sql.split(NEW_LINE);
@@ -23,10 +24,7 @@ public class StringUtil {
             var params = new HashSet<String>();
             while (m.find()) {
                 var key = m.group("key");
-                var holder = m.group(0);
-                if (!isTemplateKeyInForExpression(sql, holder)) {
-                    params.add("${" + key + "}");
-                }
+                params.add("${" + key + "}");
             }
             return params;
         }
@@ -73,32 +71,34 @@ public class StringUtil {
             var tempM = tempP.matcher(line);
             while (tempM.find()) {
                 var key = tempM.group("key");
-                var holder = tempM.group(0);
-                if (!isTemplateKeyInForExpression(sql, holder)) {
-                    if (key.contains(".")) {
-                        key = key.substring(0, key.indexOf("."));
-                    }
-                    if (!keyMapping.containsKey(key)) {
-                        var temp = tempM.group(0).replace(key, "*");
-                        var coloredTemp = colorful(temp.substring(0, temp.indexOf("*")), HtmlUtil.Color.ANNOTATION) + colorful("_", HtmlUtil.Color.LIGHT) + colorful(temp.substring(temp.indexOf("*") + 1), HtmlUtil.Color.ANNOTATION);
-                        keyMapping.put(key, Set.of(coloredTemp));
-                    }
+                if (key.contains(".")) {
+                    key = key.substring(0, key.indexOf("."));
+                }
+                if (!keyMapping.containsKey(key)) {
+                    var temp = tempM.group(0).replace(key, "*");
+                    var coloredTemp = colorful(temp.substring(0, temp.indexOf("*")), HtmlUtil.Color.ANNOTATION) + colorful("_", HtmlUtil.Color.LIGHT) + colorful(temp.substring(temp.indexOf("*") + 1), HtmlUtil.Color.ANNOTATION);
+                    keyMapping.put(key, Set.of(coloredTemp));
                 }
             }
         }
         return keyMapping;
     }
 
-    public static boolean isTemplateKeyInForExpression(String sql, String key) {
+    public static boolean isForLocalVariable(String sql, String key, int start, int end) {
         if (!sql.contains(key)) {
             return false;
         }
-        if (com.github.chengyuxing.common.utils.StringUtil.containsAllIgnoreCase(sql, FOR, DONE)) {
-            var start = com.github.chengyuxing.common.utils.StringUtil.indexOfIgnoreCase(sql, FOR);
-            if (start > 0) {
-                var end = com.github.chengyuxing.common.utils.StringUtil.indexOfIgnoreCase(sql.substring(start + 4), DONE);
-                if (end > 0) {
-                    end = start + end + 8;
+        int forStart = com.github.chengyuxing.common.utils.StringUtil.indexOfIgnoreCase(sql, FOR);
+        if (forStart > 0) {
+            var forEnd = com.github.chengyuxing.common.utils.StringUtil.indexOfIgnoreCase(sql.substring(start + 4), DONE);
+            if (end > 0) {
+                end = forStart + forEnd + 8;
+                //
+                // -- #for item of :users
+                //      ${item} or :item
+                // -- #done
+                //
+                if (forStart < start && forEnd > end) {
                     var forLoop = sql.substring(start, end);
                     var forVars = sql.substring(start + 4, sql.indexOf(" of :")).trim().split(",");
                     var itemName = forVars[0].trim();
@@ -109,7 +109,7 @@ public class StringUtil {
                     if (forLoop.contains(key) && (key.contains(itemName) || key.contains(itemIdx))) {
                         return true;
                     }
-                    return isTemplateKeyInForExpression(sql.substring(end), key);
+                    return isForLocalVariable(sql.substring(end), key, start, end);
                 }
             }
         }
