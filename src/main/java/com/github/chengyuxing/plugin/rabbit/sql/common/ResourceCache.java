@@ -160,7 +160,7 @@ public class ResourceCache {
                     var alias = next.getKey();
                     var v = next.getValue();
                     var path = v.trim();
-                    if (!path.equals("")) {
+                    if (!path.isEmpty()) {
                         var resourceRoot = xqlFileManagerLocation.getParent();
                         var abPath = resourceRoot.resolve(path);
                         if (Files.exists(abPath)) {

@@ -60,7 +60,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                         .collect(Collectors.joining("  "))
                         .trim();
 
-                if (!prepareParams.equals("")) {
+                if (!prepareParams.isEmpty()) {
                     doc += SECTION_HEADER_START + "Named parameters: " + SECTION_SEPARATOR + "<p>" + prepareParams + SECTION_END;
                 }
 

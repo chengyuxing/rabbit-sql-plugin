@@ -52,6 +52,10 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.1.2</h3>
+            <ul>
+                <li>Support IDEA IU 2023.2</li>
+            </ul>
             <h3>2.1.1</h3>
             <ul>
                 <li>rabbit sql updated to 7.5.3+ and rabbit-sql-spring-boot-starter 2.5.4+.</li>

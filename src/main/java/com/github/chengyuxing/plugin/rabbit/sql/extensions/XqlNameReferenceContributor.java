@@ -18,7 +18,7 @@ public class XqlNameReferenceContributor extends PsiReferenceContributor {
                         (String) literalExpression.getValue() : null;
                 if (value != null && value.startsWith("&")) {
                     var sqlPath = value.substring(1);
-                    if (sqlPath.trim().equals("")) {
+                    if (sqlPath.trim().isEmpty()) {
                         return PsiReference.EMPTY_ARRAY;
                     }
                     var property = new TextRange(2, value.length() + 1);
