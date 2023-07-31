@@ -81,6 +81,12 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             datasourceList.setRenderer(new IconListCellRenderer(dsInfo));
             dsInfo.forEach((k, v) -> datasourceList.addItem(k));
             datasourceList.setSwingPopup(false);
+            var selected = datasourceResource.getSelected();
+            if (selected != null) {
+                if (dsInfo.containsKey(selected)) {
+                    datasourceList.setSelectedItem(selected);
+                }
+            }
             panel.add(datasourceList);
         }
         return panel;
@@ -138,15 +144,19 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                         .generateSql(finalSql, args);
                 // execute sql
                 var idx = datasourceList.getSelectedIndex();
-                if (datasourceResource != null && idx > 0) {
-                    var db = datasourceList.getItemAt(idx);
-                    var console = datasourceResource.getConsole(db);
-                    if (console != null) {
-                        var request = new ExecuteRequest(console, rawSql, DataRequest.newConstraints(), null);
-                        console.getMessageBus().getDataProducer().processRequest(request);
-                        dispose();
-                        return;
+                if (datasourceResource != null) {
+                    if (idx > 0) {
+                        var db = datasourceList.getItemAt(idx);
+                        var console = datasourceResource.getConsole(db);
+                        if (console != null) {
+                            datasourceResource.setSelected(db);
+                            var request = new ExecuteRequest(console, rawSql, DataRequest.newConstraints(), null);
+                            console.getMessageBus().getDataProducer().processRequest(request);
+                            dispose();
+                            return;
+                        }
                     }
+                    datasourceResource.setSelected(null);
                 }
                 parametersForm.setSqlHtml(HtmlUtil.toHighlightSqlHtml(rawSql));
                 autoHeight(rawSql);
