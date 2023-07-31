@@ -88,6 +88,7 @@ public class DatasourceCache {
         private final Project project;
         private final Map<DatabaseId, JdbcConsole> consoles;
         private final Map<String, Object> paramsHistory;
+        private DatabaseId selected;
 
         public Resource(Project project) {
             this.project = project;
@@ -97,6 +98,14 @@ public class DatasourceCache {
 
         public Map<String, Object> getParamsHistory() {
             return paramsHistory;
+        }
+
+        public void setSelected(DatabaseId selected) {
+            this.selected = selected;
+        }
+
+        public DatabaseId getSelected() {
+            return selected;
         }
 
         public JdbcConsole getConsole(DatabaseId id) {
@@ -117,14 +126,25 @@ public class DatasourceCache {
                                 var cfg = ds.getConnectionConfig();
                                 if (cfg != null) {
                                     if (id.equals(DatabaseId.of(ds.getName(), ds.getUniqueId()))) {
-                                        var session = DatabaseSessionManager.openSession(project, (DatabaseConnectionPoint) cfg, "Rabbit-SQL-Plugin");
-                                        // in case execute dml in production mode
-                                        session.setAutoCommit(false);
-                                        var v = JdbcConsole.newConsole(project)
-                                                .fromDataSource(ds)
-                                                .useSession(session)
-                                                .build();
-                                        consoles.put(id, v);
+                                        var console = JdbcConsole.getActiveConsoles(project)
+                                                .stream()
+                                                .filter(c -> c.getDataSource() == ds)
+                                                .findFirst()
+                                                .map(c -> {
+                                                    var session = c.getSession();
+                                                    session.setAutoCommit(false);
+                                                    session.setTitle("Rabbit-SQL-Plugin");
+                                                    return c;
+                                                })
+                                                .orElseGet(() -> {
+                                                    var session = DatabaseSessionManager.getSession(project, (DatabaseConnectionPoint) cfg, "Rabbit-SQL-Plugin");
+                                                    session.setAutoCommit(false);
+                                                    return JdbcConsole.newConsole(project)
+                                                            .fromDataSource(ds)
+                                                            .useSession(session)
+                                                            .build();
+                                                });
+                                        consoles.put(id, console);
                                         break;
                                     }
                                 }
