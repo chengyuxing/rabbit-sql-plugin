@@ -54,7 +54,10 @@
         <![CDATA[
             <h3>2.1.2</h3>
             <ul>
-                <li>Support IDEA IU 2023.2</li>
+                <li>Fixed <b>Test dynamic sql</b> "" or '' not equals blank.</li>
+                <li>Fixed <b>Test dynamic sql</b> error when create Jdbc console if already exists.</li>
+                <li><b>Test dynamic sql</b> add remember selected and executed database.</li>
+                <li>Compatible with IDEA IU 2023.2</li>
             </ul>
             <h3>2.1.1</h3>
             <ul>
