@@ -52,6 +52,9 @@ public class ParametersForm extends JPanel {
             var v = row.get(1);
             if (v != null) {
                 var sv = v.toString().trim();
+                if (Comparators.isQuote(sv)) {
+                    sv = Comparators.getString(sv);
+                }
                 if (sv.startsWith("[") && sv.endsWith("]")) {
                     try {
                         v = JSON.std.listFrom(sv);
