@@ -34,7 +34,7 @@ public class HtmlUtil {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < maybeKeywords.size(); i++) {
                 String key = maybeKeywords.get(i);
-                if (!key.trim().equals("")) {
+                if (!key.trim().isEmpty()) {
                     // keywords highlight
                     if (StringUtil.equalsAnyIgnoreCase(key, Keywords.STANDARD) || StringUtil.equalsAnyIgnoreCase(key, Keywords.POSTGRESQL)) {
                         maybeKeywords.set(i, colorful(key, Color.KEYWORD));

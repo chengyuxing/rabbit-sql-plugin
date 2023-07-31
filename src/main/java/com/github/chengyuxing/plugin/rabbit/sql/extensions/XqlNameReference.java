@@ -29,13 +29,13 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
 
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-        if (key.equals("") || !key.contains(".")) {
+        if (key.isEmpty() || !key.contains(".")) {
             return ResolveResult.EMPTY_ARRAY;
         }
         var dotIdx = key.indexOf(".");
         var alias = key.substring(0, dotIdx).trim();
         var name = key.substring(dotIdx + 1).trim();
-        if (alias.equals("") && name.equals("")) {
+        if (alias.isEmpty() && name.isEmpty()) {
             return ResolveResult.EMPTY_ARRAY;
         }
         try {

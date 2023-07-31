@@ -96,7 +96,7 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                                                     var className = PsiUtil.getClassName(element);
                                                     if (className != null) {
                                                         var method = PsiUtil.findMethod(element);
-                                                        if (!method.equals("")) {
+                                                        if (!method.isEmpty()) {
                                                             method = "#" + method;
                                                         }
                                                         return className + method;

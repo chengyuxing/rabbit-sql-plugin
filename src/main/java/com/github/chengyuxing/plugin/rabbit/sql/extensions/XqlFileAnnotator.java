@@ -54,7 +54,7 @@ public class XqlFileAnnotator implements Annotator {
         final String clearPrefix = prefix.trim();
         final String tag = getTag(clearPrefix);
 
-        if (tag.equals("")) {
+        if (tag.isEmpty()) {
             return;
         }
 

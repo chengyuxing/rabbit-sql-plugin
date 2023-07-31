@@ -52,6 +52,12 @@
 
     <change-notes>
         <![CDATA[
+            <h3>1.15.2</h3>
+            <ul>
+                <li>Fixed <b>Test dynamic sql</b> "" or '' not equals blank.</li>
+                <li>Fixed <b>Test dynamic sql</b> error when create Jdbc console if already exists.</li>
+                <li><b>Test dynamic sql</b> add remember selected and executed database.</li>
+            </ul>
             <h3>1.15.1</h3>
                 <ul>
                 <li>rabbit sql updated to 7.5.3+ and rabbit-sql-spring-boot-starter 2.5.4+.</li>

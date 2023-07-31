@@ -13,7 +13,6 @@ import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.colorful;
 
 public class StringUtil {
-    public static final String TIPS = "Ignore local variables from the #for...#done block and property chains(e.g: user.id).";
     public static Set<String> getTemplateParameters(String str) {
         var sql = SqlUtil.removeAnnotationBlock(str);
         String[] lines = sql.split(NEW_LINE);
