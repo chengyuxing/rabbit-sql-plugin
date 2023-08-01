@@ -57,6 +57,7 @@
                 <li>Fixed <b>Test dynamic sql</b> "" or '' not equals blank.</li>
                 <li>Fixed <b>Test dynamic sql</b> error when create Jdbc console if already exists.</li>
                 <li><b>Test dynamic sql</b> add remember selected and executed database.</li>
+                <li>rabbit sql updated to 7.5.5+ and rabbit-sql-spring-boot-starter 2.5.6+.</li>
                 <li>Compatible with IDEA IU 2023.2</li>
                 <li>Some bugs fixed.</li>
             </ul>
