@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
+import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
 import com.github.chengyuxing.sql.utils.SqlUtil;
@@ -42,12 +43,15 @@ public class StringUtil {
             var m = p.matcher(tl);
             if (com.github.chengyuxing.common.utils.StringUtil.startsWithsIgnoreCase(tl, IF, SWITCH, WHEN, CASE, FOR)) {
                 while (m.find()) {
-                    var key = m.group("name");
+                    var name = m.group("name");
+                    var kl = getKeyAndRestLength(name);
+                    var key = kl.getItem1();
+                    var endIdx = m.end("name") - kl.getItem2();
                     tl = tl.replace("<", "&lt;")
                             .replace(">", "&gt;");
-                    var part = colorful(tl.substring(0, m.start("name") - 1), HtmlUtil.Color.ANNOTATION) + "_" + colorful(tl.substring(m.end("name")), HtmlUtil.Color.ANNOTATION);
+                    var part = colorful(tl.substring(0, m.start("name") - 1), HtmlUtil.Color.ANNOTATION) + "_" + colorful(tl.substring(endIdx), HtmlUtil.Color.ANNOTATION);
                     if (!keyMapping.containsKey(key)) {
-                        var parts = new HashSet<String>();
+                        var parts = new LinkedHashSet<String>();
                         keyMapping.put(key, parts);
                     }
                     keyMapping.get(key).add(part);
@@ -55,15 +59,18 @@ public class StringUtil {
                 continue;
             }
             while (m.find()) {
-                var key = m.group("name");
+                var name = m.group("name");
                 // ignore for local variables
-                if (key.startsWith(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY + ".")) {
+                if (name.startsWith(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY + ".")) {
                     continue;
                 }
+                var kl = getKeyAndRestLength(name);
+                var key = kl.getItem1();
+                var holder = "_" + colorful(name.substring(key.length()), HtmlUtil.Color.ANNOTATION);
                 if (!keyMapping.containsKey(key)) {
-                    keyMapping.put(key, Set.of("_"));
+                    keyMapping.put(key, Set.of(holder));
                 } else {
-                    keyMapping.get(key).add("_");
+                    keyMapping.get(key).add(holder);
                 }
             }
             var tempP = SqlUtil.FMT.getPattern();
@@ -81,6 +88,19 @@ public class StringUtil {
             }
         }
         return keyMapping;
+    }
+
+    public static Pair<String, Integer> getKeyAndRestLength(String name) {
+        String key = name;
+        int restLength = key.length();
+        int dotIdx = name.indexOf(".");
+        if (dotIdx != -1) {
+            key = name.substring(0, dotIdx);
+            restLength -= dotIdx;
+        } else {
+            restLength = 0;
+        }
+        return Pair.of(key, restLength);
     }
 
     public static boolean isForLocalVariable(String sql, String key, int start, int end) {

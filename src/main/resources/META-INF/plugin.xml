@@ -38,7 +38,7 @@
     </ul>
     <h2>Getting Started</h2>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.5.3+</strong> or <strong>rabbit-sql-spring-boot-starter 2.5.4+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.5.5+</strong> or <strong>rabbit-sql-spring-boot-starter 2.5.6+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in source root: <code>.../src/main/resources/</code>;</li>
         <li>Register xql files on property: <code>files</code>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
@@ -58,6 +58,7 @@
                 <li>Fixed <b>Test dynamic sql</b> error when create Jdbc console if already exists.</li>
                 <li><b>Test dynamic sql</b> add remember selected and executed database.</li>
                 <li>Compatible with IDEA IU 2023.2</li>
+                <li>Some bugs fixed.</li>
             </ul>
             <h3>2.1.1</h3>
             <ul>

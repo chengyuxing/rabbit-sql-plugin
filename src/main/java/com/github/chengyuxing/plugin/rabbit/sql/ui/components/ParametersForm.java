@@ -52,9 +52,6 @@ public class ParametersForm extends JPanel {
             var v = row.get(1);
             if (v != null) {
                 var sv = v.toString().trim();
-                if (Comparators.isQuote(sv)) {
-                    sv = Comparators.getString(sv);
-                }
                 if (sv.startsWith("[") && sv.endsWith("]")) {
                     try {
                         v = JSON.std.listFrom(sv);
@@ -75,10 +72,11 @@ public class ParametersForm extends JPanel {
                     } else {
                         v = Integer.parseInt(sv);
                     }
+                } else if (StringUtil.equalsAnyIgnoreCase(sv, "blank", "null", "true", "false")) {
+                    v = Comparators.valueOf(v);
                 }
             }
-            var objV = Comparators.valueOf(v);
-            map.put(k, objV);
+            map.put(k, v);
         });
         return Pair.of(map, errors);
     }
