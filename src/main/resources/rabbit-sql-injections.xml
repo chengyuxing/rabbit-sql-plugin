@@ -10,6 +10,18 @@
                             .definedInClass("com.github.chengyuxing.sql.Baki"))
             ]]></place>
         <place><![CDATA[
+            psiParameter()
+                    .ofMethod(0, psiMethod().withName("of")
+                            .withParameters("java.lang.String")
+                            .definedInClass("com.github.chengyuxing.sql.Baki"))
+            ]]></place>
+        <place><![CDATA[
+            psiParameter()
+                    .ofMethod(0, psiMethod().withName("executeBatch")
+                            .withParameters("java.lang.String[]")
+                            .definedInClass("com.github.chengyuxing.sql.support.executor.Executor"))
+            ]]></place>
+        <place><![CDATA[
             psiParameter().
                     ofMethod(0, psiMethod().withName("execute")
                             .withParameters("java.lang.String")
