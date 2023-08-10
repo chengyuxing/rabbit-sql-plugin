@@ -1,80 +1,113 @@
 <templateSet group="Rabbit SQL(.xql)">
-  <template name="xql:for-full" value="-- #for $KEY$ $INDEX$ of :$LIST$ $PIPES$ delimiter '$SYMBOL$' open '$OPEN$' close '$CLOSE$'&#10;    $BODY$&#10;-- #done" description="full for-expression" toReformat="false" toShortenFQNames="true">
-    <variable name="KEY" expression="" defaultValue="&quot;item&quot;" alwaysStopAt="true" />
-    <variable name="INDEX" expression="" defaultValue="&quot;,idx&quot;" alwaysStopAt="true" />
-    <variable name="LIST" expression="" defaultValue="&quot;list&quot;" alwaysStopAt="true" />
-    <variable name="PIPES" expression="" defaultValue="&quot;| pipeN&quot;" alwaysStopAt="true" />
-    <variable name="SYMBOL" expression="" defaultValue="&quot;,&quot;" alwaysStopAt="true" />
-    <variable name="OPEN" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="CLOSE" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true" />
-    <context>
-      <option name="SQL" value="true" />
-    </context>
-  </template>
-  <template name="xql:for-normal" value="-- #for $KEY$ of :$LIST$ delimiter '$SYMBOL$'&#10;    $BODY$&#10;-- #done" description="normal for-expression" toReformat="false" toShortenFQNames="true">
-    <variable name="KEY" expression="" defaultValue="&quot;item&quot;" alwaysStopAt="true" />
-    <variable name="LIST" expression="" defaultValue="&quot;list&quot;" alwaysStopAt="true" />
-    <variable name="SYMBOL" expression="" defaultValue="&quot;,&quot;" alwaysStopAt="true" />
-    <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true" />
-    <context>
-      <option name="SQL" value="true" />
-    </context>
-  </template>
-  <template name="xql:if" value="-- #if :$KEY$ $OPERATOR$ $VAR$&#10;    $BODY$&#10;-- #fi$END$" description="if-expression" toReformat="false" toShortenFQNames="true">
-    <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="OPERATOR" expression="enum(&quot;!=&quot;,&quot;=&quot;,&quot;&gt;&quot;,&quot;&lt;&quot;,&quot;&gt;=&quot;,&quot;&lt;=&quot;,&quot;&lt;&gt;&quot;,&quot;~&quot;,&quot;!~&quot;,&quot;@&quot;,&quot;!@&quot;)" defaultValue="&quot;!=&quot;" alwaysStopAt="true" />
-    <variable name="VAR" expression="enum(&quot;blank&quot;,&quot;null&quot;,&quot;true&quot;,&quot;false&quot;)" defaultValue="&quot;blank&quot;" alwaysStopAt="true" />
-    <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true" />
-    <context>
-      <option name="SQL" value="true" />
-    </context>
-  </template>
-  <template name="xql:choose" value="-- #choose&#10;    -- #when :$KEY$ $OPERATOR$ $VAR$&#10;        $BODY$&#10;    -- #break$END$&#10;    -- #default&#10;        $DEFAULT$&#10;    -- #break&#10;-- #end" description="choose-expression" toReformat="false" toShortenFQNames="true">
-    <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="OPERATOR" expression="enum(&quot;!=&quot;,&quot;=&quot;,&quot;&gt;&quot;,&quot;&lt;&quot;,&quot;&gt;=&quot;,&quot;&lt;=&quot;,&quot;&lt;&gt;&quot;,&quot;~&quot;,&quot;!~&quot;,&quot;@&quot;,&quot;!@&quot;)" defaultValue="&quot;!=&quot;" alwaysStopAt="true" />
-    <variable name="VAR" expression="enum(&quot;blank&quot;,&quot;null&quot;,&quot;true&quot;,&quot;false&quot;)" defaultValue="&quot;blank&quot;" alwaysStopAt="true" />
-    <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="DEFAULT" expression="" defaultValue="" alwaysStopAt="true" />
-    <context>
-      <option name="SQL" value="true" />
-    </context>
-  </template>
-  <template name="xql:choose-when" value="-- #when :$KEY$ $OPERATOR$ $VAR$&#10;    $BODY$&#10;-- #break$END$" description="when-expression for choose-expression block" toReformat="false" toShortenFQNames="true">
-    <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="OPERATOR" expression="enum(&quot;!=&quot;,&quot;=&quot;,&quot;&gt;&quot;,&quot;&lt;&quot;,&quot;&gt;=&quot;,&quot;&lt;=&quot;,&quot;&lt;&gt;&quot;,&quot;~&quot;,&quot;!~&quot;,&quot;@&quot;,&quot;!@&quot;)" defaultValue="&quot;!=&quot;" alwaysStopAt="true" />
-    <variable name="VAR" expression="enum(&quot;blank&quot;,&quot;null&quot;,&quot;true&quot;,&quot;false&quot;)" defaultValue="&quot;blank&quot;" alwaysStopAt="true" />
-    <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true" />
-    <context>
-      <option name="SQL" value="true" />
-    </context>
-  </template>
-  <template name="xql:switch" value="-- #switch :$KEY$&#10;    -- #case $VAR$&#10;        $BODY$&#10;    -- #break$END$&#10;    -- #default&#10;        $DEFAULT$&#10;    -- #break&#10;-- #end" description="switch-expression" toReformat="false" toShortenFQNames="true">
-    <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="VAR" expression="enum(&quot;blank&quot;,&quot;null&quot;,&quot;true&quot;,&quot;false&quot;)" defaultValue="&quot;blank&quot;" alwaysStopAt="true" />
-    <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="DEFAULT" expression="" defaultValue="" alwaysStopAt="true" />
-    <context>
-      <option name="SQL" value="true" />
-    </context>
-  </template>
-  <template name="xql:switch-case" value="-- #case $VAR$&#10;    $BODY$&#10;-- #break$END$" description="case-expression for switch-expression block" toReformat="false" toShortenFQNames="true">
-    <variable name="VAR" expression="enum(&quot;blank&quot;,&quot;null&quot;,&quot;true&quot;,&quot;false&quot;)" defaultValue="&quot;blank&quot;" alwaysStopAt="true" />
-    <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true" />
-    <context>
-      <option name="SQL" value="true" />
-    </context>
-  </template>
-  <template name="xql:new" value="/*[$VAR$]*/&#10;$END$&#10;;" description="create new sql block" toReformat="false" toShortenFQNames="true">
-    <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true" />
-    <context>
-      <option name="SQL" value="true" />
-    </context>
-  </template>
-  <template name="xql:new-template" value="/*{$VAR$}*/&#10;$END$&#10;;" description="create new sql template block" toReformat="false" toShortenFQNames="true">
-    <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true" />
-    <context>
-      <option name="SQL" value="true" />
-    </context>
-  </template>
+    <template name="xql:for-full"
+              value="-- #for $KEY$ $INDEX$ of :$LIST$ $PIPES$ delimiter '$SYMBOL$' open '$OPEN$' close '$CLOSE$'&#10;    $BODY$&#10;-- #done"
+              description="full for-expression" toReformat="false" toShortenFQNames="true">
+        <variable name="KEY" expression="" defaultValue="&quot;item&quot;" alwaysStopAt="true"/>
+        <variable name="INDEX" expression="" defaultValue="&quot;,idx&quot;" alwaysStopAt="true"/>
+        <variable name="LIST" expression="" defaultValue="&quot;list&quot;" alwaysStopAt="true"/>
+        <variable name="PIPES" expression="" defaultValue="&quot;| pipeN&quot;" alwaysStopAt="true"/>
+        <variable name="SYMBOL" expression="" defaultValue="&quot;,&quot;" alwaysStopAt="true"/>
+        <variable name="OPEN" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="CLOSE" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="SQL" value="true"/>
+        </context>
+    </template>
+    <template name="xql:for-normal" value="-- #for $KEY$ of :$LIST$ delimiter '$SYMBOL$'&#10;    $BODY$&#10;-- #done"
+              description="normal for-expression" toReformat="false" toShortenFQNames="true">
+        <variable name="KEY" expression="" defaultValue="&quot;item&quot;" alwaysStopAt="true"/>
+        <variable name="LIST" expression="" defaultValue="&quot;list&quot;" alwaysStopAt="true"/>
+        <variable name="SYMBOL" expression="" defaultValue="&quot;,&quot;" alwaysStopAt="true"/>
+        <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="SQL" value="true"/>
+        </context>
+    </template>
+    <template name="xql:if" value="-- #if :$KEY$ $OPERATOR$ $VAR$&#10;    $BODY$&#10;-- #fi$END$"
+              description="if-expression" toReformat="false" toShortenFQNames="true">
+        <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="OPERATOR"
+                  expression="enum(&quot;!=&quot;,&quot;=&quot;,&quot;&gt;&quot;,&quot;&lt;&quot;,&quot;&gt;=&quot;,&quot;&lt;=&quot;,&quot;&lt;&gt;&quot;,&quot;~&quot;,&quot;!~&quot;,&quot;@&quot;,&quot;!@&quot;)"
+                  defaultValue="&quot;!=&quot;" alwaysStopAt="true"/>
+        <variable name="VAR" expression="enum(&quot;blank&quot;,&quot;null&quot;,&quot;true&quot;,&quot;false&quot;)"
+                  defaultValue="&quot;blank&quot;" alwaysStopAt="true"/>
+        <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="SQL" value="true"/>
+        </context>
+    </template>
+    <template name="xql:choose"
+              value="-- #choose&#10;    -- #when :$KEY$ $OPERATOR$ $VAR$&#10;        $BODY$&#10;    -- #break$END$&#10;    -- #default&#10;        $DEFAULT$&#10;    -- #break&#10;-- #end"
+              description="choose-expression" toReformat="false" toShortenFQNames="true">
+        <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="OPERATOR"
+                  expression="enum(&quot;!=&quot;,&quot;=&quot;,&quot;&gt;&quot;,&quot;&lt;&quot;,&quot;&gt;=&quot;,&quot;&lt;=&quot;,&quot;&lt;&gt;&quot;,&quot;~&quot;,&quot;!~&quot;,&quot;@&quot;,&quot;!@&quot;)"
+                  defaultValue="&quot;!=&quot;" alwaysStopAt="true"/>
+        <variable name="VAR" expression="enum(&quot;blank&quot;,&quot;null&quot;,&quot;true&quot;,&quot;false&quot;)"
+                  defaultValue="&quot;blank&quot;" alwaysStopAt="true"/>
+        <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="DEFAULT" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="SQL" value="true"/>
+        </context>
+    </template>
+    <template name="xql:choose-when" value="-- #when :$KEY$ $OPERATOR$ $VAR$&#10;    $BODY$&#10;-- #break$END$"
+              description="when-expression for choose-expression block" toReformat="false" toShortenFQNames="true">
+        <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="OPERATOR"
+                  expression="enum(&quot;!=&quot;,&quot;=&quot;,&quot;&gt;&quot;,&quot;&lt;&quot;,&quot;&gt;=&quot;,&quot;&lt;=&quot;,&quot;&lt;&gt;&quot;,&quot;~&quot;,&quot;!~&quot;,&quot;@&quot;,&quot;!@&quot;)"
+                  defaultValue="&quot;!=&quot;" alwaysStopAt="true"/>
+        <variable name="VAR" expression="enum(&quot;blank&quot;,&quot;null&quot;,&quot;true&quot;,&quot;false&quot;)"
+                  defaultValue="&quot;blank&quot;" alwaysStopAt="true"/>
+        <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="SQL" value="true"/>
+        </context>
+    </template>
+    <template name="xql:switch"
+              value="-- #switch :$KEY$&#10;    -- #case $VAR$&#10;        $BODY$&#10;    -- #break$END$&#10;    -- #default&#10;        $DEFAULT$&#10;    -- #break&#10;-- #end"
+              description="switch-expression" toReformat="false" toShortenFQNames="true">
+        <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="VAR" expression="enum(&quot;blank&quot;,&quot;null&quot;,&quot;true&quot;,&quot;false&quot;)"
+                  defaultValue="&quot;blank&quot;" alwaysStopAt="true"/>
+        <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="DEFAULT" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="SQL" value="true"/>
+        </context>
+    </template>
+    <template name="xql:switch-case" value="-- #case $VAR$&#10;    $BODY$&#10;-- #break$END$"
+              description="case-expression for switch-expression block" toReformat="false" toShortenFQNames="true">
+        <variable name="VAR" expression="enum(&quot;blank&quot;,&quot;null&quot;,&quot;true&quot;,&quot;false&quot;)"
+                  defaultValue="&quot;blank&quot;" alwaysStopAt="true"/>
+        <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="SQL" value="true"/>
+        </context>
+    </template>
+    <template name="xql:new" value="/*[$VAR$]*/&#10;$END$&#10;;" description="create new sql block" toReformat="false"
+              toShortenFQNames="true">
+        <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="SQL" value="true"/>
+        </context>
+    </template>
+    <template name="xql:new-template" value="/*{$VAR$}*/&#10;$END$&#10;;" description="create new sql template block"
+              toReformat="false" toShortenFQNames="true">
+        <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="SQL" value="true"/>
+        </context>
+    </template>
+    <template name="xql:example-update"
+              value="/*[$SQL_NAME$]*/&#10;update $TABLE$&#10;set&#10;-- #for set of :sets | kv&#10;    ${set.key} = :_for.set.value&#10;-- #done&#10;where $CND$&#10;;"
+              description="dynamic update statement example." toReformat="false" toShortenFQNames="true">
+        <variable name="SQL_NAME" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="TABLE" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="CND" expression="" defaultValue="&quot;id = :id&quot;" alwaysStopAt="true"/>
+        <context>
+            <option name="SQL" value="true"/>
+        </context>
+    </template>
 </templateSet>
