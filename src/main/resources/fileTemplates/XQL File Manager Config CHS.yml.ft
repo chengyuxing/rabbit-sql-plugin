@@ -21,4 +21,8 @@ files:#[[$END$]]#
 #charset: UTF-8
 
 #named-param-prefix: ':'
+
 #pipes:
+
+# 内置的数据库名，在项目运行时会自动修改为当前数据库的名称
+#database-id:

@@ -52,6 +52,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.1.5</h3>
+            <ul>
+                <li>Support rabbit sql 7.6.4 and rabbit-sql-spring-boot-starter 2.6.5.</li>
+                <li>Dynamic sql Args support prefix: <code>_parameter</code> .</li>
+            </ul>
             <h3>2.1.4</h3>
             <ul>
                 <li>Support rabbit sql 7.6.1 and rabbit-sql-spring-boot-starter 2.6.1.</li>

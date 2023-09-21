@@ -103,12 +103,25 @@ public class MyCode {
 
     @Test
     public void test23() {
+        var user1 = new User("cyx", 23);
+        var user2 = new User("cyx", 23);
+        System.out.println(user1.hashCode());
+        System.out.println(user2.hashCode());
+    }
 
+    @Test
+    public void testXQL() {
+        var xql = new XQLFileManager();
+        System.out.println(xql);
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> clazz = SimpleJavaCompiler.getInstance().compile("org.example.pipes.Big", Path.of("/Users/chengyuxing/IdeaProjects/sbp-test1/src/main/java/org/example/pipes/Big.java"));
         IPipe<?> pipe = (IPipe<?>) clazz.getConstructor().newInstance();
         System.out.println(pipe.transform(175));
+    }
+
+    public record User(String name, int age) {
+
     }
 }

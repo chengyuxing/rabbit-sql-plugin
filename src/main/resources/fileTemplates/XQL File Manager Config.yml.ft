@@ -21,4 +21,8 @@ files:#[[$END$]]#
 #charset: UTF-8
 
 #named-param-prefix: ':'
+
 #pipes:
+
+# builtin databaseId will be changed to current database name in project runtime.
+#database-id:
