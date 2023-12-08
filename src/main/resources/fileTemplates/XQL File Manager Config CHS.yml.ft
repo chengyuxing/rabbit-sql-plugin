@@ -1,4 +1,7 @@
-# 创建者： $USER ，时间： $DATE $TIME
+# 由 IntelljJ IDEA 创建。
+# 用户：$USER
+# 日期：$DATE
+# 时间：$TIME
 # 配置 'src/main/resources/xql-file-manager.yml' 可启用 rabbit-sql 插件功能。
 # 你可以使用 yaml 的所有语法功能，例如：锚。
 # 扩展功能:

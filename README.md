@@ -7,7 +7,7 @@
 
 Language: English | [简体中文](README.chs.md)
 
-IDEA IU 2022.2.* - 2023.2.* is required.
+IDEA IU 2023.1.* - 2023.3.* is required.
 
 - Support the identification of xql(`.xql`) file type.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
@@ -30,7 +30,7 @@ IDEA IU 2022.2.* - 2023.2.* is required.
 
 ## Getting Started
 
-1. Add dependency **Rabbit-sql 7.6.1+** or **rabbit-sql-spring-boot-starter 2.6.1+** to your project;
+1. Add dependency **Rabbit-sql 7.8.6+** or **rabbit-sql-spring-boot-starter 2.8.5+** to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 4. Configure [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);

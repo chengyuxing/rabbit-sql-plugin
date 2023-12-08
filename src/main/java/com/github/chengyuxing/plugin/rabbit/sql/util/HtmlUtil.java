@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
-import static com.github.chengyuxing.sql.utils.SqlUtil.getAnnotationBlock;
 
 public class HtmlUtil {
     private static final Logger log = Logger.getInstance(HtmlUtil.class);
@@ -36,14 +35,11 @@ public class HtmlUtil {
                 String key = maybeKeywords.get(i);
                 if (!key.trim().isEmpty()) {
                     // keywords highlight
-                    if (StringUtil.equalsAnyIgnoreCase(key, Keywords.STANDARD) || StringUtil.equalsAnyIgnoreCase(key, Keywords.POSTGRESQL)) {
+                    if (rSql.contains(key + "(")) {
+                        maybeKeywords.set(i, colorful(key, Color.FUNCTION));
+                    } else if (StringUtil.equalsAnyIgnoreCase(key, Keywords.STANDARD)) {
                         maybeKeywords.set(i, colorful(key, Color.KEYWORD));
                         // functions highlight
-                    } else if (StringUtil.containsAnyIgnoreCase(key, Keywords.FUNCTIONS)) {
-                        if (rSql.contains(key + "(")) {
-                            maybeKeywords.set(i, colorful(key, Color.FUNCTION));
-                        }
-                        // number highlight
                     } else if (StringUtil.isNumeric(key)) {
                         maybeKeywords.set(i, colorful(key, Color.NUMBER));
                         // PostgreSQL function body block highlight
@@ -79,7 +75,7 @@ public class HtmlUtil {
             colorfulSql = String.join(NEW_LINE, sqlLine);
             // resolve block annotation
             if (colorfulSql.contains("/*") && colorfulSql.contains("*/")) {
-                List<String> annotations = getAnnotationBlock(colorfulSql);
+                List<String> annotations = SqlUtil.getBlockAnnotation(colorfulSql);
                 for (String annotation : annotations) {
                     colorfulSql = colorfulSql.replace(annotation, colorful(annotation, Color.ANNOTATION));
                 }
@@ -97,8 +93,8 @@ public class HtmlUtil {
 
     public enum Color {
         KEYWORD("#CC7832"),
-        NUMBER("#56A9B6"),
-        FUNCTION("#E4B20F"),
+        NUMBER("#48A0A2"),
+        FUNCTION("#54ADF9"),
         STRING("#79A978"),
         ANNOTATION("#7B7E84"),
         DANGER("#E56068"),

@@ -15,7 +15,7 @@ import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.colorful;
 
 public class StringUtil {
     public static Set<String> getTemplateParameters(String str) {
-        var sql = SqlUtil.removeAnnotationBlock(str);
+        var sql = SqlUtil.removeBlockAnnotation(str);
         String[] lines = sql.split(NEW_LINE);
         if (lines.length > 0) {
             var cleanedSql = Stream.of(lines).filter(line -> !line.trim().startsWith("--"))
@@ -32,7 +32,7 @@ public class StringUtil {
     }
 
     public static Map<String, Set<String>> getParamsMappingInfo(SqlGenerator sqlGenerator, String sql) {
-        var p = sqlGenerator.getPARAM_PATTERN();
+        var p = sqlGenerator.getNamedParamPattern();
         String[] lines = sql.split(NEW_LINE);
         var keyMapping = new LinkedHashMap<String, Set<String>>();
         for (String line : lines) {

@@ -115,6 +115,20 @@ public class MyCode {
         System.out.println(xql);
     }
 
+    @Test
+    public void testYield() {
+        System.out.println(ok(10));
+    }
+
+    public boolean ok(int i) {
+        return switch (i) {
+            case 5:
+                yield true;
+            default:
+                yield false;
+        };
+    }
+
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> clazz = SimpleJavaCompiler.getInstance().compile("org.example.pipes.Big", Path.of("/Users/chengyuxing/IdeaProjects/sbp-test1/src/main/java/org/example/pipes/Big.java"));
         IPipe<?> pipe = (IPipe<?>) clazz.getConstructor().newInstance();

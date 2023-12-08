@@ -38,7 +38,7 @@
     </ul>
     <h2>Getting Started</h2>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.6.1+</strong> or <strong>rabbit-sql-spring-boot-starter 2.6.1+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.8.6+</strong> or <strong>rabbit-sql-spring-boot-starter 2.8.5+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in source root: <code>.../src/main/resources/</code>;</li>
         <li>Register xql files on property: <code>files</code>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
@@ -52,6 +52,12 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.1.6</h3>
+            <ul>
+                <li>Support rabbit sql 7.8.6 and rabbit-sql-spring-boot-starter 2.8.5.</li>
+                <li>Support IDEA 233.*(2023.3.*).</li>
+                <li>Live templates update.</li>
+            </ul>
             <h3>2.1.5</h3>
             <ul>
                 <li>Support rabbit sql 7.6.4 and rabbit-sql-spring-boot-starter 2.6.5.</li>
@@ -254,16 +260,19 @@
                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameAnnotator"/>
         <!--Java:Copy sql definition-->
         <intentionAction id="CopySqlDefinition">
+            <language>JAVA</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinition</className>
         </intentionAction>
         <!--Xql:Copy sql definition-->
         <intentionAction>
+            <language>SQL</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInXql</className>
         </intentionAction>
         <!--Test dynamic sql-->
         <intentionAction id="TestDynamicSql">
+            <language>JAVA</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInJava</className>
         </intentionAction>
@@ -286,7 +295,8 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <defaultLiveTemplates file="xql-live-templates.xml"/>
-        <liveTemplateContext implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlContext"/>
+        <liveTemplateContext contextId="SQL"
+                             implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlContext"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.intellij.intelliLang">

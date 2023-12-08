@@ -1,4 +1,7 @@
-# Created by $USER at $DATE $TIME
+# Created by IntelliJ IDEA.
+# User: $USER
+# Date: $DATE
+# Time: $TIME
 # Configure 'src/main/resources/xql-file-manager.yml' will be enabling the rabbit-sql plugin.
 # You can use yaml all syntax features, such as anchor.
 # Extends features:
