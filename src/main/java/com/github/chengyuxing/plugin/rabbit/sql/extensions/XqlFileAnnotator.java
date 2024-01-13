@@ -17,7 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.github.chengyuxing.common.script.SimpleScriptParser.*;
+import static com.github.chengyuxing.common.script.SimpleScriptParser.FOR;
+import static com.github.chengyuxing.common.script.SimpleScriptParser.TAGS;
 
 public class XqlFileAnnotator implements Annotator {
     static final String[] XQL_KEYWORDS = new String[]{"delimiter", "of", "open", "close"};
@@ -40,7 +41,11 @@ public class XqlFileAnnotator implements Annotator {
             return;
         }
 
-        PsiWhiteSpace whiteSpace = (PsiWhiteSpace) element.getPrevSibling();
+        PsiWhiteSpace whiteSpace = null;
+        if (element.getPrevSibling() instanceof PsiWhiteSpace w) {
+            whiteSpace = w;
+        }
+
         if (whiteSpace != null) {
             value = whiteSpace.getText() + value;
         }
@@ -94,7 +99,7 @@ public class XqlFileAnnotator implements Annotator {
     }
 
     void highlightVarName(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content) {
-        Pattern p = Pattern.compile("\\s(?<var>:"+ Patterns.VAR_KEY_PATTERN +")(\\s|\\W)");
+        Pattern p = Pattern.compile("\\s(?<var>:" + Patterns.VAR_KEY_PATTERN + ")(\\s|\\W)");
         Matcher m = p.matcher(content);
         while (m.find()) {
             String var = m.group("var");
