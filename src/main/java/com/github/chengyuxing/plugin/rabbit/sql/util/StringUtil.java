@@ -21,7 +21,7 @@ public class StringUtil {
             var cleanedSql = Stream.of(lines).filter(line -> !line.trim().startsWith("--"))
                     .collect(Collectors.joining(NEW_LINE));
             var m = SqlUtil.FMT.getPattern().matcher(cleanedSql);
-            var params = new HashSet<String>();
+            var params = new LinkedHashSet<String>();
             while (m.find()) {
                 var key = m.group("key");
                 params.add("${" + key + "}");
@@ -68,7 +68,9 @@ public class StringUtil {
                 var key = kl.getItem1();
                 var holder = "_" + colorful(name.substring(key.length()), HtmlUtil.Color.ANNOTATION);
                 if (!keyMapping.containsKey(key)) {
-                    keyMapping.put(key, Set.of(holder));
+                    var set = new LinkedHashSet<String>();
+                    set.add(holder);
+                    keyMapping.put(key, set);
                 } else {
                     keyMapping.get(key).add(holder);
                 }
@@ -83,7 +85,9 @@ public class StringUtil {
                 if (!keyMapping.containsKey(key)) {
                     var temp = tempM.group(0).replace(key, "*");
                     var coloredTemp = colorful(temp.substring(0, temp.indexOf("*")), HtmlUtil.Color.ANNOTATION) + colorful("_", HtmlUtil.Color.LIGHT) + colorful(temp.substring(temp.indexOf("*") + 1), HtmlUtil.Color.ANNOTATION);
-                    keyMapping.put(key, Set.of(coloredTemp));
+                    var set = new LinkedHashSet<String>();
+                    set.add(coloredTemp);
+                    keyMapping.put(key, set);
                 }
             }
         }
