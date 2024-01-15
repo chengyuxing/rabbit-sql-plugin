@@ -33,7 +33,8 @@ public class StringUtil {
 
     public static Map<String, Set<String>> getParamsMappingInfo(SqlGenerator sqlGenerator, String sql) {
         var p = sqlGenerator.getNamedParamPattern();
-        String[] lines = sql.split(NEW_LINE);
+        var nonSubstringSql = SqlUtil.replaceSqlSubstr(sql).getItem1();
+        String[] lines = nonSubstringSql.split(NEW_LINE);
         var keyMapping = new LinkedHashMap<String, Set<String>>();
         for (String line : lines) {
             var tl = line.trim();
