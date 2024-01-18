@@ -1,14 +1,19 @@
 package com.github.chengyuxing.plugin.rabbit.sql;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
-import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
-import com.github.chengyuxing.plugin.rabbit.sql.util.XqlUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.search.FilenameIndex;
+
+import java.util.Objects;
 
 public class ProjectReadyListener implements DumbService.DumbModeListener {
-    private final ResourceCache resourceCache = ResourceCache.getInstance();
+    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
     private final Project project;
 
     public ProjectReadyListener(Project project) {
@@ -17,14 +22,25 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
 
     @Override
     public void exitDumbMode() {
-        // file:///Users/chengyuxing/IdeaProjects/my-project/sbp-test1/src/main/resources
-        // file:///Users/chengyuxing/IdeaProjects/my-project/sbp-test2/src/main/resources
-        for (var vf : ProjectRootManager.getInstance(project).getContentSourceRoots()) {
-            var xqlFileManager = vf.toNioPath().resolve(Constants.CONFIG_NAME);
-            if (XqlUtil.xqlFileManagerExists(xqlFileManager)) {
-                var resource = resourceCache.createResource(project, xqlFileManager);
-                if (resource != null) {
-                    resource.fire();
+        var modules = ModuleManager.getInstance(project).getModules();
+        for (Module module : modules) {
+            var moduleVfs = ProjectUtil.guessModuleDir(module);
+            if (Objects.nonNull(moduleVfs) && moduleVfs.exists()) {
+                var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", module.getModuleProductionSourceScope());
+                for (VirtualFile configVfs : allConfigVfs) {
+                    var config = new XQLConfigManager.Config(project, moduleVfs, configVfs);
+                    var configName = config.getConfigName();
+                    // maybe for support springboot.
+                    if (!ProjectFileUtil.isXqlFileManagerConfig(configName)) {
+                        continue;
+                    }
+                    if (!config.isValid()) {
+                        continue;
+                    }
+                    if (config.isPrimary()) {
+                        config.fire();
+                    }
+                    xqlConfigManager.add(project, config);
                 }
             }
         }
