@@ -16,7 +16,7 @@ public class ReloadConfigAction extends AnAction {
             FileDocumentManager.getInstance().saveAllDocuments();
             XQLConfigManager.getInstance().getConfigMap(project)
                     .forEach((module, configs) -> configs.forEach(config -> {
-                        if (config.isValid() && config.isPrimary()) {
+                        if (config.isValid() && config.isActive()) {
                             config.fire(true);
                         }
                     }));

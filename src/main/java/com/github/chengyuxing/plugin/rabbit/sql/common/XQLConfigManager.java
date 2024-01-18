@@ -70,7 +70,7 @@ public class XQLConfigManager {
     public Config getActiveConfig(Project project, Path module) {
         var configs = getConfigs(project, module);
         for (var config : configs) {
-            if (config.isPrimary()) {
+            if (config.isActive()) {
                 return config;
             }
         }
@@ -143,6 +143,8 @@ public class XQLConfigManager {
         private final XQLFileManager xqlFileManager;
         private final Set<String> configFiles;
         private SqlGenerator sqlGenerator = new SqlGenerator(':');
+
+        private boolean active = false;
 
         public Config(Project project, VirtualFile moduleVfs, VirtualFile configVfs) {
             this.project = project;
@@ -364,6 +366,17 @@ public class XQLConfigManager {
         public void close() {
             xqlFileManager.close();
             notificationExecutor.close();
+        }
+
+        public boolean isActive() {
+            if (active) {
+                return true;
+            }
+            return isPrimary();
+        }
+
+        public void setActive(boolean active) {
+            this.active = active;
         }
     }
 }

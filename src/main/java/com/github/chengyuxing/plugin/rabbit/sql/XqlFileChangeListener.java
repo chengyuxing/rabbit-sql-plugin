@@ -40,7 +40,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                         if (Objects.nonNull(moduleVf) && moduleVf.exists()) {
                             var config = new XQLConfigManager.Config(project, moduleVf, vf);
                             if (config.isValid()) {
-                                if (config.isPrimary()) {
+                                if (config.isActive()) {
                                     config.fire(true);
                                 }
                                 xqlConfigManager.add(project, moduleVf.toNioPath(), config);
@@ -62,7 +62,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                         if (Objects.nonNull(configs)) {
                             log.debug("find module: " + moduleVf + " configs.");
                             configs.forEach(config -> {
-                                if (config.isValid() && config.isPrimary()) {
+                                if (config.isValid() && config.isActive()) {
                                     var configured = config.getConfigFiles().contains(xqlPath);
                                     // configured files:
                                     // content modified

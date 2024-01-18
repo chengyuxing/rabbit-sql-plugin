@@ -37,7 +37,7 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
                     if (!config.isValid()) {
                         continue;
                     }
-                    if (config.isPrimary()) {
+                    if (config.isActive()) {
                         config.fire();
                     }
                     xqlConfigManager.add(project, moduleVfs.toNioPath(), config);
