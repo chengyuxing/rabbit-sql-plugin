@@ -5,7 +5,6 @@ import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.script.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
-import com.github.chengyuxing.plugin.rabbit.sql.util.PathUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SimpleJavaCompiler;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -22,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 public class MyCode {
     @Test
@@ -52,13 +50,6 @@ public class MyCode {
         keyMapping.forEach((k, v) -> {
             System.out.println(k + ":" + v);
         });
-    }
-
-    @Test
-    public void test33() {
-        var path = Path.of("/Users/chengyuxing/IdeaProjects/rabbit-sql-plugin/src/test/resources/data.sql");
-        System.out.println(Path.of("/abc/ddd.my.xql").toUri().toString());
-        System.out.println(PathUtil.backward(path, 4).getFileName());
     }
 
     @Test

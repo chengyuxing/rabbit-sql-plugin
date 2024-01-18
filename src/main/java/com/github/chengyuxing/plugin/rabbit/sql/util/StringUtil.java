@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import static com.github.chengyuxing.common.script.SimpleScriptParser.*;
 import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
-import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.colorful;
+import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.code;
 
 public class StringUtil {
     public static Set<String> getTemplateParameters(String str) {
@@ -33,7 +33,10 @@ public class StringUtil {
 
     public static Map<String, Set<String>> getParamsMappingInfo(SqlGenerator sqlGenerator, String sql) {
         var p = sqlGenerator.getNamedParamPattern();
-        var nonSubstringSql = SqlUtil.replaceSqlSubstr(sql).getItem1();
+        var substrMapPair = SqlUtil.replaceSqlSubstr(sql);
+        var nonSubstringSql = substrMapPair.getItem1();
+        var substrMap = substrMapPair.getItem2();
+
         String[] lines = nonSubstringSql.split(NEW_LINE);
         var keyMapping = new LinkedHashMap<String, Set<String>>();
         for (String line : lines) {
@@ -50,12 +53,12 @@ public class StringUtil {
                     var endIdx = m.end("name") - kl.getItem2();
                     tl = tl.replace("<", "&lt;")
                             .replace(">", "&gt;");
-                    var part = colorful(tl.substring(0, m.start("name") - 1), HtmlUtil.Color.ANNOTATION) + "_" + colorful(tl.substring(endIdx), HtmlUtil.Color.ANNOTATION);
+                    var part = code(tl.substring(0, m.start("name") - 1), HtmlUtil.Color.ANNOTATION) + "_" + code(tl.substring(endIdx), HtmlUtil.Color.ANNOTATION);
                     if (!keyMapping.containsKey(key)) {
                         var parts = new LinkedHashSet<String>();
                         keyMapping.put(key, parts);
                     }
-                    keyMapping.get(key).add(part);
+                    keyMapping.get(key).add(restoreSubStr(part, substrMap));
                 }
                 continue;
             }
@@ -67,13 +70,13 @@ public class StringUtil {
                 }
                 var kl = getKeyAndRestLength(name);
                 var key = kl.getItem1();
-                var holder = "_" + colorful(name.substring(key.length()), HtmlUtil.Color.ANNOTATION);
+                var holder = "_" + code(name.substring(key.length()), HtmlUtil.Color.ANNOTATION);
                 if (!keyMapping.containsKey(key)) {
                     var set = new LinkedHashSet<String>();
-                    set.add(holder);
+                    set.add(restoreSubStr(holder,substrMap));
                     keyMapping.put(key, set);
                 } else {
-                    keyMapping.get(key).add(holder);
+                    keyMapping.get(key).add(restoreSubStr(holder,substrMap));
                 }
             }
             var tempP = SqlUtil.FMT.getPattern();
@@ -85,7 +88,7 @@ public class StringUtil {
                 }
                 if (!keyMapping.containsKey(key)) {
                     var temp = tempM.group(0).replace(key, "*");
-                    var coloredTemp = colorful(temp.substring(0, temp.indexOf("*")), HtmlUtil.Color.ANNOTATION) + colorful("_", HtmlUtil.Color.LIGHT) + colorful(temp.substring(temp.indexOf("*") + 1), HtmlUtil.Color.ANNOTATION);
+                    var coloredTemp = code(temp.substring(0, temp.indexOf("*")), HtmlUtil.Color.ANNOTATION) + code("_", HtmlUtil.Color.LIGHT) + code(temp.substring(temp.indexOf("*") + 1), HtmlUtil.Color.ANNOTATION);
                     var set = new LinkedHashSet<String>();
                     set.add(coloredTemp);
                     keyMapping.put(key, set);
@@ -93,6 +96,13 @@ public class StringUtil {
             }
         }
         return keyMapping;
+    }
+
+    private static String restoreSubStr(String content, Map<String, String> substrMap) {
+        for (Map.Entry<String, String> e : substrMap.entrySet()) {
+            content = content.replace(e.getKey(), e.getValue());
+        }
+        return content;
     }
 
     public static Pair<String, Integer> getKeyAndRestLength(String name) {
