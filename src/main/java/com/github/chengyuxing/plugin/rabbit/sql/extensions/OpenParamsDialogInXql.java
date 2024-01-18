@@ -1,8 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
-import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceCache;
-import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
+import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceManager;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.codeInspection.util.IntentionFamilyName;
@@ -20,6 +20,8 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class OpenParamsDialogInXql extends PsiElementBaseIntentionAction {
+    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
+
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
         var sqlNameTag = element.getText();
@@ -34,13 +36,16 @@ public class OpenParamsDialogInXql extends PsiElementBaseIntentionAction {
             if (xqlVf == null) {
                 return;
             }
-            var resource = ResourceCache.getInstance().getResource(xqlFile);
-            var xqlFileManager = resource.getXqlFileManager();
+            var config = xqlConfigManager.getActiveConfig(element);
+            if (Objects.isNull(config)) {
+                return;
+            }
+            var xqlFileManager = config.getXqlFileManager();
             for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
                 if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
                     var sqlPath = file.getKey() + "." + m.group("name");
-                    var dsResource = DatasourceCache.getInstance().getResource(project);
-                    ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlPath, resource, dsResource).showAndGet());
+                    var dsResource = DatasourceManager.getInstance().getResource(project);
+                    ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlPath, config, dsResource).showAndGet());
                     return;
                 }
             }
@@ -70,13 +75,12 @@ public class OpenParamsDialogInXql extends PsiElementBaseIntentionAction {
             if (!Objects.equals(xqlVf.getExtension(), "xql")) {
                 return false;
             }
-            var resource = ResourceCache.getInstance().getResource(xqlFile);
-            if (resource != null) {
-                var xqlFileManager = resource.getXqlFileManager();
+            var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(xqlFile);
+            if (xqlFileManager != null) {
                 for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
                     if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
                         var sqlPath = file.getKey() + "." + m.group("name");
-                        if (resource.getXqlFileManager().contains(sqlPath)) {
+                        if (xqlFileManager.contains(sqlPath)) {
                             return true;
                         }
                     }

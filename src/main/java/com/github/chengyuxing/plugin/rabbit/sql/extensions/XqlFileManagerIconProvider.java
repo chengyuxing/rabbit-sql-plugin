@@ -17,7 +17,8 @@ public class XqlFileManagerIconProvider extends IconProvider {
             if (psiFile.getName().equals(Constants.CONFIG_NAME)) {
                 return XqlIcons.XQL_FILE_MANAGER;
             }
-            if (psiFile.getName().matches("xql-file-manager[-.]\\w+\\.yml")) {
+            var name = psiFile.getName();
+            if (name.matches(Constants.CONFIG_PATTERN) && !name.equals(Constants.CONFIG_NAME)) {
                 return XqlIcons.XQL_FILE_MANAGER_SECONDARY;
             }
         }

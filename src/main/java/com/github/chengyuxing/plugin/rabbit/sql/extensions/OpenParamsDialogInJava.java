@@ -1,7 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceCache;
-import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
+import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceManager;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
@@ -14,6 +14,8 @@ import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class OpenParamsDialogInJava extends CopySqlDefinition {
     private static final Logger log = Logger.getInstance(OpenParamsDialogInJava.class);
 
@@ -21,9 +23,12 @@ public class OpenParamsDialogInJava extends CopySqlDefinition {
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
         try {
             @SuppressWarnings("DataFlowIssue") var sqlName = ((PsiLiteralExpression) element.getParent()).getValue().toString().substring(1);
-            var resource = ResourceCache.getInstance().getResource(element);
-            var dsResource = DatasourceCache.getInstance().getResource(project);
-            ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlName, resource, dsResource).showAndGet());
+            var config = XQLConfigManager.getInstance().getActiveConfig(element);
+            if (Objects.isNull(config)) {
+                return;
+            }
+            var dsResource = DatasourceManager.getInstance().getResource(project);
+            ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlName, config, dsResource).showAndGet());
         } catch (Throwable e) {
             log.warn(e);
         }

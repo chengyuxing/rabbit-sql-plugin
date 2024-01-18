@@ -3,8 +3,8 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.script.Comparators;
 import com.github.chengyuxing.common.utils.StringUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceCache;
-import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
+import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceManager;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.IconListCellRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ParametersForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
@@ -31,20 +31,20 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     private final String sql;
     private final Map<String, Object> paramsHistory;
     private final XQLFileManager xqlFileManager;
-    private final DatasourceCache.Resource datasourceResource;
-    private final ResourceCache.Resource resource;
+    private final DatasourceManager.Resource datasourceResource;
+    private final XQLConfigManager.Config config;
     private final ParametersForm parametersForm;
-    private final ComboBox<DatasourceCache.DatabaseId> datasourceList;
+    private final ComboBox<DatasourceManager.DatabaseId> datasourceList;
 
-    public DynamicSqlCalcDialog(String sqlName, ResourceCache.Resource resource, DatasourceCache.Resource datasourceResource) {
+    public DynamicSqlCalcDialog(String sqlName, XQLConfigManager.Config config, DatasourceManager.Resource datasourceResource) {
         super(true);
         this.sqlName = sqlName;
-        this.resource = resource;
+        this.config = config;
         this.datasourceResource = datasourceResource;
-        this.xqlFileManager = this.resource.getXqlFileManager();
+        this.xqlFileManager = this.config.getXqlFileManager();
         this.sql = this.xqlFileManager.get(sqlName);
         this.paramsHistory = datasourceResource.getParamsHistory();
-        var paramsMapping = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.getParamsMappingInfo(this.resource.getSqlGenerator(), sql);
+        var paramsMapping = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.getParamsMappingInfo(this.config.getSqlGenerator(), sql);
         this.parametersForm = new ParametersForm(paramsMapping, paramsHistory);
         this.datasourceList = new ComboBox<>();
         setTitle("Parameters");
@@ -75,7 +75,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     protected @Nullable JPanel createSouthAdditionalPanel() {
         var panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 0));
-        datasourceList.addItem(DatasourceCache.DatabaseId.empty("<Configured database>"));
+        datasourceList.addItem(DatasourceManager.DatabaseId.empty("<Configured database>"));
         if (datasourceResource != null) {
             var dsInfo = datasourceResource.getConfiguredDatabases();
             datasourceList.setRenderer(new IconListCellRenderer(dsInfo));
@@ -94,7 +94,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
 
     @Override
     protected void doHelpAction() {
-        parametersForm.setSqlHtml(HtmlUtil.toHighlightSqlHtml(sql));
+        parametersForm.setSqlHtml(HtmlUtil.highlightSql(sql));
         autoHeight(sql);
     }
 
@@ -140,7 +140,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                 var forVars = result.getItem2();
                 // generate raw sql.
                 args.put(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY, forVars);
-                var rawSql = resource.getSqlGenerator()
+                var rawSql = config.getSqlGenerator()
                         .generateSql(finalSql, args);
                 // execute sql
                 var idx = datasourceList.getSelectedIndex();
@@ -158,19 +158,19 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                     }
                     datasourceResource.setSelected(null);
                 }
-                parametersForm.setSqlHtml(HtmlUtil.toHighlightSqlHtml(rawSql));
+                parametersForm.setSqlHtml(HtmlUtil.highlightSql(rawSql));
                 autoHeight(rawSql);
             } catch (Exception e) {
                 var errors = ExceptionUtil.getCauseMessages(e);
                 var msg = String.join(NEW_LINE, errors);
-                parametersForm.setSqlHtml(HtmlUtil.toHtml(msg, HtmlUtil.Color.DANGER));
+                parametersForm.setSqlHtml(HtmlUtil.pre(msg, HtmlUtil.Color.DANGER));
                 autoHeight(msg);
             }
             return;
         }
         // show error messages
         String msg = String.join(NEW_LINE, data.getItem2());
-        parametersForm.setSqlHtml(HtmlUtil.toHtml(msg, HtmlUtil.Color.DANGER));
+        parametersForm.setSqlHtml(HtmlUtil.pre(msg, HtmlUtil.Color.DANGER));
         autoHeight(msg);
     }
 

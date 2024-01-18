@@ -1,7 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
-import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
@@ -9,7 +9,7 @@ import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -49,15 +49,16 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                     return;
                 }
                 var project = xqlPsiElement.getProject();
-                var module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(xqlVf);
+                var module = ModuleUtil.findModuleForPsiElement(xqlPsiElement);
                 if (module == null) return;
-                var resource = ResourceCache.getInstance().getResource(xqlFile);
-                if (resource == null) return;
-                var xqlFileManager = resource.getXqlFileManager();
+
+                var xqlFileManager = XQLConfigManager.getInstance().getActiveXqlFileManager(project, xqlPsiElement);
+                if (Objects.isNull(xqlFileManager)) return;
+
                 for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
                     if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
                         var sqlPath = file.getKey() + "." + sqlName;
-                        if (resource.getXqlFileManager().contains(sqlPath)) {
+                        if (xqlFileManager.contains(sqlPath)) {
                             final var sqlRef = "&" + sqlPath;
                             try {
                                 List<PsiElement> founded = FilenameIndex.getAllFilesByExt(project, "java", GlobalSearchScope.moduleScope(module))

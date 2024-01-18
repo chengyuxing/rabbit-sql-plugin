@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -22,9 +22,9 @@ public class XqlNameAnnotator implements Annotator {
             }
             if (sqlRef.matches(SQL_NAME_PATTERN)) {
                 String sqlName = sqlRef.substring(1);
-                var resource = ResourceCache.getInstance().getResource(element);
-                if (resource != null) {
-                    if (resource.getXqlFileManager().contains(sqlName)) {
+                var config = XQLConfigManager.getInstance().getActiveConfig(element);
+                if (config != null) {
+                    if (config.getXqlFileManager().contains(sqlName)) {
                         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                                 .range(element)
                                 .textAttributes(DefaultLanguageHighlighterColors.METADATA)

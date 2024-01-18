@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -20,6 +20,8 @@ import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME
 import static com.intellij.lang.documentation.DocumentationMarkup.*;
 
 public class XqlQuickDoc extends AbstractDocumentationProvider {
+    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
+
     @Override
     public @Nullable @Nls String generateHoverDoc(@NotNull PsiElement element, @Nullable PsiElement originalElement) {
         return generateDoc(element, originalElement);
@@ -39,18 +41,18 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
         }
         if (sqlRef.matches(SQL_NAME_PATTERN)) {
             String sqlName = sqlRef.substring(1);
-            var resource = ResourceCache.getInstance().getResource(originalElement);
-            if (resource != null && resource.getXqlFileManager().contains(sqlName)) {
-                var xqlFileManager = resource.getXqlFileManager();
+            var config = xqlConfigManager.getActiveConfig(originalElement);
+            if (config != null && config.getXqlFileManager().contains(sqlName)) {
+                var xqlFileManager = config.getXqlFileManager();
                 String sqlDefinition = xqlFileManager.get(sqlName);
-                String sqlContent = HtmlUtil.toHighlightSqlHtml(sqlDefinition);
+                String sqlContent = HtmlUtil.highlightSql(sqlDefinition);
                 String xqlFile = element.getContainingFile().getName();
 
                 String doc = DEFINITION_START + element.getText() + DEFINITION_END +
                         CONTENT_START + sqlContent + CONTENT_END +
                         SECTIONS_START;
 
-                var prepareParams = resource.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of())
+                var prepareParams = config.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of())
                         .getItem2()
                         .stream()
                         // ignore for local variables.
@@ -92,8 +94,8 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
         }
         if (sqlRef.matches(SQL_NAME_PATTERN)) {
             String sqlName = sqlRef.substring(1);
-            var resource = ResourceCache.getInstance().getResource(originalElement);
-            if (resource != null && resource.getXqlFileManager().contains(sqlName)) {
+            var config = xqlConfigManager.getActiveConfig(originalElement);
+            if (config != null && config.getXqlFileManager().contains(sqlName)) {
                 String xqlFile = element.getContainingFile().getName();
                 return xqlFile + "<br>" + element.getText() + " -> " + sqlRef;
             }

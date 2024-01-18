@@ -14,21 +14,21 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DatasourceCache {
-    private static volatile DatasourceCache instance;
+public class DatasourceManager {
+    private static volatile DatasourceManager instance;
     /**
      * key: project dir, value: database resource which be owned by project
      */
     private final Map<Project, Resource> cache = new ConcurrentHashMap<>();
 
-    private DatasourceCache() {
+    private DatasourceManager() {
     }
 
-    public static DatasourceCache getInstance() {
+    public static DatasourceManager getInstance() {
         if (instance == null) {
-            synchronized (DatasourceCache.class) {
+            synchronized (DatasourceManager.class) {
                 if (instance == null) {
-                    instance = new DatasourceCache();
+                    instance = new DatasourceManager();
                 }
             }
         }

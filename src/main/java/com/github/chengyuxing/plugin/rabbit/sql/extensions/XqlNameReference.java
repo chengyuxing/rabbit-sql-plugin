@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.diagnostic.Logger;
@@ -19,12 +19,12 @@ import java.util.concurrent.atomic.AtomicReference;
 public class XqlNameReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
     private static final Logger log = Logger.getInstance(XqlNameReference.class);
     private final String key;
-    private final ResourceCache.Resource resource;
+    private final XQLConfigManager.Config config;
 
     public XqlNameReference(@NotNull PsiElement element, TextRange rangeInElement) {
         super(element, rangeInElement);
         key = element.getText().substring(rangeInElement.getStartOffset(), rangeInElement.getEndOffset());
-        resource = ResourceCache.getInstance().getResource(element);
+        config = XQLConfigManager.getInstance().getActiveConfig(element);
     }
 
     @Override
@@ -42,9 +42,9 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
             if (myElement.isValid()) {
                 Project project = myElement.getProject();
 
-                if (resource == null) return ResolveResult.EMPTY_ARRAY;
+                if (config == null) return ResolveResult.EMPTY_ARRAY;
 
-                var allXqlFiles = resource.getXqlFileManager().getFiles();
+                var allXqlFiles = config.getXqlFileManager().getFiles();
                 if (allXqlFiles.containsKey(alias)) {
                     var xqlFilePath = allXqlFiles.get(alias);
                     var xqlPath = Path.of(URI.create(xqlFilePath));
@@ -80,10 +80,10 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
 
     @Override
     public Object @NotNull [] getVariants() {
-        if (resource == null) {
+        if (config == null) {
             return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
         }
-        return resource.getXqlFileManager().names()
+        return config.getXqlFileManager().names()
                 .stream()
                 .map(name -> LookupElementBuilder.create(name)
                         .withIcon(XqlIcons.XQL_ITEM)

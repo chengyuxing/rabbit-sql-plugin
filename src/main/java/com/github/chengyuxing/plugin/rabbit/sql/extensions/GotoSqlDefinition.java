@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Objects;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 
@@ -32,13 +33,13 @@ public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
         }
         if (sqlRef.matches(SQL_NAME_PATTERN)) {
             sqlRef = sqlRef.substring(1);
-            var resource = ResourceCache.getInstance().getResource(javaElement);
-            if (resource != null && resource.getXqlFileManager().contains(sqlRef)) {
+            var xqlFileManager = XQLConfigManager.getInstance().getActiveXqlFileManager(javaElement);
+            if (Objects.nonNull(xqlFileManager) && xqlFileManager.contains(sqlRef)) {
                 var dotIdx = sqlRef.indexOf(".");
                 var alias = sqlRef.substring(0, dotIdx).trim();
                 var sqlName = sqlRef.substring(dotIdx + 1).trim();
                 try {
-                    var allXqlFiles = resource.getXqlFileManager().getFiles();
+                    var allXqlFiles = xqlFileManager.getFiles();
                     if (allXqlFiles.containsKey(alias)) {
                         var xqlFilePath = allXqlFiles.get(alias);
                         var xqlPath = Path.of(URI.create(xqlFilePath));

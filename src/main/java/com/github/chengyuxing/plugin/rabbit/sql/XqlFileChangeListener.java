@@ -37,12 +37,14 @@ public class XqlFileChangeListener implements BulkFileListener {
                     var module = ModuleUtil.findModuleForFile(vf, project);
                     if (Objects.nonNull(module)) {
                         var moduleVf = ProjectUtil.guessModuleDir(module);
-                        var config = new XQLConfigManager.Config(project, moduleVf, vf);
-                        if (config.isValid()) {
-                            if (config.isPrimary()) {
-                                config.fire(true);
+                        if (Objects.nonNull(moduleVf) && moduleVf.exists()) {
+                            var config = new XQLConfigManager.Config(project, moduleVf, vf);
+                            if (config.isValid()) {
+                                if (config.isPrimary()) {
+                                    config.fire(true);
+                                }
+                                xqlConfigManager.add(project, moduleVf.toNioPath(), config);
                             }
-                            xqlConfigManager.add(project, config);
                         }
                     }
                     xqlConfigManager.cleanup(project);
@@ -56,8 +58,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                     if (Objects.isNull(validXqlVf)) continue;
                     var moduleVf = ProjectFileUtil.findModule(project, validXqlVf);
                     if (Objects.nonNull(moduleVf) && moduleVf.exists()) {
-                        var configsByModule = xqlConfigManager.groupByModule(project);
-                        var configs = configsByModule.get(moduleVf.toNioPath());
+                        var configs = xqlConfigManager.getConfigs(project, moduleVf.toNioPath());
                         if (Objects.nonNull(configs)) {
                             log.debug("find module: " + moduleVf + " configs.");
                             configs.forEach(config -> {
@@ -79,7 +80,6 @@ public class XqlFileChangeListener implements BulkFileListener {
                                             }
                                         });
                                     }
-                                    System.out.println(config);
                                 }
                             });
                         }

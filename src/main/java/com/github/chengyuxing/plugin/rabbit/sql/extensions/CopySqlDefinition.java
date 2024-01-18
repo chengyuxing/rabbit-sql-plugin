@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceCache;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
@@ -16,18 +16,20 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.util.Objects;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 
 public class CopySqlDefinition extends PsiElementBaseIntentionAction {
     private static final Logger log = Logger.getInstance(CopySqlDefinition.class);
+    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
         try {
             @SuppressWarnings("DataFlowIssue") var sqlName = ((PsiLiteralExpression) element.getParent()).getValue().toString().substring(1);
-            var resource = ResourceCache.getInstance().getResource(element);
-            var sqlDefinition = resource.getXqlFileManager().get(sqlName);
+            var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(project, element);
+            var sqlDefinition = xqlFileManager.get(sqlName);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(new StringSelection(sqlDefinition), null);
         } catch (Throwable e) {
@@ -46,9 +48,9 @@ public class CopySqlDefinition extends PsiElementBaseIntentionAction {
         }
         if (sqlRef.matches(SQL_NAME_PATTERN)) {
             String sqlName = sqlRef.substring(1);
-            var resource = ResourceCache.getInstance().getResource(element);
-            if (resource != null) {
-                return resource.getXqlFileManager().contains(sqlName);
+            var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(project, element);
+            if (Objects.nonNull(xqlFileManager)) {
+                return xqlFileManager.contains(sqlName);
             }
         }
         return false;
