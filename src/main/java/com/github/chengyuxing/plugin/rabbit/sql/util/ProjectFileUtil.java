@@ -12,8 +12,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class ProjectFileUtil {
+
     public static boolean isXqlFileManagerConfig(String name) {
-        return name.matches(Constants.SPRINGBOOT_CONFIG_PATTERN) || name.matches(Constants.CONFIG_PATTERN);
+        return name.matches(Constants.CONFIG_PATTERN);
     }
 
     public static VirtualFile getValidVirtualFile(VirtualFile file) {

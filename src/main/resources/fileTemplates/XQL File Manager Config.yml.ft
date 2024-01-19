@@ -23,9 +23,9 @@ files:
 # UTF-8 is the default.
 #charset: UTF-8
 
-#named-param-prefix: ':'
-
+# Dynamic sql pipe class.
 #pipes:
 
-# builtin databaseId will be changed to current database name in project runtime.
+# Following properties for support rabbit-sql-plugin dynamic sql test parameter.
+#named-param-prefix: ':'
 #database-id:

@@ -14,7 +14,4 @@ public class Constants {
     public static final Path CONFIG_PATH = RESOURCE_ROOT.resolve(CONFIG_NAME);
     @Language("Regexp")
     public static final String CONFIG_PATTERN = "xql-file-manager(-[a-zA-Z0-9]+)?\\.yml";
-    @Language("Regexp")
-    public static final String SPRINGBOOT_CONFIG_PATTERN = "application(-[a-zA-Z0-9]+)?\\.yml";
-    public static final String SPRINGBOOT_MAIN_CONFIG = "application.yml";
 }

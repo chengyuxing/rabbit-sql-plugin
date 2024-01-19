@@ -11,7 +11,6 @@ import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
@@ -25,7 +24,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class XQLConfigManager {
-    private static final Logger log = Logger.getInstance(XQLConfigManager.class);
     private static volatile XQLConfigManager instance;
     private final Map<Project, Map<Path, Set<Config>>> configMap = new ConcurrentHashMap<>();
 
@@ -68,12 +66,20 @@ public class XQLConfigManager {
     }
 
     public Config getActiveConfig(Project project, Path module) {
+        Config primary = null;
+        Config selected = null;
         var configs = getConfigs(project, module);
         for (var config : configs) {
             if (config.isActive()) {
-                return config;
+                if (config.isPrimary()) {
+                    primary = config;
+                    continue;
+                }
+                selected = config;
             }
         }
+        if (Objects.nonNull(selected)) return selected;
+        if (Objects.nonNull(primary)) return primary;
         return null;
     }
 
@@ -118,15 +124,7 @@ public class XQLConfigManager {
     public void cleanup(Project project) {
         var configs = configMap.get(project);
         if (Objects.nonNull(configs)) {
-            configs.forEach((k, v) -> {
-                v.removeIf(config -> {
-                    var invalid = !config.isValid();
-                    if (invalid) {
-                        log.debug("clean invalid config: " + config.configVfs);
-                    }
-                    return invalid;
-                });
-            });
+            configs.forEach((k, v) -> v.removeIf(config -> !config.isValid()));
         }
     }
 
@@ -140,6 +138,7 @@ public class XQLConfigManager {
         private final Path resourcesRoot;
 
         private final NotificationExecutor notificationExecutor;
+
         private final XQLFileManager xqlFileManager;
         private final Set<String> configFiles;
         private SqlGenerator sqlGenerator = new SqlGenerator(':');
@@ -148,14 +147,17 @@ public class XQLConfigManager {
 
         public Config(Project project, VirtualFile moduleVfs, VirtualFile configVfs) {
             this.project = project;
+
             this.configVfs = configVfs;
             this.configPath = this.configVfs.toNioPath();
 
             this.moduleVfs = moduleVfs;
             this.modulePath = this.moduleVfs.toNioPath();
+
             this.resourcesRoot = this.modulePath.resolve(Constants.RESOURCE_ROOT);
 
             this.configFiles = new HashSet<>();
+
             this.notificationExecutor = new NotificationExecutor(messages ->
                     messages.forEach(m ->
                             NotificationUtil.showMessage(project, m.getText(), m.getType())), 1500);
@@ -176,7 +178,7 @@ public class XQLConfigManager {
                                 var pipeClassName = e.getValue();
                                 var pipeClassPath = classesPath.resolve(ResourceUtil.package2path(pipeClassName) + ".class");
                                 if (!Files.exists(pipeClassPath)) {
-                                    notificationExecutor.addMessage(Message.warning("[" + getModuleName() + "] pipe '" + pipeClassName + "' not found, maybe should re-compile project."));
+                                    notificationExecutor.show(Message.warning("[" + getModuleName() + "] pipe '" + pipeClassName + "' not found, maybe should re-compile project."));
                                     continue;
                                 }
                                 try {
@@ -186,7 +188,7 @@ public class XQLConfigManager {
                                     }
                                     pipeInstances.put(pipeName, (IPipe<?>) ReflectUtil.getInstance(pipeClass));
                                 } catch (Throwable ex) {
-                                    notificationExecutor.addMessage(Message.warning("[" + getModuleName() + "] load pipe '" + pipeClassName + "' error: " + ex.getMessage()));
+                                    notificationExecutor.show(Message.warning("[" + getModuleName() + "] load pipe '" + pipeClassName + "' error: " + ex.getMessage()));
                                 }
                             }
                         }
@@ -203,7 +205,7 @@ public class XQLConfigManager {
             try {
                 var config = new XQLFileManagerConfig(configPath.toUri().toString());
                 config.copyStateTo(xqlFileManager);
-                Map<String, String> newFiles = new HashMap<>();
+                var newFiles = new HashMap<String, String>();
                 for (Map.Entry<String, String> e : xqlFileManager.getFiles().entrySet()) {
                     var alias = e.getKey();
                     // e.g. xqls/home.xql
@@ -234,11 +236,9 @@ public class XQLConfigManager {
                 xqlFileManager.init();
                 successes.add(Message.info("[" + getModuleName() + "] xql resources updated!"));
             } catch (YamlDeserializeException e) {
-                warnings.add(Message.error("[" + getModuleName() + "] xql-file-manager.yml config content invalid."));
-                log.warn(e);
+                warnings.add(Message.error("[" + getModuleName() + "] xql-file-manager.yml config content invalid: " + e.getMessage()));
             } catch (Exception e) {
-                warnings.add(Message.error("[" + getModuleName() + "] error:" + e.getMessage()));
-                log.warn(e);
+                warnings.add(Message.error("[" + getModuleName() + "] error: " + e.getMessage()));
             }
             if (warnings.isEmpty()) {
                 return successes;
@@ -249,7 +249,7 @@ public class XQLConfigManager {
         public void fire(boolean showNotification) {
             var messages = initXqlFileManager();
             if (showNotification) {
-                notificationExecutor.addMessages(messages);
+                notificationExecutor.show(messages);
             }
         }
 
@@ -305,32 +305,24 @@ public class XQLConfigManager {
         }
 
         /**
-         * Is default config file or not.(src/main/resources/xql-file-manager.yml)
+         * Is current config active.
+         *
+         * @return true or false
+         */
+        public boolean isActive() {
+            if (active) {
+                return true;
+            }
+            return isPrimary();
+        }
+
+        /**
+         * src/main/resources/xql-file-manager.yml
          *
          * @return true or false
          */
         public boolean isPrimary() {
             return configPath.endsWith(Constants.CONFIG_PATH);
-        }
-
-        /**
-         * guess application.yml or not.
-         *
-         * @return true or false
-         */
-        public boolean guessSpringbootPrimary() {
-            if (guessSpringboot()) {
-                return configPath.endsWith(Constants.SPRINGBOOT_MAIN_CONFIG);
-            }
-            return false;
-        }
-
-        public boolean guessSpringboot() {
-            var configName = getConfigName();
-            if (configName.matches(Constants.SPRINGBOOT_CONFIG_PATTERN)) {
-                return configPath.endsWith(Constants.RESOURCE_ROOT.resolve(configName));
-            }
-            return false;
         }
 
         public boolean isValid() {
@@ -366,13 +358,6 @@ public class XQLConfigManager {
         public void close() {
             xqlFileManager.close();
             notificationExecutor.close();
-        }
-
-        public boolean isActive() {
-            if (active) {
-                return true;
-            }
-            return isPrimary();
         }
 
         public void setActive(boolean active) {

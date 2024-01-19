@@ -23,9 +23,9 @@ files:
 # UTF-8 是默认编码。
 #charset: UTF-8
 
-#named-param-prefix: ':'
-
+# 动态sql管道类
 #pipes:
 
-# 内置的数据库名，在项目运行时会自动修改为当前数据库的名称
+# 这两个属性仅为了支持插件动态sql测试参数功能
+#named-param-prefix: ':'
 #database-id:

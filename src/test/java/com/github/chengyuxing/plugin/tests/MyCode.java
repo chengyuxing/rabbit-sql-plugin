@@ -5,6 +5,7 @@ import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.script.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SimpleJavaCompiler;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -104,6 +105,14 @@ public class MyCode {
     public void testXQL() {
         var xql = new XQLFileManager();
         System.out.println(xql);
+    }
+
+    @Test
+    public void testSbtApp() throws IOException {
+        var p = ProjectFileUtil.parseSpringApplicationYML(Path.of("/Users/chengyuxing/IdeaProjects/multi-modules/system/src/main/resources/application.yml"));
+        System.out.println(p);
+        var c = ProjectFileUtil.copySbtAppProperties(p);
+        System.out.println(c);
     }
 
     @Test

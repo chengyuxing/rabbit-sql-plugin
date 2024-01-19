@@ -30,7 +30,6 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
                 for (VirtualFile configVfs : allConfigVfs) {
                     var config = new XQLConfigManager.Config(project, moduleVfs, configVfs);
                     var configName = config.getConfigName();
-                    // maybe for support springboot.
                     if (!ProjectFileUtil.isXqlFileManagerConfig(configName)) {
                         continue;
                     }

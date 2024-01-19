@@ -22,12 +22,12 @@ public class NotificationExecutor implements AutoCloseable {
         service = Executors.newSingleThreadScheduledExecutor();
     }
 
-    public void addMessage(Message message) {
+    public void show(Message message) {
         messageCache.add(message);
         trigger();
     }
 
-    public void addMessages(Collection<Message> messages) {
+    public void show(Collection<Message> messages) {
         this.messageCache.addAll(messages);
         trigger();
     }
