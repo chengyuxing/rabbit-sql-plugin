@@ -11,8 +11,6 @@ import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -130,7 +128,6 @@ public class XQLConfigManager {
 
     public static final class Config implements AutoCloseable {
         private final Project project;
-        private final VirtualFile moduleVfs;
         private final VirtualFile configVfs;
         private final Path configPath;
         private final Path modulePath;
@@ -151,8 +148,7 @@ public class XQLConfigManager {
             this.configVfs = configVfs;
             this.configPath = this.configVfs.toNioPath();
 
-            this.moduleVfs = moduleVfs;
-            this.modulePath = this.moduleVfs.toNioPath();
+            this.modulePath = moduleVfs.toNioPath();
 
             this.resourcesRoot = this.modulePath.resolve(Constants.RESOURCE_ROOT);
 
@@ -268,28 +264,12 @@ public class XQLConfigManager {
             return xqlFileManager;
         }
 
-        public VirtualFile getConfigVfs() {
-            return configVfs;
-        }
-
-        public VirtualFile getModuleVfs() {
-            return moduleVfs;
-        }
-
         public Path getConfigPath() {
             return configPath;
         }
 
-        public Path getModulePath() {
-            return modulePath;
-        }
-
         public Project getProject() {
             return project;
-        }
-
-        public Module getModule() {
-            return ModuleUtil.findModuleForFile(configVfs, project);
         }
 
         public Set<String> getConfigFiles() {
