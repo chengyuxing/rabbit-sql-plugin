@@ -3,6 +3,7 @@ package com.github.chengyuxing.plugin.tests;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.script.IPipe;
+import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SimpleJavaCompiler;
@@ -108,6 +109,15 @@ public class MyCode {
 
     @Test
     public void testSbtApp() throws IOException {
+        var p1 = Pair.of("a", "b");
+        var p2 = Pair.of("a", "b");
+        var a1 = "Hello world!";
+        var a2 = "Hello world!";
+        System.out.println(p1.equals(p2));
+        System.out.println(p1.hashCode() + ":" + p2.hashCode());
+
+        System.out.println(a1 == a2);
+        System.out.println(a1.hashCode() + ":" + a2.hashCode());
     }
 
     @Test

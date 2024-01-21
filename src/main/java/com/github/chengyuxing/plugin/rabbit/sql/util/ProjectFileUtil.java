@@ -1,12 +1,15 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,6 +18,16 @@ public class ProjectFileUtil {
 
     public static boolean isXqlFileManagerConfig(String name) {
         return name.matches(Constants.CONFIG_PATTERN);
+    }
+
+    public static VirtualFile findXqlByAlias(String alias, XQLConfigManager.Config config) {
+        var resource = config.getXqlFileManager().getResource(alias);
+        if (Objects.isNull(resource)) {
+            return null;
+        }
+        var filename = resource.getFilename();
+        return VirtualFileManager.getInstance()
+                .findFileByNioPath(Path.of(URI.create(filename)));
     }
 
     public static VirtualFile getValidVirtualFile(VirtualFile file) {

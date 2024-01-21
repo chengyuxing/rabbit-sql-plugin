@@ -1,12 +1,13 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
+import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.script.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.common.utils.ResourceUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ArrayListValueSet;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.ValueHashSet;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
@@ -46,7 +47,7 @@ public class XQLConfigManager {
         }
         var map = configMap.get(project);
         if (!map.containsKey(module)) {
-            var set = new ValueHashSet<Config>();
+            var set = new ArrayListValueSet<Config>();
             map.put(module, set);
         }
         var configs = map.get(module);
@@ -63,21 +64,21 @@ public class XQLConfigManager {
         return Objects.nonNull(configs) ? configs : Set.of();
     }
 
+    public void toggleActive(Project project, Config _config) {
+        var configs = getConfigs(project, _config.getModulePath());
+        for (var config : configs) {
+            config.clear();
+            config.setActive(config == _config);
+        }
+    }
+
     public Config getActiveConfig(Project project, Path module) {
-        Config primary = null;
-        Config selected = null;
         var configs = getConfigs(project, module);
         for (var config : configs) {
             if (config.isActive()) {
-                if (config.isPrimary()) {
-                    primary = config;
-                    continue;
-                }
-                selected = config;
+                return config;
             }
         }
-        if (Objects.nonNull(selected)) return selected;
-        if (Objects.nonNull(primary)) return primary;
         return null;
     }
 
@@ -135,11 +136,10 @@ public class XQLConfigManager {
         private final Path resourcesRoot;
 
         private final NotificationExecutor notificationExecutor;
-
+        private final XQLFileManagerConfig xqlFileManagerConfig;
         private final XQLFileManager xqlFileManager;
         private final Set<String> configFiles;
         private SqlGenerator sqlGenerator = new SqlGenerator(':');
-
         private boolean active = false;
 
         public Config(Project project, VirtualFile moduleVfs, VirtualFile configVfs) {
@@ -154,9 +154,12 @@ public class XQLConfigManager {
 
             this.configFiles = new HashSet<>();
 
+            this.active = isPrimary();
+
             this.notificationExecutor = new NotificationExecutor(messages ->
                     messages.forEach(m ->
                             NotificationUtil.showMessage(project, m.getText(), m.getType())), 1500);
+            this.xqlFileManagerConfig = new XQLFileManagerConfig();
             this.xqlFileManager = new XQLFileManager() {
                 private final Path classesPath = modulePath.resolve(Path.of("target", "classes"));
 
@@ -174,7 +177,7 @@ public class XQLConfigManager {
                                 var pipeClassName = e.getValue();
                                 var pipeClassPath = classesPath.resolve(ResourceUtil.package2path(pipeClassName) + ".class");
                                 if (!Files.exists(pipeClassPath)) {
-                                    notificationExecutor.show(Message.warning("[" + getModuleName() + "] pipe '" + pipeClassName + "' not found, maybe should re-compile project."));
+                                    notificationExecutor.show(Message.warning(messagePrefix() + "pipe '" + pipeClassName + "' not found, maybe should re-compile project."));
                                     continue;
                                 }
                                 try {
@@ -184,7 +187,7 @@ public class XQLConfigManager {
                                     }
                                     pipeInstances.put(pipeName, (IPipe<?>) ReflectUtil.getInstance(pipeClass));
                                 } catch (Throwable ex) {
-                                    notificationExecutor.show(Message.warning("[" + getModuleName() + "] load pipe '" + pipeClassName + "' error: " + ex.getMessage()));
+                                    notificationExecutor.show(Message.warning(messagePrefix() + "load pipe '" + pipeClassName + "' error: " + ex.getMessage()));
                                 }
                             }
                         }
@@ -199,8 +202,8 @@ public class XQLConfigManager {
             Set<Message> successes = new HashSet<>();
             Set<Message> warnings = new HashSet<>();
             try {
-                var config = new XQLFileManagerConfig(configPath.toUri().toString());
-                config.copyStateTo(xqlFileManager);
+                xqlFileManagerConfig.loadYaml(new FileResource(configPath.toUri().toString()));
+                xqlFileManagerConfig.copyStateTo(xqlFileManager);
                 var newFiles = new HashMap<String, String>();
                 for (Map.Entry<String, String> e : xqlFileManager.getFiles().entrySet()) {
                     var alias = e.getKey();
@@ -208,7 +211,7 @@ public class XQLConfigManager {
                     var filename = e.getValue().trim();
                     if (filename.isEmpty()) {
                         configFiles.add("");
-                        warnings.add(Message.warning("[" + alias + "] invalid xql file location."));
+                        warnings.add(Message.warning(messagePrefix() + "'" + alias + "' associated invalid location."));
                         continue;
                     }
                     Path abPath;
@@ -223,23 +226,27 @@ public class XQLConfigManager {
                     // whatever valid or not, save original xql-file-manager.yml files.
                     configFiles.add(uri);
                     if (!Files.exists(abPath)) {
-                        warnings.add(Message.warning("[" + filename + "] not exists."));
+                        warnings.add(Message.warning(messagePrefix() + filename + " not exists."));
                         continue;
                     }
                     newFiles.put(alias, uri);
                 }
                 xqlFileManager.setFiles(newFiles);
                 xqlFileManager.init();
-                successes.add(Message.info("[" + getModuleName() + "] xql resources updated!"));
+                successes.add(Message.info(messagePrefix() + "updated!"));
             } catch (YamlDeserializeException e) {
-                warnings.add(Message.error("[" + getModuleName() + "] xql-file-manager.yml config content invalid: " + e.getMessage()));
+                warnings.add(Message.error(messagePrefix() + "config content invalid: " + e.getMessage()));
             } catch (Exception e) {
-                warnings.add(Message.error("[" + getModuleName() + "] error: " + e.getMessage()));
+                warnings.add(Message.error(messagePrefix() + "error: " + e.getMessage()));
             }
             if (warnings.isEmpty()) {
                 return successes;
             }
             return warnings;
+        }
+
+        private String messagePrefix() {
+            return "[" + getModuleName() + ":" + getConfigName() + "] " + " ";
         }
 
         public void fire(boolean showNotification) {
@@ -258,6 +265,10 @@ public class XQLConfigManager {
                 sqlGenerator = new SqlGenerator(xqlFileManager.getNamedParamPrefix());
             }
             return sqlGenerator;
+        }
+
+        public XQLFileManagerConfig getXqlFileManagerConfig() {
+            return xqlFileManagerConfig;
         }
 
         public XQLFileManager getXqlFileManager() {
@@ -280,6 +291,10 @@ public class XQLConfigManager {
             return configVfs.getName();
         }
 
+        public Path getModulePath() {
+            return modulePath;
+        }
+
         public String getModuleName() {
             return modulePath.getFileName().toString();
         }
@@ -290,10 +305,11 @@ public class XQLConfigManager {
          * @return true or false
          */
         public boolean isActive() {
-            if (active) {
-                return true;
-            }
-            return isPrimary();
+            return active;
+        }
+
+        void setActive(boolean active) {
+            this.active = active;
         }
 
         /**
@@ -318,30 +334,36 @@ public class XQLConfigManager {
             return Files.exists(configPath);
         }
 
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof Config config)) return false;
 
-            if (!getProject().equals(config.getProject())) return false;
-            return getConfigPath().equals(config.getConfigPath());
+            if (getProject() != null ? !getProject().equals(config.getProject()) : config.getProject() != null)
+                return false;
+            if (!getConfigPath().equals(config.getConfigPath())) return false;
+            return getModulePath().equals(config.getModulePath());
         }
 
         @Override
         public int hashCode() {
-            int result = getProject().hashCode();
+            int result = getProject() != null ? getProject().hashCode() : 0;
             result = 31 * result + getConfigPath().hashCode();
+            result = 31 * result + getModulePath().hashCode();
             return result;
         }
 
         @Override
         public void close() {
             xqlFileManager.close();
+            configFiles.clear();
             notificationExecutor.close();
         }
 
-        public void setActive(boolean active) {
-            this.active = active;
+        public void clear() {
+            xqlFileManager.close();
+            configFiles.clear();
         }
     }
 }

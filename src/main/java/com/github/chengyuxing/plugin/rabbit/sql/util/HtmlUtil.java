@@ -6,7 +6,8 @@ public class HtmlUtil {
 
     public static String highlightSql(String sqlString) {
         var sql = sqlString.replace(">", "&gt;")
-                .replace("<", "&lt;");
+                .replace("<", "&lt;")
+                .replace("&","&amp;");
         var highlighted = SqlHighlighter.highlight(sql, (tag, content) -> switch (tag) {
             case FUNCTION -> code(content, Color.FUNCTION);
             case KEYWORD -> code(content, Color.KEYWORD);
@@ -19,11 +20,11 @@ public class HtmlUtil {
     }
 
     public static String pre(String s, Color color) {
-        return "<pre style='color:" + color.getCode() + "'>" + s + "</pre>";
+        return "<pre style=\"color:" + color.getCode() + "\">" + s + "</pre>";
     }
 
     public static String code(String word, Color color) {
-        return "<code style='color:" + color.getCode() + "'>" + word + "</code>";
+        return "<code style=\"color:" + color.getCode() + "\">" + word + "</code>";
     }
 
     public enum Color {

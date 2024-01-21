@@ -1,6 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -43,5 +45,6 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
                 }
             }
         }
+        XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
     }
 }
