@@ -201,6 +201,9 @@ public class NewXQLForm extends JPanel {
         //---- label1 ----
         label1.setText("File Name:");
         add(label1, cc.xy(1, 1));
+
+        //---- filename ----
+        filename.setFont(new Font("JetBrains Mono", Font.PLAIN, 13));
         add(filename, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 
         //======== panel2 ========
@@ -222,6 +225,7 @@ public class NewXQLForm extends JPanel {
 
         //---- alias ----
         alias.setEditable(false);
+        alias.setFont(new Font("JetBrains Mono", Font.PLAIN, 13));
         add(alias, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
 
         //======== panel1 ========
