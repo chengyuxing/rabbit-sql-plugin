@@ -7,6 +7,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
+import com.intellij.ui.JBColor;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 
@@ -210,7 +211,7 @@ public class NewXQLForm extends JPanel {
             filenameTooltip.setText("Path by '/' or Array e.g [xqls, mysql, home.xql]");
             filenameTooltip.setVerticalAlignment(SwingConstants.TOP);
             filenameTooltip.setFont(filenameTooltip.getFont().deriveFont(filenameTooltip.getFont().getSize() - 1f));
-            filenameTooltip.setForeground(new Color(0x727782));
+            filenameTooltip.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
             panel2.add(filenameTooltip);
         }
         add(panel2, cc.xy(3, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
@@ -229,7 +230,7 @@ public class NewXQLForm extends JPanel {
 
             //---- message ----
             message.setText("...");
-            message.setForeground(new Color(0x727782));
+            message.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
             message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
             panel1.add(message);
         }
