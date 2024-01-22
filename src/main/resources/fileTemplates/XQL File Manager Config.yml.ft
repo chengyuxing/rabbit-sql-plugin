@@ -6,7 +6,6 @@
 # You can use yaml all syntax features, such as anchor.
 # Extends features:
 # !path --concat all items of list by /
-# !join --concat all items of list
 # https://github.com/chengyuxing/rabbit-sql#xqlfilemanager
 
 #constants:
@@ -17,13 +16,11 @@ files:
 #  other: another.xql
 
 # Multi sql fragment delimiter symbol in xql file, ';' is default.
-# https://github.com/chengyuxing/rabbit-sql#options
+# https://github.com/chengyuxing/rabbit-sql#options-1
 #delimiter: ;
 
-# UTF-8 is the default.
 #charset: UTF-8
 
-# Dynamic sql pipe class.
 #pipes:
 
 # Following properties for support rabbit-sql-plugin dynamic sql test parameter.
