@@ -2,7 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup.*;
-import com.github.chengyuxing.plugin.rabbit.sql.common.TreeNodeSource;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.TreeNodeSource;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;

@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.TreeNodeSource;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.TreeNodeSource;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlTreeNode;
 
 import javax.swing.*;

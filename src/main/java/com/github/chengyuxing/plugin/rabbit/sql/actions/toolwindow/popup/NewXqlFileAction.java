@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.TreeNodeSource;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.TreeNodeSource;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;

@@ -2,7 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.tuple.Triple;
-import com.github.chengyuxing.plugin.rabbit.sql.common.TreeNodeSource;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.TreeNodeSource;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.intellij.icons.AllIcons;

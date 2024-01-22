@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.common;
+package com.github.chengyuxing.plugin.rabbit.sql.ui.types;
 
 public record TreeNodeSource(NodeSourceType type, String title, Object source) {
     @Override
