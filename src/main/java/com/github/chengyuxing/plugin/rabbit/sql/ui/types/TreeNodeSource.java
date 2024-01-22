@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.types;
 
-public record TreeNodeSource(NodeSourceType type, String title, Object source) {
+public record TreeNodeSource(Type type, String title, Object source) {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -24,7 +24,7 @@ public record TreeNodeSource(NodeSourceType type, String title, Object source) {
         return title;
     }
 
-    public enum NodeSourceType {
+    public enum Type {
         MODULE,
         /**
          * xql-file-manager.yml

@@ -25,7 +25,7 @@ public class ExecuteSqlAction extends AnAction {
         super(() -> {
             var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
             if (Objects.nonNull(nodeSource)) {
-                if (nodeSource.type() == TreeNodeSource.NodeSourceType.XQL_FRAGMENT) {
+                if (nodeSource.type() == TreeNodeSource.Type.XQL_FRAGMENT) {
                     @SuppressWarnings("unchecked")
                     var data = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
                     var name = data.getItem2();
@@ -40,7 +40,7 @@ public class ExecuteSqlAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.NodeSourceType.XQL_FRAGMENT) {
+        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.Type.XQL_FRAGMENT) {
             @SuppressWarnings("unchecked")
             var sqlMeta = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
             var alias = sqlMeta.getItem1();
@@ -57,7 +57,7 @@ public class ExecuteSqlAction extends AnAction {
     public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setEnabled(false);
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.NodeSourceType.XQL_FRAGMENT) {
+        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.Type.XQL_FRAGMENT) {
             e.getPresentation().setEnabled(true);
         }
     }

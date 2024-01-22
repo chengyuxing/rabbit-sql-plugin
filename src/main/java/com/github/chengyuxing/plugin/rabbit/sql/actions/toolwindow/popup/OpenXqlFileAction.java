@@ -31,7 +31,7 @@ public class OpenXqlFileAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.NodeSourceType.XQL_FILE) {
+        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.Type.XQL_FILE) {
             @SuppressWarnings("unchecked")
             var sqlMeta = (Triple<String, String, String>) nodeSource.source();
             var filepath = sqlMeta.getItem3();
@@ -49,7 +49,7 @@ public class OpenXqlFileAction extends AnAction {
     public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setEnabled(false);
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.NodeSourceType.XQL_FILE) {
+        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.Type.XQL_FILE) {
             e.getPresentation().setEnabled(true);
         }
     }

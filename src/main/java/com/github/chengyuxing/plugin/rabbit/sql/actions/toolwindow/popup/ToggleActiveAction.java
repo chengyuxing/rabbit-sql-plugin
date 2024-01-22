@@ -30,7 +30,7 @@ public class ToggleActiveAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.NodeSourceType.XQL_CONFIG) {
+        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.Type.XQL_CONFIG) {
             var config = (XQLConfigManager.Config) nodeSource.source();
             if (config.isActive()) {
                 return;
@@ -45,7 +45,7 @@ public class ToggleActiveAction extends AnAction {
     public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setEnabled(false);
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.NodeSourceType.XQL_CONFIG) {
+        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.Type.XQL_CONFIG) {
             e.getPresentation().setEnabled(true);
         }
     }

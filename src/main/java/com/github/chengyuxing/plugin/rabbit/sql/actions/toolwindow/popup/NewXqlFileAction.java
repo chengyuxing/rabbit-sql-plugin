@@ -31,18 +31,18 @@ public class NewXqlFileAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.NodeSourceType.XQL_CONFIG) {
+        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.Type.XQL_CONFIG) {
             var config = (XQLConfigManager.Config) nodeSource.source();
             var configPath = config.getConfigPath();
             var configVf = VirtualFileManager.getInstance().findFileByNioPath(configPath);
             if (Objects.isNull(configVf)) {
                 return;
             }
-            var psi = PsiManager.getInstance(e.getProject()).findFile(configVf);
+            var psi = PsiManager.getInstance(project).findFile(configVf);
             if (Objects.isNull(psi)) {
                 return;
             }
-            var doc = PsiDocumentManager.getInstance(e.getProject()).getDocument(psi);
+            var doc = PsiDocumentManager.getInstance(project).getDocument(psi);
             if (Objects.isNull(doc)) {
                 return;
             }
