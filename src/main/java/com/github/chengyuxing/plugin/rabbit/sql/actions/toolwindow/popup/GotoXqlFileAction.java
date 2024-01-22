@@ -1,7 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.common.tuple.Quadruple;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.TreeNodeSource;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
@@ -32,7 +32,7 @@ public class GotoXqlFileAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.Type.XQL_FRAGMENT) {
+        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
             @SuppressWarnings("unchecked")
             var sqlMeta = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
             var alias = sqlMeta.getItem1();
@@ -60,7 +60,7 @@ public class GotoXqlFileAction extends AnAction {
     public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setEnabled(false);
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.Type.XQL_FRAGMENT) {
+        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
             e.getPresentation().setEnabled(true);
         }
     }

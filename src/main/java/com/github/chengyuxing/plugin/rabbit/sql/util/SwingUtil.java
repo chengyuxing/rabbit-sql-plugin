@@ -1,7 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.TreeNodeSource;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlTreeNode;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 
 import javax.swing.*;
 import javax.swing.tree.TreeNode;
@@ -9,13 +9,13 @@ import javax.swing.tree.TreePath;
 import java.util.Objects;
 
 public class SwingUtil {
-    public static TreeNodeSource getTreeSelectionNodeUserData(JTree tree) {
+    public static XqlTreeNodeData getTreeSelectionNodeUserData(JTree tree) {
         var selected = tree.getSelectionPath();
         if (Objects.isNull(selected)) {
             return null;
         }
         var node = (XqlTreeNode) selected.getLastPathComponent();
-        if (node.getUserObject() instanceof TreeNodeSource nodeSource) {
+        if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
             return nodeSource;
         }
         return null;

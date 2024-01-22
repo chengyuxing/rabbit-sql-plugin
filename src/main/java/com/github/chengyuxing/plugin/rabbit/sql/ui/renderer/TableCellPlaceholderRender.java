@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
+package com.github.chengyuxing.plugin.rabbit.sql.ui.renderer;
 
 import com.github.chengyuxing.common.script.Comparators;
 import com.github.chengyuxing.common.utils.StringUtil;
@@ -8,10 +8,10 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-public class PlaceholderRender extends DefaultTableCellRenderer {
+public class TableCellPlaceholderRender extends DefaultTableCellRenderer {
     final private String placeholder;
 
-    public PlaceholderRender(String placeholder) {
+    public TableCellPlaceholderRender(String placeholder) {
         super();
         this.placeholder = placeholder;
     }

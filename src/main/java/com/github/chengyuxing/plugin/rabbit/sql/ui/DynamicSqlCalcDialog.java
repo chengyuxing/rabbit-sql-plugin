@@ -5,7 +5,7 @@ import com.github.chengyuxing.common.script.Comparators;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceManager;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.components.IconListCellRenderer;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.IconListCellRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ParametersForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;

@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
+package com.github.chengyuxing.plugin.rabbit.sql.ui.renderer;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceManager;
 

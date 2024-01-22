@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
+package com.github.chengyuxing.plugin.rabbit.sql.ui.renderer;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;

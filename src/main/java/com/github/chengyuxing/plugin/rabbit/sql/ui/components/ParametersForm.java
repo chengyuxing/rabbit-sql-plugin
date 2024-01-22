@@ -8,6 +8,8 @@ import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.script.Comparators;
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.FieldInfoRender;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TableCellPlaceholderRender;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.JBColor;
@@ -111,7 +113,7 @@ public class ParametersForm extends JPanel {
         model.setDataVector(params, new Object[]{"", ""});
         paramsTable.getColumnModel().getColumn(0).setCellRenderer(new FieldInfoRender(paramsMapping));
         paramsTable.getColumnModel().getColumn(1).setCellEditor(buildParamsEditor());
-        paramsTable.getColumnModel().getColumn(1).setCellRenderer(new PlaceholderRender("<blank>"));
+        paramsTable.getColumnModel().getColumn(1).setCellRenderer(new TableCellPlaceholderRender("<blank>"));
         paramsTable.setTableHeader(null);
     }
 

@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.TreeNodeSource;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
@@ -31,7 +31,7 @@ public class NewXqlFileAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == TreeNodeSource.Type.XQL_CONFIG) {
+        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_CONFIG) {
             var config = (XQLConfigManager.Config) nodeSource.source();
             var configPath = config.getConfigPath();
             var configVf = VirtualFileManager.getInstance().findFileByNioPath(configPath);

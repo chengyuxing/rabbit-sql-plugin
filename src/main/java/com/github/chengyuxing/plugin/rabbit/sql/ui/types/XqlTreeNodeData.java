@@ -1,10 +1,10 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.types;
 
-public record TreeNodeSource(Type type, String title, Object source) {
+public record XqlTreeNodeData(Type type, String title, Object source) {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TreeNodeSource that)) return false;
+        if (!(o instanceof XqlTreeNodeData that)) return false;
 
         if (type != that.type) return false;
         if (!title.equals(that.title)) return false;

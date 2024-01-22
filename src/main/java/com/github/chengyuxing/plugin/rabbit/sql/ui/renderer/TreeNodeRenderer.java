@@ -1,8 +1,9 @@
-package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
+package com.github.chengyuxing.plugin.rabbit.sql.ui.renderer;
 
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.tuple.Triple;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.TreeNodeSource;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.intellij.icons.AllIcons;
@@ -16,7 +17,7 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
     @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         if (value instanceof XqlTreeNode node) {
-            if (node.getUserObject() instanceof TreeNodeSource nodeSource) {
+            if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
                 var type = nodeSource.type();
                 switch (type) {
                     case MODULE -> {

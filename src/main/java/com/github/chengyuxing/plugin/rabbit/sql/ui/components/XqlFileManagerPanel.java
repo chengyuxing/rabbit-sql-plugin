@@ -2,8 +2,10 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup.*;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.TreeNodeSource;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TreeNodeRenderer;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
@@ -84,7 +86,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         return;
                     }
                     var node = (XqlTreeNode) selected.getLastPathComponent();
-                    if (node.getUserObject() instanceof TreeNodeSource nodeSource) {
+                    if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
                         switch (nodeSource.type()) {
                             case MODULE -> {
                             }
@@ -157,19 +159,19 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         root.removeAllChildren();
         xqlConfigManager.getConfigMap(project)
                 .forEach((module, configs) -> {
-                    var mNode = new XqlTreeNode(new TreeNodeSource(TreeNodeSource.Type.MODULE, module.getFileName().toString(), module.toString()));
+                    var mNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.MODULE, module.getFileName().toString(), module.toString()));
                     configs.forEach(config -> {
-                        var ds = new TreeNodeSource(TreeNodeSource.Type.XQL_CONFIG, config.getConfigName(), config);
+                        var ds = new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_CONFIG, config.getConfigName(), config);
                         var configNode = new XqlTreeNode(ds);
                         mNode.add(configNode);
                         config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
                             var resource = config.getXqlFileManager().getResource(alias);
                             if (Objects.nonNull(resource)) {
-                                var fileNode = new XqlTreeNode(new TreeNodeSource(TreeNodeSource.Type.XQL_FILE, alias, Tuples.of(alias, filename, resource.getFilename())));
+                                var fileNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE, alias, Tuples.of(alias, filename, resource.getFilename())));
                                 configNode.add(fileNode);
                                 resource.getEntry().forEach((name, sql) -> {
                                     if (!name.startsWith("${") && !name.endsWith("}")) {
-                                        var sqlNode = new XqlTreeNode(new TreeNodeSource(TreeNodeSource.Type.XQL_FRAGMENT,
+                                        var sqlNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FRAGMENT,
                                                 name, Tuples.of(alias, name, sql, config)));
                                         fileNode.add(sqlNode);
                                     }
