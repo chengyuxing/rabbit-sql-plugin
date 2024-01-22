@@ -49,7 +49,7 @@ public class NewXqlDialog extends DialogWrapper {
                 var parts = inputFileName.substring(1, inputFileName.length() - 1).split(",");
                 for (var part : parts) {
                     if (INVALID_CHAR.matcher(part.trim()).find()) {
-                        this.newXqlFileForm.alert("Empty path founded.");
+                        this.newXqlFileForm.alert("Invalid path part founded.");
                         setOKActionEnabled(false);
                         return;
                     }

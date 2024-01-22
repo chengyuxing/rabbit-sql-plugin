@@ -170,6 +170,8 @@ public class NewXQLForm extends JPanel {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
         label1 = new JLabel();
         filename = new JTextField();
+        panel2 = new JPanel();
+        filenameTooltip = new JLabel();
         label2 = new JLabel();
         alias = new JTextField();
         panel1 = new JPanel();
@@ -177,8 +179,8 @@ public class NewXQLForm extends JPanel {
         CellConstraints cc = new CellConstraints();
 
         //======== this ========
-        setMinimumSize(new Dimension(300, 88));
-        setPreferredSize(new Dimension(300, 88));
+        setMinimumSize(new Dimension(350, 105));
+        setPreferredSize(new Dimension(350, 105));
         setLayout(new FormLayout(
             new ColumnSpec[] {
                 new ColumnSpec(Sizes.dluX(35)),
@@ -186,6 +188,8 @@ public class NewXQLForm extends JPanel {
                 new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(50), FormSpec.DEFAULT_GROW)
             },
             new RowSpec[] {
+                FormFactory.DEFAULT_ROWSPEC,
+                FormFactory.LINE_GAP_ROWSPEC,
                 FormFactory.DEFAULT_ROWSPEC,
                 FormFactory.LINE_GAP_ROWSPEC,
                 FormFactory.DEFAULT_ROWSPEC,
@@ -198,13 +202,26 @@ public class NewXQLForm extends JPanel {
         add(label1, cc.xy(1, 1));
         add(filename, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 
+        //======== panel2 ========
+        {
+            panel2.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 0));
+
+            //---- filenameTooltip ----
+            filenameTooltip.setText("Path by '/' or Array e.g [xqls, mysql, home.xql]");
+            filenameTooltip.setVerticalAlignment(SwingConstants.TOP);
+            filenameTooltip.setFont(filenameTooltip.getFont().deriveFont(filenameTooltip.getFont().getSize() - 1f));
+            filenameTooltip.setForeground(Color.gray);
+            panel2.add(filenameTooltip);
+        }
+        add(panel2, cc.xy(3, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
+
         //---- label2 ----
         label2.setText("Alias:");
-        add(label2, cc.xy(1, 3));
+        add(label2, cc.xy(1, 5));
 
         //---- alias ----
         alias.setEditable(false);
-        add(alias, cc.xy(3, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
+        add(alias, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
 
         //======== panel1 ========
         {
@@ -213,15 +230,18 @@ public class NewXQLForm extends JPanel {
             //---- message ----
             message.setText("...");
             message.setForeground(Color.gray);
+            message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
             panel1.add(message);
         }
-        add(panel1, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
+        add(panel1, cc.xy(3, 7, CellConstraints.FILL, CellConstraints.DEFAULT));
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
     private JLabel label1;
     private JTextField filename;
+    private JPanel panel2;
+    private JLabel filenameTooltip;
     private JLabel label2;
     private JTextField alias;
     private JPanel panel1;

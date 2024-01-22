@@ -5,7 +5,7 @@ new FormModel {
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
 			"$columnSpecs": "35dlu, labelcompgap, 50dlu:grow"
-			"$rowSpecs": "default, linegap, default, linegap, default"
+			"$rowSpecs": "default, linegap, default, linegap, default, linegap, default"
 		} ) {
 			name: "this"
 			"minimumSize": new java.awt.Dimension( 300, 88 )
@@ -24,19 +24,37 @@ new FormModel {
 				"gridY": 1
 				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints FILL
 			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+				"hgap": 4
+				"vgap": 0
+				"alignment": 0
+			} ) {
+				name: "panel2"
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "filenameTooltip"
+					"text": "Path by '/' or Array e.g [xqls, mysql, home.xql]"
+					"verticalAlignment": 1
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, -1, false )
+					"foreground": sfield java.awt.Color gray
+				} )
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 3
+				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints FILL
+			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label2"
 				"text": "Alias:"
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 1
-				"gridY": 3
+				"gridY": 5
 			} )
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "alias"
 				"editable": false
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
-				"gridY": 3
+				"gridY": 5
 				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints FILL
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
@@ -49,15 +67,16 @@ new FormModel {
 					name: "message"
 					"text": "..."
 					"foreground": sfield java.awt.Color gray
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, -1, false )
 				} )
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
-				"gridY": 5
+				"gridY": 7
 				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints FILL
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 300, 100 )
+			"size": new java.awt.Dimension( 350, 125 )
 		} )
 	}
 }
