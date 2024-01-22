@@ -14,6 +14,7 @@ import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.code;
 
 public class StringUtil {
+
     public static Set<String> getTemplateParameters(String str) {
         var sql = SqlUtil.removeBlockAnnotation(str);
         String[] lines = sql.split(NEW_LINE);
@@ -73,10 +74,10 @@ public class StringUtil {
                 var holder = "_" + code(name.substring(key.length()), HtmlUtil.Color.ANNOTATION);
                 if (!keyMapping.containsKey(key)) {
                     var set = new LinkedHashSet<String>();
-                    set.add(restoreSubStr(holder,substrMap));
+                    set.add(restoreSubStr(holder, substrMap));
                     keyMapping.put(key, set);
                 } else {
-                    keyMapping.get(key).add(restoreSubStr(holder,substrMap));
+                    keyMapping.get(key).add(restoreSubStr(holder, substrMap));
                 }
             }
             var tempP = SqlUtil.FMT.getPattern();

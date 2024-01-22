@@ -299,6 +299,10 @@ public class XQLConfigManager {
             return modulePath.getFileName().toString();
         }
 
+        public Path getResourcesRoot() {
+            return resourcesRoot;
+        }
+
         /**
          * Is current config active.
          *

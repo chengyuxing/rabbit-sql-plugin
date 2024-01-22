@@ -36,6 +36,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     public XqlFileManagerPanel(boolean vertical, Project project) {
         super(vertical);
         this.project = project;
+        setBorder(BorderFactory.createEmptyBorder());
         initToolbar();
         initContent();
         updateStates();
@@ -61,9 +62,6 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     }
 
     void initContent() {
-        var scrollPane = new JBScrollPane();
-        scrollPane.setBorder(null);
-
         tree = createTree();
         xqlFileMenu = createXqlFilePopMenu(tree);
         xqlFileManagerMenu = createXqlFileManagerPopMenu(tree);
@@ -113,14 +111,19 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
 
             }
         });
-
         var searchTree = new TreeSpeedSearch(tree);
         searchTree.setCanExpand(true);
-        scrollPane.setViewportView(searchTree.getComponent());
+
+        var scrollPane = new JBScrollPane(searchTree.getComponent());
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
         setContent(scrollPane);
     }
 
     public void saveTreeExpandedState() {
+        if (Objects.isNull(tree)) {
+            return;
+        }
         treeExpandedState.clear();
         var expandedPaths = tree.getExpandedDescendants(new TreePath(tree.getModel().getRoot()));
         while (Objects.nonNull(expandedPaths) && expandedPaths.hasMoreElements()) {
@@ -130,6 +133,9 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     }
 
     public void restoreTreeExpandedState() {
+        if (Objects.isNull(tree)) {
+            return;
+        }
         for (var e : treeExpandedState.entrySet()) {
             var path = e.getKey();
             var expand = e.getValue();
@@ -142,6 +148,9 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     }
 
     public void updateStates() {
+        if (Objects.isNull(tree)) {
+            return;
+        }
         var model = (DefaultTreeModel) tree.getModel();
         var root = (XqlTreeNode) model.getRoot();
         saveTreeExpandedState();
@@ -197,7 +206,8 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                 return new AnAction[]{
                         new ToggleActiveAction(tree),
                         new ReloadSelectedAction(tree),
-                        new UpdateConfigFileAction(tree)
+                        new Separator(),
+                        new NewXqlFileAction(tree)
                 };
             }
         });

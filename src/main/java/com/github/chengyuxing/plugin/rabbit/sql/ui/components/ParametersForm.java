@@ -134,7 +134,7 @@ public class ParametersForm extends JPanel {
         sqlContent = new JTextPane();
 
         //======== this ========
-        setBorder(null);
+        setBorder(BorderFactory.createEmptyBorder());
         setMinimumSize(new Dimension(58, 22));
         setPreferredSize(new Dimension(470, 115));
         setLayout(new MigLayout(
@@ -149,7 +149,7 @@ public class ParametersForm extends JPanel {
             scrollPane1.setBorder(new LineBorder(new JBColor(new Color(0xD2D2D2), new Color(0x323232))));
 
             //---- paramsTable ----
-            paramsTable.setBorder(null);
+            paramsTable.setBorder(BorderFactory.createEmptyBorder());
             paramsTable.setShowHorizontalLines(false);
             paramsTable.setShowVerticalLines(false);
             paramsTable.setIntercellSpacing(new Dimension(0, 0));

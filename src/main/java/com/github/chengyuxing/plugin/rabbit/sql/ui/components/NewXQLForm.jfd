@@ -1,0 +1,63 @@
+JFDML JFormDesigner: "8.2.1.0.348" Java: "17.0.9" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
+			"$columnSpecs": "35dlu, labelcompgap, 50dlu:grow"
+			"$rowSpecs": "default, linegap, default, linegap, default"
+		} ) {
+			name: "this"
+			"minimumSize": new java.awt.Dimension( 300, 88 )
+			"preferredSize": new java.awt.Dimension( 300, 88 )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "File Name:"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 1
+				"gridY": 1
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "filename"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 1
+				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints FILL
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label2"
+				"text": "Alias:"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 1
+				"gridY": 3
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "alias"
+				"editable": false
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 3
+				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints FILL
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+				"alignment": 0
+				"vgap": 1
+				"hgap": 4
+			} ) {
+				name: "panel1"
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "message"
+					"text": "..."
+					"foreground": sfield java.awt.Color gray
+				} )
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 5
+				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints FILL
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 300, 100 )
+		} )
+	}
+}

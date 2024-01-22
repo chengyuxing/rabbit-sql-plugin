@@ -7,7 +7,7 @@ public class HtmlUtil {
     public static String highlightSql(String sqlString) {
         var sql = sqlString.replace(">", "&gt;")
                 .replace("<", "&lt;")
-                .replace("&","&amp;");
+                .replace("&", "&amp;");
         var highlighted = SqlHighlighter.highlight(sql, (tag, content) -> switch (tag) {
             case FUNCTION -> code(content, Color.FUNCTION);
             case KEYWORD -> code(content, Color.KEYWORD);
@@ -27,6 +27,14 @@ public class HtmlUtil {
         return "<code style=\"color:" + color.getCode() + "\">" + word + "</code>";
     }
 
+    public static String span(String content, Color color) {
+        return "<span style=\"color:" + color.getCode() + "\">" + content + "</span>";
+    }
+
+    public static String toHtml(String content) {
+        return "<html><body>" + content + "</body></html>";
+    }
+
     public enum Color {
         KEYWORD("#CC7832"),
         NUMBER("#48A0A2"),
@@ -35,7 +43,11 @@ public class HtmlUtil {
         ANNOTATION("#7B7E84"),
         DANGER("#E56068"),
         LIGHT("#B4BBC3"),
-        HIGHLIGHT("#BBB529");
+        HIGHLIGHT("#BBB529"),
+        WARNING("orange"),
+        ERROR("#F75464")
+        ;
+
         private final String code;
 
         Color(String code) {
