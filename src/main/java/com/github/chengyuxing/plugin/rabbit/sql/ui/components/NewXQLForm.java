@@ -179,8 +179,8 @@ public class NewXQLForm extends JPanel {
         CellConstraints cc = new CellConstraints();
 
         //======== this ========
-        setMinimumSize(new Dimension(350, 105));
-        setPreferredSize(new Dimension(350, 105));
+        setMinimumSize(new Dimension(350, 108));
+        setPreferredSize(new Dimension(350, 108));
         setLayout(new FormLayout(
             new ColumnSpec[] {
                 new ColumnSpec(Sizes.dluX(35)),
@@ -189,9 +189,9 @@ public class NewXQLForm extends JPanel {
             },
             new RowSpec[] {
                 FormFactory.DEFAULT_ROWSPEC,
-                FormFactory.LINE_GAP_ROWSPEC,
-                FormFactory.DEFAULT_ROWSPEC,
-                FormFactory.LINE_GAP_ROWSPEC,
+                new RowSpec(Sizes.DLUY1),
+                FormFactory.MIN_ROWSPEC,
+                new RowSpec(Sizes.DLUY4),
                 FormFactory.DEFAULT_ROWSPEC,
                 FormFactory.LINE_GAP_ROWSPEC,
                 FormFactory.DEFAULT_ROWSPEC
@@ -210,7 +210,7 @@ public class NewXQLForm extends JPanel {
             filenameTooltip.setText("Path by '/' or Array e.g [xqls, mysql, home.xql]");
             filenameTooltip.setVerticalAlignment(SwingConstants.TOP);
             filenameTooltip.setFont(filenameTooltip.getFont().deriveFont(filenameTooltip.getFont().getSize() - 1f));
-            filenameTooltip.setForeground(Color.gray);
+            filenameTooltip.setForeground(new Color(0x727782));
             panel2.add(filenameTooltip);
         }
         add(panel2, cc.xy(3, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
@@ -229,7 +229,7 @@ public class NewXQLForm extends JPanel {
 
             //---- message ----
             message.setText("...");
-            message.setForeground(Color.gray);
+            message.setForeground(new Color(0x727782));
             message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
             panel1.add(message);
         }
