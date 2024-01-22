@@ -1,12 +1,12 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
 import com.github.chengyuxing.common.MostDateTime;
-import com.github.chengyuxing.common.utils.StringUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.NewXQLForm;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.github.chengyuxing.sql.Args;
+import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
@@ -15,7 +15,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class NewXqlDialog extends DialogWrapper {
@@ -85,6 +88,7 @@ public class NewXqlDialog extends DialogWrapper {
         var alias = data.getItem1();
         var userInput = data.getItem2();
         var abPath = data.getItem3();
+
         if (config.getXqlFileManagerConfig().getFiles().containsKey(alias)) {
             newXqlFileForm.alert("Alias '" + alias + "' already configured.");
             return;
@@ -95,6 +99,7 @@ public class NewXqlDialog extends DialogWrapper {
             return;
         }
         try {
+            var xqlFt = FileTemplateManager.getInstance(project).getTemplate("XQL File.xql");
             var now = MostDateTime.now();
             var args = Args.of(
                     "USER", System.getProperty("user.name"),
@@ -105,7 +110,7 @@ public class NewXqlDialog extends DialogWrapper {
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
             }
-            Files.writeString(file, StringUtil.FMT.format(Constants.XQL_TEMPLATE, args), StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+            Files.writeString(file, xqlFt.getText(args), StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
         } catch (IOException ex) {
             newXqlFileForm.alert(ex.toString());
             return;
@@ -133,9 +138,19 @@ public class NewXqlDialog extends DialogWrapper {
                     }
                     PsiDocumentManager.getInstance(project).commitDocument(doc);
                     FileDocumentManager.getInstance().saveDocument(doc);
-                    LocalFileSystem.getInstance().refresh(true);
+                    // set false for open file after dialog closed.
+                    LocalFileSystem.getInstance().refresh(false);
                     XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
                     dispose();
+                    var newVf = VirtualFileManager.getInstance().findFileByNioPath(file);
+                    if (Objects.isNull(newVf)) {
+                        return;
+                    }
+                    var psi = PsiManager.getInstance(project).findFile(newVf);
+                    if (Objects.isNull(psi)) {
+                        return;
+                    }
+                    NavigationUtil.activateFileWithPsiElement(psi);
                 }));
     }
 }

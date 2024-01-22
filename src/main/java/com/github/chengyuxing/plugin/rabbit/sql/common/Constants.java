@@ -14,17 +14,4 @@ public class Constants {
     public static final Path CONFIG_PATH = RESOURCE_ROOT.resolve(CONFIG_NAME);
     @Language("Regexp")
     public static final String CONFIG_PATTERN = "xql-file-manager(-[a-zA-Z0-9]+)?\\.yml";
-
-    public static final String XQL_TEMPLATE = """
-            /*
-            * Created by IntelliJ IDEA.
-            * User: ${USER}
-            * Date: ${DATE}
-            * Time: ${TIME}
-            * Typing "xql" keyword to get suggestions,
-            * e.g: "xql:new" will be create a sql fragment.
-            */
-
-
-            """;
 }
