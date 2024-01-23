@@ -88,9 +88,9 @@ public class MyCode {
 
     @Test
     public void testx() throws MalformedURLException, ClassNotFoundException {
-        URLClassLoader classLoader = new URLClassLoader(new URL[]{new URL("file:/Users/chengyuxing/IdeaProjects/sbp-test1/target/classes/org/example/pipes")});
-        Class<?> clazz = classLoader.loadClass("org.example.pipes.Big");
-        System.out.println(clazz);
+//        URLClassLoader classLoader = new URLClassLoader(new URL[]{new URL("file:/Users/chengyuxing/IdeaProjects/sbp-test1/target/classes/org/example/pipes")});
+//        Class<?> clazz = classLoader.loadClass("org.example.pipes.Big");
+//        System.out.println(clazz);
     }
 
     @Test
