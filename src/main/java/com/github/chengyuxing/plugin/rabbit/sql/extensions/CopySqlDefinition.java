@@ -4,15 +4,19 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.impl.source.tree.java.PsiJavaTokenImpl;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -20,7 +24,7 @@ import java.util.Objects;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 
-public class CopySqlDefinition extends PsiElementBaseIntentionAction {
+public class CopySqlDefinition extends PsiElementBaseIntentionAction implements Iconable {
     private static final Logger log = Logger.getInstance(CopySqlDefinition.class);
     private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
 
@@ -32,7 +36,10 @@ public class CopySqlDefinition extends PsiElementBaseIntentionAction {
             var sqlDefinition = xqlFileManager.get(sqlName);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(new StringSelection(sqlDefinition), null);
-        } catch (Throwable e) {
+        } catch (Exception e) {
+            if (e instanceof ControlFlowException) {
+                throw e;
+            }
             log.warn(e);
         }
     }
@@ -71,4 +78,8 @@ public class CopySqlDefinition extends PsiElementBaseIntentionAction {
         return "Copy sql definition";
     }
 
+    @Override
+    public Icon getIcon(int flags) {
+        return AllIcons.Actions.Copy;
+    }
 }

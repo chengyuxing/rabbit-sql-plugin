@@ -5,7 +5,9 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -14,6 +16,7 @@ import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.Objects;
 
 public class OpenParamsDialogInJava extends CopySqlDefinition {
@@ -29,18 +32,26 @@ public class OpenParamsDialogInJava extends CopySqlDefinition {
             }
             var dsResource = DatasourceManager.getInstance().getResource(project);
             ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlName, config, dsResource).showAndGet());
-        } catch (Throwable e) {
+        } catch (Exception e) {
+            if (e instanceof ControlFlowException) {
+                throw e;
+            }
             log.warn(e);
         }
     }
 
     @Override
     public @NotNull @IntentionFamilyName String getFamilyName() {
-        return "Test dynamic sql";
+        return "Execute dynamic sql";
     }
 
     @Override
     public @IntentionName @NotNull String getText() {
-        return "Test dynamic sql";
+        return "Execute dynamic sql";
+    }
+
+    @Override
+    public Icon getIcon(int flags) {
+        return AllIcons.Actions.Execute;
     }
 }

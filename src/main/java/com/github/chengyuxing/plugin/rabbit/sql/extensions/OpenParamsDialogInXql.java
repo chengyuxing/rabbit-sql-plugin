@@ -7,19 +7,22 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class OpenParamsDialogInXql extends PsiElementBaseIntentionAction {
+public class OpenParamsDialogInXql extends PsiElementBaseIntentionAction implements Iconable {
     private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
 
     @Override
@@ -97,11 +100,16 @@ public class OpenParamsDialogInXql extends PsiElementBaseIntentionAction {
 
     @Override
     public @NotNull @IntentionFamilyName String getFamilyName() {
-        return "Test dynamic sql";
+        return "Execute dynamic sql";
     }
 
     @Override
     public @IntentionName @NotNull String getText() {
-        return "Test dynamic sql";
+        return "Execute dynamic sql";
+    }
+
+    @Override
+    public Icon getIcon(int flags) {
+        return AllIcons.Actions.Execute;
     }
 }
