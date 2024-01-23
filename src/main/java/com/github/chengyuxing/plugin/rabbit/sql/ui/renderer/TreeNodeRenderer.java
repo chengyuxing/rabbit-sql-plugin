@@ -40,7 +40,7 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                         var sqlMeta = (Pair<String, String>) nodeSource.source();
                         setIcon(XqlIcons.XQL_FILE);
                         append(sqlMeta.getItem1() + " ");
-                        appendHTML("(" + sqlMeta.getItem2() + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
+                        append("(" + sqlMeta.getItem2() + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
                     }
                     case XQL_FRAGMENT -> {
                         @SuppressWarnings("unchecked")

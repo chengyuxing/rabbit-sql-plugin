@@ -3,11 +3,9 @@ package com.github.chengyuxing.plugin.rabbit.sql.util;
 import com.github.chengyuxing.sql.utils.SqlHighlighter;
 
 public class HtmlUtil {
-
     public static String highlightSql(String sqlString) {
         var sql = sqlString.replace(">", "&gt;")
-                .replace("<", "&lt;")
-                .replace("&", "&amp;");
+                .replace("<", "&lt;");
         var highlighted = SqlHighlighter.highlight(sql, (tag, content) -> switch (tag) {
             case FUNCTION -> code(content, Color.FUNCTION);
             case KEYWORD -> code(content, Color.KEYWORD);
@@ -45,8 +43,7 @@ public class HtmlUtil {
         LIGHT("#B4BBC3"),
         HIGHLIGHT("#BBB529"),
         WARNING("orange"),
-        ERROR("#F75464")
-        ;
+        ERROR("#F75464");
 
         private final String code;
 
