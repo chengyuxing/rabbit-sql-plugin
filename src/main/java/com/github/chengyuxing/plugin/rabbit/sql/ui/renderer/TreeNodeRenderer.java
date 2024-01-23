@@ -47,7 +47,11 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                         var sqlMeta = (Triple<String, String, String>) nodeSource.source();
                         setIcon(AllIcons.FileTypes.Text);
                         append(sqlMeta.getItem2() + " -> ");
-                        appendHTML(sqlMeta.getItem3(), SimpleTextAttributes.GRAY_ATTRIBUTES);
+                        var sql = sqlMeta.getItem3();
+                        if (sql.length() > 100) {
+                            sql = sql.substring(0, 100) + "...";
+                        }
+                        append(sql, SimpleTextAttributes.GRAY_ATTRIBUTES);
                     }
                 }
             }
