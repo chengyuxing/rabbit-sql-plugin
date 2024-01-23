@@ -194,7 +194,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
             @Override
             public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
                 return new AnAction[]{
-                        new OpenXqlFileAction(tree)
+                        new OpenInEditorAction(tree)
                 };
             }
         });
@@ -206,10 +206,11 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
             @Override
             public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
                 return new AnAction[]{
-                        new ToggleActiveAction(tree),
-                        new ReloadSelectedAction(tree),
+                        new NewXqlFileAction(tree),
+                        new OpenInEditorAction(tree),
                         new Separator(),
-                        new NewXqlFileAction(tree)
+                        new ReloadSelectedAction(tree),
+                        new ToggleActiveAction(tree)
                 };
             }
         });
