@@ -135,9 +135,9 @@ public class MyCode {
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Class<?> clazz = SimpleJavaCompiler.getInstance().compile("org.example.pipes.Big", Path.of("/Users/chengyuxing/IdeaProjects/sbp-test1/src/main/java/org/example/pipes/Big.java"));
-        IPipe<?> pipe = (IPipe<?>) clazz.getConstructor().newInstance();
-        System.out.println(pipe.transform(175));
+//        Class<?> clazz = SimpleJavaCompiler.getInstance().compile("org.example.pipes.Big", Path.of("/Users/chengyuxing/IdeaProjects/sbp-test1/src/main/java/org/example/pipes/Big.java"));
+//        IPipe<?> pipe = (IPipe<?>) clazz.getConstructor().newInstance();
+//        System.out.println(pipe.transform(175));
     }
 
     public record User(String name, int age) {
