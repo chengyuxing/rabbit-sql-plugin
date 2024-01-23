@@ -49,7 +49,7 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                         append(sqlMeta.getItem2() + " -> ");
                         var sql = sqlMeta.getItem3();
                         if (sql.length() > 100) {
-                            sql = sql.substring(0, 100) + "...";
+                            sql = sql.substring(0, 95) + "...";
                         }
                         append(sql, SimpleTextAttributes.GRAY_ATTRIBUTES);
                     }
