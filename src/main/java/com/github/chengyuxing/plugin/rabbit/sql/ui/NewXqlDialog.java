@@ -66,7 +66,7 @@ public class NewXqlDialog extends DialogWrapper {
             setOKActionEnabled(true);
         });
         setOKActionEnabled(false);
-        setSize(450, 100);
+        setSize(450, 120);
         setTitle("New XQL File");
         init();
     }

@@ -180,8 +180,8 @@ public class NewXQLForm extends JPanel {
         CellConstraints cc = new CellConstraints();
 
         //======== this ========
-        setMinimumSize(new Dimension(350, 108));
-        setPreferredSize(new Dimension(350, 108));
+        setMinimumSize(new Dimension(350, 120));
+        setPreferredSize(new Dimension(350, 120));
         setLayout(new FormLayout(
             new ColumnSpec[] {
                 new ColumnSpec(Sizes.dluX(35)),
