@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:7.8.12") {
+    implementation("com.github.chengyuxing:rabbit-sql:7.8.16") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.yaml", "snakeyaml")
     }
@@ -26,7 +26,9 @@ intellij {
     version.set("2023.1.5")
     type.set("IU") // Target IDE Platform
 
-    plugins.set(listOf("com.intellij.database", "com.intellij.java", "org.intellij.intelliLang"))
+    plugins.set(listOf("com.intellij.database",
+            "com.intellij.java",
+            "org.intellij.intelliLang"))
 }
 
 sourceSets["main"].java.srcDirs("src/main/gen")

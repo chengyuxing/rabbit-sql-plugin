@@ -29,17 +29,25 @@
         <li>Support java and xql file references to navigate each other.</li>
         <li>Support sql name suggestions auto complete in java string literal where start with <code>"&"</code>.</li>
         <li>Create <code>xql-file-manager.yml</code> in <code>/src/main/resources</code> and register xql file to enable some features above.</li>
+        <li>Toolwindow:
+            <ul>
+                <li>Structured tree view.</li>
+                <li>Config mouse right click action(New) to create and auto configure xql file.</li>
+                <li>Execute selected SQL Action.</li>
+                <li>Some more useful actions.</li>
+            </ul>
+        </li>
         <li>Toolbar menu:
             <ul>
                 <li><kbd>File</kbd> &gt; <kbd>New</kbd> &gt; <kbd>Xql File</kbd> | <kbd>Xql File Manager</kbd> | <kbd>Xql File Manager CHS</kbd></li>
-                <li><kbd>Tools</kbd> &gt; <kbd>Reload XQL File Manager</kbd></li>
+                <li><kbd>Tools</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Reload All</kbd></li>
             </ul>
         </li>
     </ul>
     <h2>Getting Started</h2>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.8.12+</strong> or <strong>rabbit-sql-spring-boot-starter 2.8.9+</strong> to your project;</li>
-        <li>Create <code>xql-file-manager.yml</code> in source root: <code>.../src/main/resources/</code>;</li>
+        <li>Add dependency <strong>rabbit-sql 7.8.16+</strong> or <strong>rabbit-sql-spring-boot-starter 2.8.14+</strong> to your project;</li>
+        <li>Create <code>xql-file-manager.yml</code> in resource root: <code>.../src/main/resources/</code>;</li>
         <li>Register xql files on property: <code>files</code>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#bakidao">BakiDao#setXqlFileManager</a>;</li>
@@ -54,11 +62,21 @@
         <![CDATA[
             <h3>2.1.7</h3>
             <ul>
-                <li>Support rabbit sql 7.8.12+ and rabbit-sql-spring-boot-starter 2.8.9+.</li>
-                <li>Sql name quick doc highlight sql optimized.</li>
+                <li>Support rabbit sql 7.8.16+ and rabbit-sql-spring-boot-starter 2.8.14+.</li>
+                <li>New Feature: <b>XQL File Manager Toolwindow</b> panel, supports display structured config, toggle multi config, reload config, execute sql action and so on...</li>
+                <li>New Action: New (Toolwindow xql-file-manager.yml node mouse right click to create xql file and auto update config).</li>
+                <li>Toolwindow Action 'New' support for open file after dialog closed.</li>
+                <li>Add supports for multi <code>xql-file-manager-*.yml</code>.</li>
+                <li>Improved xql-file-manager parsing and loading logic.</li>
+                <li>Update sql name quick doc highlight sql.</li>
+                <li>Action Reload Xql File Manager scope range optimized.</li>
+                <li>Test Dynamic sql dialog parameter title optimized.</li>
                 <li>Fixed plugin error occurs UnsupportedOperationException when popping dynamic sql dialog.</li>
                 <li>Fixed plugin error in <code>.xql</code> file syntax highlight bug.</li>
                 <li>Fixed create xql-file-manager.yml occurs error notice.</li>
+                <li>Fixed dynamic sql dialog parameter detect not correct.</li>
+                <li>Fixed Test dynamic sql parameter value is null output empty string bug.</li>
+                <li>Some bug fixed and optimized.</li>
             </ul>
             <h3>2.1.6</h3>
             <ul>
@@ -298,7 +316,13 @@
 
         <lang.documentationProvider language="JAVA"
                                     implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlQuickDoc"/>
+
         <iconProvider implementation="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlFileManagerIconProvider"/>
+
+        <toolWindow factoryClass="com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow"
+                    id="XQL File Manager" anchor="right"/>
+
+        <webHelpProvider implementation="com.github.chengyuxing.plugin.rabbit.sql.Helper"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -316,12 +340,36 @@
                            id="Rabbit-SQL Notification Group"/>
     </extensions>
     <actions>
-        <action id="com.github.chengyuxing.plugin.rabbit.sql.extensions.ReloadConfigAction"
-                class="com.github.chengyuxing.plugin.rabbit.sql.extensions.ReloadConfigAction"
-                text="Reload XQL File Manager"
-                description="Commit all files and reload XQL File Manager."
-                icon="AllIcons.Actions.ForceRefresh">
+        <group id="XQL File Manager Menu"
+               text="XQL File Manager"
+               description="XQL file manager actions."
+               searchable="true"
+               popup="true">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.ReloadConfigAction"
+                    class="com.github.chengyuxing.plugin.rabbit.sql.actions.ReloadConfigAction"
+                    text="Reload All"
+                    description="Commit all files and reload XQL File Manager."
+                    icon="AllIcons.Actions.ForceRefresh">
+            </action>
+        </group>
+
+        <action id="xqlFileManager.toolwindow.Separator"
+                class="com.intellij.openapi.actionSystem.Separator"/>
+
+        <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.RefreshContentAction"
+                class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.RefreshContentAction"
+                text="Refresh"
+                description="Refresh XQL file manager tool window content."
+                icon="AllIcons.Actions.Refresh">
         </action>
+        <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ExpandAllAction"
+                class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ExpandAllAction"
+                text="Expand All"
+                icon="AllIcons.Actions.Expandall"/>
+        <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.CollapseAllAction"
+                class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.CollapseAllAction"
+                text="Collapse All"
+                icon="AllIcons.Actions.Collapseall"/>
     </actions>
 </idea-plugin>
