@@ -3,6 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -66,7 +67,10 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
                     }
                 }
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
+            if (e instanceof ControlFlowException) {
+                throw e;
+            }
             log.warn(e);
         }
         return ResolveResult.EMPTY_ARRAY;

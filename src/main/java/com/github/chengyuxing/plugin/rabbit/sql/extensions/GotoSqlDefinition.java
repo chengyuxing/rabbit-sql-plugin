@@ -5,6 +5,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
+import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -62,7 +63,10 @@ public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
                             }
                         });
                     }
-                } catch (Throwable e) {
+                } catch (Exception e) {
+                    if (e instanceof ControlFlowException) {
+                        throw e;
+                    }
                     log.warn(e);
                 }
             }

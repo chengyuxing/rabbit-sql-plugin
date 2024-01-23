@@ -8,6 +8,7 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
+import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.*;
@@ -110,7 +111,10 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
                                             .createLineMarkerInfo(xqlPsiElement);
                                     result.add(markInfo);
                                 }
-                            } catch (Throwable e) {
+                            } catch (Exception e) {
+                                if (e instanceof ControlFlowException) {
+                                    throw e;
+                                }
                                 log.warn(e);
                             }
                         }
