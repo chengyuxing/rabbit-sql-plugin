@@ -66,22 +66,6 @@ public class DatasourceManager {
         public String toString() {
             return name;
         }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof DatabaseId that)) return false;
-
-            if (!name().equals(that.name())) return false;
-            return id().equals(that.id());
-        }
-
-        @Override
-        public int hashCode() {
-            int result = name().hashCode();
-            result = 31 * result + id().hashCode();
-            return result;
-        }
     }
 
     public static class Resource implements AutoCloseable {
