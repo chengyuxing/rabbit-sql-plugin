@@ -1,11 +1,13 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
+import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup.*;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TreeNodeRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
+import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
@@ -72,7 +74,24 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         tree.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
+                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+                    var selected = tree.getSelectionPath();
+                    if (Objects.isNull(selected)) {
+                        return;
+                    }
+                    var node = (XqlTreeNode) selected.getLastPathComponent();
+                    if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
+                        switch (nodeSource.type()) {
+                            case MODULE, XQL_CONFIG, XQL_FILE -> {
+                            }
+                            case XQL_FRAGMENT -> {
+                                @SuppressWarnings("unchecked")
+                                var sqlMeta = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
+                                PsiUtil.navigateToXqlFile(sqlMeta.getItem1(), sqlMeta.getItem2(), sqlMeta.getItem4());
+                            }
+                        }
+                    }
+                }
             }
 
             @Override

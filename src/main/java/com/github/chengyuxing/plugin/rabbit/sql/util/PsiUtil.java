@@ -1,17 +1,45 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.StringJoiner;
 
 public class PsiUtil {
+
+    public static void navigateToXqlFile(String alias, String name, XQLConfigManager.Config config) {
+        var xqlVf = ProjectFileUtil.findXqlByAlias(alias, config);
+        if (Objects.nonNull(xqlVf) && xqlVf.exists()) {
+            var psi = PsiManager.getInstance(config.getProject()).findFile(xqlVf);
+            if (Objects.nonNull(psi)) {
+                ProgressManager.checkCanceled();
+                psi.acceptChildren(new PsiRecursiveElementVisitor() {
+                    @Override
+                    public void visitElement(@NotNull PsiElement element) {
+                        if (element instanceof PsiComment comment) {
+                            if (comment.getText().matches("/\\*\\s*\\[\\s*" + name + "\\s*]\\s*\\*/")) {
+                                var nav = comment.getNavigationElement();
+                                NavigationUtil.activateFileWithPsiElement(nav);
+                                return;
+                            }
+                        }
+                        if (element instanceof GeneratedParserUtilBase.DummyBlock) {
+                            super.visitElement(element);
+                        }
+                    }
+                });
+            }
+        }
+    }
 
     public static void saveUnsavedXqlAndConfig(@NotNull Project project) {
         var fileDocumentManager = FileDocumentManager.getInstance();
