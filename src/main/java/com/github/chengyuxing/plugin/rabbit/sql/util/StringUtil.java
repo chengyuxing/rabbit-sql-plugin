@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import static com.github.chengyuxing.common.script.SimpleScriptParser.*;
 import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.code;
+import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.safeEscape;
 
 public class StringUtil {
 
@@ -52,8 +53,7 @@ public class StringUtil {
                     var kl = getKeyAndRestLength(name);
                     var key = kl.getItem1();
                     var endIdx = m.end("name") - kl.getItem2();
-                    tl = tl.replace("<", "&lt;")
-                            .replace(">", "&gt;");
+                    tl = safeEscape(tl);
                     var part = code(tl.substring(0, m.start("name") - 1), HtmlUtil.Color.ANNOTATION) + "_" + code(tl.substring(endIdx), HtmlUtil.Color.ANNOTATION);
                     if (!keyMapping.containsKey(key)) {
                         var parts = new LinkedHashSet<String>();
@@ -83,7 +83,12 @@ public class StringUtil {
             var tempP = SqlUtil.FMT.getPattern();
             var tempM = tempP.matcher(line);
             while (tempM.find()) {
+                var prefix = "";
                 var key = tempM.group("key");
+                if (key.startsWith("!")) {
+                    key = key.substring(1);
+                    prefix = "!";
+                }
                 if (key.contains(".")) {
                     key = key.substring(0, key.indexOf("."));
                 }

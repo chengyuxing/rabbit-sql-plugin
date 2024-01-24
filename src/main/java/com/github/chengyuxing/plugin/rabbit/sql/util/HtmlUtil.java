@@ -4,8 +4,7 @@ import com.github.chengyuxing.sql.utils.SqlHighlighter;
 
 public class HtmlUtil {
     public static String highlightSql(String sqlString) {
-        var sql = sqlString.replace(">", "&gt;")
-                .replace("<", "&lt;");
+        var sql = safeEscape(sqlString);
         var highlighted = SqlHighlighter.highlight(sql, (tag, content) -> switch (tag) {
             case FUNCTION -> code(content, Color.FUNCTION);
             case KEYWORD -> code(content, Color.KEYWORD);
@@ -29,11 +28,17 @@ public class HtmlUtil {
         return "<span style=\"color:" + color.getCode() + "\">" + content + "</span>";
     }
 
+    public static String safeEscape(String s) {
+        return s.replace(">", "&gt;")
+                .replace("<", "&lt;");
+    }
+
     public static String toHtml(String content) {
         return "<html><body>" + content + "</body></html>";
     }
 
     public enum Color {
+        EMPTY(""),
         KEYWORD("#CC7832"),
         NUMBER("#48A0A2"),
         FUNCTION("#54ADF9"),
