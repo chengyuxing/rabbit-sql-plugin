@@ -5,8 +5,10 @@ import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
+import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
@@ -20,8 +22,8 @@ import java.util.Objects;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 
-public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
-    private static final Logger log = Logger.getInstance(GotoSqlDefinition.class);
+public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
+    private static final Logger log = Logger.getInstance(GotoXqlDefinition.class);
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement javaElement, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
@@ -50,15 +52,22 @@ public class GotoSqlDefinition extends RelatedItemLineMarkerProvider {
                         Project project = javaElement.getProject();
                         var xqlFile = PsiManager.getInstance(project).findFile(vf);
                         if (xqlFile == null) return;
-                        xqlFile.acceptChildren(new PsiElementVisitor() {
+                        ProgressManager.checkCanceled();
+                        xqlFile.acceptChildren(new PsiRecursiveElementVisitor() {
                             @Override
-                            public void visitComment(@NotNull PsiComment comment) {
-                                if (comment.getText().matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/")) {
-                                    var markInfo = NavigationGutterIconBuilder.create(XqlIcons.XQL_FILE)
-                                            .setTarget(comment)
-                                            .setTooltipText(xqlPath.getFileName() + " -> " + sqlName)
-                                            .createLineMarkerInfo(javaElement);
-                                    result.add(markInfo);
+                            public void visitElement(@NotNull PsiElement element) {
+                                if (element instanceof PsiComment comment) {
+                                    if (comment.getText().matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/")) {
+                                        var markInfo = NavigationGutterIconBuilder.create(XqlIcons.XQL_FILE)
+                                                .setTarget(comment)
+                                                .setTooltipText(xqlPath.getFileName() + " -> " + sqlName)
+                                                .createLineMarkerInfo(javaElement);
+                                        result.add(markInfo);
+                                        return;
+                                    }
+                                }
+                                if (element instanceof GeneratedParserUtilBase.DummyBlock) {
+                                    super.visitElement(element);
                                 }
                             }
                         });

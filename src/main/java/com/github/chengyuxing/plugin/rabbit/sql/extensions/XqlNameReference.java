@@ -3,6 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -54,11 +55,17 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
                     var xqlFile = PsiManager.getInstance(project).findFile(vf);
                     if (xqlFile == null) return ResolveResult.EMPTY_ARRAY;
                     AtomicReference<PsiElement> elem = new AtomicReference<>(null);
-                    xqlFile.acceptChildren(new PsiElementVisitor() {
+                    xqlFile.acceptChildren(new PsiRecursiveElementVisitor() {
                         @Override
-                        public void visitComment(@NotNull PsiComment comment) {
-                            if (comment.getText().matches("/\\*\\s*\\[\\s*(" + name + ")\\s*]\\s*\\*/")) {
-                                elem.set(comment);
+                        public void visitElement(@NotNull PsiElement element) {
+                            if (element instanceof PsiComment comment) {
+                                if (comment.getText().matches("/\\*\\s*\\[\\s*(" + name + ")\\s*]\\s*\\*/")) {
+                                    elem.set(comment);
+                                    return;
+                                }
+                            }
+                            if (element instanceof GeneratedParserUtilBase.DummyBlock) {
+                                super.visitElement(element);
                             }
                         }
                     });
