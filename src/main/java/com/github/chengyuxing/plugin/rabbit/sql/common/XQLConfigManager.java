@@ -138,7 +138,7 @@ public class XQLConfigManager {
         private final NotificationExecutor notificationExecutor;
         private final XQLFileManagerConfig xqlFileManagerConfig;
         private final XQLFileManager xqlFileManager;
-        private final Set<String> configFiles;
+        private final Set<String> originalXqlFiles;
         private SqlGenerator sqlGenerator = new SqlGenerator(':');
         private boolean active = false;
 
@@ -152,7 +152,7 @@ public class XQLConfigManager {
 
             this.resourcesRoot = this.modulePath.resolve(Constants.RESOURCE_ROOT);
 
-            this.configFiles = new HashSet<>();
+            this.originalXqlFiles = new HashSet<>();
 
             this.active = isPrimary();
 
@@ -210,7 +210,7 @@ public class XQLConfigManager {
                     // e.g. xqls/home.xql
                     var filename = e.getValue().trim();
                     if (filename.isEmpty()) {
-                        configFiles.add("");
+                        originalXqlFiles.add("");
                         warnings.add(Message.warning(messagePrefix() + "'" + alias + "' associated invalid location."));
                         continue;
                     }
@@ -224,7 +224,7 @@ public class XQLConfigManager {
                     }
                     var uri = abPath.toUri().toString();
                     // whatever valid or not, save original xql-file-manager.yml files.
-                    configFiles.add(uri);
+                    originalXqlFiles.add(uri);
                     if (!Files.exists(abPath)) {
                         warnings.add(Message.warning(messagePrefix() + filename + " not exists."));
                         continue;
@@ -283,8 +283,8 @@ public class XQLConfigManager {
             return project;
         }
 
-        public Set<String> getConfigFiles() {
-            return configFiles;
+        public Set<String> getOriginalXqlFiles() {
+            return originalXqlFiles;
         }
 
         public String getConfigName() {
@@ -360,13 +360,13 @@ public class XQLConfigManager {
         @Override
         public void close() {
             xqlFileManager.close();
-            configFiles.clear();
+            originalXqlFiles.clear();
             notificationExecutor.close();
         }
 
         public void clear() {
             xqlFileManager.close();
-            configFiles.clear();
+            originalXqlFiles.clear();
         }
     }
 }

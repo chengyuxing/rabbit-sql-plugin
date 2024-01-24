@@ -63,7 +63,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                             log.debug("find module: " + moduleVf + " configs.");
                             configs.forEach(config -> {
                                 if (config.isValid() && config.isActive()) {
-                                    var configured = config.getConfigFiles().contains(xqlPath);
+                                    var configured = config.getOriginalXqlFiles().contains(xqlPath);
                                     // configured files:
                                     // content modified
                                     // file deleted
@@ -73,7 +73,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                                         config.fire(true);
                                     } else {
                                         // filename changed which not included in config files.
-                                        config.getConfigFiles().forEach(cfgPath -> {
+                                        config.getOriginalXqlFiles().forEach(cfgPath -> {
                                             var p = Path.of(URI.create(cfgPath));
                                             if (cfgPath.isEmpty() || !Files.exists(p)) {
                                                 config.fire(true);

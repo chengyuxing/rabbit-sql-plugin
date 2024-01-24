@@ -7,7 +7,6 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
-import com.intellij.ui.JBColor;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 
@@ -15,6 +14,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
 
@@ -23,11 +23,12 @@ import java.util.function.Consumer;
  */
 public class NewXQLForm extends JPanel {
     private final String resourceRoot;
-
+    private final Map<String, String> anchors;
     private final Consumer<Triple<String, String, String>> inputChanged;
 
-    public NewXQLForm(String resourceRoot, Consumer<Triple<String, String, String>> inputChanged) {
+    public NewXQLForm(String resourceRoot, Map<String, String> anchors, Consumer<Triple<String, String, String>> inputChanged) {
         this.resourceRoot = resourceRoot;
+        this.anchors = anchors;
         this.inputChanged = inputChanged;
         initComponents();
         customInit();
@@ -37,7 +38,7 @@ public class NewXQLForm extends JPanel {
         var userInputPath = filename.getText().trim();
         var abPath = genAbPath(userInputPath);
         if (isYmlListType(userInputPath)) {
-            userInputPath = "!path [ " + String.join(", ", abPath.split("/")) + " ]";
+            userInputPath = "!path " + formatYmlArray(userInputPath);
             return Tuples.of(alias.getText(), userInputPath, abPath);
         }
         if (userInputPath.startsWith("/")) {
@@ -79,6 +80,12 @@ public class NewXQLForm extends JPanel {
     }
 
     private void customInit() {
+        if (!anchors.isEmpty()) {
+            var sb = new StringJoiner(", ");
+            anchors.forEach((k, v) -> sb.add(k + "=" + v));
+            filenameTooltip.setText(HtmlUtil.toHtml(filenameTooltip.getText() + "  " + HtmlUtil.code("[Anchors]", HtmlUtil.Color.NUMBER)));
+            filenameTooltip.setToolTipText(sb.toString());
+        }
         message.setText(resourceRoot);
         filename.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -145,26 +152,53 @@ public class NewXQLForm extends JPanel {
         if (filename.startsWith("/")) {
             filename = filename.substring(1);
         }
-        if (filename.endsWith(".xql")) {
-            return filename;
-        }
-        return filename + ".xql";
+        return filename;
     }
 
     private String joinPath(String paths) {
         if (isYmlListType(paths)) {
             var parts = paths.substring(1, paths.length() - 1).split(",");
             var sb = new StringJoiner("/");
-            for (var part : parts) {
-                sb.add(part.trim());
+            for (int i = 0, j = parts.length; i < j; i++) {
+                var part = parts[i].trim();
+                var pt = part;
+                if (pt.startsWith("*")) {
+                    pt = anchors.get(pt.substring(1));
+                }
+                if (!part.startsWith("*") && i == j - 1) {
+                    if (!pt.endsWith(".xql")) {
+                        pt += ".xql";
+                    }
+                }
+                sb.add(pt);
             }
             return sb.toString();
+        }
+        if (!paths.endsWith(".xql")) {
+            paths += ".xql";
         }
         return paths;
     }
 
     private boolean isYmlListType(String s) {
         return s.startsWith("[") && s.endsWith("]");
+    }
+
+    private String formatYmlArray(String s) {
+        var r = s.trim();
+        r = r.substring(1, r.length() - 1);
+        var sb = new StringJoiner(", ");
+        var paths = r.split(",");
+        for (int i = 0, j = paths.length; i < j; i++) {
+            var part = paths[i].trim();
+            if (!part.startsWith("*") && i == j - 1) {
+                if (!part.endsWith(".xql")) {
+                    part += ".xql";
+                }
+            }
+            sb.add(part);
+        }
+        return "[ " + sb + " ]";
     }
 
     private void initComponents() {
@@ -211,10 +245,10 @@ public class NewXQLForm extends JPanel {
             panel2.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 0));
 
             //---- filenameTooltip ----
-            filenameTooltip.setText("Path by '/' or Array e.g [xqls, mysql, home.xql]");
+            filenameTooltip.setText("Divided by '/' or array e.g. [a, b, c]");
             filenameTooltip.setVerticalAlignment(SwingConstants.TOP);
             filenameTooltip.setFont(filenameTooltip.getFont().deriveFont(filenameTooltip.getFont().getSize() - 1f));
-            filenameTooltip.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
+            filenameTooltip.setForeground(new Color(0x727782));
             panel2.add(filenameTooltip);
         }
         add(panel2, cc.xy(3, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
@@ -234,7 +268,7 @@ public class NewXQLForm extends JPanel {
 
             //---- message ----
             message.setText("...");
-            message.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
+            message.setForeground(new Color(0x727782));
             message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
             panel1.add(message);
         }

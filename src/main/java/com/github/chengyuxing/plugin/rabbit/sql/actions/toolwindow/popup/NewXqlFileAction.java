@@ -3,6 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
+import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -46,7 +47,8 @@ public class NewXqlFileAction extends AnAction {
             if (Objects.isNull(doc)) {
                 return;
             }
-            ApplicationManager.getApplication().invokeLater(() -> new NewXqlDialog(project, config, doc).showAndGet());
+            var anchors = PsiUtil.getYmlAnchors(project, configVf);
+            ApplicationManager.getApplication().invokeLater(() -> new NewXqlDialog(project, config, doc, anchors).showAndGet());
         }
     }
 }

@@ -33,7 +33,7 @@ new FormModel {
 				name: "panel2"
 				add( new FormComponent( "javax.swing.JLabel" ) {
 					name: "filenameTooltip"
-					"text": "Path by '/' or Array e.g [xqls, mysql, home.xql]"
+					"text": "Divided by '/' or array e.g. [a, b, c]"
 					"verticalAlignment": 1
 					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, -1, false )
 					"foreground": new java.awt.Color( 114, 119, 130, 255 )

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -35,12 +36,12 @@ public class NewXqlDialog extends DialogWrapper {
     private final Document doc;
     private NewXQLForm newXqlFileForm = null;
 
-    public NewXqlDialog(Project project, XQLConfigManager.Config config, Document doc) {
+    public NewXqlDialog(Project project, XQLConfigManager.Config config, Document doc, Map<String, String> anchors) {
         super(true);
         this.project = project;
         this.config = config;
         this.doc = doc;
-        this.newXqlFileForm = new NewXQLForm(getAbResourceRoot(), data -> {
+        this.newXqlFileForm = new NewXQLForm(getAbResourceRoot(), anchors, data -> {
             var alias = data.getItem1();
             var abPath = data.getItem2();
             var inputFileName = data.getItem3();
@@ -48,13 +49,27 @@ public class NewXqlDialog extends DialogWrapper {
                 setOKActionEnabled(false);
                 return;
             }
+            if (!abPath.endsWith(".xql")) {
+                this.newXqlFileForm.alert("File Extension is required.");
+                setOKActionEnabled(false);
+                return;
+            }
             if (inputFileName.startsWith("[") && inputFileName.endsWith("]")) {
                 var parts = inputFileName.substring(1, inputFileName.length() - 1).split(",");
                 for (var part : parts) {
-                    if (INVALID_CHAR.matcher(part.trim()).find()) {
+                    var pt = part.trim();
+                    if (INVALID_CHAR.matcher(pt).find()) {
                         this.newXqlFileForm.alert("Invalid path part founded.");
                         setOKActionEnabled(false);
                         return;
+                    }
+                    if (pt.startsWith("*")) {
+                        var name = pt.substring(1);
+                        if (!anchors.containsKey(name)) {
+                            this.newXqlFileForm.alert("Cannot find '" + name + "' anchor value.");
+                            setOKActionEnabled(false);
+                            return;
+                        }
                     }
                 }
             }
