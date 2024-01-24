@@ -7,6 +7,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
+import com.intellij.ui.JBColor;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 
@@ -83,8 +84,8 @@ public class NewXQLForm extends JPanel {
         if (!anchors.isEmpty()) {
             var sb = new StringJoiner(", ");
             anchors.forEach((k, v) -> sb.add(k + "=" + v));
-            filenameTooltip.setText(HtmlUtil.toHtml(filenameTooltip.getText() + "  " + HtmlUtil.code("[Anchors]", HtmlUtil.Color.NUMBER)));
-            filenameTooltip.setToolTipText(sb.toString());
+            anchorTag.setToolTipText(sb.toString());
+            anchorTag.setVisible(true);
         }
         message.setText(resourceRoot);
         filename.getDocument().addDocumentListener(new DocumentListener() {
@@ -207,6 +208,7 @@ public class NewXQLForm extends JPanel {
         filename = new JTextField();
         panel2 = new JPanel();
         filenameTooltip = new JLabel();
+        anchorTag = new JLabel();
         label2 = new JLabel();
         alias = new JTextField();
         panel1 = new JPanel();
@@ -242,16 +244,30 @@ public class NewXQLForm extends JPanel {
 
         //======== panel2 ========
         {
-            panel2.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 0));
+            panel2.setLayout(new FormLayout(
+                new ColumnSpec[] {
+                    new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, 0.01),
+                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, 0.01)
+                },
+                RowSpec.decodeSpecs("fill:default:grow(0.01)")));
 
             //---- filenameTooltip ----
             filenameTooltip.setText("Divided by '/' or array e.g. [a, b, c]");
             filenameTooltip.setVerticalAlignment(SwingConstants.TOP);
             filenameTooltip.setFont(filenameTooltip.getFont().deriveFont(filenameTooltip.getFont().getSize() - 1f));
-            filenameTooltip.setForeground(new Color(0x727782));
-            panel2.add(filenameTooltip);
+            filenameTooltip.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
+            panel2.add(filenameTooltip, cc.xy(1, 1, CellConstraints.LEFT, CellConstraints.CENTER));
+
+            //---- anchorTag ----
+            anchorTag.setText("[Anchors]");
+            anchorTag.setHorizontalAlignment(SwingConstants.TRAILING);
+            anchorTag.setFont(anchorTag.getFont().deriveFont(anchorTag.getFont().getSize() - 1f));
+            anchorTag.setForeground(new JBColor(new Color(0x48a0a2), new Color(0x1D7FC5)));
+            anchorTag.setVisible(false);
+            panel2.add(anchorTag, cc.xy(3, 1, CellConstraints.RIGHT, CellConstraints.CENTER));
         }
-        add(panel2, cc.xy(3, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
+        add(panel2, new CellConstraints(3, 3, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(0, 4, 0, 4)));
 
         //---- label2 ----
         label2.setText("Alias:");
@@ -268,8 +284,8 @@ public class NewXQLForm extends JPanel {
 
             //---- message ----
             message.setText("...");
-            message.setForeground(new Color(0x727782));
             message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
+            message.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
             panel1.add(message);
         }
         add(panel1, cc.xy(3, 7, CellConstraints.FILL, CellConstraints.DEFAULT));
@@ -281,6 +297,7 @@ public class NewXQLForm extends JPanel {
     private JTextField filename;
     private JPanel panel2;
     private JLabel filenameTooltip;
+    private JLabel anchorTag;
     private JLabel label2;
     private JTextField alias;
     private JPanel panel1;

@@ -25,10 +25,9 @@ new FormModel {
 				"gridY": 1
 				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints FILL
 			} )
-			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
-				"hgap": 4
-				"vgap": 0
-				"alignment": 0
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
+				"$columnSpecs": "default:grow(0.01), labelcompgap, default:grow(0.01)"
+				"$rowSpecs": "fill:default:grow(0.01)"
 			} ) {
 				name: "panel2"
 				add( new FormComponent( "javax.swing.JLabel" ) {
@@ -37,11 +36,29 @@ new FormModel {
 					"verticalAlignment": 1
 					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, -1, false )
 					"foreground": new java.awt.Color( 114, 119, 130, 255 )
+				}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+					"gridX": 1
+					"gridY": 1
+					"hAlign": sfield com.jgoodies.forms.layout.CellConstraints LEFT
+					"vAlign": sfield com.jgoodies.forms.layout.CellConstraints CENTER
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "anchorTag"
+					"text": "[Anchors]"
+					"horizontalAlignment": 11
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, -1, false )
+					"foreground": new java.awt.Color( 72, 160, 162, 255 )
+					"visible": false
+				}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+					"gridX": 3
+					"gridY": 1
+					"hAlign": sfield com.jgoodies.forms.layout.CellConstraints RIGHT
+					"vAlign": sfield com.jgoodies.forms.layout.CellConstraints CENTER
 				} )
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
 				"gridY": 3
-				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints FILL
+				"insets": new java.awt.Insets( 0, 4, 0, 4 )
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label2"
@@ -68,8 +85,8 @@ new FormModel {
 				add( new FormComponent( "javax.swing.JLabel" ) {
 					name: "message"
 					"text": "..."
-					"foreground": new java.awt.Color( 114, 119, 130, 255 )
 					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, -1, false )
+					"foreground": new java.awt.Color( 223, 225, 234, 255 )
 				} )
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3
