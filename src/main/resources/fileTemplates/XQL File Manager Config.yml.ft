@@ -15,7 +15,7 @@ files:
 #  data: !path [ *basePath, data.xql ]
 #  other: another.xql
 
-# Multi sql fragment delimiter symbol in xql file, ';' is default.
+# Multiple sql fragment delimiter symbol in xql file, ';' is default.
 # https://github.com/chengyuxing/rabbit-sql#options-1
 #delimiter: ;
 
