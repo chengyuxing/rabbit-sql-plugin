@@ -6,6 +6,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPane
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
@@ -28,6 +29,7 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
         for (Module module : modules) {
             var moduleVfs = ProjectUtil.guessModuleDir(module);
             if (Objects.nonNull(moduleVfs) && moduleVfs.exists()) {
+                ProgressManager.checkCanceled();
                 var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", module.getModuleProductionSourceScope());
                 for (VirtualFile configVfs : allConfigVfs) {
                     var config = new XQLConfigManager.Config(project, moduleVfs, configVfs);
