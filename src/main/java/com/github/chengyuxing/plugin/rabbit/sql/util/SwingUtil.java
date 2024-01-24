@@ -34,7 +34,6 @@ public class SwingUtil {
         if (includeCurrentNode) {
             if (expand) {
                 tree.expandPath(parent);
-                System.out.println(parent);
             } else {
                 tree.collapsePath(parent);
             }
