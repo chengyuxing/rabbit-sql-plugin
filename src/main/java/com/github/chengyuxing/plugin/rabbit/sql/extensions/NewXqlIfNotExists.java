@@ -76,15 +76,14 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
             if (Objects.isNull(doc)) {
                 return;
             }
-            ApplicationManager.getApplication().runWriteAction(() -> {
-                WriteCommandAction.runWriteCommandAction(project, "Modify '" + sqlFileVf.getName() + "'", null, () -> {
-                    var lastIdx = doc.getTextLength();
-                    doc.insertString(lastIdx, "\n/*[" + name + "]*/\n\n;\n");
-                    PsiDocumentManager.getInstance(project).commitDocument(doc);
-                    FileDocumentManager.getInstance().saveDocument(doc);
-                    PsiUtil.navigate2xqlFile(alias, name, config);
-                });
-            });
+            ApplicationManager.getApplication().runWriteAction(() ->
+                    WriteCommandAction.runWriteCommandAction(project, "Modify '" + sqlFileVf.getName() + "'", null, () -> {
+                        var lastIdx = doc.getTextLength();
+                        doc.insertString(lastIdx, "\n/*[" + name + "]*/\n\n;\n");
+                        PsiDocumentManager.getInstance(project).commitDocument(doc);
+                        FileDocumentManager.getInstance().saveDocument(doc);
+                        PsiUtil.navigate2xqlFile(alias, name, config);
+                    }));
 
         } catch (Exception e) {
             if (e instanceof ControlFlowException) {
@@ -112,12 +111,12 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
 
     @Override
     public @NotNull @IntentionFamilyName String getFamilyName() {
-        return "Smart create or append...";
+        return "Smart create/append xql...";
     }
 
     @Override
     public @IntentionName @NotNull String getText() {
-        return "Smart create or append...";
+        return "Smart create/append xql...";
     }
 
     @Override
@@ -127,6 +126,6 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
 
     @Override
     public Icon getIcon(int flags) {
-        return AllIcons.Actions.New;
+        return AllIcons.Actions.AddMulticaret;
     }
 }
