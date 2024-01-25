@@ -69,7 +69,6 @@ new FormModel {
 			} )
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "alias"
-				"editable": false
 				"font": new java.awt.Font( "JetBrains Mono", 0, 13 )
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 3

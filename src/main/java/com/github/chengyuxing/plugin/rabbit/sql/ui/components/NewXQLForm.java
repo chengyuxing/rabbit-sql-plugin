@@ -16,6 +16,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
 
@@ -24,15 +25,15 @@ import java.util.function.Consumer;
  */
 public class NewXQLForm extends JPanel {
     private final String resourceRoot;
-    private final Map<String, String> anchors;
-    private final Consumer<Triple<String, String, String>> inputChanged;
+    private Map<String, String> anchors = Map.of();
+    private Consumer<Triple<String, String, String>> inputChanged = v -> {
+    };
+    private boolean aliasEditable = true;
+    private String defaultAlias = "";
 
-    public NewXQLForm(String resourceRoot, Map<String, String> anchors, Consumer<Triple<String, String, String>> inputChanged) {
+    public NewXQLForm(String resourceRoot) {
         this.resourceRoot = resourceRoot;
-        this.anchors = anchors;
-        this.inputChanged = inputChanged;
         initComponents();
-        customInit();
     }
 
     public Triple<String, String, String> getData() {
@@ -69,7 +70,9 @@ public class NewXQLForm extends JPanel {
 
     void userInputChanged() {
         var data = genData();
-        alias.setText(data.getItem1());
+        if (aliasEditable) {
+            alias.setText(data.getItem1());
+        }
         message.setText(resourceRoot + "/" + data.getItem2());
         inputChanged.accept(Tuples.of(alias.getText(), data.getItem2(), data.getItem3()));
     }
@@ -80,7 +83,9 @@ public class NewXQLForm extends JPanel {
         inputChanged.accept(Tuples.of(alias.getText(), data.getItem2(), data.getItem3()));
     }
 
-    private void customInit() {
+    public void init() {
+        alias.setEditable(aliasEditable);
+        alias.setText(defaultAlias);
         if (!anchors.isEmpty()) {
             var sb = new StringJoiner(", ");
             anchors.forEach((k, v) -> sb.add(k + "=" + v));
@@ -92,14 +97,11 @@ public class NewXQLForm extends JPanel {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 userInputChanged();
-                alias.setEditable(true);
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 userInputChanged();
-                if (filename.getText().trim().isEmpty())
-                    alias.setEditable(false);
             }
 
             @Override
@@ -107,22 +109,24 @@ public class NewXQLForm extends JPanel {
 
             }
         });
-        alias.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                aliasInputChanged();
-            }
+        if (aliasEditable) {
+            alias.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    aliasInputChanged();
+                }
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                aliasInputChanged();
-            }
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    aliasInputChanged();
+                }
 
-            @Override
-            public void changedUpdate(DocumentEvent e) {
+                @Override
+                public void changedUpdate(DocumentEvent e) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     private String genAlias(String text) {
@@ -202,6 +206,25 @@ public class NewXQLForm extends JPanel {
         return "[ " + sb + " ]";
     }
 
+    public void setAnchors(Map<String, String> anchors) {
+        if (Objects.nonNull(anchors))
+            this.anchors = anchors;
+    }
+
+    public void setInputChanged(Consumer<Triple<String, String, String>> inputChanged) {
+        if (Objects.nonNull(inputChanged))
+            this.inputChanged = inputChanged;
+    }
+
+    public void setAliasEditable(boolean aliasEditable) {
+        this.aliasEditable = aliasEditable;
+    }
+
+    public void setDefaultAlias(String defaultAlias) {
+        if (Objects.nonNull(defaultAlias))
+            this.defaultAlias = defaultAlias;
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
         label1 = new JLabel();
@@ -256,7 +279,7 @@ public class NewXQLForm extends JPanel {
             filenameTooltip.setText("Divided by '/' or array e.g. [a, b, c]");
             filenameTooltip.setVerticalAlignment(SwingConstants.TOP);
             filenameTooltip.setFont(filenameTooltip.getFont().deriveFont(filenameTooltip.getFont().getSize() - 1f));
-            filenameTooltip.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
+            filenameTooltip.setForeground(new Color(0x727782));
             panel2.add(filenameTooltip, cc.xy(1, 1, CellConstraints.LEFT, CellConstraints.CENTER));
 
             //---- anchorTag ----
@@ -274,7 +297,6 @@ public class NewXQLForm extends JPanel {
         add(label2, cc.xy(1, 5));
 
         //---- alias ----
-        alias.setEditable(false);
         alias.setFont(new Font("JetBrains Mono", Font.PLAIN, 13));
         add(alias, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
 
