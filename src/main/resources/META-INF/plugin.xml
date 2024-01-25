@@ -47,7 +47,7 @@
     </ul>
     <h2>Getting Started</h2>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.8.17+</strong> or <strong>rabbit-sql-spring-boot-starter 2.8.15+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.8.20+</strong> or <strong>rabbit-sql-spring-boot-starter 2.8.16+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;</li>
         <li>Register xql files on property: <code>files</code>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
@@ -63,7 +63,7 @@
         <![CDATA[
             <h3>2.2.0</h3>
             <ul>
-                <li>Support rabbit sql 7.8.17+ and rabbit-sql-spring-boot-starter 2.8.15+.</li>
+                <li>Support rabbit sql 7.8.20+ and rabbit-sql-spring-boot-starter 2.8.16+.</li>
                 <li>New Feature: <b>XQL File Manager Toolwindow</b> panel, supports display structured config, toggle multiple config, reload config, execute sql action, etc.</li>
                 <li>Toolwindow Action <kbd>New</kbd> support for open file after dialog closed.</li>
                 <li>Toolwindow support xql fragment double-click to navigate to xql file.</li>
