@@ -1,8 +1,9 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.intellij.icons.AllIcons;
@@ -10,8 +11,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -36,19 +35,16 @@ public class NewXqlFileAction extends AnAction {
             var config = (XQLConfigManager.Config) nodeSource.source();
             var configPath = config.getConfigPath();
             var configVf = VirtualFileManager.getInstance().findFileByNioPath(configPath);
-            if (Objects.isNull(configVf)) {
-                return;
-            }
-            var psi = PsiManager.getInstance(project).findFile(configVf);
-            if (Objects.isNull(psi)) {
-                return;
-            }
-            var doc = PsiDocumentManager.getInstance(project).getDocument(psi);
+            var doc = ProjectFileUtil.getDocument(project, configVf);
             if (Objects.isNull(doc)) {
                 return;
             }
             var anchors = PsiUtil.getYmlAnchors(project, configVf);
-            ApplicationManager.getApplication().invokeLater(() -> new NewXqlDialog(project, config, doc, anchors).showAndGet());
+            ApplicationManager.getApplication().invokeLater(() -> {
+                var d = new NewXqlDialog(project, config, doc, anchors);
+                d.initContent();
+                d.showAndGet();
+            });
         }
     }
 }

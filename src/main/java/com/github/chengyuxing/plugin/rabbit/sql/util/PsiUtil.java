@@ -10,6 +10,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.java.PsiJavaTokenImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLAnchor;
 import org.jetbrains.yaml.psi.YamlRecursivePsiElementVisitor;
@@ -45,28 +46,32 @@ public class PsiUtil {
         return anchors;
     }
 
-    public static void navigateToXqlFile(String alias, String name, XQLConfigManager.Config config) {
+    public static void navigate2xqlFile(String alias, String name, XQLConfigManager.Config config) {
         var xqlVf = ProjectFileUtil.findXqlByAlias(alias, config);
         if (Objects.nonNull(xqlVf) && xqlVf.exists()) {
             var psi = PsiManager.getInstance(config.getProject()).findFile(xqlVf);
-            if (Objects.nonNull(psi)) {
-                ProgressManager.checkCanceled();
-                psi.acceptChildren(new PsiRecursiveElementVisitor() {
-                    @Override
-                    public void visitElement(@NotNull PsiElement element) {
-                        if (element instanceof PsiComment comment) {
-                            if (comment.getText().matches("/\\*\\s*\\[\\s*" + name + "\\s*]\\s*\\*/")) {
-                                var nav = comment.getNavigationElement();
-                                NavigationUtil.activateFileWithPsiElement(nav);
-                                return;
-                            }
-                        }
-                        if (element instanceof GeneratedParserUtilBase.DummyBlock) {
-                            super.visitElement(element);
+            navigate2xqlFile(psi, name);
+        }
+    }
+
+    public static void navigate2xqlFile(PsiElement psi, String sqlFragmentName) {
+        if (Objects.nonNull(psi)) {
+            ProgressManager.checkCanceled();
+            psi.acceptChildren(new PsiRecursiveElementVisitor() {
+                @Override
+                public void visitElement(@NotNull PsiElement element) {
+                    if (element instanceof PsiComment comment) {
+                        if (comment.getText().matches("/\\*\\s*\\[\\s*" + sqlFragmentName + "\\s*]\\s*\\*/")) {
+                            var nav = comment.getNavigationElement();
+                            NavigationUtil.activateFileWithPsiElement(nav);
+                            return;
                         }
                     }
-                });
-            }
+                    if (element instanceof GeneratedParserUtilBase.DummyBlock) {
+                        super.visitElement(element);
+                    }
+                }
+            });
         }
     }
 
@@ -128,5 +133,12 @@ public class PsiUtil {
             }
         }
         return "";
+    }
+
+    public static String getJavaLiteral(PsiElement element) {
+        if (!(element instanceof PsiJavaTokenImpl) || !(element.getParent() instanceof PsiLiteralExpression literalExpression)) {
+            return null;
+        }
+        return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
     }
 }

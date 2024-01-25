@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
@@ -12,7 +13,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLiteralExpression;
-import com.intellij.psi.impl.source.tree.java.PsiJavaTokenImpl;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,10 +46,7 @@ public class CopySqlDefinition extends PsiElementBaseIntentionAction implements 
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        if (!(element instanceof PsiJavaTokenImpl) || !(element.getParent() instanceof PsiLiteralExpression literalExpression)) {
-            return false;
-        }
-        String sqlRef = literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
+        String sqlRef = PsiUtil.getJavaLiteral(element);
         if (sqlRef == null) {
             return false;
         }

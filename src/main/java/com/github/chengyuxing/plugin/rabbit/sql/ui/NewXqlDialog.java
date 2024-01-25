@@ -17,6 +17,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public class NewXqlDialog extends DialogWrapper {
@@ -34,6 +36,12 @@ public class NewXqlDialog extends DialogWrapper {
     private final Project project;
     private final XQLConfigManager.Config config;
     private final Document doc;
+    private final Map<String, String> anchors;
+    private String defaultAlias = "";
+    private boolean enableAutoGenAlias = true;
+    private String templateContent = "";
+    private Consumer<PsiElement> whenComplete = psi -> {
+    };
     private NewXQLForm newXqlFileForm = null;
 
     public NewXqlDialog(Project project, XQLConfigManager.Config config, Document doc, Map<String, String> anchors) {
@@ -41,7 +49,18 @@ public class NewXqlDialog extends DialogWrapper {
         this.project = project;
         this.config = config;
         this.doc = doc;
-        this.newXqlFileForm = new NewXQLForm(getAbResourceRoot(), anchors, data -> {
+        this.anchors = anchors;
+        setOKActionEnabled(false);
+        setSize(450, 120);
+        setTitle("New XQL File");
+    }
+
+    public void initContent() {
+        this.newXqlFileForm = new NewXQLForm(getAbResourceRoot());
+        this.newXqlFileForm.setAnchors(anchors);
+        this.newXqlFileForm.setDefaultAlias(defaultAlias);
+        this.newXqlFileForm.setAliasEditable(enableAutoGenAlias);
+        this.newXqlFileForm.setInputChanged(data -> {
             var alias = data.getItem1();
             var abPath = data.getItem2();
             var inputFileName = data.getItem3();
@@ -55,10 +74,10 @@ public class NewXqlDialog extends DialogWrapper {
                 return;
             }
             if (inputFileName.startsWith("[") && inputFileName.endsWith("]")) {
-                var parts = inputFileName.substring(1, inputFileName.length() - 1).split(",");
+                var parts = inputFileName.substring(1, inputFileName.length() - 1).split(",", -1);
                 for (var part : parts) {
                     var pt = part.trim();
-                    if (INVALID_CHAR.matcher(pt).find()) {
+                    if (pt.isEmpty() || INVALID_CHAR.matcher(pt).find()) {
                         this.newXqlFileForm.alert("Invalid path part founded.");
                         setOKActionEnabled(false);
                         return;
@@ -80,9 +99,7 @@ public class NewXqlDialog extends DialogWrapper {
             }
             setOKActionEnabled(true);
         });
-        setOKActionEnabled(false);
-        setSize(450, 120);
-        setTitle("New XQL File");
+        this.newXqlFileForm.init();
         init();
     }
 
@@ -125,7 +142,11 @@ public class NewXqlDialog extends DialogWrapper {
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
             }
-            Files.writeString(file, xqlFt.getText(args), StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+            var template = xqlFt.getText(args);
+            if (!templateContent.isEmpty()) {
+                template += "\n" + templateContent;
+            }
+            Files.writeString(file, template, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
         } catch (IOException ex) {
             newXqlFileForm.alert(ex.toString());
             return;
@@ -166,6 +187,26 @@ public class NewXqlDialog extends DialogWrapper {
                         return;
                     }
                     NavigationUtil.activateFileWithPsiElement(psi);
+                    whenComplete.accept(psi);
                 }));
+    }
+
+    public void setDefaultAlias(String defaultAlias) {
+        if (Objects.nonNull(defaultAlias))
+            this.defaultAlias = defaultAlias;
+    }
+
+    public void setEnableAutoGenAlias(boolean enableAutoGenAlias) {
+        this.enableAutoGenAlias = enableAutoGenAlias;
+    }
+
+    public void setTemplateContent(String templateContent) {
+        if (Objects.nonNull(templateContent))
+            this.templateContent = templateContent;
+    }
+
+    public void setWhenComplete(Consumer<PsiElement> whenComplete) {
+        if (Objects.nonNull(whenComplete))
+            this.whenComplete = whenComplete;
     }
 }

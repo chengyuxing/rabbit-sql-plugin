@@ -2,12 +2,15 @@ package com.github.chengyuxing.plugin.rabbit.sql.util;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiManager;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -15,6 +18,20 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class ProjectFileUtil {
+    public static Document getDocument(Project project, VirtualFile virtualFile) {
+        if (Objects.isNull(virtualFile)) {
+            return null;
+        }
+        var psi = PsiManager.getInstance(project).findFile(virtualFile);
+        if (Objects.isNull(psi)) {
+            return null;
+        }
+        var doc = PsiDocumentManager.getInstance(project).getDocument(psi);
+        if (Objects.isNull(doc)) {
+            return null;
+        }
+        return doc;
+    }
 
     public static boolean isXqlFileManagerConfig(String name) {
         return name.matches(Constants.CONFIG_PATTERN);
