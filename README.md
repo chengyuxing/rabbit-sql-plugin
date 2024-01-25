@@ -15,7 +15,7 @@ IDEA IU 2023.1.* - 2023.3.* is required.
 - `Baki` interface support inject SQL language(e.g: `.query("select ...")`).
 - Support java and xql file references to navigate each other.
 - Support copy sql by focus in sql name.(macOS:<kbd>Option</kbd> + <kbd>Enter</kbd> , Windows: <kbd>Alt</kbd> + <kbd>Enter</kbd>) > <kbd>Copy sql definition</kbd> .
-- Support test dynamic SQL by focus in sql name.(macOS:<kbd>Option</kbd> + <kbd>Enter</kbd> , Windows: <kbd>Alt</kbd> + <kbd>Enter</kbd>) > <kbd>Test dynamic sql</kbd> .
+- Support Execute Dynamic SQL by focus in sql name.(macOS:<kbd>Option</kbd> + <kbd>Enter</kbd> , Windows: <kbd>Alt</kbd> + <kbd>Enter</kbd>) > <kbd>Execute Dynamic sql</kbd> .
 - Support sql name suggestions auto complete in java string literal where start with `"&"`.
 - Create `xql-file-manager.yml` in `/src/main/resources` and register xql file to enable some features above.
 - **ToolBar menu**: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd> | <kbd>XQL File Manager CHS</kbd>
@@ -30,7 +30,7 @@ IDEA IU 2023.1.* - 2023.3.* is required.
 
 ## Getting Started
 
-1. Add dependency **Rabbit-sql 7.8.16+** or **rabbit-sql-spring-boot-starter 2.8.14+** to your project;
+1. Add dependency **Rabbit-sql 7.8.17+** or **rabbit-sql-spring-boot-starter 2.8.15+** to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 4. Configure [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);

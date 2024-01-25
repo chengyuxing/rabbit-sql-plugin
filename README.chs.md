@@ -15,7 +15,7 @@ IDEA 旗舰版版本兼容 2023.1.* - 2023.3.* 。
 - `Baki` 接口支持注入sql语言（例如：`.query（"select ..."）`）；
 - 支持java文件和xql文件sql引用导航；
 - 鼠标点击sql名支持拷贝sql语句内容.（macOS:<kbd>Option</kbd> + <kbd>Enter</kbd> , Windows: <kbd>Alt</kbd> + <kbd>Enter</kbd>) > <kbd>Copy sql definition</kbd> ；
-- 鼠标点击sql名支持测试动态sql.(macOS:<kbd>Option</kbd> + <kbd>Enter</kbd> , Windows: <kbd>Alt</kbd> + <kbd>Enter</kbd>) > <kbd>Test dynamic sql</kbd> )；
+- 鼠标点击sql名支持测试动态sql.(macOS:<kbd>Option</kbd> + <kbd>Enter</kbd> , Windows: <kbd>Alt</kbd> + <kbd>Enter</kbd>) > <kbd>Execute Dynamic sql</kbd> )；
 - java文件中字符串字面量以 `&` 开头支持sql名自动完成提示建议；
 - 在 `/src/main/resources` 目录下创建文件 `xql-file-manager.yml` 并配置xql文件可以开启支持以上全部功能；
 - **工具栏菜单**: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd> | <kbd>XQL File Manager CHS</kbd>。
@@ -29,7 +29,7 @@ IDEA 旗舰版版本兼容 2023.1.* - 2023.3.* 。
 
 ## 开始使用
 
-1. 项目中引入 **rabbit-sql 7.8.16+** 或 **rabbit-sql-spring-boot-starter 2.8.14+**；
+1. 项目中引入 **rabbit-sql 7.8.17+** 或 **rabbit-sql-spring-boot-starter 2.8.15+**；
 2. 在源文件根目录: `.../src/main/resources/` 下创建 `xql-file-manager.yml`；
 3. 为属性: `files` 配置你的xql文件；
 4. 配置 [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);

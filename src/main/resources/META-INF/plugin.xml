@@ -23,7 +23,7 @@
     <ul>
         <li>Support the identification of xql(<code>.xql</code>) file type.</li>
         <li>Support dynamic sql expression script live templates(e.g: <code>xql:if</code>).</li>
-        <li>Support intention action <kbd>Test Dynamic sql</kbd> and <kbd>Copy sql definition</kbd> by sql name(e.g: <code>&my.users</code>).</li>
+        <li>Support intention action <kbd>Execute Dynamic sql</kbd> and <kbd>Copy sql definition</kbd> by sql name(e.g: <code>&my.users</code>).</li>
         <li>Support quick look sql definition by sql name(e.g: <code>&my.users</code>).</li>
         <li>Baki interface Support inject SQL language(e.g: <code>.query("select ...")</code>).</li>
         <li>Support java and xql file references to navigate each other.</li>
@@ -32,7 +32,8 @@
         <li>Toolwindow:
             <ul>
                 <li>Structured tree view.</li>
-                <li>Config mouse right click action(New) to create and auto configure xql file.</li>
+                <li>Manager multiple xql-file-manager.yml.</li>
+                <li>Config mouse right click action(<kbd>New</kbd>) to create and auto configure xql file.</li>
                 <li>Execute selected SQL Action.</li>
                 <li>Some more useful actions.</li>
             </ul>
@@ -46,8 +47,8 @@
     </ul>
     <h2>Getting Started</h2>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.8.16+</strong> or <strong>rabbit-sql-spring-boot-starter 2.8.14+</strong> to your project;</li>
-        <li>Create <code>xql-file-manager.yml</code> in resource root: <code>.../src/main/resources/</code>;</li>
+        <li>Add dependency <strong>rabbit-sql 7.8.17+</strong> or <strong>rabbit-sql-spring-boot-starter 2.8.15+</strong> to your project;</li>
+        <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;</li>
         <li>Register xql files on property: <code>files</code>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#bakidao">BakiDao#setXqlFileManager</a>;</li>
@@ -60,23 +61,29 @@
 
     <change-notes>
         <![CDATA[
-            <h3>2.1.7</h3>
+            <h3>2.2.0</h3>
             <ul>
-                <li>Support rabbit sql 7.8.16+ and rabbit-sql-spring-boot-starter 2.8.14+.</li>
-                <li>New Feature: <b>XQL File Manager Toolwindow</b> panel, supports display structured config, toggle multi config, reload config, execute sql action and so on...</li>
-                <li>New Action: New (Toolwindow xql-file-manager.yml node mouse right click to create xql file and auto update config).</li>
-                <li>Toolwindow Action 'New' support for open file after dialog closed.</li>
-                <li>Add supports for multi <code>xql-file-manager-*.yml</code>.</li>
-                <li>Improved xql-file-manager parsing and loading logic.</li>
+                <li>Support rabbit sql 7.8.17+ and rabbit-sql-spring-boot-starter 2.8.15+.</li>
+                <li>New Feature: <b>XQL File Manager Toolwindow</b> panel, supports display structured config, toggle multiple config, reload config, execute sql action, etc.</li>
+                <li>Toolwindow Action <kbd>New</kbd> support for open file after dialog closed.</li>
+                <li>Toolwindow support xql fragment double-click to navigate to xql file.</li>
+                <li>New Action: <kbd>New</kbd> (Toolwindow xql-file-manager.yml node mouse right click to create xql file and auto update config).</li>
+                <li>New Intention Action: <kbd>Smart create/append xql...</kbd>(If sql reference in xql not exists).</li>
+                <li>Add supports for multiple <code>xql-file-manager-*.yml</code>.</li>
+                <li>Add icon for intention action: <kbd>Execute/Copy</kbd> Dynamic Sql.</li>
+                <li>Improved <code>xql-file-manager.yml</code> parsing and loading logic.</li>
                 <li>Update sql name quick doc highlight sql.</li>
-                <li>Action Reload Xql File Manager scope range optimized.</li>
-                <li>Test Dynamic sql dialog parameter title optimized.</li>
+                <li>Action <kbd>Reload All</kbd>(Reload Xql File Manager) scope range optimized.</li>
+                <li>Execute Dynamic sql dialog parameter title optimized.</li>
                 <li>Fixed plugin error occurs UnsupportedOperationException when popping dynamic sql dialog.</li>
+                <li>Fixed xql reference gutter icon in java file cannot navigate to xql file bug.</li>
+                <li>Fixed logging the not should be logged <code>ControlFlowException</code> error.</li>
                 <li>Fixed plugin error in <code>.xql</code> file syntax highlight bug.</li>
-                <li>Fixed create xql-file-manager.yml occurs error notice.</li>
+                <li>Fixed create <code>xql-file-manager.yml</code> occurs error notice.</li>
                 <li>Fixed dynamic sql dialog parameter detect not correct.</li>
-                <li>Fixed Test dynamic sql parameter value is null output empty string bug.</li>
-                <li>Some bug fixed and optimized.</li>
+                <li>Fixed <kbd>Execute Dynamic sql</kbd> parameter value is null occurs output empty string bug.</li>
+                <li>Fixed <kbd>Execute Dynamic sql</kbd> detect string template(${!key}) parameters bug.</li>
+                <li>Some bugs have been fixed and some optimizations made.</li>
             </ul>
             <h3>2.1.6</h3>
             <ul>
@@ -102,9 +109,9 @@
             </ul>
             <h3>2.1.2</h3>
             <ul>
-                <li>Fixed <b>Test dynamic sql</b> "" or '' not equals blank.</li>
-                <li>Fixed <b>Test dynamic sql</b> error when create Jdbc console if already exists.</li>
-                <li><b>Test dynamic sql</b> add remember selected and executed database.</li>
+                <li>Fixed <b>Execute Dynamic sql</b> "" or '' not equals blank.</li>
+                <li>Fixed <b>Execute Dynamic sql</b> error when create Jdbc console if already exists.</li>
+                <li><b>Execute Dynamic sql</b> add remember selected and executed database.</li>
                 <li>rabbit sql updated to 7.5.5+ and rabbit-sql-spring-boot-starter 2.5.6+.</li>
                 <li>Compatible with IDEA IU 2023.2</li>
                 <li>Some bugs fixed.</li>
@@ -127,7 +134,7 @@
             </ul>
             <h3>2.0.6</h3>
             <ul>
-                <li><b>Test Dynamic Sql</b> dialog layout optimized.</li>
+                <li><b>Execute Dynamic Sql</b> dialog layout optimized.</li>
                 <li>Support <code>rabbit-sql 7.4.0+ and rabbit-sql-spring-boot-starter 2.5.0+.</code></li>
                 <li>Fixed some bugs.</li>
             </ul>
@@ -155,11 +162,11 @@
             </ul>
             <h3>2.0.1</h3>
             <ul>
-                <li>Support intention action [<strong>Test dynamic sql</strong>] in xql file's sql name which configured in <code>xql-file-manager.yml</code>.</li>
+                <li>Support intention action [<strong>Execute Dynamic sql</strong>] in xql file's sql name which configured in <code>xql-file-manager.yml</code>.</li>
                 <li>Support show sql name error highlight if sql definition not exists.</li>
                 <li>Parameters dialog '_' as parameter default placeholder.</li>
-                <li>[<strong>Test dynamic sql</strong>]: Configured database cache fixed bugs when same name founded.</li>
-                <li>[<strong>Test dynamic sql</strong>]: Set Transaction Mode to Manual as default.</li>
+                <li>[<strong>Execute Dynamic sql</strong>]: Configured database cache fixed bugs when same name founded.</li>
+                <li>[<strong>Execute Dynamic sql</strong>]: Set Transaction Mode to Manual as default.</li>
                 <li>Fixed [<strong>CopySqlDefinition</strong>] automatic trigger when hover the menu item.</li>
                 <li>Some optimized.</li>
             </ul>
@@ -171,13 +178,13 @@
             <h3>1.14</h3>
             <ul>
                 <li>Sql language injections support baki v7.1.20+</li>
-                <li><strong>Test dynamic sql</strong> support execute dynamic sql by choose configured database.</li>
-                <li><strong>Test dynamic sql</strong> support display query result.</li>
+                <li><strong>Execute Dynamic sql</strong> support execute dynamic sql by choose configured database.</li>
+                <li><strong>Execute Dynamic sql</strong> support display query result.</li>
                 <li>Some bugs fixed and updates.</li>
             </ul>
             <h3>1.13</h3>
             <ul>
-                <li>Support [<strong>Test dynamic sql</strong>] action at sql name.(e.g: <code>&my.query</code>)</li>
+                <li>Support [<strong>Execute Dynamic sql</strong>] action at sql name.(e.g: <code>&my.query</code>)</li>
                 <li>Fixed plugin not working on trust a new project.</li>
                 <li>Some bugs fixed.</li>
             </ul>
@@ -216,7 +223,7 @@
             <h3>1.7</h3>
             <ul>
                 <li>Special icon for <code>xql-file-manager.properties</code></li>
-                <li>Fixed xql file manager resource shared bugs in multi opened projects.</li>
+                <li>Fixed xql file manager resource shared bugs in multiple opened projects.</li>
                 <li>Fixed open second or more projects occurs xql file manager init fired many times.</li>
             </ul>
             <h3>1.6</h3>
@@ -296,14 +303,20 @@
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInXql</className>
         </intentionAction>
-        <!--Test dynamic sql-->
+        <!--Execute Dynamic sql-->
         <intentionAction id="TestDynamicSql">
             <language>JAVA</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInJava</className>
         </intentionAction>
+        <!--Create/Append-->
+        <intentionAction id="CreateOrAppendXql">
+            <language>JAVA</language>
+            <category>Rabbit-SQL</category>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.NewXqlIfNotExists</className>
+        </intentionAction>
         <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoSqlDefinition"/>
+                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoXqlDefinition"/>
 
         <codeInsight.lineMarkerProvider language="SQL"
                                         implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoJavaCallable"/>

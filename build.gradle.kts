@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.1.7"
+version = "2.2.0"
 
 repositories {
     mavenLocal()
@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:7.8.16") {
+    implementation("com.github.chengyuxing:rabbit-sql:7.8.17") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.yaml", "snakeyaml")
     }
@@ -28,7 +28,8 @@ intellij {
 
     plugins.set(listOf("com.intellij.database",
             "com.intellij.java",
-            "org.intellij.intelliLang"))
+            "org.intellij.intelliLang",
+            "org.jetbrains.plugins.yaml"))
 }
 
 sourceSets["main"].java.srcDirs("src/main/gen")
