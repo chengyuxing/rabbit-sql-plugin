@@ -9,7 +9,7 @@ public class Helper extends WebHelpProvider {
     @Override
     public @Nullable String getHelpPageUrl(@NotNull String helpTopicId) {
         return switch (helpTopicId) {
-            case XQL_FILE_MANAGER -> "https://github.com/chengyuxing/rabbit-sql/blob/master/README.md#XQLFileManager";
+            case XQL_FILE_MANAGER -> "https://github.com/chengyuxing/rabbit-sql/blob/master/XQL_FILE_MANAGER.md";
             default -> null;
         };
     }
