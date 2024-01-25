@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
 import com.github.chengyuxing.common.tuple.Pair;
+import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
 import com.github.chengyuxing.sql.utils.SqlUtil;
@@ -15,6 +16,18 @@ import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.code;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.safeEscape;
 
 public class StringUtil {
+    /**
+     * get alias and sqlName
+     *
+     * @param sqlName sql reference name
+     * @return [alias, sqlName]
+     */
+    public static Pair<String, String> extraSqlReference(String sqlName) {
+        int dotIdx = sqlName.lastIndexOf(".");
+        var alias = sqlName.substring(0, dotIdx).trim();
+        var name = sqlName.substring(dotIdx + 1).trim();
+        return Tuples.of(alias, name);
+    }
 
     public static Set<String> getTemplateParameters(String str) {
         var sql = SqlUtil.removeBlockAnnotation(str);
@@ -83,11 +96,9 @@ public class StringUtil {
             var tempP = SqlUtil.FMT.getPattern();
             var tempM = tempP.matcher(line);
             while (tempM.find()) {
-                var prefix = "";
                 var key = tempM.group("key");
                 if (key.startsWith("!")) {
                     key = key.substring(1);
-                    prefix = "!";
                 }
                 if (key.contains(".")) {
                     key = key.substring(0, key.indexOf("."));

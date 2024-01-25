@@ -31,7 +31,7 @@ public class GotoXqlFileAction extends AnAction {
         if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
             @SuppressWarnings("unchecked")
             var sqlMeta = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
-            PsiUtil.navigateToXqlFile(sqlMeta.getItem1(), sqlMeta.getItem2(), sqlMeta.getItem4());
+            PsiUtil.navigate2xqlFile(sqlMeta.getItem1(), sqlMeta.getItem2(), sqlMeta.getItem4());
         }
     }
 

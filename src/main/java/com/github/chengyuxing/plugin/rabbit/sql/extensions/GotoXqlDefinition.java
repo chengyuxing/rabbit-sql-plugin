@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
+import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
@@ -38,9 +39,9 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
             sqlRef = sqlRef.substring(1);
             var xqlFileManager = XQLConfigManager.getInstance().getActiveXqlFileManager(javaElement);
             if (Objects.nonNull(xqlFileManager) && xqlFileManager.contains(sqlRef)) {
-                var dotIdx = sqlRef.indexOf(".");
-                var alias = sqlRef.substring(0, dotIdx).trim();
-                var sqlName = sqlRef.substring(dotIdx + 1).trim();
+                var sqlRefParts = StringUtil.extraSqlReference(sqlRef);
+                var alias = sqlRefParts.getItem1();
+                var sqlName = sqlRefParts.getItem2();
                 try {
                     var allXqlFiles = xqlFileManager.getFiles();
                     if (allXqlFiles.containsKey(alias)) {

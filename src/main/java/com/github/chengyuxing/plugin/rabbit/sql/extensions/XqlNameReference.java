@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
+import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.diagnostic.ControlFlowException;
@@ -34,9 +35,9 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
         if (key.isEmpty() || !key.contains(".")) {
             return ResolveResult.EMPTY_ARRAY;
         }
-        var dotIdx = key.indexOf(".");
-        var alias = key.substring(0, dotIdx).trim();
-        var name = key.substring(dotIdx + 1).trim();
+        var sqlRefParts = StringUtil.extraSqlReference(key);
+        var alias = sqlRefParts.getItem1();
+        var name = sqlRefParts.getItem2();
         if (alias.isEmpty() && name.isEmpty()) {
             return ResolveResult.EMPTY_ARRAY;
         }
@@ -98,7 +99,7 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
                 .stream()
                 .map(name -> LookupElementBuilder.create(name)
                         .withIcon(XqlIcons.XQL_ITEM)
-                        .withTypeText(name.substring(0, name.indexOf(".")) + ".xql")
+                        .withTypeText(name.substring(0, name.lastIndexOf(".")) + ".xql")
                         .withCaseSensitivity(true))
                 .toArray();
     }
