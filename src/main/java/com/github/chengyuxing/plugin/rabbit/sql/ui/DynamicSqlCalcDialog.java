@@ -10,6 +10,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ParametersForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
+import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.database.datagrid.DataRequest;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -136,7 +137,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                 // select ... from tb where id = :id and ${temp}
                 var args = parseArgs2raw(data.getItem1());
                 var result = xqlFileManager.get(sqlName, args);
-                var finalSql = result.getItem1();
+                var finalSql = SqlUtil.repairSyntaxError(result.getItem1());
                 var forVars = result.getItem2();
                 // generate raw sql.
                 args.put(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY, forVars);
