@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "8.0.5.0.268" Java: "17.0.6" encoding: "UTF-8"
+JFDML JFormDesigner: "8.2.1.0.348" Java: "17.0.9" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
@@ -23,7 +23,7 @@ new FormModel {
 					"intercellSpacing": new java.awt.Dimension( 0, 0 )
 					"fillsViewportHeight": true
 					"selectionMode": 0
-					"font": new java.awt.Font( "JetBrains Mono", 0, 14 )
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 1, false )
 					"rowHeight": 30
 					"selectionBackground": sfield com.jformdesigner.model.FormObject NULL_VALUE
 				} )
@@ -49,4 +49,3 @@ new FormModel {
 		} )
 	}
 }
-

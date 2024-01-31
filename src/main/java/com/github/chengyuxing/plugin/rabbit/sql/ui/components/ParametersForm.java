@@ -124,7 +124,6 @@ public class ParametersForm extends JPanel {
         cbx.addItem("true");
         cbx.addItem("false");
         cbx.setEditable(true);
-        cbx.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
         return new DefaultCellEditor(cbx);
     }
 
@@ -157,7 +156,7 @@ public class ParametersForm extends JPanel {
             paramsTable.setIntercellSpacing(new Dimension(0, 0));
             paramsTable.setFillsViewportHeight(true);
             paramsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            paramsTable.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
+            paramsTable.setFont(paramsTable.getFont().deriveFont(paramsTable.getFont().getSize() + 1f));
             paramsTable.setRowHeight(30);
             paramsTable.setSelectionForeground(null);
             paramsTable.setSelectionBackground(null);
