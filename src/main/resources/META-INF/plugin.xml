@@ -61,6 +61,12 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.2.1</h3>
+            <ul>
+                <li>Support IDEA 241.*(2024.1.*).</li>
+                <li>Fixed dynamic sql parsing bug.</li>
+                <li>Fixed <b>Execute dynamic sql</b> and <b>New Xql File</b> text box cannot display Chinese characters.</li>
+            </ul>
             <h3>2.2.0</h3>
             <ul>
                 <li>Support rabbit sql 7.8.20+ and rabbit-sql-spring-boot-starter 2.8.16+.</li>
