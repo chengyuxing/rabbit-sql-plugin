@@ -47,7 +47,7 @@
     </ul>
     <h2>Getting Started</h2>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.8.22+</strong> or <strong>rabbit-sql-spring-boot-starter 2.8.17+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.8.24+</strong> or <strong>rabbit-sql-spring-boot-starter 2.8.20+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;</li>
         <li>Register xql files on property: <code>files</code>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
@@ -61,6 +61,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.2.3</h3>
+            <ul>
+                <li>Fixed dynamic sql parsing without fix sql syntax bug.</li>
+                <li>Support rabbit sql 7.8.24+ and rabbit-sql-spring-boot-starter 2.8.20+.</li>
+            </ul>
             <h3>2.2.2</h3>
             <ul>
                 <li>Support rabbit sql 7.8.22+ and rabbit-sql-spring-boot-starter 2.8.17+.</li>
