@@ -1,4 +1,10 @@
 <templateSet group="Rabbit SQL(.xql)">
+    <template name="xql:desc" value="/*#$VAR$#*/" description="write description for this sql fragment" toReformat="false" toShortenFQNames="true">
+        <variable name="VAR" expression="" defaultValue="&quot;some description...&quot;" alwaysStopAt="true" />
+        <context>
+            <option name="SQL" value="true" />
+        </context>
+    </template>
     <template name="xql:for-full"
               value="-- #for $KEY$ $INDEX$ of :$LIST$ $PIPES$ delimiter '$SYMBOL$' open '$OPEN$' close '$CLOSE$'&#10;    $BODY$&#10;-- #done"
               description="full for-expression" toReformat="false" toShortenFQNames="true">
