@@ -6,6 +6,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
@@ -27,7 +28,7 @@ public class ExecuteSqlAction extends AnAction {
             if (Objects.nonNull(nodeSource)) {
                 if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
                     @SuppressWarnings("unchecked")
-                    var data = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
+                    var data = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
                     var name = data.getItem2();
                     return "Execute " + SqlUtil.quote(name);
                 }
@@ -42,7 +43,7 @@ public class ExecuteSqlAction extends AnAction {
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
         if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
             @SuppressWarnings("unchecked")
-            var sqlMeta = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
+            var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
             var alias = sqlMeta.getItem1();
             var name = sqlMeta.getItem2();
             var config = sqlMeta.getItem4();

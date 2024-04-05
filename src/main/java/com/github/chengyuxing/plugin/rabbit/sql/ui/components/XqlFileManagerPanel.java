@@ -8,6 +8,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
@@ -86,7 +87,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                             }
                             case XQL_FRAGMENT -> {
                                 @SuppressWarnings("unchecked")
-                                var sqlMeta = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
+                                var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
                                 PsiUtil.navigate2xqlFile(sqlMeta.getItem1(), sqlMeta.getItem2(), sqlMeta.getItem4());
                             }
                         }

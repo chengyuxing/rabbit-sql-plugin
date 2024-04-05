@@ -6,6 +6,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
@@ -44,17 +45,35 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                     }
                     case XQL_FRAGMENT -> {
                         @SuppressWarnings("unchecked")
-                        var sqlMeta = (Triple<String, String, String>) nodeSource.source();
+                        var sqlMeta = (Triple<String, String, XQLFileManager.Sql>) nodeSource.source();
                         setIcon(AllIcons.FileTypes.Text);
                         append(sqlMeta.getItem2() + " -> ");
-                        var sql = sqlMeta.getItem3();
-                        if (sql.length() > 100) {
-                            sql = sql.substring(0, 95) + "...";
+                        var info = getInfo(sqlMeta);
+                        append(info, SimpleTextAttributes.GRAY_ATTRIBUTES);
+                        if (info.isBlank()) {
+                            setToolTipText(null);
+                        } else {
+                            setToolTipText(info);
                         }
-                        append(sql, SimpleTextAttributes.GRAY_ATTRIBUTES);
                     }
                 }
             }
         }
+    }
+
+    @NotNull
+    private static String getInfo(Triple<String, String, XQLFileManager.Sql> sqlMeta) {
+        var sql = sqlMeta.getItem3();
+        var sqlContent = sql.getContent();
+        var description = sql.getDescription();
+        var info = description;
+        if (description.isBlank()) {
+            if (sqlContent.length() > 100) {
+                info = sqlContent.substring(0, 95) + "...";
+            } else {
+                info = sqlContent;
+            }
+        }
+        return info;
     }
 }
