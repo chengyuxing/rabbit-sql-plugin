@@ -4,6 +4,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
+import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -44,12 +45,19 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
             var config = xqlConfigManager.getActiveConfig(originalElement);
             if (config != null && config.getXqlFileManager().contains(sqlName)) {
                 var xqlFileManager = config.getXqlFileManager();
-                String sqlDefinition = xqlFileManager.get(sqlName);
-                String sqlContent = HtmlUtil.highlightSql(sqlDefinition);
-                String xqlFile = element.getContainingFile().getName();
+                var sql = xqlFileManager.getSqlObject(sqlName);
+                var sqlDefinition = SqlUtil.trimEnd(sql.getContent());
+                var sqlContent = HtmlUtil.highlightSql(sqlDefinition);
+                var description = sql.getDescription();
+                var xqlFile = element.getContainingFile().getName();
 
-                String doc = DEFINITION_START + element.getText() + DEFINITION_END +
-                        CONTENT_START + sqlContent + CONTENT_END +
+                var doc = DEFINITION_START + element.getText();
+
+                if (!description.trim().isEmpty()) {
+                    doc += HtmlUtil.pre(description, HtmlUtil.Color.LIGHT);
+                }
+
+                doc += DEFINITION_END + CONTENT_START + sqlContent + CONTENT_END +
                         SECTIONS_START;
 
                 var prepareParams = config.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of())
