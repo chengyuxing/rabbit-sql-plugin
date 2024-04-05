@@ -2,27 +2,24 @@
 # User: $USER
 # Date: $DATE
 # Time: $TIME
-# Configure 'src/main/resources/xql-file-manager.yml' will be enabling the rabbit-sql plugin.
-# You can use yaml all syntax features, such as anchor.
-# Extends features:
-# !path --concat all items of list by /
-# https://github.com/chengyuxing/rabbit-sql#xqlfilemanager
+# Configure 'src/main/resources/xql-file-manager.yml' to enable the rabbit-sql plugin.
+# https://github.com/chengyuxing/rabbit-sql/blob/master/XQL_FILE_MANAGER.md
 
 #constants:
-#  base: &basePath pgsql
+#  db: &db pgsql
 
 files:
-#  data: !path [ *basePath, data.xql ]
-#  other: another.xql
+#  foo: !path [ *db, a.xql ]
+#  bar: b.xql
 
-# Multiple sql fragment delimiter symbol in xql file, ';' is default.
-# https://github.com/chengyuxing/rabbit-sql#options-1
 #delimiter: ;
 
 #charset: UTF-8
 
 #pipes:
 
-# Following properties for support rabbit-sql-plugin dynamic sql test parameter.
+# The following properties work for plugin action (Execute Dynamic sql).
+
 #named-param-prefix: ':'
+
 #database-id:

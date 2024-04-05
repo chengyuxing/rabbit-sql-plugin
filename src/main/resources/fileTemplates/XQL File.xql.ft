@@ -1,8 +1,8 @@
 /*
-* Created by IntelliJ IDEA.
-* User: $USER
-* Date: $DATE
-* Time: $TIME
-* Typing "xql" keyword to get suggestions,
-* e.g: "xql:new" will be create a sql fragment.
+ Created by IntelliJ IDEA.
+ User: $USER
+ Date: $DATE
+ Time: $TIME
+ Typing "xql" keyword to get suggestions,
+ e.g: "xql:new" will be create a sql fragment.
 */
