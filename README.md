@@ -7,7 +7,7 @@
 
 Language: English | [简体中文](README.chs.md)
 
-IDEA IU 2023.1.* - 2023.3.* is required.
+IDEA IU 2023.1.* - 2024.1.* is required.
 
 - Support the identification of xql(`.xql`) file type.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
@@ -18,7 +18,7 @@ IDEA IU 2023.1.* - 2023.3.* is required.
 - Support Execute Dynamic SQL by focus in sql name.(macOS:<kbd>Option</kbd> + <kbd>Enter</kbd> , Windows: <kbd>Alt</kbd> + <kbd>Enter</kbd>) > <kbd>Execute Dynamic sql</kbd> .
 - Support sql name suggestions auto complete in java string literal where start with `"&"`.
 - Create `xql-file-manager.yml` in `/src/main/resources` and register xql file to enable some features above.
-- **ToolBar menu**: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd> | <kbd>XQL File Manager CHS</kbd>
+- **ToolBar menu**: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd>.
 
 ## Installation
 

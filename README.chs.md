@@ -7,7 +7,7 @@
 
 语言: [English](README.md) | 简体中文
 
-IDEA 旗舰版版本兼容 2023.1.* - 2023.3.* 。
+IDEA 旗舰版版本兼容 2023.1.* - 2024.1.* 。
 
 - 支持识别 xql（`.xql`） 文件类型；
 - 支持动态sql表达式脚本 live templates（例如：`xql:if`）；
@@ -18,7 +18,7 @@ IDEA 旗舰版版本兼容 2023.1.* - 2023.3.* 。
 - 鼠标点击sql名支持测试动态sql.(macOS:<kbd>Option</kbd> + <kbd>Enter</kbd> , Windows: <kbd>Alt</kbd> + <kbd>Enter</kbd>) > <kbd>Execute Dynamic sql</kbd> )；
 - java文件中字符串字面量以 `&` 开头支持sql名自动完成提示建议；
 - 在 `/src/main/resources` 目录下创建文件 `xql-file-manager.yml` 并配置xql文件可以开启支持以上全部功能；
-- **工具栏菜单**: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd> | <kbd>XQL File Manager CHS</kbd>。
+- **工具栏菜单**: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd>。
 
 ## 安装
 
