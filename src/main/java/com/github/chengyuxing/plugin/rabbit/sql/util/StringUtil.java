@@ -30,6 +30,10 @@ public class StringUtil {
     }
 
     public static Set<String> getTemplateParameters(String str) {
+        return getTemplateParameters(str, "${", "}");
+    }
+
+    public static Set<String> getTemplateParameters(String str, String keyPrefix, String keySuffix) {
         var sql = SqlUtil.removeBlockAnnotation(str);
         String[] lines = sql.split(NEW_LINE);
         if (lines.length > 0) {
@@ -39,7 +43,7 @@ public class StringUtil {
             var params = new LinkedHashSet<String>();
             while (m.find()) {
                 var key = m.group("key");
-                params.add("${" + key + "}");
+                params.add(keyPrefix + key + keySuffix);
             }
             return params;
         }

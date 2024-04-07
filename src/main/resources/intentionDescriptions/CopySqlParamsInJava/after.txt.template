@@ -1,0 +1,5 @@
+// template parameters
+"cnd", cnd,
+// named parameters
+"name", name,
+"age", age
