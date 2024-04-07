@@ -54,7 +54,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                 var doc = DEFINITION_START + element.getText();
 
                 if (!description.trim().isEmpty()) {
-                    doc += HtmlUtil.pre(description, HtmlUtil.Color.LIGHT);
+                    doc += HtmlUtil.pre(description, HtmlUtil.Color.LIGHT, "padding-top:5px;");
                 }
 
                 doc += DEFINITION_END + CONTENT_START + sqlContent + CONTENT_END +

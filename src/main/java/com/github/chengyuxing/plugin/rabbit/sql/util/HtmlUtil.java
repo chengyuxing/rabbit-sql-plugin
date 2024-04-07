@@ -6,26 +6,30 @@ public class HtmlUtil {
     public static String highlightSql(String sqlString) {
         var sql = safeEscape(sqlString);
         var highlighted = SqlHighlighter.highlight(sql, (tag, content) -> switch (tag) {
-            case FUNCTION -> code(content, Color.FUNCTION);
-            case KEYWORD -> code(content, Color.KEYWORD);
-            case NUMBER -> code(content, Color.NUMBER);
-            case POSTGRESQL_FUNCTION_BODY_SYMBOL, SINGLE_QUOTE_STRING -> code(content, Color.STRING);
-            case ASTERISK -> code(content, Color.HIGHLIGHT);
-            case LINE_ANNOTATION, BLOCK_ANNOTATION -> code(content, Color.ANNOTATION);
+            case FUNCTION -> span(content, Color.FUNCTION);
+            case KEYWORD -> span(content, Color.KEYWORD);
+            case NUMBER -> span(content, Color.NUMBER);
+            case POSTGRESQL_FUNCTION_BODY_SYMBOL, SINGLE_QUOTE_STRING -> span(content, Color.STRING);
+            case ASTERISK -> span(content, Color.HIGHLIGHT);
+            case LINE_ANNOTATION, BLOCK_ANNOTATION -> span(content, Color.ANNOTATION);
         });
         return "<pre>" + highlighted + "</pre>";
     }
 
-    public static String pre(String s, Color color) {
-        return "<pre style=\"color:" + color.getCode() + "\">" + s + "</pre>";
+    public static String pre(String s, Color color, String... attrs) {
+        return wrap("pre", s, color, attrs);
     }
 
-    public static String code(String word, Color color) {
-        return "<code style=\"color:" + color.getCode() + "\">" + word + "</code>";
+    public static String code(String word, Color color, String... attrs) {
+        return wrap("code", word, color, attrs);
     }
 
-    public static String span(String content, Color color) {
-        return "<span style=\"color:" + color.getCode() + "\">" + content + "</span>";
+    public static String span(String content, Color color, String... attrs) {
+        return wrap("span", content, color, attrs);
+    }
+
+    public static String wrap(String tag, String content, Color color, String... attrs) {
+        return "<" + tag + " style=\"color:" + color.getCode() + ";" + String.join(";", attrs) + "\">" + content + "</" + tag + ">";
     }
 
     public static String safeEscape(String s) {
