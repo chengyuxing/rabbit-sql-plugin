@@ -29,7 +29,8 @@ public class HtmlUtil {
     }
 
     public static String wrap(String tag, String content, Color color, String... attrs) {
-        return "<" + tag + " style=\"color:" + color.getCode() + ";" + String.join(";", attrs) + "\">" + content + "</" + tag + ">";
+        var colorAttr = color.getCode().isEmpty() ? "" : "color:" + color.getCode();
+        return "<" + tag + " style=\"" + colorAttr + ";" + String.join(";", attrs) + "\">" + content + "</" + tag + ">";
     }
 
     public static String safeEscape(String s) {
