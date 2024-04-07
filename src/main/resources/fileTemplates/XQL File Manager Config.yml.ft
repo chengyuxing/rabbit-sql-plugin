@@ -2,7 +2,7 @@
 # User: $USER
 # Date: $DATE
 # Time: $TIME
-# Configure 'src/main/resources/xql-file-manager.yml' to enable the rabbit-sql plugin.
+# Create 'src/main/resources/xql-file-manager.yml' to enable the rabbit-sql plugin.
 # https://github.com/chengyuxing/rabbit-sql/blob/master/XQL_FILE_MANAGER.md
 
 #constants:
