@@ -30,23 +30,24 @@ IDEA IU 2023.1.* - 2024.1.* is required.
 
 ## Getting Started
 
-1. Add dependency **Rabbit-sql 7.8.26+** or **rabbit-sql-spring-boot-starter 2.8.22+** to your project;
+1. Add dependency **Rabbit-sql 7.8.26+** to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 4. Configure [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
 5. Configure [BakiDao#setXqlFileManager](https://github.com/chengyuxing/rabbit-sql#bakidao);
 
+### Springboot support
+
+1. Add dependency **rabbit-sql-spring-boot-starter 2.8.22+** to your project;
+2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
+3. Register your xql files on property: `files`;
+
 > Press <kbd>Ctrl</kbd> + <kbd>s</kbd> or <kbd>Tools</kbd> > <kbd>Reload XQL File Manager</kbd> to update sql resource cache when you modify the `xql` file or `xql-file-manager.yml` ;
 >
 > :warning: Plugin only parse xql file.
 
-### Springboot support:
-
-Just 1, 2, 3 steps are required.
-
 Get more information from [Rabbit-sql](https://github.com/chengyuxing/rabbit-sql) homepage
 and [Springboot support document](https://github.com/chengyuxing/rabbit-sql-spring-boot-starter).
-
 
 
 [badge:homepage]:https://img.shields.io/badge/plugin%20homepage-rabbit--sql-success
