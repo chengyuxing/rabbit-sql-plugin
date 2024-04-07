@@ -319,26 +319,34 @@
         <intentionAction id="CopySqlDefinition">
             <language>JAVA</language>
             <category>Rabbit-SQL</category>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinition</className>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinitionInJava</className>
         </intentionAction>
-        <!--Xql:Copy sql definition-->
-        <intentionAction>
-            <language>SQL</language>
-            <category>Rabbit-SQL</category>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInXql</className>
-        </intentionAction>
-        <!--Execute Dynamic sql-->
+        <!--Java:Execute Dynamic sql-->
         <intentionAction id="TestDynamicSql">
             <language>JAVA</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInJava</className>
         </intentionAction>
-        <!--Create/Append-->
+        <!--Java:Create/Append-->
         <intentionAction id="CreateOrAppendXql">
             <language>JAVA</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.NewXqlIfNotExists</className>
         </intentionAction>
+
+        <!--Xql:Execute Dynamic sql-->
+        <intentionAction>
+            <language>SQL</language>
+            <category>Rabbit-SQL</category>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInXql</className>
+        </intentionAction>
+        <!--Xql:Copy sql definition-->
+        <intentionAction>
+            <language>SQL</language>
+            <category>Rabbit-SQL</category>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinitionInXql</className>
+        </intentionAction>
+
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoXqlDefinition"/>
 
