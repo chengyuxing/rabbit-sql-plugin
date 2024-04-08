@@ -20,6 +20,7 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
         if (value instanceof XqlTreeNode node) {
             if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
                 var type = nodeSource.type();
+                setToolTipText(null);
                 switch (type) {
                     case MODULE -> {
                         setIcon(AllIcons.Nodes.Module);
