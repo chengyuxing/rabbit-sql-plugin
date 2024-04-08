@@ -70,6 +70,7 @@
                 <li>Sql name reference in java quick doc style optimized for IDEA IU 2024.1.*</li>
                 <li>New intention action: <b>Copy sql definition</b> available in xql file sql name.</li>
                 <li>New intention action: <b>Copy sql parameters to key-value pairs</b> available in java sql name reference.</li>
+                <li>Fixed xql tree tooltip bug.</li>
                 <li>Some more optimized.</li>
             </ul>
             <h3>2.2.4</h3>
