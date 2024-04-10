@@ -3,7 +3,9 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
@@ -23,11 +25,13 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
     private static final Logger log = Logger.getInstance(XqlNameReference.class);
     private final String key;
     private final XQLConfigManager.Config config;
+    private final XQLFileManager xqlFileManager;
 
     public XqlNameReference(@NotNull PsiElement element, TextRange rangeInElement) {
         super(element, rangeInElement);
         key = element.getText().substring(rangeInElement.getStartOffset(), rangeInElement.getEndOffset());
         config = XQLConfigManager.getInstance().getActiveConfig(element);
+        xqlFileManager = config.getXqlFileManager();
     }
 
     @Override
@@ -95,12 +99,16 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
         if (config == null) {
             return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
         }
-        return config.getXqlFileManager().names()
+        return xqlFileManager.names()
                 .stream()
-                .map(name -> LookupElementBuilder.create(name)
-                        .withIcon(XqlIcons.XQL_ITEM)
-                        .withTypeText(name.substring(0, name.lastIndexOf(".")) + ".xql")
-                        .withCaseSensitivity(true))
+                .map(name -> {
+                    var description = xqlFileManager.getSqlObject(name).getDescription();
+                    return LookupElementBuilder.create(name)
+                            .withIcon(AllIcons.FileTypes.Text)
+                            .withTypeText(name.substring(0, name.lastIndexOf(".")) + ".xql")
+                            .withTailText(" " + description)
+                            .withCaseSensitivity(true);
+                })
                 .toArray();
     }
 }
