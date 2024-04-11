@@ -46,7 +46,7 @@
     </ul>
     <h2>Getting Started</h2>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.8.26+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.8.27+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;</li>
         <li>Register xql files on property: <code>files</code>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
@@ -54,7 +54,7 @@
     </ol>
     <h3>Springboot support</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.8.22+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.8.23+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;</li>
         <li>Register xql files on property: <code>files</code>;</li>
     </ol>
@@ -64,6 +64,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.2.6</h3>
+            <ul>
+                <li>Sql reference name suggestions support show description if exists.</li>
+                <li>New UI icon: <code>.xql</code> file type.</li>
+            </ul>
             <h3>2.2.5</h3>
             <ul>
                 <li>Update icons.</li>
@@ -402,6 +407,11 @@
         <notificationGroup toolWindowId="Rabbit-SQL Notification" displayType="BALLOON"
                            id="Rabbit-SQL Notification Group"/>
     </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <iconMapper mappingFile="Rabbit SQLIconMappings.json"/>
+    </extensions>
+
     <actions>
         <group id="XQL File Manager Menu"
                text="XQL File Manager"
