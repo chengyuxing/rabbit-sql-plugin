@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -103,7 +104,7 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
                 .map(name -> {
                     var description = xqlFileManager.getSqlObject(name).getDescription();
                     return LookupElementBuilder.create(name)
-                            .withIcon(AllIcons.FileTypes.Text)
+                            .withIcon(XqlIcons.XQL_FILE_ITEM)
                             .withTypeText(name.substring(0, name.lastIndexOf(".")) + ".xql")
                             .withTailText(" " + description)
                             .withCaseSensitivity(true);
