@@ -3,7 +3,6 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
-import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.diagnostic.ControlFlowException;
@@ -24,17 +23,18 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
     private static final Logger log = Logger.getInstance(XqlNameReference.class);
     private final String key;
     private final XQLConfigManager.Config config;
-    private final XQLFileManager xqlFileManager;
 
     public XqlNameReference(@NotNull PsiElement element, TextRange rangeInElement) {
         super(element, rangeInElement);
         key = element.getText().substring(rangeInElement.getStartOffset(), rangeInElement.getEndOffset());
         config = XQLConfigManager.getInstance().getActiveConfig(element);
-        xqlFileManager = config.getXqlFileManager();
     }
 
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
+        if (config == null) {
+            return ResolveResult.EMPTY_ARRAY;
+        }
         if (key.isEmpty() || !key.contains(".")) {
             return ResolveResult.EMPTY_ARRAY;
         }
@@ -47,8 +47,6 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
         try {
             if (myElement.isValid()) {
                 Project project = myElement.getProject();
-
-                if (config == null) return ResolveResult.EMPTY_ARRAY;
 
                 var allXqlFiles = config.getXqlFileManager().getFiles();
                 if (allXqlFiles.containsKey(alias)) {
@@ -98,6 +96,7 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
         if (config == null) {
             return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
         }
+        var xqlFileManager = config.getXqlFileManager();
         return xqlFileManager.names()
                 .stream()
                 .map(name -> {
