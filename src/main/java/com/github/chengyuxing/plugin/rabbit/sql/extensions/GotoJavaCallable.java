@@ -36,7 +36,7 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
         }
         var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
         var m = pattern.matcher(sqlNameTag);
-        if (m.find()) {
+        if (m.matches()) {
             var sqlName = m.group("name");
             var xqlFile = xqlPsiElement.getContainingFile();
             if (xqlFile != null) {
