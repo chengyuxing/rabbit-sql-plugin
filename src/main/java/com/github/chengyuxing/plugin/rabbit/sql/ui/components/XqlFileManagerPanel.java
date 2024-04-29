@@ -181,23 +181,25 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                 .forEach((module, configs) -> {
                     var mNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.MODULE, module.getFileName().toString(), module.toString()));
                     configs.forEach(config -> {
-                        var ds = new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_CONFIG, config.getConfigName(), config);
-                        var configNode = new XqlTreeNode(ds);
-                        mNode.add(configNode);
-                        config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
-                            var resource = config.getXqlFileManager().getResource(alias);
-                            if (Objects.nonNull(resource)) {
-                                var fileNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE, alias, Tuples.of(alias, filename, resource.getFilename())));
-                                configNode.add(fileNode);
-                                resource.getEntry().forEach((name, sql) -> {
-                                    if (!name.startsWith("${") && !name.endsWith("}")) {
-                                        var sqlNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FRAGMENT,
-                                                name, Tuples.of(alias, name, sql, config)));
-                                        fileNode.add(sqlNode);
-                                    }
-                                });
-                            }
-                        });
+                        if (config.isValid()) {
+                            var ds = new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_CONFIG, config.getConfigName(), config);
+                            var configNode = new XqlTreeNode(ds);
+                            mNode.add(configNode);
+                            config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
+                                var resource = config.getXqlFileManager().getResource(alias);
+                                if (Objects.nonNull(resource)) {
+                                    var fileNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE, alias, Tuples.of(alias, filename, resource.getFilename())));
+                                    configNode.add(fileNode);
+                                    resource.getEntry().forEach((name, sql) -> {
+                                        if (!name.startsWith("${") && !name.endsWith("}")) {
+                                            var sqlNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FRAGMENT,
+                                                    name, Tuples.of(alias, name, sql, config)));
+                                            fileNode.add(sqlNode);
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     });
                     root.add(mNode);
                 });

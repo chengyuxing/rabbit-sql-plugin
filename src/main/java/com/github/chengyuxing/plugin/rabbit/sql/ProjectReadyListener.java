@@ -31,8 +31,14 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
             if (Objects.nonNull(moduleVfs) && moduleVfs.exists()) {
                 ProgressManager.checkCanceled();
                 var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", module.getModuleProductionSourceScope());
+                if (allConfigVfs.isEmpty()) {
+                    var config = new XQLConfigManager.Config(project, moduleVfs);
+                    xqlConfigManager.add(project, moduleVfs.toNioPath(), config);
+                    continue;
+                }
                 for (VirtualFile configVfs : allConfigVfs) {
-                    var config = new XQLConfigManager.Config(project, moduleVfs, configVfs);
+                    var config = new XQLConfigManager.Config(project, moduleVfs);
+                    config.setConfigVfs(configVfs);
                     var configName = config.getConfigName();
                     if (!ProjectFileUtil.isXqlFileManagerConfig(configName)) {
                         continue;

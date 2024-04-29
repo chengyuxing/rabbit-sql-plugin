@@ -129,11 +129,12 @@ public class XQLConfigManager {
 
     public static final class Config implements AutoCloseable {
         private final Project project;
-        private final VirtualFile configVfs;
-        private final Path configPath;
         private final Path modulePath;
         // src/main/resources
         private final Path resourcesRoot;
+
+        private VirtualFile configVfs;
+        private Path configPath;
 
         private final NotificationExecutor notificationExecutor;
         private final XQLFileManagerConfig xqlFileManagerConfig;
@@ -142,19 +143,14 @@ public class XQLConfigManager {
         private SqlGenerator sqlGenerator = new SqlGenerator(':');
         private boolean active = false;
 
-        public Config(Project project, VirtualFile moduleVfs, VirtualFile configVfs) {
+        public Config(Project project, VirtualFile moduleVfs) {
             this.project = project;
-
-            this.configVfs = configVfs;
-            this.configPath = this.configVfs.toNioPath();
 
             this.modulePath = moduleVfs.toNioPath();
 
             this.resourcesRoot = this.modulePath.resolve(Constants.RESOURCE_ROOT);
 
             this.originalXqlFiles = new HashSet<>();
-
-            this.active = isPrimary();
 
             this.notificationExecutor = new NotificationExecutor(messages ->
                     messages.forEach(m ->
@@ -198,7 +194,18 @@ public class XQLConfigManager {
             };
         }
 
+        public void setConfigVfs(VirtualFile configVfs) {
+            this.configVfs = configVfs;
+            if (Objects.nonNull(this.configVfs)) {
+                this.configPath = this.configVfs.toNioPath();
+                this.active = isPrimary();
+            }
+        }
+
         Set<Message> initXqlFileManager() {
+            if (!isValid()) {
+                return Set.of();
+            }
             Set<Message> successes = new HashSet<>();
             Set<Message> warnings = new HashSet<>();
             try {
@@ -279,6 +286,10 @@ public class XQLConfigManager {
             return configPath;
         }
 
+        public VirtualFile getConfigVfs() {
+            return configVfs;
+        }
+
         public Project getProject() {
             return project;
         }
@@ -322,6 +333,9 @@ public class XQLConfigManager {
          * @return true or false
          */
         public boolean isPrimary() {
+            if (!isPhysicExists()) {
+                return false;
+            }
             return configPath.endsWith(Constants.CONFIG_PATH);
         }
 
@@ -330,11 +344,10 @@ public class XQLConfigManager {
             return isPhysicExists();
         }
 
-        public boolean isExists() {
-            return configVfs.exists();
-        }
-
         public boolean isPhysicExists() {
+            if (Objects.isNull(configPath)) {
+                return false;
+            }
             return Files.exists(configPath);
         }
 
@@ -343,17 +356,14 @@ public class XQLConfigManager {
             if (this == o) return true;
             if (!(o instanceof Config config)) return false;
 
-            if (getProject() != null ? !getProject().equals(config.getProject()) : config.getProject() != null)
-                return false;
-            if (!getConfigPath().equals(config.getConfigPath())) return false;
-            return getModulePath().equals(config.getModulePath());
+            return Objects.equals(getProject(), config.getProject()) && getModulePath().equals(config.getModulePath()) && Objects.equals(getConfigPath(), config.getConfigPath());
         }
 
         @Override
         public int hashCode() {
-            int result = getProject() != null ? getProject().hashCode() : 0;
-            result = 31 * result + getConfigPath().hashCode();
+            int result = Objects.hashCode(getProject());
             result = 31 * result + getModulePath().hashCode();
+            result = 31 * result + Objects.hashCode(getConfigPath());
             return result;
         }
 
