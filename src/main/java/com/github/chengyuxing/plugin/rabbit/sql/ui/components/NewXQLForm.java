@@ -258,7 +258,7 @@ public class NewXQLForm extends JPanel {
             }));
 
         //---- label1 ----
-        label1.setText("File Name:");
+        label1.setText("File name:");
         add(label1, cc.xy(1, 1));
         add(filename, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 
