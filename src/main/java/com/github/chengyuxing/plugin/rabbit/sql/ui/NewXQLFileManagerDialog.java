@@ -27,8 +27,8 @@ public class NewXQLFileManagerDialog extends DialogWrapper {
             setOKActionEnabled(!s.trim().isEmpty());
         });
         setOKActionEnabled(false);
-        setSize(450, 120);
-        setTitle("New Secondary XQL File Manager");
+        setSize(370, 100);
+        setTitle("New XQL File Manager");
         init();
     }
 

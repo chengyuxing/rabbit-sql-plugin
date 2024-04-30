@@ -4,15 +4,15 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
-			"$columnSpecs": "40dlu, labelcompgap, 50dlu:grow"
+			"$columnSpecs": "25dlu, labelcompgap, 50dlu:grow"
 			"$rowSpecs": "default, default"
 		} ) {
 			name: "this"
-			"minimumSize": new java.awt.Dimension( 350, 70 )
-			"preferredSize": new java.awt.Dimension( 350, 70 )
+			"minimumSize": new java.awt.Dimension( 200, 50 )
+			"preferredSize": new java.awt.Dimension( 200, 50 )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "title"
-				"text": "Secondary:"
+				"text": "Name:"
 			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
 				"gridX": 1
 				"gridY": 1

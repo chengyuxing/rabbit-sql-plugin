@@ -75,18 +75,18 @@ public class NewXQLFileManagerForm extends JPanel {
         CellConstraints cc = new CellConstraints();
 
         //======== this ========
-        setMinimumSize(new Dimension(350, 70));
-        setPreferredSize(new Dimension(350, 70));
+        setMinimumSize(new Dimension(200, 50));
+        setPreferredSize(new Dimension(200, 50));
         setLayout(new FormLayout(
             new ColumnSpec[] {
-                new ColumnSpec(Sizes.dluX(40)),
+                new ColumnSpec(Sizes.dluX(25)),
                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                 new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(50), FormSpec.DEFAULT_GROW)
             },
             RowSpec.decodeSpecs("default, default")));
 
         //---- title ----
-        title.setText("Secondary:");
+        title.setText("Name:");
         add(title, cc.xy(1, 1));
         add(secondaryFileName, cc.xy(3, 1));
 
