@@ -30,6 +30,9 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
             var moduleVfs = ProjectUtil.guessModuleDir(module);
             if (Objects.nonNull(moduleVfs) && moduleVfs.exists()) {
                 ProgressManager.checkCanceled();
+                if (!ProjectFileUtil.isProjectModule(moduleVfs)) {
+                    continue;
+                }
                 var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", module.getModuleProductionSourceScope());
                 if (allConfigVfs.isEmpty()) {
                     var config = new XQLConfigManager.Config(project, moduleVfs);

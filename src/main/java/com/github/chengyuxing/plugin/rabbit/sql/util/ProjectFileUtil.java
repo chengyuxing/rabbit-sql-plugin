@@ -62,6 +62,12 @@ public class ProjectFileUtil {
         return name.matches(Constants.CONFIG_PATTERN);
     }
 
+    public static boolean isProjectModule(VirtualFile module) {
+        var mPath = module.toNioPath();
+        var resourcesPath = mPath.resolve(Constants.RESOURCE_ROOT);
+        return Files.exists(resourcesPath);
+    }
+
     public static void createXqlConfigByTemplate(Project project, Path absFilename, Runnable then) {
         try {
             var xqlConfig = FileTemplateManager.getInstance(project).getTemplate("XQL File Manager Config.yml");

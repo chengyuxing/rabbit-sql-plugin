@@ -38,13 +38,15 @@ public class XqlFileChangeListener implements BulkFileListener {
                     if (Objects.nonNull(module)) {
                         var moduleVf = ProjectUtil.guessModuleDir(module);
                         if (Objects.nonNull(moduleVf) && moduleVf.exists()) {
-                            var config = new XQLConfigManager.Config(project, moduleVf);
-                            config.setConfigVfs(vf);
-                            if (config.isValid()) {
-                                if (config.isActive()) {
-                                    config.fire(true);
+                            if (ProjectFileUtil.isProjectModule(moduleVf)) {
+                                var config = new XQLConfigManager.Config(project, moduleVf);
+                                config.setConfigVfs(vf);
+                                if (config.isValid()) {
+                                    if (config.isActive()) {
+                                        config.fire(true);
+                                    }
+                                    xqlConfigManager.add(project, moduleVf.toNioPath(), config);
                                 }
-                                xqlConfigManager.add(project, moduleVf.toNioPath(), config);
                             }
                         }
                     }
