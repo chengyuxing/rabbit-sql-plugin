@@ -3,6 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.NewXQLFileManagerForm;
+import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -44,7 +45,7 @@ public class NewXQLFileManagerDialog extends DialogWrapper {
         var secondaryFilename = configName + "-" + name + ".yml";
         var secondaryAbsFilename = module.resolve(Constants.RESOURCE_ROOT).resolve(secondaryFilename);
         if (Files.exists(secondaryAbsFilename)) {
-            newXQLFileManagerForm.setMessage("'" + secondaryFilename + "' already exists.");
+            newXQLFileManagerForm.setMessage(HtmlUtil.toHtml(HtmlUtil.span("'" + secondaryFilename + "' already exists.", HtmlUtil.Color.WARNING)));
             return;
         }
         ProjectFileUtil.createXqlConfigByTemplate(project, secondaryAbsFilename, () -> {
