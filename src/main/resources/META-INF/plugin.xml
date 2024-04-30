@@ -64,6 +64,13 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.2.7</h3>
+            <ul>
+                <li>New Action: <b>New XQL File Manager</b> on XQL File Manager toolwindow project module.</li>
+                <li>XqlFileManager toolwindow support show module without config.</li>
+                <li>Fixed xql reference name navigate bug.</li>
+                <li>Some more optimized.</li>
+            </ul>
             <h3>2.2.6</h3>
             <ul>
                 <li>Sql reference name suggestions support show description if exists.</li>

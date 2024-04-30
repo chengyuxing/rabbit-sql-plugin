@@ -70,7 +70,7 @@ public class ProjectFileUtil {
 
     public static void createXqlConfigByTemplate(Project project, Path absFilename, Runnable then) {
         try {
-            var xqlConfig = FileTemplateManager.getInstance(project).getTemplate("XQL File Manager Config.yml");
+            var xqlConfig = FileTemplateManager.getInstance(project).getTemplate("XQL File Manager.yml");
             var now = MostDateTime.now();
             var args = Args.of(
                     "USER", System.getProperty("user.name"),
