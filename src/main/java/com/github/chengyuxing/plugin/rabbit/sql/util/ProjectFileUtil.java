@@ -1,19 +1,29 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
+import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.sql.Args;
+import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -33,8 +43,44 @@ public class ProjectFileUtil {
         return doc;
     }
 
+    public static void openFile(Project project, Path file, boolean refresh) {
+        var newVf = refresh ?
+                LocalFileSystem.getInstance().refreshAndFindFileByNioFile(file) :
+                VirtualFileManager.getInstance().findFileByNioPath(file);
+        if (Objects.isNull(newVf)) {
+            return;
+        }
+        var psi = PsiManager.getInstance(project).findFile(newVf);
+        if (Objects.isNull(psi)) {
+            return;
+        }
+        NavigationUtil.activateFileWithPsiElement(psi);
+    }
+
+
     public static boolean isXqlFileManagerConfig(String name) {
         return name.matches(Constants.CONFIG_PATTERN);
+    }
+
+    public static void createXqlConfigByTemplate(Project project, Path absFilename, Runnable then) {
+        try {
+            var xqlConfig = FileTemplateManager.getInstance(project).getTemplate("XQL File Manager Config.yml");
+            var now = MostDateTime.now();
+            var args = Args.of(
+                    "USER", System.getProperty("user.name"),
+                    "DATE", now.toString("yyyy/MM/dd"),
+                    "TIME", now.toString("HH:mm:ss")
+            );
+            var path = absFilename.getParent();
+            if (!Files.exists(path)) {
+                Files.createDirectories(path);
+            }
+            var template = xqlConfig.getText(args);
+            Files.writeString(absFilename, template, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+            then.run();
+        } catch (IOException ex) {
+            NotificationUtil.showMessage(project, "Error", ex.getMessage(), NotificationType.ERROR);
+        }
     }
 
     public static VirtualFile findXqlByAlias(String alias, XQLConfigManager.Config config) {

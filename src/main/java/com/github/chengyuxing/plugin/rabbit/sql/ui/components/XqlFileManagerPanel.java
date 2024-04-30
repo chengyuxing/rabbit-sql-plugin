@@ -37,6 +37,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     private ActionPopupMenu xqlFileManagerMenu;
     private ActionPopupMenu xqlFragmentMenu;
     private ActionPopupMenu xqlFileMenu;
+    private ActionPopupMenu moduleMenu;
 
     public XqlFileManagerPanel(boolean vertical, Project project) {
         super(vertical);
@@ -71,6 +72,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         xqlFileMenu = createXqlFilePopMenu(tree);
         xqlFileManagerMenu = createXqlFileManagerPopMenu(tree);
         xqlFragmentMenu = createXqlFragmentPopMenu(tree);
+        moduleMenu = createModuleMenu(tree);
 
         tree.addMouseListener(new MouseListener() {
             @Override
@@ -108,8 +110,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                     var node = (XqlTreeNode) selected.getLastPathComponent();
                     if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
                         switch (nodeSource.type()) {
-                            case MODULE -> {
-                            }
+                            case MODULE -> moduleMenu.getComponent().show(tree, e.getX(), e.getY());
                             case XQL_CONFIG -> xqlFileManagerMenu.getComponent().show(tree, e.getX(), e.getY());
                             case XQL_FILE -> xqlFileMenu.getComponent().show(tree, e.getX(), e.getY());
                             case XQL_FRAGMENT -> xqlFragmentMenu.getComponent().show(tree, e.getX(), e.getY());
@@ -179,7 +180,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         root.removeAllChildren();
         xqlConfigManager.getConfigMap(project)
                 .forEach((module, configs) -> {
-                    var mNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.MODULE, module.getFileName().toString(), module.toString()));
+                    var mNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.MODULE, module.getFileName().toString(), module));
                     configs.forEach(config -> {
                         if (config.isValid()) {
                             var ds = new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_CONFIG, config.getConfigName(), config);
@@ -209,6 +210,17 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
 
     public Tree getTree() {
         return tree;
+    }
+
+    private ActionPopupMenu createModuleMenu(JTree tree) {
+        return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
+            @Override
+            public AnAction @NotNull [] getChildren(@Nullable AnActionEvent anActionEvent) {
+                return new AnAction[]{
+                        new NewXqlFileManagerAction(tree)
+                };
+            }
+        });
     }
 
     private ActionPopupMenu createXqlFilePopMenu(JTree tree) {

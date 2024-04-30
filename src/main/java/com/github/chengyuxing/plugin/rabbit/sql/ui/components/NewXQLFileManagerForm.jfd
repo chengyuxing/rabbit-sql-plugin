@@ -1,0 +1,48 @@
+JFDML JFormDesigner: "8.2.3.0.386" Java: "17.0.10" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
+			"$columnSpecs": "40dlu, labelcompgap, 50dlu:grow"
+			"$rowSpecs": "default, default"
+		} ) {
+			name: "this"
+			"minimumSize": new java.awt.Dimension( 350, 70 )
+			"preferredSize": new java.awt.Dimension( 350, 70 )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "title"
+				"text": "Secondary:"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 1
+				"gridY": 1
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "secondaryFileName"
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 1
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+				"alignment": 0
+				"hgap": 4
+				"vgap": 1
+			} ) {
+				name: "panel1"
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "message"
+					"text": "xql-file-manager-*.yml"
+					"foreground": new java.awt.Color( 223, 225, 234, 255 )
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, -1, false )
+				} )
+			}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+				"gridX": 3
+				"gridY": 2
+				"hAlign": sfield com.jgoodies.forms.layout.CellConstraints FILL
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 415, 300 )
+		} )
+	}
+}

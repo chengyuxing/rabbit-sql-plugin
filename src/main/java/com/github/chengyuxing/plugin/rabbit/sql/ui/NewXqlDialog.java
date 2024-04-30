@@ -147,6 +147,18 @@ public class NewXqlDialog extends DialogWrapper {
                 template += "\n" + templateContent;
             }
             Files.writeString(file, template, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+            ApplicationManager.getApplication().runWriteAction(() -> {
+                var newVf = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(file);
+                if (Objects.isNull(newVf)) {
+                    return;
+                }
+                var psi = PsiManager.getInstance(project).findFile(newVf);
+                if (Objects.isNull(psi)) {
+                    return;
+                }
+                NavigationUtil.activateFileWithPsiElement(psi);
+                whenComplete.accept(psi);
+            });
         } catch (IOException ex) {
             newXqlFileForm.alert(ex.toString());
             return;
@@ -178,16 +190,6 @@ public class NewXqlDialog extends DialogWrapper {
                     LocalFileSystem.getInstance().refresh(false);
                     XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
                     dispose();
-                    var newVf = VirtualFileManager.getInstance().findFileByNioPath(file);
-                    if (Objects.isNull(newVf)) {
-                        return;
-                    }
-                    var psi = PsiManager.getInstance(project).findFile(newVf);
-                    if (Objects.isNull(psi)) {
-                        return;
-                    }
-                    NavigationUtil.activateFileWithPsiElement(psi);
-                    whenComplete.accept(psi);
                 }));
     }
 
