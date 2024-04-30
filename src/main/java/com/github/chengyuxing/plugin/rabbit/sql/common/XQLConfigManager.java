@@ -14,6 +14,7 @@ import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 
 import java.net.URI;
@@ -123,6 +124,13 @@ public class XQLConfigManager {
     public void cleanup(Project project) {
         var configs = configMap.get(project);
         if (Objects.nonNull(configs)) {
+            configs.entrySet().removeIf(entry -> {
+                var moduleVf = VirtualFileManager.getInstance().findFileByNioPath(entry.getKey());
+                if (Objects.nonNull(moduleVf)) {
+                    return !ProjectFileUtil.isProjectModule(moduleVf);
+                }
+                return true;
+            });
             configs.forEach((k, v) -> v.removeIf(config -> !config.isValid()));
         }
     }

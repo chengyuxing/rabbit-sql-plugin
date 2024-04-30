@@ -1,6 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleUtil;
@@ -29,11 +31,8 @@ public class XqlFileChangeListener implements BulkFileListener {
     public void after(@NotNull List<? extends @NotNull VFileEvent> events) {
         for (var event : events) {
             var vf = event.getFile();
-            if (vf != null && vf.getExtension() != null) {
-                var ext = vf.getExtension();
-                var filename = vf.getName();
-
-                if (ProjectFileUtil.isXqlFileManagerConfig(filename)) {
+            if (vf != null) {
+                if (ProjectFileUtil.isXqlFileManagerConfig(vf.getName())) {
                     var module = ModuleUtil.findModuleForFile(vf, project);
                     if (Objects.nonNull(module)) {
                         var moduleVf = ProjectUtil.guessModuleDir(module);
@@ -51,7 +50,8 @@ public class XqlFileChangeListener implements BulkFileListener {
                         }
                     }
                     xqlConfigManager.cleanup(project);
-                } else if (ext.equals("xql")) {
+                    XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
+                } else if (Objects.equals(vf.getExtension(), "xql")) {
                     var xqlPath = vf.toNioPath().toUri().toString();
                     var validXqlVf = vf;
                     // file is deleted.
@@ -87,6 +87,19 @@ public class XqlFileChangeListener implements BulkFileListener {
                             });
                         }
                     }
+                } else if (vf.isDirectory()) {
+                    var module = ModuleUtil.findModuleForFile(vf, project);
+                    if (Objects.nonNull(module)) {
+                        var moduleVf = ProjectUtil.guessModuleDir(module);
+                        if (Objects.nonNull(moduleVf) && moduleVf.exists()) {
+                            if (ProjectFileUtil.isProjectModule(moduleVf)) {
+                                var config = new XQLConfigManager.Config(project, moduleVf);
+                                xqlConfigManager.add(project, moduleVf.toNioPath(), config);
+                            }
+                        }
+                    }
+                    xqlConfigManager.cleanup(project);
+                    XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
                 }
             }
         }
