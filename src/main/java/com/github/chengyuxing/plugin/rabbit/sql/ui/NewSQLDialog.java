@@ -73,20 +73,19 @@ public class NewSQLDialog extends DialogWrapper {
                 return;
             }
             dispose();
-            ApplicationManager.getApplication().runWriteAction(() -> {
-                WriteCommandAction.runWriteCommandAction(project, "Modify '" + sqlFileVf.getName() + "'", null, () -> {
-                    var sqlFragment = "\n/*[" + name + "]*/";
-                    if (!desc.trim().isEmpty()) {
-                        sqlFragment += "\n/*#" + desc + "#*/";
-                    }
-                    sqlFragment += "\n\n;\n";
-                    var lastIdx = doc.getTextLength();
-                    doc.insertString(lastIdx, sqlFragment);
-                    PsiDocumentManager.getInstance(project).commitDocument(doc);
-                    FileDocumentManager.getInstance().saveDocument(doc);
-                    PsiUtil.navigate2xqlFile(alias, name, config);
-                });
-            });
+            ApplicationManager.getApplication().runWriteAction(() ->
+                    WriteCommandAction.runWriteCommandAction(project, "Modify '" + sqlFileVf.getName() + "'", null, () -> {
+                        var sqlFragment = "\n/*[" + name + "]*/";
+                        if (!desc.trim().isEmpty()) {
+                            sqlFragment += "\n/*#" + desc + "#*/";
+                        }
+                        sqlFragment += "\n\n;\n";
+                        var lastIdx = doc.getTextLength();
+                        doc.insertString(lastIdx, sqlFragment);
+                        PsiDocumentManager.getInstance(project).commitDocument(doc);
+                        FileDocumentManager.getInstance().saveDocument(doc);
+                        PsiUtil.navigate2xqlFile(alias, name, config);
+                    }));
         }
     }
 }
