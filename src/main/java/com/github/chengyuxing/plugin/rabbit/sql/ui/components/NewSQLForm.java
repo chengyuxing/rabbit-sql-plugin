@@ -74,7 +74,7 @@ public class NewSQLForm extends JPanel {
         setPreferredSize(new Dimension(350, 100));
         setLayout(new FormLayout(
             new ColumnSpec[] {
-                new ColumnSpec(Sizes.dluX(45)),
+                new ColumnSpec(Sizes.dluX(40)),
                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                 new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(50), FormSpec.DEFAULT_GROW)
             },
