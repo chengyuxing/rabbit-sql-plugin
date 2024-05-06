@@ -8,8 +8,8 @@ new FormModel {
 			"$rowSpecs": "default, default"
 		} ) {
 			name: "this"
-			"minimumSize": new java.awt.Dimension( 200, 50 )
-			"preferredSize": new java.awt.Dimension( 200, 50 )
+			"minimumSize": new java.awt.Dimension( 200, 60 )
+			"preferredSize": new java.awt.Dimension( 200, 60 )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "title"
 				"text": "Name:"
