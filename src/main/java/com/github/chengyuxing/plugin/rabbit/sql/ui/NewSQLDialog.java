@@ -17,15 +17,16 @@ public class NewSQLDialog extends DialogWrapper {
         super(true);
         this.newSQLForm = new NewSQLForm();
         this.newSQLForm.setInputChanged(name -> {
-            if (name.matches("[a-zA-Z][-\\w]+")) {
+            if (name.matches("[a-zA-Z][-\\w]*")) {
                 setOKActionEnabled(true);
+                this.newSQLForm.setMessage("");
             } else {
                 setOKActionEnabled(false);
                 this.newSQLForm.setMessage(HtmlUtil.toHtml(HtmlUtil.span("'" + name + "' is invalid.", HtmlUtil.Color.WARNING)));
             }
         });
         setOKActionEnabled(false);
-        setSize(450, 80);
+        setSize(450, 100);
         setTitle("New SQL");
         init();
     }
@@ -40,6 +41,7 @@ public class NewSQLDialog extends DialogWrapper {
         var data = newSQLForm.getData();
         var name = data.getItem1();
         var desc = data.getItem2();
+        // TODO 检查xql文件解析器中是否已存在此名字
         var tmp = """
                 /*[${NAME}]*/
                 /*#${DESC}#*/

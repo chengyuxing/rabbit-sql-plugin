@@ -49,7 +49,6 @@ public class NewSQLForm extends JPanel {
 
             }
         });
-        description.setRequestFocusEnabled(false);
     }
 
     public void setMessage(String message) {
@@ -71,8 +70,8 @@ public class NewSQLForm extends JPanel {
         CellConstraints cc = new CellConstraints();
 
         //======== this ========
-        setMinimumSize(new Dimension(350, 120));
-        setPreferredSize(new Dimension(350, 120));
+        setMinimumSize(new Dimension(350, 100));
+        setPreferredSize(new Dimension(350, 100));
         setLayout(new FormLayout(
             new ColumnSpec[] {
                 new ColumnSpec(Sizes.dluX(45)),
