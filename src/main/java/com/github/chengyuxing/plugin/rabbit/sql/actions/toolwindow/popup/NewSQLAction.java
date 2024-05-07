@@ -18,7 +18,7 @@ public class NewSQLAction extends AnAction {
     private final JTree tree;
 
     public NewSQLAction(JTree tree) {
-        super("New SQL", "Create a new SQL fragment.", AllIcons.Actions.AddMulticaret);
+        super("New", "Create a new SQL fragment.", AllIcons.Actions.AddMulticaret);
         this.tree = tree;
     }
 

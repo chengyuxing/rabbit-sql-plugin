@@ -20,7 +20,7 @@ public class NewXqlFileManagerAction extends AnAction {
     private final JTree tree;
 
     public NewXqlFileManagerAction(JTree tree) {
-        super("New XQL File Manager", "Create a new XQL file manager config.", AllIcons.Actions.AddMulticaret);
+        super("New", "Create a new XQL file manager config.", AllIcons.Actions.AddMulticaret);
         this.tree = tree;
     }
 

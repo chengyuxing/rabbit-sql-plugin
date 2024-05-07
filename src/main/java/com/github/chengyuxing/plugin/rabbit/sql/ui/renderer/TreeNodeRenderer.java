@@ -28,7 +28,7 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                     }
                     case XQL_CONFIG -> {
                         var config = (XQLConfigManager.Config) nodeSource.source();
-                        setIcon(AllIcons.General.GearPlain);
+                        setIcon(XqlIcons.XQL_FILE_MANAGER);
                         append(nodeSource.toString());
                         if (config.isPrimary()) {
                             append(" [primary]", SimpleTextAttributes.GRAY_ATTRIBUTES);
