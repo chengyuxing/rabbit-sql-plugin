@@ -70,8 +70,8 @@ public class NewSQLForm extends JPanel {
         CellConstraints cc = new CellConstraints();
 
         //======== this ========
-        setMinimumSize(new Dimension(350, 100));
-        setPreferredSize(new Dimension(350, 100));
+        setMinimumSize(new Dimension(350, 110));
+        setPreferredSize(new Dimension(350, 110));
         setLayout(new FormLayout(
             new ColumnSpec[] {
                 new ColumnSpec(Sizes.dluX(40)),
