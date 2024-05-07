@@ -45,18 +45,24 @@
         </li>
     </ul>
     <h2>Getting Started</h2>
+    <p>Create a new maven project.</p>
+    <h3>Springboot</h3>
+    <ol>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.8.23+</strong> to your project;</li>
+        <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
+        ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New XQL File Manager</kbd> )
+        </li>
+        <li>Register xql files on property: <code>files</code>;</li>
+    </ol>
+    <h3>Other</h3>
     <ol>
         <li>Add dependency <strong>rabbit-sql 7.8.27+</strong> to your project;</li>
-        <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;</li>
+        <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
+        ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New XQL File Manager</kbd> )
+        </li>
         <li>Register xql files on property: <code>files</code>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#bakidao">BakiDao#setXqlFileManager</a>;</li>
-    </ol>
-    <h3>Springboot support</h3>
-    <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.8.23+</strong> to your project;</li>
-        <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;</li>
-        <li>Register xql files on property: <code>files</code>;</li>
     </ol>
     <p>Get more information from <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> homepage
     and <a href="https://github.com/chengyuxing/rabbit-sql-spring-boot-starter">Springboot support document</a>.</p>
@@ -64,6 +70,12 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.2.8</h3>
+            <ul>
+                <li>New action: <b>New SQL</b> on XQL File Manager toolwindow xql file.</li>
+                <li>New Toolwindow icon.</li>
+                <li>Some more optimized.</li>
+            </ul>
             <h3>2.2.7</h3>
             <ul>
                 <li>New Action: <b>New XQL File Manager</b> on XQL File Manager toolwindow project module.</li>
