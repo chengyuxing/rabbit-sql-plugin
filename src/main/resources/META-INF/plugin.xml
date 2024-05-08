@@ -72,13 +72,15 @@
         <![CDATA[
             <h3>2.2.8</h3>
             <ul>
-                <li>New action: <b>New SQL</b> on XQL File Manager toolwindow xql file.</li>
+                <li>New action: <b>New</b> on XQL File Manager toolwindow xql file.</li>
                 <li>New Toolwindow icon.</li>
+                <li>Fixed <b>Execute dynamic sql</b> number parameter parse error.</li>
+                <li>Fixed <b>Toolwindow XQL File Manager</b> cannot show module bug when <b>src/main/resources</b> has other <code>*.yml</code> files.</li>
                 <li>Some more optimized.</li>
             </ul>
             <h3>2.2.7</h3>
             <ul>
-                <li>New Action: <b>New XQL File Manager</b> on XQL File Manager toolwindow project module.</li>
+                <li>New Action: <b>New</b> on XQL File Manager toolwindow project module.</li>
                 <li>XqlFileManager toolwindow support show module without config.</li>
                 <li>Fixed xql reference name navigate bug.</li>
                 <li>Some more optimized.</li>
