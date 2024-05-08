@@ -86,19 +86,21 @@ public class StatisticsForm extends JPanel {
                                 ProjectFileUtil.formatFileSize(totalSize)
                         };
                     }).toArray(i -> new Object[i][5]);
-            var model = new DefaultTableModel() {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
-            table.setModel(model);
-            model.setDataVector(tbody, thead);
-            table.getColumnModel().getColumn(0).setPreferredWidth(130);
-            panel.add(moduleCom, "cell 0 0,growx");
-            tablePanel.setViewportView(table);
-            panel.add(tablePanel, "cell 0 1,growx");
-            container.add(panel);
+            if (tbody.length > 0) {
+                var model = new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    }
+                };
+                table.setModel(model);
+                model.setDataVector(tbody, thead);
+                table.getColumnModel().getColumn(0).setPreferredWidth(130);
+                panel.add(moduleCom, "cell 0 0,growx");
+                tablePanel.setViewportView(table);
+                panel.add(tablePanel, "cell 0 1,growx");
+                container.add(panel);
+            }
         });
     }
 
