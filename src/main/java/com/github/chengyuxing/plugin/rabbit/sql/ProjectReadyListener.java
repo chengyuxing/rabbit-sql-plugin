@@ -33,26 +33,32 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
                 if (!ProjectFileUtil.isProjectModule(moduleVfs)) {
                     continue;
                 }
+                var moduleNioPath = moduleVfs.toNioPath();
                 var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", module.getModuleProductionSourceScope());
                 if (allConfigVfs.isEmpty()) {
                     var config = new XQLConfigManager.Config(project, moduleVfs);
-                    xqlConfigManager.add(project, moduleVfs.toNioPath(), config);
+                    xqlConfigManager.add(project, moduleNioPath, config);
                     continue;
                 }
+                var found = false;
                 for (VirtualFile configVfs : allConfigVfs) {
-                    var config = new XQLConfigManager.Config(project, moduleVfs);
-                    config.setConfigVfs(configVfs);
-                    var configName = config.getConfigName();
-                    if (!ProjectFileUtil.isXqlFileManagerConfig(configName)) {
+                    if (!ProjectFileUtil.isXqlFileManagerConfig(configVfs.getName())) {
                         continue;
                     }
+                    found = true;
+                    var config = new XQLConfigManager.Config(project, moduleVfs);
+                    config.setConfigVfs(configVfs);
                     if (!config.isValid()) {
                         continue;
                     }
                     if (config.isActive()) {
                         config.fire();
                     }
-                    xqlConfigManager.add(project, moduleVfs.toNioPath(), config);
+                    xqlConfigManager.add(project, moduleNioPath, config);
+                }
+                if (!found) {
+                    var config = new XQLConfigManager.Config(project, moduleVfs);
+                    xqlConfigManager.add(project, moduleNioPath, config);
                 }
             }
         }
