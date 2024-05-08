@@ -69,10 +69,15 @@ public class ParametersForm extends JPanel {
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
                 } else if (StringUtil.isNumeric(sv)) {
-                    if (sv.contains(".")) {
-                        v = Double.parseDouble(sv);
-                    } else {
-                        v = Integer.parseInt(sv);
+                    try {
+                        if (sv.contains(".")) {
+                            v = Double.parseDouble(sv);
+                        } else {
+                            v = Long.parseLong(sv);
+                        }
+                    }catch (Exception e) {
+                        errors.add("Parse number '" + k + "' error.");
+                        errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
                 } else if (StringUtil.equalsAnyIgnoreCase(sv, "blank", "null", "true", "false")) {
                     v = Comparators.valueOf(v);
