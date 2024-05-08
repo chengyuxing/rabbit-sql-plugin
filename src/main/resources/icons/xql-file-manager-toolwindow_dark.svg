@@ -2,10 +2,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Created with Vectornator (http://vectornator.io/) -->
 <svg height="100%" stroke-miterlimit="10" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 20 20" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<defs>
-<path d="M0.576623 12.814C0.576623 12.7736 0.609443 12.7407 0.649928 12.7407L19.3501 12.7407C19.3906 12.7407 19.4234 12.7736 19.4234 12.814L19.4234 19.3891C19.4234 19.4295 19.3906 19.4624 19.3501 19.4624L0.649928 19.4624C0.609443 19.4624 0.576623 19.4295 0.576623 19.3891L0.576623 12.814Z" id="Fill"/>
-<path d="M0.576623 12.814C0.576623 12.7736 0.609443 12.7407 0.649928 12.7407L19.3501 12.7407C19.3906 12.7407 19.4234 12.7736 19.4234 12.814L19.4234 19.3891C19.4234 19.4295 19.3906 19.4624 19.3501 19.4624L0.649928 19.4624C0.609443 19.4624 0.576623 19.4295 0.576623 19.3891L0.576623 12.814Z" id="Fill_2"/>
-</defs>
+<defs/>
 <g id="图层-1">
 <g opacity="1">
 <path d="M14.863 0.60179C14.863 0.563678 14.8939 0.532782 14.932 0.532782L19.2811 0.532782C19.3192 0.532782 19.3501 0.563678 19.3501 0.60179L19.3501 4.67183C19.3501 4.70994 19.3192 4.74084 19.2811 4.74084L14.932 4.74084C14.8939 4.74084 14.863 4.70994 14.863 4.67183L14.863 0.60179Z" fill="#ced0d6" fill-rule="nonzero" opacity="1" stroke="none"/>
@@ -20,7 +17,7 @@
 </g>
 <g opacity="1">
 <g opacity="1">
-<clipPath clip-rule="evenodd" id="ClipPath_2">
+<clipPath clip-rule="nonzero" id="ClipPath_2">
 <path d="M7.03007 2.91654C7.03007 2.87899 7.06051 2.84856 7.09805 2.84856L16.1019 2.84856C16.1395 2.84856 16.1699 2.87899 16.1699 2.91654L16.1699 11.6023C16.1699 11.6398 16.1395 11.6703 16.1019 11.6703L7.09805 11.6703C7.06051 11.6703 7.03007 11.6398 7.03007 11.6023L7.03007 2.91654Z"/>
 </clipPath>
 <g clip-path="url(#ClipPath_2)">
@@ -32,7 +29,7 @@
 <path d="M7.03007 2.91654C7.03007 2.87899 7.06051 2.84856 7.09805 2.84856L16.1019 2.84856C16.1395 2.84856 16.1699 2.87899 16.1699 2.91654L16.1699 11.6023C16.1699 11.6398 16.1395 11.6703 16.1019 11.6703L7.09805 11.6703C7.06051 11.6703 7.03007 11.6398 7.03007 11.6023L7.03007 2.91654Z"/>
 </clipPath>
 <g clip-path="url(#ClipPath_3)">
-<clipPath clip-rule="evenodd" id="ClipPath_4">
+<clipPath clip-rule="nonzero" id="ClipPath_4">
 <path d="M7.03007 2.91654C7.03007 2.87899 7.06051 2.84856 7.09805 2.84856L16.1019 2.84856C16.1395 2.84856 16.1699 2.87899 16.1699 2.91654L16.1699 11.6023C16.1699 11.6398 16.1395 11.6703 16.1019 11.6703L7.09805 11.6703C7.06051 11.6703 7.03007 11.6398 7.03007 11.6023L7.03007 2.91654Z"/>
 </clipPath>
 <g clip-path="url(#ClipPath_4)">
@@ -43,22 +40,24 @@
 </g>
 <g opacity="1">
 <g opacity="1">
-<mask height="6.7217" id="StrokeMask" maskUnits="userSpaceOnUse" width="18.8468" x="0.576623" y="12.7407">
-<rect fill="#000000" height="6.7217" stroke="none" width="18.8468" x="0.576623" y="12.7407"/>
-<use fill="#ffffff" fill-rule="evenodd" stroke="none" xlink:href="#Fill"/>
-</mask>
-<use fill="none" mask="url(#StrokeMask)" stroke="#e02ba6" stroke-linecap="butt" stroke-linejoin="round" stroke-width="4" xlink:href="#Fill"/>
-</g>
 <clipPath clip-rule="evenodd" id="ClipPath_5">
-<use xlink:href="#Fill"/>
+<path d="M0.744184 12.814C0.744184 12.7736 0.776585 12.7407 0.816552 12.7407L19.2777 12.7407C19.3177 12.7407 19.3501 12.7736 19.3501 12.814L19.3501 19.3891C19.3501 19.4295 19.3177 19.4624 19.2777 19.4624L0.816552 19.4624C0.776585 19.4624 0.744184 19.4295 0.744184 19.3891L0.744184 12.814Z"/>
 </clipPath>
 <g clip-path="url(#ClipPath_5)">
+<path d="M0.744184 12.814C0.744184 12.7736 0.776585 12.7407 0.816552 12.7407L19.2777 12.7407C19.3177 12.7407 19.3501 12.7736 19.3501 12.814L19.3501 19.3891C19.3501 19.4295 19.3177 19.4624 19.2777 19.4624L0.816552 19.4624C0.776585 19.4624 0.744184 19.4295 0.744184 19.3891L0.744184 12.814Z" fill="none" opacity="1" stroke="#e02ba6" stroke-linecap="butt" stroke-linejoin="round" stroke-width="4"/>
+</g>
+</g>
 <g opacity="1">
-<mask height="6.7217" id="StrokeMask_2" maskUnits="userSpaceOnUse" width="18.8468" x="0.576623" y="12.7407">
-<rect fill="#000000" height="6.7217" stroke="none" width="18.8468" x="0.576623" y="12.7407"/>
-<use fill="#ffffff" fill-rule="evenodd" stroke="none" xlink:href="#Fill_2"/>
-</mask>
-<use fill="none" mask="url(#StrokeMask_2)" stroke="#e02ba6" stroke-linecap="butt" stroke-linejoin="round" stroke-width="4" xlink:href="#Fill_2"/>
+<clipPath clip-rule="nonzero" id="ClipPath_6">
+<path d="M0.744184 12.814C0.744184 12.7736 0.776585 12.7407 0.816552 12.7407L19.2777 12.7407C19.3177 12.7407 19.3501 12.7736 19.3501 12.814L19.3501 19.3891C19.3501 19.4295 19.3177 19.4624 19.2777 19.4624L0.816552 19.4624C0.776585 19.4624 0.744184 19.4295 0.744184 19.3891L0.744184 12.814Z"/>
+</clipPath>
+<g clip-path="url(#ClipPath_6)">
+<clipPath clip-rule="evenodd" id="ClipPath_7">
+<path d="M0.744184 12.814C0.744184 12.7736 0.776585 12.7407 0.816552 12.7407L19.2777 12.7407C19.3177 12.7407 19.3501 12.7736 19.3501 12.814L19.3501 19.3891C19.3501 19.4295 19.3177 19.4624 19.2777 19.4624L0.816552 19.4624C0.776585 19.4624 0.744184 19.4295 0.744184 19.3891L0.744184 12.814Z"/>
+</clipPath>
+<g clip-path="url(#ClipPath_7)">
+<path d="M0.744184 12.814C0.744184 12.7736 0.776585 12.7407 0.816552 12.7407L19.2777 12.7407C19.3177 12.7407 19.3501 12.7736 19.3501 12.814L19.3501 19.3891C19.3501 19.4295 19.3177 19.4624 19.2777 19.4624L0.816552 19.4624C0.776585 19.4624 0.744184 19.4295 0.744184 19.3891L0.744184 12.814Z" fill="none" opacity="1" stroke="#e02ba6" stroke-linecap="butt" stroke-linejoin="round" stroke-width="4"/>
+</g>
 </g>
 </g>
 </g>
