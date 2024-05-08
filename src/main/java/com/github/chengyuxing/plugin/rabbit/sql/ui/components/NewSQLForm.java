@@ -70,15 +70,15 @@ public class NewSQLForm extends JPanel {
         CellConstraints cc = new CellConstraints();
 
         //======== this ========
-        setMinimumSize(new Dimension(350, 110));
-        setPreferredSize(new Dimension(350, 110));
+        setMinimumSize(new Dimension(350, 103));
+        setPreferredSize(new Dimension(350, 103));
         setLayout(new FormLayout(
             new ColumnSpec[] {
                 new ColumnSpec(Sizes.dluX(40)),
                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                 new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(50), FormSpec.DEFAULT_GROW)
             },
-            RowSpec.decodeSpecs("27dlu, 1dlu, min, 3dlu, default")));
+            RowSpec.decodeSpecs("default, 4dlu, min, 3dlu, default")));
 
         //---- abc ----
         abc.setText("Name:");

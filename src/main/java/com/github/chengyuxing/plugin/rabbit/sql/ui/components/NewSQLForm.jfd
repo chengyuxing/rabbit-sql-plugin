@@ -5,7 +5,7 @@ new FormModel {
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
 			"$columnSpecs": "40dlu, labelcompgap, 50dlu:grow"
-			"$rowSpecs": "27dlu, 1dlu, min, 3dlu, default"
+			"$rowSpecs": "default, 4dlu, min, 3dlu, default"
 		} ) {
 			name: "this"
 			"minimumSize": new java.awt.Dimension( 350, 120 )
