@@ -96,6 +96,7 @@ public class NewSQLForm extends JPanel {
 
             //---- message ----
             message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
+            message.setText("Append a sql fragment to the end.");
             message.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
             panel1.add(message);
         }
