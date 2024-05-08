@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public class OpenParamsDialogInXql extends SqlNameIntentionActionInXql implements Iconable {
     @Override
@@ -29,6 +30,9 @@ public class OpenParamsDialogInXql extends SqlNameIntentionActionInXql implement
 
     @Override
     public @IntentionName @NotNull String getText() {
+        if (Objects.nonNull(intentionTarget)) {
+            return "Execute '" + intentionTarget + "'";
+        }
         return "Execute dynamic sql";
     }
 

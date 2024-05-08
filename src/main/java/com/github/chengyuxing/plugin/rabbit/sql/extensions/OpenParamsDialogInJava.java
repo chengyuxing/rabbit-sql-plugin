@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public class OpenParamsDialogInJava extends SqlNameIntentionActionInJava implements Iconable {
     private final DatasourceManager datasourceManager = DatasourceManager.getInstance();
@@ -31,6 +32,9 @@ public class OpenParamsDialogInJava extends SqlNameIntentionActionInJava impleme
 
     @Override
     public @IntentionName @NotNull String getText() {
+        if (Objects.nonNull(intentionTarget)) {
+            return "Execute '" + intentionTarget.substring(1) + "'";
+        }
         return "Execute dynamic sql";
     }
 

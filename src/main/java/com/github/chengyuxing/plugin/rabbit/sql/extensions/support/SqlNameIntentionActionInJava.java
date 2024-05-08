@@ -21,6 +21,8 @@ public abstract class SqlNameIntentionActionInJava extends PsiElementBaseIntenti
     private static final Logger log = Logger.getInstance(OpenParamsDialogInJava.class);
     private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
 
+    protected String intentionTarget;
+
     public abstract void invokeIfSuccess(Project project, PsiElement element, XQLConfigManager.Config config, String sqlName);
 
     @Override
@@ -50,7 +52,11 @@ public abstract class SqlNameIntentionActionInJava extends PsiElementBaseIntenti
             String sqlName = sqlRef.substring(1);
             var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(project, element);
             if (Objects.nonNull(xqlFileManager)) {
-                return xqlFileManager.contains(sqlName);
+                var contains = xqlFileManager.contains(sqlName);
+                if (contains) {
+                    intentionTarget = sqlRef;
+                }
+                return contains;
             }
         }
         return false;

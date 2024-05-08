@@ -21,6 +21,8 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
 
     private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
 
+    protected String intentionTarget;
+
     public abstract void invokeIfSuccess(Project project, PsiElement element, XQLConfigManager.Config config, String sqlName);
 
     @Override
@@ -70,7 +72,7 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
         }
         var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
         var m = pattern.matcher(sqlNameTag);
-        if (m.find()) {
+        if (m.matches()) {
             var xqlFile = element.getContainingFile();
             if (xqlFile == null || !xqlFile.isPhysical() || !xqlFile.isValid()) {
                 return false;
@@ -86,8 +88,10 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
             if (xqlFileManager != null) {
                 for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
                     if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
-                        var sqlPath = file.getKey() + "." + m.group("name");
+                        var sqlName = m.group("name");
+                        var sqlPath = file.getKey() + "." + sqlName;
                         if (xqlFileManager.contains(sqlPath)) {
+                            intentionTarget = sqlName;
                             return true;
                         }
                     }
