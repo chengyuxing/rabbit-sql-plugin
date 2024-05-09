@@ -11,10 +11,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -22,6 +20,8 @@ import javax.swing.table.DefaultTableModel;
 
 import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.io.FileResource;
+import com.github.chengyuxing.common.tuple.Triple;
+import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.LinkCellRender;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.DataCell;
@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StatisticsForm extends JPanel {
     private final Map<Path, Set<XQLConfigManager.Config>> configMap;
-    private final Map<JBTable, Set<XQLConfigManager.Config>> dataMap = new LinkedHashMap<>();
+    private final Map<JBTable, List<XQLConfigManager.Config>> dataMap = new LinkedHashMap<>();
 
     private static final Object[] summaryTableHeader = new Object[]{"Config", "Total XQL Files", "Total SQLs", "Total Lines", "Total Size"};
     private static final Object[] detailsTableHeader = new Object[]{"File Name", "Alias", "SQLs", "Lines", "Size", "Last Modified"};
@@ -52,7 +52,26 @@ public class StatisticsForm extends JPanel {
         initTableDatasource();
     }
 
-    private void initTableData(JBTable table, Set<XQLConfigManager.Config> configs) {
+    @SuppressWarnings("rawtypes")
+    public List<Triple<String, ArrayList<String>, Vector<Vector>>> getDisplayData() {
+        return dataMap.keySet().stream().map(table -> {
+                    var model = (DefaultTableModel) table.getModel();
+                    var headerColumn = table.getTableHeader().getColumnModel().getColumns();
+                    var header = new ArrayList<String>();
+                    while (headerColumn.hasMoreElements()) {
+                        header.add(headerColumn.nextElement().getHeaderValue().toString());
+                    }
+                    var configs = dataMap.get(table);
+                    if (!configs.isEmpty()) {
+                        var module = configs.get(0).getModuleName();
+                        return Tuples.of(module, header, model.getDataVector());
+                    }
+                    return null;
+                }).filter(Objects::nonNull)
+                .toList();
+    }
+
+    private void initTableData(JBTable table, List<XQLConfigManager.Config> configs) {
         var tbody = configs.stream().map(config -> {
             var xqlFileManager = config.getXqlFileManager();
             long totalLines = 0;
@@ -97,27 +116,25 @@ public class StatisticsForm extends JPanel {
             var validConfigs = configs.stream()
                     .filter(XQLConfigManager.Config::isValid)
                     .filter(config -> Objects.nonNull(config.getXqlFileManager()))
-                    .collect(Collectors.toSet());
-            if (!validConfigs.isEmpty()) {
-                var module = path.getFileName().toString();
-                var panel = new JPanel();
-                panel.setLayout(new MigLayout(
-                        "fillx,insets 0,hidemode 3,align center center,gap 5 5",
-                        // columns
-                        "[grow,left]",
-                        // rows
-                        "[fill][fill]"));
-                var moduleCom = new TitledSeparator(module);
-                var tablePanel = new JBScrollPane();
-                tablePanel.setBorder(new LineBorder(new JBColor(new Color(0xD2D2D2), new Color(0x323232))));
-                tablePanel.setMinimumSize(new Dimension(0, 60));
-                var table = createTable();
-                dataMap.put(table, validConfigs);
-                panel.add(moduleCom, "cell 0 0,growx");
-                tablePanel.setViewportView(table);
-                panel.add(tablePanel, "cell 0 1,growx");
-                container.add(panel);
-            }
+                    .collect(Collectors.toList());
+            var module = path.getFileName().toString();
+            var panel = new JPanel();
+            panel.setLayout(new MigLayout(
+                    "fillx,insets 0,hidemode 3,align center center,gap 5 5",
+                    // columns
+                    "[grow,left]",
+                    // rows
+                    "[fill][fill]"));
+            var moduleCom = new TitledSeparator(module);
+            var tablePanel = new JBScrollPane();
+            tablePanel.setBorder(new LineBorder(new JBColor(new Color(0xD2D2D2), new Color(0x323232))));
+            tablePanel.setMinimumSize(new Dimension(0, 60));
+            var table = createTable();
+            dataMap.put(table, validConfigs);
+            panel.add(moduleCom, "cell 0 0,growx");
+            tablePanel.setViewportView(table);
+            panel.add(tablePanel, "cell 0 1,growx");
+            container.add(panel);
         });
     }
 
@@ -218,7 +235,7 @@ public class StatisticsForm extends JPanel {
         container = new JPanel();
 
         //======== this ========
-        setPreferredSize(new Dimension(600, 320));
+        setPreferredSize(new Dimension(650, 320));
         setLayout(new MigLayout(
             "fill,insets 0,hidemode 3,align center center",
             // columns

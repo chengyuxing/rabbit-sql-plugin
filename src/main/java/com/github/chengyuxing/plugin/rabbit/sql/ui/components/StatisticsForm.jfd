@@ -9,7 +9,7 @@ new FormModel {
 			"$rowConstraints": "[fill]"
 		} ) {
 			name: "this"
-			"preferredSize": new java.awt.Dimension( 600, 320 )
+			"preferredSize": new java.awt.Dimension( 650, 320 )
 			add( new FormContainer( "com.intellij.ui.components.JBScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 				name: "scrollPanel"
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.swingx.VerticalLayout ) {
