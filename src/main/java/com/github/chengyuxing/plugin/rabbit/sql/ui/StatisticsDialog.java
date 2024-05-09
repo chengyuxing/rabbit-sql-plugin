@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,21 +48,24 @@ public class StatisticsDialog extends DialogWrapper {
 
     @Override
     protected void doOKAction() {
-        var data = statisticsForm.getDisplayData();
+        var p = statisticsForm.getDisplayData();
+        if (Objects.isNull(p)) {
+            return;
+        }
         var sb = new StringJoiner("\n");
-        data.forEach(p -> {
-            var module = p.getItem1();
-            var header = p.getItem2();
-            var body = p.getItem3();
-            var headerLine = String.join("\t", header);
-            var moduleLine = "\n" + module + "-".repeat(headerLine.length() - module.length() - 1);
-            sb.add(moduleLine);
-            sb.add(headerLine);
-            body.stream().map(row -> Stream.of(row.toArray())
-                            .map(Object::toString)
-                            .collect(Collectors.joining("\t")))
-                    .forEach(sb::add);
-        });
+
+        var module = p.getItem1();
+        var header = p.getItem2();
+        var body = p.getItem3();
+        var headerLine = String.join("\t", header);
+        var moduleLine = module + "-".repeat(headerLine.length() - module.length() - 1);
+        sb.add(moduleLine);
+        sb.add(headerLine);
+        body.stream().map(row -> Stream.of(row.toArray())
+                        .map(Object::toString)
+                        .collect(Collectors.joining("\t")))
+                .forEach(sb::add);
+
         var clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(sb.toString()), null);
         dispose();

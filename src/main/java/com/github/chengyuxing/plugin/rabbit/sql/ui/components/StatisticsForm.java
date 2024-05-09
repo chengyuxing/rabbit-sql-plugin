@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.github.chengyuxing.common.MostDateTime;
@@ -27,12 +26,10 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.LinkCellRender;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.DataCell;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.TitledSeparator;
+import com.intellij.icons.AllIcons;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.*;
 import net.miginfocom.swing.*;
-import org.jdesktop.swingx.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -53,22 +50,30 @@ public class StatisticsForm extends JPanel {
     }
 
     @SuppressWarnings("rawtypes")
-    public List<Triple<String, ArrayList<String>, Vector<Vector>>> getDisplayData() {
-        return dataMap.keySet().stream().map(table -> {
-                    var model = (DefaultTableModel) table.getModel();
-                    var headerColumn = table.getTableHeader().getColumnModel().getColumns();
-                    var header = new ArrayList<String>();
-                    while (headerColumn.hasMoreElements()) {
-                        header.add(headerColumn.nextElement().getHeaderValue().toString());
-                    }
-                    var configs = dataMap.get(table);
-                    if (!configs.isEmpty()) {
-                        var module = configs.get(0).getModuleName();
-                        return Tuples.of(module, header, model.getDataVector());
-                    }
-                    return null;
-                }).filter(Objects::nonNull)
-                .toList();
+    public Triple<String, ArrayList<String>, Vector<Vector>> getDisplayData() {
+        var tabIndex = tabPane.getSelectedIndex();
+        if (tabIndex == -1) {
+            return null;
+        }
+        int i = 0;
+        for (Map.Entry<JBTable, List<XQLConfigManager.Config>> e : dataMap.entrySet()) {
+            if (tabIndex == i) {
+                var table = e.getKey();
+                var model = (DefaultTableModel) table.getModel();
+                var headerColumn = table.getTableHeader().getColumnModel().getColumns();
+                var header = new ArrayList<String>();
+                while (headerColumn.hasMoreElements()) {
+                    header.add(headerColumn.nextElement().getHeaderValue().toString());
+                }
+                var configs = dataMap.get(table);
+                if (!configs.isEmpty()) {
+                    var module = configs.get(0).getModuleName();
+                    return Tuples.of(module, header, model.getDataVector());
+                }
+            }
+            i++;
+        }
+        return null;
     }
 
     private void initTableData(JBTable table, List<XQLConfigManager.Config> configs) {
@@ -111,30 +116,18 @@ public class StatisticsForm extends JPanel {
     }
 
     private void customInitComponents() {
-        scrollPanel.setBorder(BorderFactory.createEmptyBorder());
         configMap.forEach((path, configs) -> {
             var validConfigs = configs.stream()
                     .filter(XQLConfigManager.Config::isValid)
                     .filter(config -> Objects.nonNull(config.getXqlFileManager()))
                     .collect(Collectors.toList());
             var module = path.getFileName().toString();
-            var panel = new JPanel();
-            panel.setLayout(new MigLayout(
-                    "fillx,insets 0,hidemode 3,align center center,gap 5 5",
-                    // columns
-                    "[grow,left]",
-                    // rows
-                    "[fill][fill]"));
-            var moduleCom = new TitledSeparator(module);
             var tablePanel = new JBScrollPane();
-            tablePanel.setBorder(new LineBorder(new JBColor(new Color(0xD2D2D2), new Color(0x323232))));
-            tablePanel.setMinimumSize(new Dimension(0, 60));
+            tablePanel.setBorder(BorderFactory.createEmptyBorder());
             var table = createTable();
             dataMap.put(table, validConfigs);
-            panel.add(moduleCom, "cell 0 0,growx");
             tablePanel.setViewportView(table);
-            panel.add(tablePanel, "cell 0 1,growx");
-            container.add(panel);
+            tabPane.addTab(module, AllIcons.Nodes.Module, tablePanel);
         });
     }
 
@@ -231,33 +224,28 @@ public class StatisticsForm extends JPanel {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
-        scrollPanel = new JBScrollPane();
-        container = new JPanel();
+        tabPane = new JTabbedPane();
 
         //======== this ========
         setPreferredSize(new Dimension(650, 320));
+        setBorder(null);
         setLayout(new MigLayout(
-            "fill,insets 0,hidemode 3,align center center",
+            "fill,hidemode 3,align left top",
             // columns
             "[grow,left]",
             // rows
             "[fill]"));
 
-        //======== scrollPanel ========
+        //======== tabPane ========
         {
-
-            //======== container ========
-            {
-                container.setLayout(new VerticalLayout(15));
-            }
-            scrollPanel.setViewportView(container);
+            tabPane.setBorder(null);
+            tabPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         }
-        add(scrollPanel, "cell 0 0,grow");
+        add(tabPane, "cell 0 0,grow");
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
-    private JBScrollPane scrollPanel;
-    private JPanel container;
+    private JTabbedPane tabPane;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }

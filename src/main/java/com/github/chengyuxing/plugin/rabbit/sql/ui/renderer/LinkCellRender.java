@@ -11,6 +11,7 @@ public class LinkCellRender extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (value instanceof DataCell) {
+            setToolTipText("Mouse Double Click");
             var richText = "<html>" + HtmlUtil.span(value.toString(), HtmlUtil.Color.FUNCTION, "text-decoration: underline") + "</html>";
             return super.getTableCellRendererComponent(table, richText, isSelected, hasFocus, row, column);
         }
