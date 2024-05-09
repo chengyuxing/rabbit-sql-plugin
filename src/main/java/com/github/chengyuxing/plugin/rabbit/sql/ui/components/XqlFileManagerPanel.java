@@ -58,6 +58,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.RefreshContentAction"),
                         actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ExpandAllAction"),
                         actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.CollapseAllAction"),
+                        actionManager.getAction("xqlFileManager.toolwindow.Separator"),
                         actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.StatisticsAction")
                 };
             }
