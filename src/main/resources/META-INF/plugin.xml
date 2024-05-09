@@ -70,6 +70,14 @@
 
     <change-notes>
         <![CDATA[
+            <h4>2.2.9</h4>
+            <ul>
+                <li>New Action: <b>Statistics</b> on XQL File Manager toolwindow.</li>
+                <li><b>Statistics</b> Support copy displayed table data as tsv format content to Clipboard.</li>
+                <li>Intention Action: <b>Execute dynamic sql</b> text optimized.</li>
+                <li>Toolwindow icon optimized.</li>
+                <li>New SQL Dialog size optimized.</li>
+            </ul>
             <h3>2.2.8</h3>
             <ul>
                 <li>New action: <b>New</b> on XQL File Manager toolwindow xql file.</li>
@@ -464,5 +472,9 @@
                 class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.CollapseAllAction"
                 text="Collapse All"
                 icon="AllIcons.Actions.Collapseall"/>
+        <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.StatisticsAction"
+                class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.StatisticsAction"
+                text="Statistics"
+                icon="AllIcons.Actions.DependencyAnalyzer"/>
     </actions>
 </idea-plugin>
