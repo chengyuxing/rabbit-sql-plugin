@@ -23,6 +23,7 @@ import javax.swing.table.DefaultTableModel;
 import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.LinkCellRender;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.DataCell;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -41,6 +42,9 @@ public class StatisticsForm extends JPanel {
     private final Map<Path, Set<XQLConfigManager.Config>> configMap;
     private final Map<JBTable, Set<XQLConfigManager.Config>> dataMap = new LinkedHashMap<>();
 
+    private static final Object[] summaryTableHeader = new Object[]{"Config", "Total XQL Files", "Total SQLs", "Total Lines", "Total Size"};
+    private static final Object[] detailsTableHeader = new Object[]{"File Name", "Alias", "SQLs", "Lines", "Size", "Last Modified"};
+
     public StatisticsForm(Map<Path, Set<XQLConfigManager.Config>> configMap) {
         this.configMap = configMap;
         initComponents();
@@ -49,7 +53,6 @@ public class StatisticsForm extends JPanel {
     }
 
     private void initTableData(JBTable table, Set<XQLConfigManager.Config> configs) {
-        var thead = new Object[]{"Config", "Total XQL Files", "Total SQLs", "Total Lines", "Total Size"};
         var tbody = configs.stream().map(config -> {
             var xqlFileManager = config.getXqlFileManager();
             long totalLines = 0;
@@ -79,8 +82,9 @@ public class StatisticsForm extends JPanel {
             }
         };
         table.setModel(model);
-        model.setDataVector(tbody, thead);
+        model.setDataVector(tbody, summaryTableHeader);
         table.getColumnModel().getColumn(0).setPreferredWidth(130);
+        table.getColumnModel().getColumn(1).setCellRenderer(new LinkCellRender());
     }
 
     private void initTableDatasource() {
@@ -140,7 +144,6 @@ public class StatisticsForm extends JPanel {
                         if (value instanceof DataCell dataCell) {
                             var source = dataCell.getData();
                             if (source instanceof XQLFileManager xqlFileManager) {
-                                var thead = new Object[]{"File Name", "Alias", "SQLs", "Lines", "Size", "Last Modified"};
                                 var tbody = xqlFileManager.getResources().keySet().stream()
                                         .map(alias -> {
                                             var resource = xqlFileManager.getResources().get(alias);
@@ -173,7 +176,8 @@ public class StatisticsForm extends JPanel {
                                     }
                                 };
                                 table.setModel(model);
-                                model.setDataVector(tbody, thead);
+                                model.setDataVector(tbody, detailsTableHeader);
+                                table.getColumnModel().getColumn(0).setCellRenderer(new LinkCellRender());
                                 return;
                             }
                             if (source instanceof JBTable jbTable) {
@@ -214,7 +218,7 @@ public class StatisticsForm extends JPanel {
         container = new JPanel();
 
         //======== this ========
-        setPreferredSize(new Dimension(600, 220));
+        setPreferredSize(new Dimension(600, 320));
         setLayout(new MigLayout(
             "fill,insets 0,hidemode 3,align center center",
             // columns

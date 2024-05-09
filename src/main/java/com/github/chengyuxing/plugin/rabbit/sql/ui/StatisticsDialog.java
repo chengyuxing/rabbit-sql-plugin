@@ -16,7 +16,7 @@ public class StatisticsDialog extends DialogWrapper {
         XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
         this.statisticsForm = new StatisticsForm(xqlConfigManager.getConfigMap(project));
         setTitle("Statistics");
-        setSize(600, 300);
+        setSize(600, 320);
         init();
     }
 
