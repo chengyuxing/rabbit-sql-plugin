@@ -1,7 +1,10 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
+import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.StatisticsForm;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +25,13 @@ public class StatisticsDialog extends DialogWrapper {
         super(true);
         XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
         this.statisticsForm = new StatisticsForm(xqlConfigManager.getConfigMap(project));
+        this.statisticsForm.setClickEmptyTableTextLink(module -> {
+            dispose();
+            var primaryAbsFilename = module.resolve(Constants.CONFIG_PATH);
+            ProjectFileUtil.createXqlConfigByTemplate(project, primaryAbsFilename, () ->
+                    ApplicationManager.getApplication().runWriteAction(() ->
+                            ProjectFileUtil.openFile(project, primaryAbsFilename, true)));
+        });
         setTitle("Statistics");
         setSize(650, 320);
         init();

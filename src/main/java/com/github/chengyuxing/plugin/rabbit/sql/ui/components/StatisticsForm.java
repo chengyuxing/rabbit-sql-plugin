@@ -5,6 +5,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
@@ -13,12 +14,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.io.FileResource;
+import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
@@ -28,6 +31,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.*;
 import net.miginfocom.swing.*;
@@ -38,10 +42,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StatisticsForm extends JPanel {
     private final Map<Path, Set<XQLConfigManager.Config>> configMap;
-    private final Map<JBTable, List<XQLConfigManager.Config>> dataMap = new LinkedHashMap<>();
+    // (table, (module, configs))
+    private final Map<JBTable, Pair<Path, List<XQLConfigManager.Config>>> dataMap = new LinkedHashMap<>();
 
     private static final Object[] summaryTableHeader = new Object[]{"Config", "Total XQL Files", "Total SQLs", "Total Lines", "Total Size"};
     private static final Object[] detailsTableHeader = new Object[]{"File Name", "Alias", "SQLs", "Lines", "Size", "Last Modified"};
+
+    private Consumer<Path> clickEmptyTableTextLink = (module) -> {
+    };
 
     public StatisticsForm(Map<Path, Set<XQLConfigManager.Config>> configMap) {
         this.configMap = configMap;
@@ -57,7 +65,7 @@ public class StatisticsForm extends JPanel {
             return null;
         }
         int i = 0;
-        for (Map.Entry<JBTable, List<XQLConfigManager.Config>> e : dataMap.entrySet()) {
+        for (var e : dataMap.entrySet()) {
             if (tabIndex == i) {
                 var table = e.getKey();
                 var model = (DefaultTableModel) table.getModel();
@@ -67,8 +75,8 @@ public class StatisticsForm extends JPanel {
                     header.add(headerColumn.nextElement().getHeaderValue().toString());
                 }
                 var configs = dataMap.get(table);
-                if (!configs.isEmpty()) {
-                    var module = configs.get(0).getModuleName();
+                if (!configs.getItem2().isEmpty()) {
+                    var module = configs.getItem2().get(0).getModuleName();
                     return Tuples.of(module, header, model.getDataVector());
                 }
             }
@@ -77,8 +85,8 @@ public class StatisticsForm extends JPanel {
         return null;
     }
 
-    private void initTableData(JBTable table, List<XQLConfigManager.Config> configs) {
-        var tbody = configs.stream().map(config -> {
+    private void initTableData(JBTable table, Pair<Path, List<XQLConfigManager.Config>> pairConfig) {
+        var tbody = pairConfig.getItem2().stream().map(config -> {
             var xqlFileManager = config.getXqlFileManager();
             long totalLines = 0;
             long totalSize = 0;
@@ -125,7 +133,7 @@ public class StatisticsForm extends JPanel {
             var tablePanel = new JBScrollPane();
             tablePanel.setBorder(BorderFactory.createEmptyBorder());
             var table = createTable();
-            dataMap.put(table, validConfigs);
+            dataMap.put(table, Pair.of(path, validConfigs));
             tablePanel.setViewportView(table);
             tabPane.addTab(module, AllIcons.Nodes.Module, tablePanel);
         });
@@ -143,6 +151,24 @@ public class StatisticsForm extends JPanel {
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.setIntercellSpacing(new Dimension(0, 0));
         table.setDefaultRenderer(Object.class, new LinkCellRender());
+        table.getEmptyText().setText("No XQLFileManager configs added.");
+        table.getEmptyText().appendSecondaryText("Add XQLFileManager config", SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                var tabIndex = tabPane.getSelectedIndex();
+                if (tabIndex == -1) {
+                    return;
+                }
+                int i = 0;
+                for (var pairConfig : dataMap.values()) {
+                    if (tabIndex == i) {
+                        clickEmptyTableTextLink.accept(pairConfig.getItem1());
+                        return;
+                    }
+                    i++;
+                }
+            }
+        });
         table.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -219,6 +245,10 @@ public class StatisticsForm extends JPanel {
             }
         });
         return table;
+    }
+
+    public void setClickEmptyTableTextLink(Consumer<Path> clickEmptyTableTextLink) {
+        this.clickEmptyTableTextLink = clickEmptyTableTextLink;
     }
 
     private void initComponents() {

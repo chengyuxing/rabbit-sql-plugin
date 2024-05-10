@@ -14,6 +14,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.JBSplitter;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.JBUI;
@@ -23,6 +24,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.*;
 
@@ -32,6 +34,8 @@ import java.util.*;
 public class ParametersForm extends JPanel {
     private final Map<String, Set<String>> paramsMapping;
     private final Map<String, Object> paramsHistory;
+    private Runnable clickEmptyTableTextLink = () -> {
+    };
 
     public ParametersForm(Map<String, Set<String>> paramsMapping, Map<String, Object> paramsHistory) {
         this.paramsMapping = paramsMapping;
@@ -75,7 +79,7 @@ public class ParametersForm extends JPanel {
                         } else {
                             v = Long.parseLong(sv);
                         }
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         errors.add("Parse number '" + k + "' error.");
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
@@ -114,6 +118,13 @@ public class ParametersForm extends JPanel {
                 return column == 1;
             }
         };
+        paramsTable.getEmptyText().setText("No parameters need to be entered.");
+        paramsTable.getEmptyText().appendSecondaryText("Show raw sql", SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clickEmptyTableTextLink.run();
+            }
+        });
         paramsTable.setModel(model);
         model.setDataVector(params, new Object[]{"", ""});
         paramsTable.getColumnModel().getColumn(0).setCellRenderer(new FieldInfoRender(paramsMapping));
@@ -130,6 +141,10 @@ public class ParametersForm extends JPanel {
         cbx.addItem("false");
         cbx.setEditable(true);
         return new DefaultCellEditor(cbx);
+    }
+
+    public void setClickEmptyTableTextLink(Runnable clickEmptyTableTextLink) {
+        this.clickEmptyTableTextLink = clickEmptyTableTextLink;
     }
 
     private void initComponents() {
@@ -183,9 +198,9 @@ public class ParametersForm extends JPanel {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
-    private JScrollPane scrollPane1;
-    private JTable paramsTable;
-    private JScrollPane scrollPane2;
+    private JBScrollPane scrollPane1;
+    private JBTable paramsTable;
+    private JBScrollPane scrollPane2;
     private JTextPane sqlContent;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }

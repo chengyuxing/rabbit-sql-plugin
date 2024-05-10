@@ -46,6 +46,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         this.paramsHistory = datasourceResource.getParamsHistory();
         var paramsMapping = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.getParamsMappingInfo(this.config.getSqlGenerator(), sql);
         this.parametersForm = new ParametersForm(paramsMapping, paramsHistory);
+        this.parametersForm.setClickEmptyTableTextLink(this::doHelpAction);
         this.datasourceList = new ComboBox<>();
         setTitle("Parameters");
         createDefaultActions();
