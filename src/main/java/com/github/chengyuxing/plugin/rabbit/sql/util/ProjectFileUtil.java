@@ -26,7 +26,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Formatter;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -143,19 +142,5 @@ public class ProjectFileUtil {
         } catch (IOException e) {
             return 0;
         }
-    }
-
-    public static String formatFileSize(long bytesLength) {
-        String strSize = "0KB";
-        Formatter fmt = new Formatter();
-        if (bytesLength > 1073741824) {
-            strSize = fmt.format("%.2f", (double) bytesLength / 1.073741824E9) + "GB";
-        } else if (bytesLength > 1048576) {
-            strSize = fmt.format("%.2f", (double) bytesLength / 1048576.0) + "MB";
-        } else if (bytesLength > 0) {
-            strSize = fmt.format("%.2f", (double) bytesLength / 1024.0) + "KB";
-        }
-
-        return strSize;
     }
 }
