@@ -109,7 +109,6 @@ public class StatisticsForm extends JPanel {
         table.setModel(model);
         model.setDataVector(tbody, summaryTableHeader);
         table.getColumnModel().getColumn(0).setPreferredWidth(130);
-        table.getColumnModel().getColumn(1).setCellRenderer(new LinkCellRender());
     }
 
     private void initTableDatasource() {
@@ -143,6 +142,7 @@ public class StatisticsForm extends JPanel {
         table.setFillsViewportHeight(true);
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.setIntercellSpacing(new Dimension(0, 0));
+        table.setDefaultRenderer(Object.class, new LinkCellRender());
         table.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -150,8 +150,7 @@ public class StatisticsForm extends JPanel {
                     var x = table.rowAtPoint(e.getPoint());
                     var y = table.columnAtPoint(e.getPoint());
                     if (x >= 0 && y >= 0) {
-                        var data = table.getModel();
-                        var value = data.getValueAt(x, y);
+                        var value = table.getValueAt(x, y);
                         if (value instanceof DataCell dataCell) {
                             var source = dataCell.getData();
                             if (source instanceof XQLFileManager xqlFileManager) {
@@ -188,7 +187,6 @@ public class StatisticsForm extends JPanel {
                                 };
                                 table.setModel(model);
                                 model.setDataVector(tbody, detailsTableHeader);
-                                table.getColumnModel().getColumn(0).setCellRenderer(new LinkCellRender());
                                 return;
                             }
                             if (source instanceof JBTable jbTable) {
