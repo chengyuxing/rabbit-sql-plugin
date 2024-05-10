@@ -1,10 +1,9 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
-import com.github.chengyuxing.common.MostDateTime;
+import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.NewXQLForm;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
-import com.github.chengyuxing.sql.Args;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.application.ApplicationManager;
@@ -132,17 +131,11 @@ public class NewXqlDialog extends DialogWrapper {
         }
         try {
             var xqlFt = FileTemplateManager.getInstance(project).getTemplate("XQL File.xql");
-            var now = MostDateTime.now();
-            var args = Args.of(
-                    "USER", System.getProperty("user.name"),
-                    "DATE", now.toString("yyyy/MM/dd"),
-                    "TIME", now.toString("HH:mm:ss")
-            );
             var path = file.getParent();
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
             }
-            var template = xqlFt.getText(args);
+            var template = xqlFt.getText(Global.usefulArgs());
             if (!templateContent.isEmpty()) {
                 template += "\n" + templateContent;
             }

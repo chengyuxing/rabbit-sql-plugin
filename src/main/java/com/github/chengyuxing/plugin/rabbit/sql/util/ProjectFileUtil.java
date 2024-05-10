@@ -1,9 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
-import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
+import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.sql.Args;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.notification.NotificationType;
@@ -73,17 +72,11 @@ public class ProjectFileUtil {
     public static void createXqlConfigByTemplate(Project project, Path absFilename, Runnable then) {
         try {
             var xqlConfig = FileTemplateManager.getInstance(project).getTemplate("XQL File Manager.yml");
-            var now = MostDateTime.now();
-            var args = Args.of(
-                    "USER", System.getProperty("user.name"),
-                    "DATE", now.toString("yyyy/MM/dd"),
-                    "TIME", now.toString("HH:mm:ss")
-            );
             var path = absFilename.getParent();
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
             }
-            var template = xqlConfig.getText(args);
+            var template = xqlConfig.getText(Global.usefulArgs());
             Files.writeString(absFilename, template, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
             then.run();
         } catch (IOException ex) {
