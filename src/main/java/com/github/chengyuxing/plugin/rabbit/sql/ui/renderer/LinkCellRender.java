@@ -15,6 +15,7 @@ public class LinkCellRender extends DefaultTableCellRenderer {
             var richText = "<html>" + HtmlUtil.span(value.toString(), HtmlUtil.Color.FUNCTION, "text-decoration: underline") + "</html>";
             return super.getTableCellRendererComponent(table, richText, isSelected, hasFocus, row, column);
         }
+        setToolTipText(null);
         return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     }
 }
