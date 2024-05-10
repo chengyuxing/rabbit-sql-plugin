@@ -27,6 +27,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.DataCell;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.*;
 import net.miginfocom.swing.*;
@@ -96,7 +97,7 @@ public class StatisticsForm extends JPanel {
                     sqlSize > 0 ? new DataCell(sqlSize, xqlFileManager) : sqlSize,
                     xqlFileManager.size(),
                     totalLines,
-                    ProjectFileUtil.formatFileSize(totalSize)
+                    StringUtil.formatFileSize(totalSize)
             };
         }).toArray(i -> new Object[i][5]);
         var model = new DefaultTableModel() {
@@ -169,7 +170,7 @@ public class StatisticsForm extends JPanel {
                                             } catch (IOException ignored) {
 
                                             }
-                                            var size = ProjectFileUtil.formatFileSize(fileLength);
+                                            var size = StringUtil.formatFileSize(fileLength);
                                             return new Object[]{
                                                     new DataCell(filename, table),
                                                     alias,
