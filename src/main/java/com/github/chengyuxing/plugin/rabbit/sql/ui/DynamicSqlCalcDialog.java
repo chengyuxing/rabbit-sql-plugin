@@ -11,10 +11,10 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.database.datagrid.DataRequest;
+import com.intellij.database.view.ui.DataSourceManagerDialog;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.wm.ToolWindowManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 
@@ -199,15 +198,12 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
 
     private JButton createOpenDatabaseButton() {
         var btn = new JButton();
-        btn.setToolTipText("Configure database.");
+        btn.setToolTipText("Configure database");
         btn.setIcon(AllIcons.Actions.AddMulticaret);
         btn.setPreferredSize(new Dimension(30, 30));
         btn.addActionListener(e -> {
-            var databaseTw = ToolWindowManager.getInstance(config.getProject()).getToolWindow("Database");
-            if (Objects.nonNull(databaseTw)) {
-                databaseTw.show();
-                dispose();
-            }
+            dispose();
+            DataSourceManagerDialog.showDialog(config.getProject(), null, null);
         });
         return btn;
     }
