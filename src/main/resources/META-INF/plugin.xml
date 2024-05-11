@@ -50,7 +50,7 @@
     <ol>
         <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.8.23+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
-        ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New XQL File Manager</kbd> )
+        ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
         <li>Register xql files on property: <code>files</code>;</li>
     </ol>
@@ -58,7 +58,7 @@
     <ol>
         <li>Add dependency <strong>rabbit-sql 7.8.27+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
-        ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New XQL File Manager</kbd> )
+        ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
         <li>Register xql files on property: <code>files</code>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
@@ -70,7 +70,15 @@
 
     <change-notes>
         <![CDATA[
-            <h4>2.2.9</h4>
+            <h3>2.2.10</h3>
+            <ul>
+                <li><b>Statistics</b> table support action <b>Add XQLFileManager config</b> if config not exists.</li>
+                <li><b>Statistics</b> file size display text optimized.</li>
+                <li>Execute dynamic sql dialog add new button for open database configuration dialog.</li>
+                <li>Fixed <b>Statistics</b> table header reordered lost click event.</li>
+                <li>Some optimized.</li>
+            </ul>
+            <h3>2.2.9</h3>
             <ul>
                 <li>New Action: <b>Statistics</b> on XQL File Manager toolwindow.</li>
                 <li><b>Statistics</b> Support copy displayed table data as tsv format content to Clipboard.</li>
