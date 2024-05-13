@@ -21,7 +21,6 @@ import javax.swing.table.DefaultTableModel;
 
 import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.io.FileResource;
-import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
@@ -30,10 +29,13 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.DataCell;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.*;
+import com.intellij.ui.tabs.TabInfo;
+import com.intellij.ui.tabs.impl.JBTabsImpl;
 import net.miginfocom.swing.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,9 +43,12 @@ import org.jetbrains.annotations.NotNull;
  * @author chengyuxing
  */
 public class StatisticsForm extends JPanel {
+    private final Project project;
+    private JBTabsImpl tabPane;
+    // (module, configs)
     private final Map<Path, Set<XQLConfigManager.Config>> configMap;
     // (table, (module, configs))
-    private final Map<JBTable, Pair<Path, List<XQLConfigManager.Config>>> dataMap = new LinkedHashMap<>();
+    private final Map<JBTable, List<XQLConfigManager.Config>> dataMap = new LinkedHashMap<>();
 
     private static final Object[] summaryTableHeader = new Object[]{"Config", "Total XQL Files", "Total SQLs", "Total Lines", "Total Size"};
     private static final Object[] detailsTableHeader = new Object[]{"File Name", "Alias", "SQLs", "Lines", "Size", "Last Modified"};
@@ -51,7 +56,8 @@ public class StatisticsForm extends JPanel {
     private Consumer<Path> clickEmptyTableTextLink = (module) -> {
     };
 
-    public StatisticsForm(Map<Path, Set<XQLConfigManager.Config>> configMap) {
+    public StatisticsForm(Project project, Map<Path, Set<XQLConfigManager.Config>> configMap) {
+        this.project = project;
         this.configMap = configMap;
         initComponents();
         customInitComponents();
@@ -60,33 +66,33 @@ public class StatisticsForm extends JPanel {
 
     @SuppressWarnings("rawtypes")
     public Triple<String, ArrayList<String>, Vector<Vector>> getDisplayData() {
-        var tabIndex = tabPane.getSelectedIndex();
+        var tabInfo = tabPane.getSelectedInfo();
+        if (Objects.isNull(tabInfo)) {
+            return null;
+        }
+        var tabIndex = tabPane.getIndexOf(tabInfo);
         if (tabIndex == -1) {
             return null;
         }
         int i = 0;
-        for (var e : dataMap.entrySet()) {
+        for (var table : dataMap.keySet()) {
             if (tabIndex == i) {
-                var table = e.getKey();
                 var model = (DefaultTableModel) table.getModel();
                 var headerColumn = table.getTableHeader().getColumnModel().getColumns();
                 var header = new ArrayList<String>();
                 while (headerColumn.hasMoreElements()) {
                     header.add(headerColumn.nextElement().getHeaderValue().toString());
                 }
-                var configs = dataMap.get(table);
-                if (!configs.getItem2().isEmpty()) {
-                    var module = configs.getItem2().get(0).getModuleName();
-                    return Tuples.of(module, header, model.getDataVector());
-                }
+                var module = ((Path) tabInfo.getObject()).getFileName().toString();
+                return Tuples.of(module, header, model.getDataVector());
             }
             i++;
         }
         return null;
     }
 
-    private void initTableData(JBTable table, Pair<Path, List<XQLConfigManager.Config>> pairConfig) {
-        var tbody = pairConfig.getItem2().stream().map(config -> {
+    private void initTableData(JBTable table, List<XQLConfigManager.Config> pairConfig) {
+        var tbody = pairConfig.stream().map(config -> {
             var xqlFileManager = config.getXqlFileManager();
             long totalLines = 0;
             long totalSize = 0;
@@ -124,6 +130,8 @@ public class StatisticsForm extends JPanel {
     }
 
     private void customInitComponents() {
+        tabPane = new JBTabsImpl(project);
+        add(tabPane, "cell 0 0,grow");
         configMap.forEach((path, configs) -> {
             var validConfigs = configs.stream()
                     .filter(XQLConfigManager.Config::isValid)
@@ -133,9 +141,14 @@ public class StatisticsForm extends JPanel {
             var tablePanel = new JBScrollPane();
             tablePanel.setBorder(BorderFactory.createEmptyBorder());
             var table = createTable();
-            dataMap.put(table, Pair.of(path, validConfigs));
+            dataMap.put(table, validConfigs);
             tablePanel.setViewportView(table);
-            tabPane.addTab(module, AllIcons.Nodes.Module, tablePanel);
+            var info = new TabInfo(tablePanel);
+            info.setIcon(AllIcons.Nodes.Module);
+            info.setText(module);
+            info.setTooltipText(path.toString());
+            info.setObject(path);
+            tabPane.addTab(info);
         });
     }
 
@@ -155,18 +168,11 @@ public class StatisticsForm extends JPanel {
         table.getEmptyText().appendSecondaryText("Add XQLFileManager config", SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                var tabIndex = tabPane.getSelectedIndex();
-                if (tabIndex == -1) {
+                var tabInfo = tabPane.getSelectedInfo();
+                if (Objects.isNull(tabInfo)) {
                     return;
                 }
-                int i = 0;
-                for (var pairConfig : dataMap.values()) {
-                    if (tabIndex == i) {
-                        clickEmptyTableTextLink.accept(pairConfig.getItem1());
-                        return;
-                    }
-                    i++;
-                }
+                clickEmptyTableTextLink.accept((Path) tabInfo.getObject());
             }
         });
         table.addMouseListener(new MouseListener() {
@@ -253,7 +259,6 @@ public class StatisticsForm extends JPanel {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
-        tabPane = new JTabbedPane();
 
         //======== this ========
         setPreferredSize(new Dimension(650, 320));
@@ -264,17 +269,9 @@ public class StatisticsForm extends JPanel {
             "[grow,left]",
             // rows
             "[fill]"));
-
-        //======== tabPane ========
-        {
-            tabPane.setBorder(null);
-            tabPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-        }
-        add(tabPane, "cell 0 0,grow");
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
-    private JTabbedPane tabPane;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }
