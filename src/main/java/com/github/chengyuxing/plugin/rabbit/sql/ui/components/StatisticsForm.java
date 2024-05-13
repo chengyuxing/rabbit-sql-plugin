@@ -131,7 +131,6 @@ public class StatisticsForm extends JPanel {
 
     private void customInitComponents() {
         tabPane = new JBTabsImpl(project);
-        add(tabPane, "cell 0 0,grow");
         configMap.forEach((path, configs) -> {
             var validConfigs = configs.stream()
                     .filter(XQLConfigManager.Config::isValid)
@@ -150,6 +149,7 @@ public class StatisticsForm extends JPanel {
             info.setObject(path);
             tabPane.addTab(info);
         });
+        add(tabPane, "cell 0 0,grow");
     }
 
     private @NotNull JBTable createTable() {
