@@ -47,7 +47,7 @@ public class StatisticsForm extends JPanel {
     private JBTabsImpl tabPane;
     // (module, configs)
     private final Map<Path, Set<XQLConfigManager.Config>> configMap;
-    // (table, (module, configs))
+    // (table, configs)
     private final Map<JBTable, List<XQLConfigManager.Config>> dataMap = new LinkedHashMap<>();
 
     private static final Object[] summaryTableHeader = new Object[]{"Config", "Total XQL Files", "Total SQLs", "Total Lines", "Total Size"};
