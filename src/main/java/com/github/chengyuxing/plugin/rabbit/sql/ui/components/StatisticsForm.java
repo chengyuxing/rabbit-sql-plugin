@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -135,7 +134,7 @@ public class StatisticsForm extends JPanel {
             var validConfigs = configs.stream()
                     .filter(XQLConfigManager.Config::isValid)
                     .filter(config -> Objects.nonNull(config.getXqlFileManager()))
-                    .collect(Collectors.toList());
+                    .toList();
             var module = path.getFileName().toString();
             var tablePanel = new JBScrollPane();
             tablePanel.setBorder(BorderFactory.createEmptyBorder());
@@ -144,7 +143,7 @@ public class StatisticsForm extends JPanel {
             tablePanel.setViewportView(table);
             var info = new TabInfo(tablePanel);
             info.setIcon(AllIcons.Nodes.Module);
-            info.setText(module);
+            info.setText(module + (validConfigs.isEmpty() ? " *" : ""));
             info.setTooltipText(path.toString());
             info.setObject(path);
             tabPane.addTab(info);
