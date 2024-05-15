@@ -191,7 +191,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                             config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
                                 var resource = config.getXqlFileManager().getResource(alias);
                                 if (Objects.nonNull(resource)) {
-                                    var fileNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE, alias, Tuples.of(alias, filename, resource.getFilename(), config)));
+                                    var fileNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE, alias, Tuples.of(alias, filename, resource.getFilename(), config, resource.getDescription())));
                                     configNode.add(fileNode);
                                     resource.getEntry().forEach((name, sql) -> {
                                         if (!name.startsWith("${") && !name.endsWith("}")) {

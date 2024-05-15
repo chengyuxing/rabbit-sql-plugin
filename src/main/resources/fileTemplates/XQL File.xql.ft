@@ -3,6 +3,9 @@
  User: $USER
  Date: $DATE
  Time: $TIME
+ @@@
+ $description
+ @@@
  Typing "xql" keyword to get suggestions,
  e.g: "xql:new" will be create a sql fragment.
 */

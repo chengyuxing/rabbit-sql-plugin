@@ -1,6 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.renderer;
 
 import com.github.chengyuxing.common.tuple.Pair;
+import com.github.chengyuxing.common.tuple.Quadruple;
+import com.github.chengyuxing.common.tuple.Quintuple;
 import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
@@ -13,6 +15,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public class TreeNodeRenderer extends ColoredTreeCellRenderer {
     @Override
@@ -41,10 +44,16 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                     }
                     case XQL_FILE -> {
                         @SuppressWarnings("unchecked")
-                        var sqlMeta = (Pair<String, String>) nodeSource.source();
+                        var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
                         setIcon(XqlIcons.XQL_FILE);
+                        String secondaryText;
                         append(sqlMeta.getItem1() + " ");
-                        append("(" + sqlMeta.getItem2() + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
+                        if (Objects.nonNull(sqlMeta.getItem5()) && !Objects.equals(sqlMeta.getItem5().trim(), "")) {
+                            secondaryText = sqlMeta.getItem5();
+                        } else {
+                            secondaryText = sqlMeta.getItem2();
+                        }
+                        append("(" + secondaryText + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
                     }
                     case XQL_FRAGMENT -> {
                         @SuppressWarnings("unchecked")
