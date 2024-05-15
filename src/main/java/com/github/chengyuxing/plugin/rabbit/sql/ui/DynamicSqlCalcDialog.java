@@ -15,6 +15,7 @@ import com.intellij.database.view.ui.DataSourceManagerDialog;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.FixedSizeButton;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,22 +52,9 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         this.parametersForm.setClickEmptyTableTextLink(this::doHelpAction);
         this.datasourceList = new ComboBox<>();
         setTitle("Parameters");
-        createDefaultActions();
+        setOKButtonText("Execute");
+        setCancelButtonText("Close");
         init();
-    }
-
-    @Override
-    protected @NotNull Action getOKAction() {
-        var a = super.getOKAction();
-        a.putValue("Name", "Execute");
-        return a;
-    }
-
-    @Override
-    protected @NotNull Action getCancelAction() {
-        var a = super.getCancelAction();
-        a.putValue("Name", "Close");
-        return a;
     }
 
     @Override
@@ -197,10 +185,9 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     }
 
     private JButton createOpenDatabaseButton() {
-        var btn = new JButton();
+        var btn = new FixedSizeButton(30);
         btn.setToolTipText("Configure database");
         btn.setIcon(AllIcons.Actions.AddMulticaret);
-        btn.setPreferredSize(new Dimension(30, 30));
         btn.addActionListener(e -> {
             dispose();
             DataSourceManagerDialog.showDialog(config.getProject(), null, null);

@@ -7,7 +7,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -33,22 +32,10 @@ public class StatisticsDialog extends DialogWrapper {
                             ProjectFileUtil.openFile(project, primaryAbsFilename, true)));
         });
         setTitle("Statistics");
+        setOKButtonText("Copy and Close");
+        setCancelButtonText("Close");
         setSize(650, 320);
         init();
-    }
-
-    @Override
-    protected @NotNull Action getOKAction() {
-        var a = super.getOKAction();
-        a.putValue("Name", "Copy and Close");
-        return a;
-    }
-
-    @Override
-    protected @NotNull Action getCancelAction() {
-        var a = super.getCancelAction();
-        a.putValue("Name", "Close");
-        return a;
     }
 
     @Override
@@ -68,7 +55,7 @@ public class StatisticsDialog extends DialogWrapper {
         var header = p.getItem2();
         var body = p.getItem3();
         var headerLine = String.join("\t", header);
-        var moduleLine = module + "-".repeat(headerLine.length() - module.length() - 1);
+        var moduleLine = module + "-".repeat(headerLine.length() - module.length());
         sb.add(moduleLine);
         sb.add(headerLine);
         body.stream().map(row -> Stream.of(row.toArray())
