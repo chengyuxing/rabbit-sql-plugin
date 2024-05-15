@@ -4,10 +4,10 @@
 
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
+import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
-import com.intellij.ui.*;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.fields.*;
 import com.jgoodies.forms.factories.FormFactory;
@@ -38,12 +38,12 @@ public class NewXQLForm extends JPanel {
         initComponents();
     }
 
-    public Triple<String, String, String> getData() {
+    public Quadruple<String, String, String, String> getData() {
         var userInputPath = filename.getText().trim();
         var abPath = genAbPath(userInputPath);
         if (isYmlListType(userInputPath)) {
             userInputPath = "!path " + formatYmlArray(userInputPath);
-            return Tuples.of(alias.getText(), userInputPath, abPath);
+            return Tuples.of(alias.getText(), userInputPath, abPath, description.getText());
         }
         if (userInputPath.startsWith("/")) {
             userInputPath = userInputPath.substring(1);
@@ -51,7 +51,7 @@ public class NewXQLForm extends JPanel {
         if (!userInputPath.endsWith(".xql")) {
             userInputPath += ".xql";
         }
-        return Tuples.of(alias.getText(), userInputPath, abPath);
+        return Tuples.of(alias.getText(), userInputPath, abPath, description.getText());
     }
 
     /**

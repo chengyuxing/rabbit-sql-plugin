@@ -55,7 +55,7 @@ public class NewSQLDialog extends DialogWrapper {
     protected void doOKAction() {
         var data = newSQLForm.getData();
         var name = data.getItem1();
-        var desc = data.getItem2().replace(' ', '\n');
+        var desc = data.getItem2().replaceAll("\\s+", "\n");
         var sqlReference = alias + "." + name;
         var xqlFileManager = config.getXqlFileManager();
         if (Objects.nonNull(xqlFileManager)) {
@@ -75,7 +75,7 @@ public class NewSQLDialog extends DialogWrapper {
             dispose();
             ApplicationManager.getApplication().runWriteAction(() ->
                     WriteCommandAction.runWriteCommandAction(project, "Modify '" + sqlFileVf.getName() + "'", null, () -> {
-                        var sqlFragment = "\n/*[" + name + "]*/";
+                        var sqlFragment = "\n\n/*[" + name + "]*/";
                         if (!desc.trim().isEmpty()) {
                             sqlFragment += "\n/*#" + desc + "#*/";
                         }

@@ -50,7 +50,7 @@ public class NewXqlDialog extends DialogWrapper {
         this.doc = doc;
         this.anchors = anchors;
         setOKActionEnabled(false);
-        setSize(450, 120);
+        setSize(450, 147);
         setTitle("New XQL File");
     }
 
@@ -119,6 +119,7 @@ public class NewXqlDialog extends DialogWrapper {
         var alias = data.getItem1();
         var userInput = data.getItem2();
         var abPath = data.getItem3();
+        var description = data.getItem4().replaceAll("\\s+", "\n");
 
         if (config.getXqlFileManagerConfig().getFiles().containsKey(alias)) {
             newXqlFileForm.alert("Alias '" + alias + "' already configured.");
@@ -135,7 +136,9 @@ public class NewXqlDialog extends DialogWrapper {
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
             }
-            var template = xqlFt.getText(Global.usefulArgs());
+            var args = Global.usefulArgs()
+                    .add("Description", description);
+            var template = xqlFt.getText(args);
             if (!templateContent.isEmpty()) {
                 template += "\n" + templateContent;
             }
