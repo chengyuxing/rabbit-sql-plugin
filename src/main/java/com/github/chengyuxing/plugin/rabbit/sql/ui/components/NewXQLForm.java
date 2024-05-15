@@ -282,14 +282,14 @@ public class NewXQLForm extends JPanel {
             filenameTooltip.setText("Divided by '/' or array e.g. [a, b, c]");
             filenameTooltip.setVerticalAlignment(SwingConstants.TOP);
             filenameTooltip.setFont(filenameTooltip.getFont().deriveFont(filenameTooltip.getFont().getSize() - 1f));
-            filenameTooltip.setForeground(new Color(0x727782));
+            filenameTooltip.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
             panel2.add(filenameTooltip, cc.xy(1, 1, CellConstraints.LEFT, CellConstraints.CENTER));
 
             //---- anchorTag ----
             anchorTag.setText("[Anchors]");
             anchorTag.setHorizontalAlignment(SwingConstants.TRAILING);
             anchorTag.setFont(anchorTag.getFont().deriveFont(anchorTag.getFont().getSize() - 1f));
-            anchorTag.setForeground(new Color(0x48a0a2));
+            anchorTag.setForeground(new JBColor(new Color(0x48a0a2), new Color(0x1D7FC5)));
             anchorTag.setVisible(false);
             panel2.add(anchorTag, cc.xy(3, 1, CellConstraints.RIGHT, CellConstraints.CENTER));
         }
@@ -312,7 +312,7 @@ public class NewXQLForm extends JPanel {
             //---- message ----
             message.setText("...");
             message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
-            message.setForeground(new Color(0xdfe1ea));
+            message.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
             panel1.add(message);
         }
         add(panel1, cc.xy(3, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
