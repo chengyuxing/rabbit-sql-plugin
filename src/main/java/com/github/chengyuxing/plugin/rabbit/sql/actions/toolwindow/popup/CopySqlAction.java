@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.common.tuple.Quadruple;
+import com.github.chengyuxing.common.tuple.Quintuple;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
@@ -40,6 +41,22 @@ public class CopySqlAction extends AnAction {
                             return "SQL Definition From " + SqlUtil.quote(name);
                         }
                     }
+                } else if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
+                    @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
+                    switch (copyType) {
+                        case ALIAS -> {
+                            return "Alias " + SqlUtil.quote(sqlMeta.getItem1());
+                        }
+                        case ABSOLUTE_PATH -> {
+                            return "Absolute Path From " + SqlUtil.quote(sqlMeta.getItem1());
+                        }
+                        case PATH_FROM_CLASSPATH -> {
+                            return "Classpath Path From " + SqlUtil.quote(sqlMeta.getItem1());
+                        }
+                        case YML_ARRAY_PATH_FROM_CLASSPATH -> {
+                            return "YAML Array Classpath Path From " + SqlUtil.quote(sqlMeta.getItem1());
+                        }
+                    }
                 }
             }
             return "Copy";
@@ -50,8 +67,15 @@ public class CopySqlAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
+        var project = e.getProject();
+        if (Objects.isNull(project)) {
+            return;
+        }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
+        if (Objects.isNull(nodeSource)) {
+            return;
+        }
+        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
             @SuppressWarnings("unchecked")
             var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
             var alias = sqlMeta.getItem1();
@@ -63,12 +87,40 @@ public class CopySqlAction extends AnAction {
                 case SQL_PATH -> clipboard.setContents(new StringSelection("&" + alias + "." + name), null);
                 case SQL_DEFINITION -> clipboard.setContents(new StringSelection(sql.getContent()), null);
             }
+            return;
+        }
+        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
+            @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            switch (copyType) {
+                case ALIAS -> clipboard.setContents(new StringSelection(sqlMeta.getItem1()), null);
+                case ABSOLUTE_PATH -> clipboard.setContents(new StringSelection(sqlMeta.getItem3()), null);
+                case PATH_FROM_CLASSPATH -> {
+                    if (sqlMeta.getItem2().startsWith("file:")) {
+                        return;
+                    }
+                    clipboard.setContents(new StringSelection(sqlMeta.getItem2()), null);
+                }
+                case YML_ARRAY_PATH_FROM_CLASSPATH -> {
+                    if (sqlMeta.getItem2().startsWith("file:")) {
+                        return;
+                    }
+                    var classpathPath = sqlMeta.getItem2().split("/");
+                    var arrayPath = "[ " + String.join(", ", classpathPath) + " ]";
+                    clipboard.setContents(new StringSelection(arrayPath), null);
+                }
+            }
         }
     }
 
     public enum CopyType {
         SQL_NAME,
         SQL_PATH,
-        SQL_DEFINITION
+        SQL_DEFINITION,
+
+        ALIAS,
+        ABSOLUTE_PATH,
+        PATH_FROM_CLASSPATH,
+        YML_ARRAY_PATH_FROM_CLASSPATH
     }
 }

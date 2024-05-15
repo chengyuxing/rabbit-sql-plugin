@@ -226,11 +226,28 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     }
 
     private ActionPopupMenu createXqlFilePopMenu(JTree tree) {
+        var copyGroup = new SplitButtonAction(new ActionGroup() {
+            @Override
+            public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
+                return new AnAction[]{
+                        new CopySqlAction(tree, CopySqlAction.CopyType.ALIAS),
+                        new CopySqlAction(tree, CopySqlAction.CopyType.ABSOLUTE_PATH),
+                        new CopySqlAction(tree, CopySqlAction.CopyType.PATH_FROM_CLASSPATH),
+                        new CopySqlAction(tree, CopySqlAction.CopyType.YML_ARRAY_PATH_FROM_CLASSPATH),
+                };
+            }
+        }) {
+            @Override
+            public void update(@NotNull AnActionEvent e) {
+                e.getPresentation().setText("Copy Path/Reference...");
+            }
+        };
         return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
             @Override
             public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
                 return new AnAction[]{
                         new NewSQLAction(tree),
+                        copyGroup,
                         new OpenInEditorAction(tree)
                 };
             }
