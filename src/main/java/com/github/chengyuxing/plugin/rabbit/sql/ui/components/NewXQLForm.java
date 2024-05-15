@@ -7,7 +7,9 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
+import com.intellij.ui.*;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.components.fields.*;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 
@@ -234,16 +236,18 @@ public class NewXQLForm extends JPanel {
         anchorTag = new JLabel();
         label2 = new JLabel();
         alias = new JTextField();
+        label3 = new JLabel();
+        description = new ExpandableTextField();
         panel1 = new JPanel();
         message = new JLabel();
         CellConstraints cc = new CellConstraints();
 
         //======== this ========
-        setMinimumSize(new Dimension(350, 120));
-        setPreferredSize(new Dimension(350, 120));
+        setMinimumSize(new Dimension(370, 147));
+        setPreferredSize(new Dimension(370, 147));
         setLayout(new FormLayout(
             new ColumnSpec[] {
-                new ColumnSpec(Sizes.dluX(35)),
+                new ColumnSpec(Sizes.dluX(41)),
                 FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
                 new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(50), FormSpec.DEFAULT_GROW)
             },
@@ -252,6 +256,8 @@ public class NewXQLForm extends JPanel {
                 new RowSpec(Sizes.DLUY1),
                 FormFactory.MIN_ROWSPEC,
                 new RowSpec(Sizes.DLUY4),
+                FormFactory.DEFAULT_ROWSPEC,
+                FormFactory.LINE_GAP_ROWSPEC,
                 FormFactory.DEFAULT_ROWSPEC,
                 FormFactory.LINE_GAP_ROWSPEC,
                 FormFactory.DEFAULT_ROWSPEC
@@ -283,7 +289,7 @@ public class NewXQLForm extends JPanel {
             anchorTag.setText("[Anchors]");
             anchorTag.setHorizontalAlignment(SwingConstants.TRAILING);
             anchorTag.setFont(anchorTag.getFont().deriveFont(anchorTag.getFont().getSize() - 1f));
-            anchorTag.setForeground(new JBColor(new Color(0x48a0a2), new Color(0x1D7FC5)));
+            anchorTag.setForeground(new Color(0x48a0a2));
             anchorTag.setVisible(false);
             panel2.add(anchorTag, cc.xy(3, 1, CellConstraints.RIGHT, CellConstraints.CENTER));
         }
@@ -294,6 +300,11 @@ public class NewXQLForm extends JPanel {
         add(label2, cc.xy(1, 5));
         add(alias, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
 
+        //---- label3 ----
+        label3.setText("Description:");
+        add(label3, cc.xy(1, 7));
+        add(description, cc.xy(3, 7));
+
         //======== panel1 ========
         {
             panel1.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 1));
@@ -301,10 +312,10 @@ public class NewXQLForm extends JPanel {
             //---- message ----
             message.setText("...");
             message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
-            message.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
+            message.setForeground(new Color(0xdfe1ea));
             panel1.add(message);
         }
-        add(panel1, cc.xy(3, 7, CellConstraints.FILL, CellConstraints.DEFAULT));
+        add(panel1, cc.xy(3, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
 
@@ -316,6 +327,8 @@ public class NewXQLForm extends JPanel {
     private JLabel anchorTag;
     private JLabel label2;
     private JTextField alias;
+    private JLabel label3;
+    private ExpandableTextField description;
     private JPanel panel1;
     private JLabel message;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
