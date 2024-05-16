@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
 import com.github.chengyuxing.common.io.FileResource;
+import com.github.chengyuxing.plugin.rabbit.sql.Helper;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.NewXQLFileManagerForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
@@ -8,6 +9,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -31,6 +33,11 @@ public class NewXQLFileManagerDialog extends DialogWrapper {
         setSize(370, 100);
         setTitle("New XQL File Manager");
         init();
+    }
+
+    @Override
+    protected @NonNls @Nullable String getHelpId() {
+        return Helper.XQL_FILE_MANAGER_BAKI_DAO;
     }
 
     @Override

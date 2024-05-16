@@ -50,8 +50,10 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                         append(sqlMeta.getItem1() + " ");
                         if (Objects.nonNull(sqlMeta.getItem5()) && !Objects.equals(sqlMeta.getItem5().trim(), "")) {
                             secondaryText = sqlMeta.getItem5();
+                            setToolTipText(sqlMeta.getItem2());
                         } else {
                             secondaryText = sqlMeta.getItem2();
+                            setToolTipText(null);
                         }
                         append("(" + secondaryText + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
                     }
