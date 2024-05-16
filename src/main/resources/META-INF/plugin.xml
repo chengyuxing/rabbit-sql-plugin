@@ -72,8 +72,8 @@
             <ul>
                 <li>Dialog: <b>New XQL File</b> support write description.</li>
                 <li>Toolwindow: <b>XQL File Manager</b> xql file tree node support show description if exists.</li>
-                <li>Toolwindow: sql file tree node add action <b>'Copy Path/Reference...'</b></li>
-                <li>Toolwindow: make sql file tree node ordered following the config's <code>files</code> property.</li>
+                <li>Toolwindow: <b>XQL File Manager</b> sql file tree node add action <b>'Copy Path/Reference...'</b></li>
+                <li>Toolwindow: <b>XQL File Manager</b> make sql file tree node ordered following the config's <code>files</code> property.</li>
                 <li>Add <b>Statistics</b> action to Tools &gt; <b>XQL File Manager</b>)</li>
                 <li>Support <code>rabbit-sql 7.9.0+</code> and <code>rabbit-sql-spring-boot-starter 2.9.0+</code></li>
                 <li>Some optimized.</li>
