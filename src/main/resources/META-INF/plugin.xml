@@ -32,15 +32,13 @@
             <ul>
                 <li>Structured tree view.</li>
                 <li>Manage multiple xql-file-manager.yml.</li>
-                <li>Mouse right click <kbd>New</kbd> to create and auto configure xql file.</li>
-                <li>Execute selected SQL Action.</li>
                 <li>Some more useful actions.</li>
             </ul>
         </li>
         <li>Toolbar menu:
             <ul>
                 <li><kbd>File</kbd> &gt; <kbd>New</kbd> &gt; <kbd>Xql File</kbd> | <kbd>Xql File Manager</kbd></li>
-                <li><kbd>Tools</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Reload All</kbd></li>
+                <li><kbd>Tools</kbd> &gt; <kbd>XQL File Manager</kbd></li>
             </ul>
         </li>
     </ul>
@@ -75,6 +73,8 @@
                 <li>Dialog: <b>New XQL File</b> support write description.</li>
                 <li>Toolwindow: <b>XQL File Manager</b> xql file tree node support show description if exists.</li>
                 <li>Toolwindow: sql file tree node add action <b>'Copy Path/Reference...'</b></li>
+                <li>Toolwindow: make sql file tree node ordered following the config's <code>files</code> property.</li>
+                <li>Add <b>Statistics</b> action to Tools &gt; <b>XQL File Manager</b>)</li>
                 <li>Support <code>rabbit-sql 7.9.0+</code> and <code>rabbit-sql-spring-boot-starter 2.9.0+</code></li>
                 <li>Some optimized.</li>
             </ul>
