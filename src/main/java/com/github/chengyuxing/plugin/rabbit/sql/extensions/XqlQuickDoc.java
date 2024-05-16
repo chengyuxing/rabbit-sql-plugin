@@ -46,7 +46,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
             var sqlRefParts = StringUtil.extraSqlReference(sqlName);
             var alias = sqlRefParts.getItem1();
             var config = xqlConfigManager.getActiveConfig(originalElement);
-            if (config != null && config.getXqlFileManager().contains(sqlName)) {
+            if (Objects.nonNull(config) && config.getXqlFileManager().contains(sqlName)) {
                 var xqlFileManager = config.getXqlFileManager();
                 var fileDescription = xqlFileManager.getResource(alias).getDescription();
                 var sql = xqlFileManager.getSqlObject(sqlName);
