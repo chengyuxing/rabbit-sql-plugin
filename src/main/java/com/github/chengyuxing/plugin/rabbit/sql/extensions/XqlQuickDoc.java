@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
@@ -41,20 +42,26 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
             return null;
         }
         if (sqlRef.matches(SQL_NAME_PATTERN)) {
-            String sqlName = sqlRef.substring(1);
+            var sqlName = sqlRef.substring(1);
+            var sqlRefParts = StringUtil.extraSqlReference(sqlName);
+            var alias = sqlRefParts.getItem1();
             var config = xqlConfigManager.getActiveConfig(originalElement);
             if (config != null && config.getXqlFileManager().contains(sqlName)) {
                 var xqlFileManager = config.getXqlFileManager();
+                var fileDescription = xqlFileManager.getResource(alias).getDescription();
                 var sql = xqlFileManager.getSqlObject(sqlName);
                 var sqlDefinition = SqlUtil.trimEnd(sql.getContent());
                 var sqlContent = HtmlUtil.highlightSql(sqlDefinition);
-                var description = sql.getDescription();
+                var sqlDescription = sql.getDescription();
                 var xqlFile = element.getContainingFile().getName();
 
                 var doc = DEFINITION_START + HtmlUtil.wrap("span", element.getText(), HtmlUtil.Color.EMPTY);
 
-                if (!description.trim().isEmpty()) {
-                    doc += HtmlUtil.pre(description, HtmlUtil.Color.LIGHT);
+                if (!sqlDescription.trim().isEmpty()) {
+                    if (Objects.nonNull(fileDescription) && !fileDescription.trim().isEmpty()) {
+                        sqlDescription = fileDescription + ": " + sqlDescription;
+                    }
+                    doc += HtmlUtil.pre(sqlDescription, HtmlUtil.Color.LIGHT);
                 }
 
                 doc += DEFINITION_END + CONTENT_START + sqlContent + CONTENT_END +
