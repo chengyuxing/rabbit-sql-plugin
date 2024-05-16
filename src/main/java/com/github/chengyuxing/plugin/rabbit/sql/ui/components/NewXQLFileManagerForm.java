@@ -75,8 +75,8 @@ public class NewXQLFileManagerForm extends JPanel {
         CellConstraints cc = new CellConstraints();
 
         //======== this ========
-        setMinimumSize(new Dimension(200, 60));
-        setPreferredSize(new Dimension(200, 60));
+        setMinimumSize(new Dimension(200, 55));
+        setPreferredSize(new Dimension(200, 55));
         setLayout(new FormLayout(
             new ColumnSpec[] {
                 new ColumnSpec(Sizes.dluX(25)),
