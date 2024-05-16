@@ -54,7 +54,7 @@ public class CopySqlAction extends AnAction {
                             return "Classpath Path From " + SqlUtil.quote(sqlMeta.getItem1());
                         }
                         case YML_ARRAY_PATH_FROM_CLASSPATH -> {
-                            return "YAML Array Classpath Path From " + SqlUtil.quote(sqlMeta.getItem1());
+                            return "Classpath YAML Array Path From " + SqlUtil.quote(sqlMeta.getItem1());
                         }
                     }
                 }

@@ -46,7 +46,7 @@ public class XQLConfigManager {
 
     public void add(Project project, Path module, Config config) {
         if (!configMap.containsKey(project)) {
-            var map = new HashMap<Path, Set<Config>>();
+            var map = new LinkedHashMap<Path, Set<Config>>();
             configMap.put(project, map);
         }
         var map = configMap.get(project);
@@ -222,7 +222,7 @@ public class XQLConfigManager {
             try {
                 xqlFileManagerConfig.loadYaml(new FileResource(configPath.toUri().toString()));
                 xqlFileManagerConfig.copyStateTo(xqlFileManager);
-                var newFiles = new HashMap<String, String>();
+                var newFiles = new LinkedHashMap<String, String>();
                 for (Map.Entry<String, String> e : xqlFileManager.getFiles().entrySet()) {
                     var alias = e.getKey();
                     // e.g. xqls/home.xql
