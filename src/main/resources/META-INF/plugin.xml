@@ -48,7 +48,7 @@
     <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.8.25+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.9.0+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -56,7 +56,7 @@
     </ol>
     <h3>Other</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.8.33+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.9.0+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -75,7 +75,7 @@
                 <li>Dialog: <b>New XQL File</b> support write description.</li>
                 <li>Toolwindow: <b>XQL File Manager</b> xql file tree node support show description if exists.</li>
                 <li>Toolwindow: sql file tree node add action <b>'Copy Path/Reference...'</b></li>
-                <li>Support <code>rabbit-sql 7.8.33+</code> and <code>rabbit-sql-spring-boot-starter 2.8.25+</code></li>
+                <li>Support <code>rabbit-sql 7.9.0+</code> and <code>rabbit-sql-spring-boot-starter 2.9.0+</code></li>
                 <li>Some optimized.</li>
             </ul>
             <h3>2.2.10</h3>
