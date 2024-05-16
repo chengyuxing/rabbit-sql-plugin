@@ -26,9 +26,7 @@ public class NewXQLFileManagerDialog extends DialogWrapper {
         this.project = project;
         this.module = module;
         this.newXQLFileManagerForm = new NewXQLFileManagerForm();
-        this.newXQLFileManagerForm.setInputChanged(s -> {
-            setOKActionEnabled(!s.trim().isEmpty());
-        });
+        this.newXQLFileManagerForm.setInputChanged(s -> setOKActionEnabled(!s.trim().isEmpty()));
         setOKActionEnabled(false);
         setSize(370, 100);
         setTitle("New XQL File Manager");
