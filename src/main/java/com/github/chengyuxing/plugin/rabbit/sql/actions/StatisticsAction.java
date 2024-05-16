@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow;
+package com.github.chengyuxing.plugin.rabbit.sql.actions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.ui.StatisticsDialog;
 import com.intellij.openapi.actionSystem.AnAction;

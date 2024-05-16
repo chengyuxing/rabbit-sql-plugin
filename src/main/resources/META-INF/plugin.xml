@@ -461,8 +461,15 @@
                text="XQL File Manager"
                description="XQL file manager actions."
                searchable="true"
-               popup="true">
+               popup="true"
+               icon="com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons.XQL_FILE_MANAGER">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action class="com.github.chengyuxing.plugin.rabbit.sql.actions.StatisticsAction"
+                    id="com.github.chengyuxing.plugin.rabbit.sql.actions.StatisticsAction"
+                    text="Statistics"
+                    description="Statistics of XQL File Manager configs."
+                    icon="AllIcons.Actions.DependencyAnalyzer"
+            />
             <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.ReloadConfigAction"
                     class="com.github.chengyuxing.plugin.rabbit.sql.actions.ReloadConfigAction"
                     text="Reload All"
@@ -488,9 +495,5 @@
                 class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.CollapseAllAction"
                 text="Collapse All"
                 icon="AllIcons.Actions.Collapseall"/>
-        <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.StatisticsAction"
-                class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.StatisticsAction"
-                text="Statistics"
-                icon="AllIcons.Actions.DependencyAnalyzer"/>
     </actions>
 </idea-plugin>
