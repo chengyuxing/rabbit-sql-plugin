@@ -116,7 +116,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
 
     @Override
     protected void setHelpTooltip(@NotNull JButton helpButton) {
-        helpButton.setToolTipText("Show raw sql.");
+        helpButton.setToolTipText("Show raw sql");
     }
 
     @Override
