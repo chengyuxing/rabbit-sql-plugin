@@ -50,7 +50,7 @@ public class NewXqlDialog extends DialogWrapper {
         this.doc = doc;
         this.anchors = anchors;
         setOKActionEnabled(false);
-        setSize(450, 147);
+        setSize(450, 155);
         setTitle("New XQL File");
     }
 

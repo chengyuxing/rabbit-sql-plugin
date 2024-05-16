@@ -12,6 +12,7 @@ import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -24,6 +25,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class XQLConfigManager {
+    private static final Logger log = Logger.getInstance(XQLConfigManager.class);
+
     private static volatile XQLConfigManager instance;
     private final Map<Project, Map<Path, Set<Config>>> configMap = new ConcurrentHashMap<>();
 
@@ -251,8 +254,10 @@ public class XQLConfigManager {
                 successes.add(Message.info(messagePrefix() + "updated!"));
             } catch (YamlDeserializeException e) {
                 warnings.add(Message.error(messagePrefix() + "config content invalid: " + e.getMessage()));
+                log.warn(e);
             } catch (Exception e) {
                 warnings.add(Message.error(messagePrefix() + "error: " + e.getMessage()));
+                log.warn(e);
             }
             if (warnings.isEmpty()) {
                 return successes;
