@@ -46,7 +46,7 @@
     <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.9.1+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.9.2+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -54,7 +54,7 @@
     </ol>
     <h3>Other</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.9.2+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.9.3+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -75,7 +75,7 @@
                 <li>Toolwindow: <b>XQL File Manager</b> xql file tree node add action <b>'Copy Path/Reference...'</b></li>
                 <li>Toolwindow: <b>XQL File Manager</b> make xql file tree node ordered following the config's <code>files</code> property.</li>
                 <li>Add <b>Statistics</b> action to Tools &gt; <b>XQL File Manager</b>)</li>
-                <li>Support <code>rabbit-sql 7.9.2+</code> and <code>rabbit-sql-spring-boot-starter 2.9.1+</code></li>
+                <li>Support <code>rabbit-sql 7.9.3+</code> and <code>rabbit-sql-spring-boot-starter 2.9.2+</code></li>
                 <li>Some optimized.</li>
             </ul>
             <h3>2.2.10</h3>
