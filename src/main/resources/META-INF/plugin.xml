@@ -76,6 +76,7 @@
                 <li>Toolwindow: <b>XQL File Manager</b> make xql file tree node ordered following the config's <code>files</code> property.</li>
                 <li>Add <b>Statistics</b> action to Tools &gt; <b>XQL File Manager</b>)</li>
                 <li>Support <code>rabbit-sql 7.9.3+</code> and <code>rabbit-sql-spring-boot-starter 2.9.2+</code></li>
+                <li>Fixed founded <code>xql-file-manager.yml</code> in test resources bug.</li>
                 <li>Some optimized.</li>
             </ul>
             <h3>2.2.10</h3>
