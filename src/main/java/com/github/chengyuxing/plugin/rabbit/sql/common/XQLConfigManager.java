@@ -172,30 +172,31 @@ public class XQLConfigManager {
 
                 @Override
                 protected void loadPipes() {
+                    if (pipes.isEmpty()) {
+                        return;
+                    }
                     Thread currentThread = Thread.currentThread();
                     ClassLoader originalClassLoader = currentThread.getContextClassLoader();
                     ClassLoader pluginClassLoader = this.getClass().getClassLoader();
                     try {
                         currentThread.setContextClassLoader(pluginClassLoader);
-                        if (!pipes.isEmpty()) {
-                            ClassFileLoader loader = ClassFileLoader.of(pluginClassLoader, classesPath);
-                            for (Map.Entry<String, String> e : pipes.entrySet()) {
-                                var pipeName = e.getKey();
-                                var pipeClassName = e.getValue();
-                                var pipeClassPath = classesPath.resolve(ResourceUtil.package2path(pipeClassName) + ".class");
-                                if (!Files.exists(pipeClassPath)) {
-                                    notificationExecutor.show(Message.warning(messagePrefix() + "pipe '" + pipeClassName + "' not found, maybe should re-compile project."));
+                        ClassFileLoader loader = ClassFileLoader.of(pluginClassLoader, classesPath);
+                        for (Map.Entry<String, String> e : pipes.entrySet()) {
+                            var pipeName = e.getKey();
+                            var pipeClassName = e.getValue();
+                            var pipeClassPath = classesPath.resolve(ResourceUtil.package2path(pipeClassName) + ".class");
+                            if (!Files.exists(pipeClassPath)) {
+                                notificationExecutor.show(Message.warning(messagePrefix() + "pipe '" + pipeClassName + "' not found, maybe should re-compile project."));
+                                continue;
+                            }
+                            try {
+                                var pipeClass = loader.findClass(pipeClassName);
+                                if (pipeClass == null) {
                                     continue;
                                 }
-                                try {
-                                    var pipeClass = loader.findClass(pipeClassName);
-                                    if (pipeClass == null) {
-                                        continue;
-                                    }
-                                    pipeInstances.put(pipeName, (IPipe<?>) ReflectUtil.getInstance(pipeClass));
-                                } catch (Throwable ex) {
-                                    notificationExecutor.show(Message.warning(messagePrefix() + "load pipe '" + pipeClassName + "' error: " + ex.getMessage()));
-                                }
+                                pipeInstances.put(pipeName, (IPipe<?>) ReflectUtil.getInstance(pipeClass));
+                            } catch (Throwable ex) {
+                                notificationExecutor.show(Message.warning(messagePrefix() + "load pipe '" + pipeClassName + "' error: " + ex.getMessage()));
                             }
                         }
                     } finally {
