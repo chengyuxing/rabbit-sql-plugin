@@ -130,7 +130,7 @@ public class XQLConfigManager {
             configs.entrySet().removeIf(entry -> {
                 var moduleVf = VirtualFileManager.getInstance().findFileByNioPath(entry.getKey());
                 if (Objects.nonNull(moduleVf)) {
-                    return !ProjectFileUtil.isProjectModule(moduleVf);
+                    return !ProjectFileUtil.isResourceProjectModule(moduleVf);
                 }
                 return true;
             });
@@ -222,6 +222,9 @@ public class XQLConfigManager {
             Set<Message> warnings = new HashSet<>();
             try {
                 xqlFileManagerConfig.loadYaml(new FileResource(configPath.toUri().toString()));
+                if (xqlFileManagerConfig.getFiles().isEmpty()) {
+                    return Set.of();
+                }
                 xqlFileManagerConfig.copyStateTo(xqlFileManager);
                 var newFiles = new LinkedHashMap<String, String>();
                 for (Map.Entry<String, String> e : xqlFileManager.getFiles().entrySet()) {

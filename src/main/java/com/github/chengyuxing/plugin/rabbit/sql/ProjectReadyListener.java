@@ -30,7 +30,7 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
             var moduleVfs = ProjectUtil.guessModuleDir(module);
             if (Objects.nonNull(moduleVfs) && moduleVfs.exists()) {
                 ProgressManager.checkCanceled();
-                if (!ProjectFileUtil.isProjectModule(moduleVfs)) {
+                if (!ProjectFileUtil.isResourceProjectModule(moduleVfs)) {
                     continue;
                 }
                 var moduleNioPath = moduleVfs.toNioPath();
@@ -42,7 +42,7 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
                 }
                 var found = false;
                 for (VirtualFile configVfs : allConfigVfs) {
-                    if (!ProjectFileUtil.isXqlFileManagerConfig(configVfs.getName())) {
+                    if (!ProjectFileUtil.isResourceXqlFileManagerConfig(moduleVfs, configVfs)) {
                         continue;
                     }
                     found = true;

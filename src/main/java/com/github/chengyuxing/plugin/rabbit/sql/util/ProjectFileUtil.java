@@ -63,7 +63,17 @@ public class ProjectFileUtil {
         return name.matches(Constants.CONFIG_PATTERN);
     }
 
-    public static boolean isProjectModule(VirtualFile module) {
+    public static boolean isResourceXqlFileManagerConfig(VirtualFile moduleFv, VirtualFile configVf) {
+        var name = configVf.getName();
+        if (isXqlFileManagerConfig(name)) {
+            var moduleResourcePath = moduleFv.toNioPath().resolve(Constants.RESOURCE_ROOT);
+            var configPath = configVf.toNioPath();
+            return configPath.startsWith(moduleResourcePath);
+        }
+        return false;
+    }
+
+    public static boolean isResourceProjectModule(VirtualFile module) {
         var mPath = module.toNioPath();
         var resourcesPath = mPath.resolve(Constants.RESOURCE_ROOT);
         return Files.exists(resourcesPath);
