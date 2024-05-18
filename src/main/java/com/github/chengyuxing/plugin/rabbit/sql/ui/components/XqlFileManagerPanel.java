@@ -147,14 +147,13 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         var searchTree = new TreeSpeedSearch(tree, true, t -> {
             if (t.getLastPathComponent() instanceof XqlTreeNode treeNode) {
                 if (treeNode.getUserObject() instanceof XqlTreeNodeData treeNodeData) {
+                    var title = treeNodeData.title();
                     if (treeNodeData.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
-                        var title = treeNodeData.title();
                         // (alias, sqlName, sql Object, config)
                         @SuppressWarnings("unchecked") var source = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) treeNodeData.source();
                         return title + SqlUtil.SYMBOL + source.getItem3().getDescription() + SqlUtil.SYMBOL + source.getItem3().getContent();
                     }
                     if (treeNodeData.type() == XqlTreeNodeData.Type.XQL_FILE) {
-                        var title = treeNodeData.title();
                         // (_, _, _, _, description)
                         @SuppressWarnings("unchecked") var source = (Quintuple<String, String, String, XQLConfigManager.Config, String>) treeNodeData.source();
                         return title + SqlUtil.SYMBOL + source.getItem5();
