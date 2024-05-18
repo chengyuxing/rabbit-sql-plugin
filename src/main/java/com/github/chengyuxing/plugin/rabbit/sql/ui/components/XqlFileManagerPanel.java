@@ -103,9 +103,6 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                if (tree.getPathForLocation(e.getX(), e.getY()) == null)
-                    return;
-                tree.setSelectionPath(tree.getPathForLocation(e.getX(), e.getY()));
                 if (e.getButton() == MouseEvent.BUTTON3) {
                     var selected = tree.getSelectionPath();
                     if (Objects.isNull(selected)) {
