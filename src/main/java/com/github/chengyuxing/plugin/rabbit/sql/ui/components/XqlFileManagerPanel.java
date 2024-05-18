@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.tuple.Quadruple;
+import com.github.chengyuxing.common.tuple.Quintuple;
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup.*;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TreeNodeRenderer;
@@ -9,6 +10,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
+import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
@@ -136,13 +138,35 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
 
             }
         });
-        var searchTree = new TreeSpeedSearch(tree);
-        searchTree.setCanExpand(true);
+        var scrollPane = createTreeSpeedSearchPane();
+
+        setContent(scrollPane);
+    }
+
+    private @NotNull JBScrollPane createTreeSpeedSearchPane() {
+        var searchTree = new TreeSpeedSearch(tree, true, t -> {
+            if (t.getLastPathComponent() instanceof XqlTreeNode treeNode) {
+                if (treeNode.getUserObject() instanceof XqlTreeNodeData treeNodeData) {
+                    if (treeNodeData.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
+                        var title = treeNodeData.title();
+                        // (alias, sqlName, sql Object, config)
+                        @SuppressWarnings("unchecked") var source = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) treeNodeData.source();
+                        return title + SqlUtil.SYMBOL + source.getItem3().getDescription() + SqlUtil.SYMBOL + source.getItem3().getContent();
+                    }
+                    if (treeNodeData.type() == XqlTreeNodeData.Type.XQL_FILE) {
+                        var title = treeNodeData.title();
+                        // (_, _, _, _, description)
+                        @SuppressWarnings("unchecked") var source = (Quintuple<String, String, String, XQLConfigManager.Config, String>) treeNodeData.source();
+                        return title + SqlUtil.SYMBOL + source.getItem5();
+                    }
+                }
+            }
+            return null;
+        });
 
         var scrollPane = new JBScrollPane(searchTree.getComponent());
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-
-        setContent(scrollPane);
+        return scrollPane;
     }
 
     public void saveTreeExpandedState() {
