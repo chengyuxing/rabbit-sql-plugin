@@ -17,6 +17,10 @@ public record XqlTreeNodeData(Type type, String title, Object source) {
          */
         XQL_FILE,
         /**
+         * xqls/home.xql -> xqls
+         */
+        XQL_FILE_FOLDER,
+        /**
          * getUsersTop10
          */
         XQL_FRAGMENT

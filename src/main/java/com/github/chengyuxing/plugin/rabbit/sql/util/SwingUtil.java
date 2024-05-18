@@ -1,11 +1,17 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
+import com.github.chengyuxing.common.tuple.Tuples;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
+import com.github.chengyuxing.sql.XQLFileManager;
 
 import javax.swing.*;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class SwingUtil {
@@ -38,5 +44,46 @@ public class SwingUtil {
                 tree.collapsePath(parent);
             }
         }
+    }
+
+    public static void path2tree(Path path, Map<String, Object> container) {
+        var first = path.getName(0).toString();
+        if (!container.containsKey(first)) {
+            container.put(first, new LinkedHashMap<>());
+        }
+        if (path.getNameCount() == 1) {
+            return;
+        }
+        var children = path.subpath(1, path.getNameCount());
+        //noinspection unchecked
+        path2tree(children, (Map<String, Object>) container.get(first));
+    }
+
+    public static void buildXQLTree(Map<String, Object> treeNodes, XQLConfigManager.Config config, XqlTreeNode rootNode) {
+        for (var e : treeNodes.entrySet()) {
+            var item = e.getKey();
+            @SuppressWarnings("unchecked") var children = (Map<String, Object>) e.getValue();
+            XqlTreeNode pNode;
+            if (children.isEmpty()) {
+                var resource = config.getXqlFileManager().getResource(item);
+                var filename = config.getXqlFileManagerConfig().getFiles().get(item);
+                pNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE, item, Tuples.of(item, filename, resource.getFilename(), config, resource.getDescription())));
+                buildXQLNodes(config, item, pNode, resource);
+            } else {
+                pNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE_FOLDER, item, item));
+            }
+            rootNode.add(pNode);
+            buildXQLTree(children, config, pNode);
+        }
+    }
+
+    public static void buildXQLNodes(XQLConfigManager.Config config, String item, XqlTreeNode XQLNode, XQLFileManager.Resource resource) {
+        resource.getEntry().forEach((name, sql) -> {
+            if (!name.startsWith("${") && !name.endsWith("}")) {
+                var sqlNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FRAGMENT,
+                        name, Tuples.of(item, name, sql, config)));
+                XQLNode.add(sqlNode);
+            }
+        });
     }
 }

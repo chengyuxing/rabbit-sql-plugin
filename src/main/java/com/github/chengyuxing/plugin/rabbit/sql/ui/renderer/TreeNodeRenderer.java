@@ -57,6 +57,10 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                         }
                         append("(" + secondaryText + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
                     }
+                    case XQL_FILE_FOLDER -> {
+                        setIcon(AllIcons.Nodes.Folder);
+                        append(nodeSource.toString());
+                    }
                     case XQL_FRAGMENT -> {
                         @SuppressWarnings("unchecked")
                         var sqlMeta = (Triple<String, String, XQLFileManager.Sql>) nodeSource.source();

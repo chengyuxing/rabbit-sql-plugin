@@ -3,12 +3,14 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.common.tuple.Quintuple;
 import com.github.chengyuxing.common.tuple.Tuples;
+import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup.*;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TreeNodeRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.openapi.actionSystem.*;
@@ -25,7 +27,9 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -34,12 +38,15 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     private final ActionManager actionManager = ActionManager.getInstance();
     private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
 
-    private Tree tree;
-    private final Map<TreePath, Boolean> treeExpandedState = new HashMap<>();
     private ActionPopupMenu xqlFileManagerMenu;
     private ActionPopupMenu xqlFragmentMenu;
     private ActionPopupMenu xqlFileMenu;
     private ActionPopupMenu moduleMenu;
+
+    private Tree tree;
+    private final Map<TreePath, Boolean> treeExpandedState = new HashMap<>();
+    private boolean treeViewNodes = false;
+
 
     public XqlFileManagerPanel(boolean vertical, Project project) {
         super(vertical);
@@ -60,6 +67,8 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.RefreshContentAction"),
                         actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ExpandAllAction"),
                         actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.CollapseAllAction"),
+                        actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ShowAsListViewAction"),
+                        actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ShowAsTreeViewAction"),
                         actionManager.getAction("xqlFileManager.toolwindow.Separator"),
                         actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.StatisticsAction")
                 };
@@ -208,20 +217,29 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                             var ds = new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_CONFIG, config.getConfigName(), config);
                             var configNode = new XqlTreeNode(ds);
                             mNode.add(configNode);
-                            config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
-                                var resource = config.getXqlFileManager().getResource(alias);
-                                if (Objects.nonNull(resource)) {
-                                    var fileNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE, alias, Tuples.of(alias, filename, resource.getFilename(), config, resource.getDescription())));
-                                    configNode.add(fileNode);
-                                    resource.getEntry().forEach((name, sql) -> {
-                                        if (!name.startsWith("${") && !name.endsWith("}")) {
-                                            var sqlNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FRAGMENT,
-                                                    name, Tuples.of(alias, name, sql, config)));
-                                            fileNode.add(sqlNode);
-                                        }
-                                    });
-                                }
-                            });
+                            if (treeViewNodes) {
+                                var nestTreeNodes = new LinkedHashMap<String, Object>();
+                                config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
+                                    String newFilename = filename;
+                                    if (newFilename.startsWith("file:")) {
+                                        newFilename = newFilename.substring(5);
+                                        newFilename = StringUtil.trimStarts(newFilename, "/");
+                                    }
+                                    int dIdx = newFilename.lastIndexOf("/");
+                                    String aliasPath = dIdx != -1 ? newFilename.substring(0, dIdx + 1) + alias : alias;
+                                    SwingUtil.path2tree(Path.of(aliasPath), nestTreeNodes);
+                                });
+                                SwingUtil.buildXQLTree(nestTreeNodes, config, configNode);
+                            } else {
+                                config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
+                                    var resource = config.getXqlFileManager().getResource(alias);
+                                    if (Objects.nonNull(resource)) {
+                                        var fileNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE, alias, Tuples.of(alias, filename, resource.getFilename(), config, resource.getDescription())));
+                                        configNode.add(fileNode);
+                                        SwingUtil.buildXQLNodes(config, alias, fileNode, resource);
+                                    }
+                                });
+                            }
                         }
                     });
                     root.add(mNode);
@@ -324,10 +342,14 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         var rootNode = new XqlTreeNode(project.getName());
         var model = new DefaultTreeModel(rootNode);
         var tree = new Tree(model);
+        tree.getEmptyText().setText("Cannot find Maven resources root folder.");
         tree.expandPath(new TreePath(rootNode));
         tree.setRootVisible(false);
         tree.setCellRenderer(new TreeNodeRenderer());
         return tree;
     }
 
+    public void setTreeViewNodes(boolean treeViewNodes) {
+        this.treeViewNodes = treeViewNodes;
+    }
 }

@@ -57,7 +57,7 @@ public class OpenInEditorAction extends AnAction {
                 var filepath = sqlMeta.getItem3();
                 yield Path.of(URI.create(filepath));
             }
-            case MODULE, XQL_FRAGMENT -> null;
+            case XQL_FILE_FOLDER, MODULE, XQL_FRAGMENT -> null;
         };
     }
 }

@@ -22,7 +22,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MyCode {
     //    @Test
@@ -94,5 +98,34 @@ public class MyCode {
 
     public record User(String name, int age) {
 
+    }
+
+    private static final Map<String, Object> nodeMap = new LinkedHashMap<>();
+
+    @Test
+    public void testNestTree() {
+        var a = Path.of("xqls/oracle/xc/b.xql");
+        var b = Path.of("xqls/oracle/admin/c.xql");
+        var c = Path.of("xqls/main/home.xql");
+
+
+        addNode(a, nodeMap);
+        addNode(b, nodeMap);
+        addNode(c, nodeMap);
+        System.out.println(nodeMap);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public void addNode(Path path, Map<String, Object> root) {
+        var first = path.getName(0).toString();
+        if (!root.containsKey(first)) {
+            root.put(first, new LinkedHashMap<>());
+        }
+        if (path.getNameCount() == 1) {
+            return;
+        }
+        var children = path.subpath(1, path.getNameCount());
+        addNode(children, (Map<String, Object>) root.get(first));
     }
 }
