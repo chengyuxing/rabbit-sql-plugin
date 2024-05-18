@@ -174,7 +174,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         return scrollPane;
     }
 
-    public void saveTreeExpandedState() {
+    void saveTreeExpandedState() {
         if (Objects.isNull(tree)) {
             return;
         }
@@ -186,7 +186,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         }
     }
 
-    public void restoreTreeExpandedState() {
+    void restoreTreeExpandedState() {
         if (Objects.isNull(tree)) {
             return;
         }
