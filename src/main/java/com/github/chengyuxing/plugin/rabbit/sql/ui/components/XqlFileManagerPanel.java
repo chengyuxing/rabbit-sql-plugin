@@ -345,7 +345,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         tree.getEmptyText().setText("Cannot find Maven resources root folder.");
         tree.expandPath(new TreePath(rootNode));
         tree.setRootVisible(false);
-        tree.setCellRenderer(new TreeNodeRenderer());
+        tree.setCellRenderer(new TreeNodeRenderer(() -> treeViewNodes));
         return tree;
     }
 

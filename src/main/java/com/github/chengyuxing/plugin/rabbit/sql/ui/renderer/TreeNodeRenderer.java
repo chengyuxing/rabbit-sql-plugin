@@ -1,7 +1,5 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.renderer;
 
-import com.github.chengyuxing.common.tuple.Pair;
-import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.common.tuple.Quintuple;
 import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
@@ -16,8 +14,15 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public class TreeNodeRenderer extends ColoredTreeCellRenderer {
+    private final Supplier<Boolean> xqlFileTreeView;
+
+    public TreeNodeRenderer(Supplier<Boolean> xqlFileTreeView) {
+        this.xqlFileTreeView = xqlFileTreeView;
+    }
+
     @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         if (value instanceof XqlTreeNode node) {
@@ -49,13 +54,17 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                         String secondaryText;
                         append(sqlMeta.getItem1() + " ");
                         if (Objects.nonNull(sqlMeta.getItem5()) && !Objects.equals(sqlMeta.getItem5().trim(), "")) {
-                            secondaryText = sqlMeta.getItem5();
+                            secondaryText = "(" + sqlMeta.getItem5() + ")";
                             setToolTipText(sqlMeta.getItem2());
                         } else {
-                            secondaryText = sqlMeta.getItem2();
+                            if (xqlFileTreeView.get()) {
+                                secondaryText = "";
+                            } else {
+                                secondaryText = "(" + sqlMeta.getItem2() + ")";
+                            }
                             setToolTipText(null);
                         }
-                        append("(" + secondaryText + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
+                        append(secondaryText, SimpleTextAttributes.GRAY_ATTRIBUTES);
                     }
                     case XQL_FILE_FOLDER -> {
                         setIcon(AllIcons.Nodes.Folder);
