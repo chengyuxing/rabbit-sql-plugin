@@ -186,6 +186,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
 
     private JButton createOpenDatabaseButton() {
         var btn = new FixedSizeButton(30);
+        btn.setFocusable(true);
         btn.setToolTipText("Configure database");
         btn.setIcon(AllIcons.Actions.AddMulticaret);
         btn.addActionListener(e -> {
