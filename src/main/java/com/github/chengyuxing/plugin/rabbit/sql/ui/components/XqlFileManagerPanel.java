@@ -247,6 +247,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
             public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
                 return new AnAction[]{
                         new NewSQLAction(tree),
+                        new Separator(),
                         copyGroup,
                         new OpenInEditorAction(tree)
                 };
