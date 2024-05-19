@@ -73,7 +73,7 @@ public class SwingUtil {
                 pNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE, item, Tuples.of(item, filename, resource.getFilename(), config, resource.getDescription())));
                 buildXQLNodes(config, item, pNode, resource);
             } else {
-                pNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE_FOLDER, item, item));
+                pNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE_FOLDER, item, config));
             }
             rootNode.add(pNode);
             buildXQLTree(children, config, pNode);

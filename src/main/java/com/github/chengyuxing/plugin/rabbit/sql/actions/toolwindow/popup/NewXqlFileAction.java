@@ -44,28 +44,20 @@ public class NewXqlFileAction extends AnAction {
             return;
         }
         if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE_FOLDER) {
+            var config = (XQLConfigManager.Config) nodeSource.source();
             var selected = tree.getSelectionPath();
             if (Objects.isNull(selected)) {
                 return;
             }
-            var treeNodes = Stream.of(selected.getPath())
+            var folderClasspath = Stream.of(selected.getPath())
                     .filter(p -> p instanceof XqlTreeNode)
                     .map(p -> ((XqlTreeNode) p).getUserObject())
                     .filter(n -> n instanceof XqlTreeNodeData)
                     .map(n -> (XqlTreeNodeData) n)
+                    .filter(n -> n.type() == XqlTreeNodeData.Type.XQL_FILE_FOLDER)
+                    .map(XqlTreeNodeData::title)
                     .toList();
-            treeNodes.stream()
-                    .filter(n -> n.type() == XqlTreeNodeData.Type.XQL_CONFIG)
-                    .map(c -> (XQLConfigManager.Config) c.source())
-                    .findFirst()
-                    .ifPresent(config -> {
-                        var folderClasspath = treeNodes.stream()
-                                .filter(n -> n.type() == XqlTreeNodeData.Type.XQL_FILE_FOLDER)
-                                .map(XqlTreeNodeData::source)
-                                .map(Object::toString)
-                                .toList();
-                        openNewXqlDialog(project, config, folderClasspath);
-                    });
+            openNewXqlDialog(project, config, folderClasspath);
         }
     }
 
