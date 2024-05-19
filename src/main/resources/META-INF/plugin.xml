@@ -46,7 +46,7 @@
     <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.9.2+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.9.3+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -54,7 +54,7 @@
     </ol>
     <h3>Other</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.9.3+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.9.4+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -68,13 +68,22 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.2.12</h3>
+            <ul>
+                <li>Compatible with IDEA IU 2024.2.* .</li>
+                <li>Toolwindow: <b>XQL File Manager</b> add support speed search <i>sql statement</i> and <i>description</i>.</li>
+                <li>Toolwindow: <b>XQL File Manager</b> add support action for toggle xql display view mode(tree and flat)</li>
+                <li>Support <code>rabbit-sql 7.9.4+</code> and <code>rabbit-sql-spring-boot-starter 2.9.3+</code></li>
+                <li>Fixed Toolwindow <b>XQL File Manager</b> tree node mouse right button click empty location cannot trigger menu popup.</li>
+                <li>Some optimized.</li>
+            </ul>
             <h3>2.2.11</h3>
             <ul>
                 <li>Dialog: <b>New XQL File</b> support write description.</li>
                 <li>Toolwindow: <b>XQL File Manager</b> xql file tree node support show description if exists.</li>
                 <li>Toolwindow: <b>XQL File Manager</b> xql file tree node add action <b>'Copy Path/Reference...'</b></li>
                 <li>Toolwindow: <b>XQL File Manager</b> make xql file tree node ordered following the config's <code>files</code> property.</li>
-                <li>Add <b>Statistics</b> action to Tools &gt; <b>XQL File Manager</b>)</li>
+                <li>Add <b>Statistics</b> action to Tools &gt; <b>XQL File Manager</b></li>
                 <li>Support <code>rabbit-sql 7.9.3+</code> and <code>rabbit-sql-spring-boot-starter 2.9.2+</code></li>
                 <li>Fixed founded <code>xql-file-manager.yml</code> in test resources bug.</li>
                 <li>Some optimized.</li>
@@ -496,5 +505,13 @@
                 class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.CollapseAllAction"
                 text="Collapse All"
                 icon="AllIcons.Actions.Collapseall"/>
+        <action class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ShowAsTreeViewAction"
+                id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ShowAsTreeViewAction"
+                text="Show XQL Files As Tree"
+                icon="AllIcons.Actions.ShowAsTree"/>
+        <action class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ShowAsListViewAction"
+                id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ShowAsListViewAction"
+                text="Flatten XQL Files"
+                icon="AllIcons.Actions.ListFiles"/>
     </actions>
 </idea-plugin>
