@@ -42,7 +42,7 @@ public class NewXQLForm extends JPanel {
         var userInputPath = filename.getText().trim();
         var abPath = genAbPath(userInputPath);
         if (isYmlListType(userInputPath)) {
-            userInputPath = "!path " + formatYmlArray(userInputPath);
+            userInputPath = formatYmlArray(userInputPath);
             return Tuples.of(alias.getText(), userInputPath, abPath, description.getText());
         }
         if (userInputPath.startsWith("/")) {
@@ -187,7 +187,7 @@ public class NewXQLForm extends JPanel {
         return paths;
     }
 
-    private boolean isYmlListType(String s) {
+    public boolean isYmlListType(String s) {
         return s.startsWith("[") && s.endsWith("]");
     }
 
@@ -243,8 +243,8 @@ public class NewXQLForm extends JPanel {
         CellConstraints cc = new CellConstraints();
 
         //======== this ========
-        setMinimumSize(new Dimension(370, 160));
-        setPreferredSize(new Dimension(370, 160));
+        setMinimumSize(new Dimension(500, 160));
+        setPreferredSize(new Dimension(500, 160));
         setLayout(new FormLayout(
             new ColumnSpec[] {
                 new ColumnSpec(Sizes.dluX(41)),

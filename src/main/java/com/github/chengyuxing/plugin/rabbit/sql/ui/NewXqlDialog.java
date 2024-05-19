@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -42,6 +44,7 @@ public class NewXqlDialog extends DialogWrapper {
     private Consumer<PsiElement> whenComplete = psi -> {
     };
     private NewXQLForm newXqlFileForm = null;
+    private List<String> pathPrefix = List.of();
 
     public NewXqlDialog(Project project, XQLConfigManager.Config config, Document doc, Map<String, String> anchors) {
         super(true);
@@ -50,12 +53,12 @@ public class NewXqlDialog extends DialogWrapper {
         this.doc = doc;
         this.anchors = anchors;
         setOKActionEnabled(false);
-        setSize(450, 160);
+        setSize(500, 160);
         setTitle("New XQL File");
     }
 
     public void initContent() {
-        this.newXqlFileForm = new NewXQLForm(getAbResourceRoot());
+        this.newXqlFileForm = new NewXQLForm(getAbResourceRoot() + "/" + String.join("/", pathPrefix));
         this.newXqlFileForm.setAnchors(anchors);
         this.newXqlFileForm.setDefaultAlias(defaultAlias);
         this.newXqlFileForm.setAliasEditable(enableAutoGenAlias);
@@ -108,6 +111,36 @@ public class NewXqlDialog extends DialogWrapper {
         return modulePath.getParent().relativize(resourcePath).toString();
     }
 
+    private String formatUserInputPath(String userInputPath) {
+        var trimUserInputPath = userInputPath.trim();
+        if (pathPrefix.isEmpty()) {
+            if (newXqlFileForm.isYmlListType(trimUserInputPath)) {
+                return "!path " + trimUserInputPath;
+            }
+            return trimUserInputPath;
+        }
+        var pathArray = new ArrayList<>(pathPrefix);
+        if (newXqlFileForm.isYmlListType(trimUserInputPath)) {
+            var paths = trimUserInputPath.substring(1, trimUserInputPath.length() - 1).split(",");
+            for (int i = 0, j = paths.length; i < j; i++) {
+                var path = paths[i].trim();
+                if (!path.endsWith(".xql") && i == j - 1) {
+                    path += ".xql";
+                }
+                pathArray.add(path);
+            }
+            return "!path [ " + String.join(", ", pathArray) + " ]";
+        }
+        return String.join("/", pathArray) + "/" + trimUserInputPath;
+    }
+
+    private String formatAbPath(String abPath) {
+        if (pathPrefix.isEmpty()) {
+            return abPath;
+        }
+        return String.join("/", pathPrefix) + "/" + abPath;
+    }
+
     @Override
     protected @Nullable JComponent createCenterPanel() {
         return newXqlFileForm;
@@ -117,8 +150,8 @@ public class NewXqlDialog extends DialogWrapper {
     protected void doOKAction() {
         var data = newXqlFileForm.getData();
         var alias = data.getItem1();
-        var userInput = data.getItem2();
-        var abPath = data.getItem3();
+        var userInput = formatUserInputPath(data.getItem2());
+        var abPath = formatAbPath(data.getItem3());
         var description = data.getItem4().replaceAll("\\s+", "\n");
 
         if (config.getXqlFileManagerConfig().getFiles().containsKey(alias)) {
@@ -206,5 +239,9 @@ public class NewXqlDialog extends DialogWrapper {
     public void setWhenComplete(Consumer<PsiElement> whenComplete) {
         if (Objects.nonNull(whenComplete))
             this.whenComplete = whenComplete;
+    }
+
+    public void setPathPrefix(List<String> pathPrefix) {
+        this.pathPrefix = pathPrefix;
     }
 }

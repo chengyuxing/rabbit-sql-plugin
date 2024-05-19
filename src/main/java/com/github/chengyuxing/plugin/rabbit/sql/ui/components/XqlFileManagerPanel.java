@@ -28,10 +28,7 @@ import javax.swing.tree.TreePath;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     private final Project project;
@@ -41,6 +38,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     private ActionPopupMenu xqlFileManagerMenu;
     private ActionPopupMenu xqlFragmentMenu;
     private ActionPopupMenu xqlFileMenu;
+    private ActionPopupMenu xqlFolderMenu;
     private ActionPopupMenu moduleMenu;
 
     private Tree tree;
@@ -86,6 +84,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         xqlFileManagerMenu = createXqlFileManagerPopMenu(tree);
         xqlFragmentMenu = createXqlFragmentPopMenu(tree);
         moduleMenu = createModuleMenu(tree);
+        xqlFolderMenu = createXqlFolderPopMenu(tree);
 
         tree.addMouseListener(new MouseListener() {
             @Override
@@ -98,7 +97,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                     var node = (XqlTreeNode) selected.getLastPathComponent();
                     if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
                         switch (nodeSource.type()) {
-                            case MODULE, XQL_CONFIG, XQL_FILE -> {
+                            case MODULE, XQL_CONFIG, XQL_FILE, XQL_FILE_FOLDER -> {
                             }
                             case XQL_FRAGMENT -> {
                                 @SuppressWarnings("unchecked")
@@ -124,6 +123,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                             case XQL_CONFIG -> xqlFileManagerMenu.getComponent().show(tree, e.getX(), e.getY());
                             case XQL_FILE -> xqlFileMenu.getComponent().show(tree, e.getX(), e.getY());
                             case XQL_FRAGMENT -> xqlFragmentMenu.getComponent().show(tree, e.getX(), e.getY());
+                            case XQL_FILE_FOLDER -> xqlFolderMenu.getComponent().show(tree, e.getX(), e.getY());
                         }
                     }
                 }
@@ -288,6 +288,17 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         new Separator(),
                         copyGroup,
                         new OpenInEditorAction(tree)
+                };
+            }
+        });
+    }
+
+    private ActionPopupMenu createXqlFolderPopMenu(Tree tree) {
+        return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
+            @Override
+            public AnAction @NotNull [] getChildren(@Nullable AnActionEvent anActionEvent) {
+                return new AnAction[]{
+                        new NewXqlFileAction(tree)
                 };
             }
         });

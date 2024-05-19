@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
@@ -10,11 +11,14 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class NewXqlFileAction extends AnAction {
     private final JTree tree;
@@ -31,20 +35,53 @@ public class NewXqlFileAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_CONFIG) {
+        if (Objects.isNull(nodeSource)) {
+            return;
+        }
+        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_CONFIG) {
             var config = (XQLConfigManager.Config) nodeSource.source();
-            var configPath = config.getConfigPath();
-            var configVf = VirtualFileManager.getInstance().findFileByNioPath(configPath);
-            var doc = ProjectFileUtil.getDocument(project, configVf);
-            if (Objects.isNull(doc)) {
+            openNewXqlDialog(project, config, List.of());
+            return;
+        }
+        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE_FOLDER) {
+            var selected = tree.getSelectionPath();
+            if (Objects.isNull(selected)) {
                 return;
             }
-            var anchors = PsiUtil.getYmlAnchors(project, configVf);
-            ApplicationManager.getApplication().invokeLater(() -> {
-                var d = new NewXqlDialog(project, config, doc, anchors);
-                d.initContent();
-                d.showAndGet();
-            });
+            var treeNodes = Stream.of(selected.getPath())
+                    .filter(p -> p instanceof XqlTreeNode)
+                    .map(p -> ((XqlTreeNode) p).getUserObject())
+                    .filter(n -> n instanceof XqlTreeNodeData)
+                    .map(n -> (XqlTreeNodeData) n)
+                    .toList();
+            treeNodes.stream()
+                    .filter(n -> n.type() == XqlTreeNodeData.Type.XQL_CONFIG)
+                    .map(c -> (XQLConfigManager.Config) c.source())
+                    .findFirst()
+                    .ifPresent(config -> {
+                        var folderClasspath = treeNodes.stream()
+                                .filter(n -> n.type() == XqlTreeNodeData.Type.XQL_FILE_FOLDER)
+                                .map(XqlTreeNodeData::source)
+                                .map(Object::toString)
+                                .toList();
+                        openNewXqlDialog(project, config, folderClasspath);
+                    });
         }
+    }
+
+    private void openNewXqlDialog(Project project, XQLConfigManager.Config config, List<String> pathPrefix) {
+        var configPath = config.getConfigPath();
+        var configVf = VirtualFileManager.getInstance().findFileByNioPath(configPath);
+        var doc = ProjectFileUtil.getDocument(project, configVf);
+        if (Objects.isNull(doc)) {
+            return;
+        }
+        var anchors = PsiUtil.getYmlAnchors(project, configVf);
+        ApplicationManager.getApplication().invokeLater(() -> {
+            var d = new NewXqlDialog(project, config, doc, anchors);
+            d.setPathPrefix(pathPrefix);
+            d.initContent();
+            d.showAndGet();
+        });
     }
 }

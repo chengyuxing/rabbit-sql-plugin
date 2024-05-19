@@ -66,6 +66,9 @@ public class SwingUtil {
             XqlTreeNode pNode;
             if (children.isEmpty()) {
                 var resource = config.getXqlFileManager().getResource(item);
+                if (resource == null) {
+                    return;
+                }
                 var filename = config.getXqlFileManagerConfig().getFiles().get(item);
                 pNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE, item, Tuples.of(item, filename, resource.getFilename(), config, resource.getDescription())));
                 buildXQLNodes(config, item, pNode, resource);
