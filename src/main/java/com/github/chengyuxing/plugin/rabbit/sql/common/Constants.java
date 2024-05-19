@@ -13,5 +13,5 @@ public class Constants {
     public static final Path RESOURCE_ROOT = Path.of("src", "main", "resources");
     public static final Path CONFIG_PATH = RESOURCE_ROOT.resolve(CONFIG_NAME);
     @Language("Regexp")
-    public static final String CONFIG_PATTERN = "xql-file-manager(-[a-zA-Z0-9]+)?\\.yml";
+    public static final String CONFIG_PATTERN = "xql-file-manager(-[a-zA-Z0-9_]+)?\\.yml";
 }
