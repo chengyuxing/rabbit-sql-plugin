@@ -66,7 +66,7 @@ public class SwingUtil {
             XqlTreeNode pNode;
             if (children.isEmpty()) {
                 var resource = config.getXqlFileManager().getResource(item);
-                if (resource == null) {
+                if (Objects.isNull(resource)) {
                     continue;
                 }
                 var filename = config.getXqlFileManagerConfig().getFiles().get(item);
