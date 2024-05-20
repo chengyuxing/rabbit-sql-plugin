@@ -68,7 +68,7 @@
 
     <change-notes>
         <![CDATA[
-            <h3>2.2.12</h3>
+            <h3>2.3.0</h3>
             <ul>
                 <li>Compatible with IDEA IU 2024.2.* .</li>
                 <li>Toolwindow: <b>XQL File Manager</b> add support speed search <i>sql statement</i> and <i>description</i>.</li>
