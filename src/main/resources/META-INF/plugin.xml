@@ -506,13 +506,9 @@
                 class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.CollapseAllAction"
                 text="Collapse All"
                 icon="AllIcons.Actions.Collapseall"/>
-        <action class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ShowAsTreeViewAction"
-                id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ShowAsTreeViewAction"
+        <action class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ToggleViewModeAction"
+                id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ToggleViewModeAction"
                 text="Show XQL Files As Tree"
-                icon="AllIcons.Actions.ShowAsTree"/>
-        <action class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ShowAsListViewAction"
-                id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ShowAsListViewAction"
-                text="Flatten XQL Files"
                 icon="AllIcons.Actions.ListFiles"/>
     </actions>
 </idea-plugin>

@@ -65,8 +65,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.RefreshContentAction"),
                         actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ExpandAllAction"),
                         actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.CollapseAllAction"),
-                        actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ShowAsListViewAction"),
-                        actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ShowAsTreeViewAction"),
+                        actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ToggleViewModeAction"),
                         actionManager.getAction("xqlFileManager.toolwindow.Separator"),
                         actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.StatisticsAction")
                 };
@@ -358,6 +357,10 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         tree.setRootVisible(false);
         tree.setCellRenderer(new TreeNodeRenderer(() -> treeViewNodes));
         return tree;
+    }
+
+    public boolean isTreeViewNodes() {
+        return treeViewNodes;
     }
 
     public void setTreeViewNodes(boolean treeViewNodes) {
