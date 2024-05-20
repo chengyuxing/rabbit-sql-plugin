@@ -1,8 +1,11 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.*;
+import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
+import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
@@ -87,7 +90,7 @@ public class ProjectFileUtil {
             Files.writeString(absFilename, template, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
             then.run();
         } catch (IOException ex) {
-            NotificationManager.getInstance().show(project, Message.error(ex.getMessage()));
+            NotificationUtil.showMessage(project, "Error", ex.getMessage(), NotificationType.ERROR);
         }
     }
 

@@ -36,7 +36,7 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
                 var moduleNioPath = moduleVfs.toNioPath();
                 var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", module.getModuleProductionSourceScope());
                 if (allConfigVfs.isEmpty()) {
-                    var config = new XQLConfigManager.Config(project, moduleVfs);
+                    var config = xqlConfigManager.newConfig(project, moduleVfs);
                     xqlConfigManager.add(project, moduleNioPath, config);
                     continue;
                 }
@@ -46,7 +46,7 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
                         continue;
                     }
                     found = true;
-                    var config = new XQLConfigManager.Config(project, moduleVfs);
+                    var config = xqlConfigManager.newConfig(project, moduleVfs);
                     config.setConfigVfs(configVfs);
                     if (!config.isValid()) {
                         continue;
@@ -57,7 +57,7 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
                     xqlConfigManager.add(project, moduleNioPath, config);
                 }
                 if (!found) {
-                    var config = new XQLConfigManager.Config(project, moduleVfs);
+                    var config = xqlConfigManager.newConfig(project, moduleVfs);
                     xqlConfigManager.add(project, moduleNioPath, config);
                 }
             }

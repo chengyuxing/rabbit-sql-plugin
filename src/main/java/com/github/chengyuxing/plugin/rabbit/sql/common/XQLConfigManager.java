@@ -6,6 +6,7 @@ import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.common.utils.ResourceUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ArrayListValueSet;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
+import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
@@ -22,12 +23,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
-public final class XQLConfigManager {
+public class XQLConfigManager {
     private static final Logger log = Logger.getInstance(XQLConfigManager.class);
 
     private static volatile XQLConfigManager instance;
     private final Map<Project, Map<Path, Set<Config>>> configMap = new ConcurrentHashMap<>();
+    private final Map<Project, NotificationExecutor> notificationMap = new ConcurrentHashMap<>();
 
     private XQLConfigManager() {
     }
@@ -44,6 +47,12 @@ public final class XQLConfigManager {
     }
 
     public void add(Project project, Path module, Config config) {
+        if (!notificationMap.containsKey(project)) {
+            var notificationExecutor = new NotificationExecutor(messages ->
+                    messages.forEach(m ->
+                            NotificationUtil.showMessage(project, m.getText(), m.getType())), 1500);
+            notificationMap.put(project, notificationExecutor);
+        }
         if (!configMap.containsKey(project)) {
             var map = new LinkedHashMap<Path, Set<Config>>();
             configMap.put(project, map);
@@ -137,7 +146,11 @@ public final class XQLConfigManager {
         }
     }
 
-    public static final class Config implements AutoCloseable {
+    public Config newConfig(Project project, VirtualFile moduleVf) {
+        return new Config(project, moduleVf);
+    }
+
+    public final class Config implements AutoCloseable {
         private final Project project;
         private final Path modulePath;
         // src/main/resources
@@ -146,6 +159,7 @@ public final class XQLConfigManager {
         private VirtualFile configVfs;
         private Path configPath;
 
+        private final Supplier<Optional<NotificationExecutor>> notificationExecutor;
         private final XQLFileManagerConfig xqlFileManagerConfig;
         private final XQLFileManager xqlFileManager;
         private final Set<String> originalXqlFiles;
@@ -160,6 +174,8 @@ public final class XQLConfigManager {
             this.resourcesRoot = this.modulePath.resolve(Constants.RESOURCE_ROOT);
 
             this.originalXqlFiles = new HashSet<>();
+
+            this.notificationExecutor = () -> Optional.ofNullable(notificationMap.get(project));
 
             this.xqlFileManagerConfig = new XQLFileManagerConfig();
             this.xqlFileManager = new XQLFileManager() {
@@ -181,7 +197,7 @@ public final class XQLConfigManager {
                             var pipeClassName = e.getValue();
                             var pipeClassPath = classesPath.resolve(ResourceUtil.package2path(pipeClassName) + ".class");
                             if (!Files.exists(pipeClassPath)) {
-                                NotificationManager.getInstance().show(project, Message.warning(messagePrefix() + "pipe '" + pipeClassName + "' not found, maybe should re-compile project."));
+                                notificationExecutor.get().ifPresent(n -> n.show(Message.warning(messagePrefix() + "pipe '" + pipeClassName + "' not found, maybe should re-compile project.")));
                                 continue;
                             }
                             try {
@@ -191,7 +207,7 @@ public final class XQLConfigManager {
                                 }
                                 pipeInstances.put(pipeName, (IPipe<?>) ReflectUtil.getInstance(pipeClass));
                             } catch (Throwable ex) {
-                                NotificationManager.getInstance().show(project, Message.warning(messagePrefix() + "load pipe '" + pipeClassName + "' error: " + ex.getMessage()));
+                                notificationExecutor.get().ifPresent(n -> n.show(Message.warning(messagePrefix() + "load pipe '" + pipeClassName + "' error: " + ex.getMessage())));
                             }
                         }
                     } finally {
@@ -270,7 +286,7 @@ public final class XQLConfigManager {
 
         public void fire() {
             var messages = initXqlFileManager();
-            messages.forEach(m -> NotificationManager.getInstance().show(project, m));
+            notificationExecutor.get().ifPresent(n -> n.show(messages));
         }
 
         public SqlGenerator getSqlGenerator() {
@@ -375,7 +391,9 @@ public final class XQLConfigManager {
 
         @Override
         public void close() {
-            clear();
+            xqlFileManager.close();
+            originalXqlFiles.clear();
+            notificationExecutor.get().ifPresent(NotificationExecutor::close);
         }
 
         public void clear() {
