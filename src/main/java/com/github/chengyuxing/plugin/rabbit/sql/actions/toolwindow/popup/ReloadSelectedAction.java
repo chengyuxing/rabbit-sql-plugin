@@ -34,7 +34,7 @@ public class ReloadSelectedAction extends AnAction {
             var config = (XQLConfigManager.Config) nodeSource.source();
             if (config.isActive()) {
                 PsiUtil.saveUnsavedXqlAndConfig(project);
-                config.fire(true);
+                config.fire();
                 XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
             }
         }

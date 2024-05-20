@@ -42,7 +42,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                                 config.setConfigVfs(vf);
                                 if (config.isValid()) {
                                     if (config.isActive()) {
-                                        config.fire(true);
+                                        config.fire();
                                     }
                                     xqlConfigManager.add(project, moduleVf.toNioPath(), config);
                                 }
@@ -73,13 +73,13 @@ public class XqlFileChangeListener implements BulkFileListener {
                                     // file created
                                     // other file name change matched configured files
                                     if (configured) {
-                                        config.fire(true);
+                                        config.fire();
                                     } else {
                                         // filename changed which not included in config files.
                                         config.getOriginalXqlFiles().forEach(cfgPath -> {
                                             var p = Path.of(URI.create(cfgPath));
                                             if (cfgPath.isEmpty() || !Files.exists(p)) {
-                                                config.fire(true);
+                                                config.fire();
                                             }
                                         });
                                     }

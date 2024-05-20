@@ -2,7 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.intellij.notification.NotificationType;
 
-public class Message {
+public final class Message {
     private final String text;
     private NotificationType type = NotificationType.INFORMATION;
 

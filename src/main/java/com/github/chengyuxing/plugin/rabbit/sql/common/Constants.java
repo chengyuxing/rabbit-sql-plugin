@@ -5,7 +5,7 @@ import org.intellij.lang.annotations.Language;
 
 import java.nio.file.Path;
 
-public class Constants {
+public final class Constants {
     @Language("RegExp")
     public static final String SQL_NAME_PATTERN = "^&\\w+\\..+";
     public static final String SQL_NAME_ANNOTATION_PATTERN = XQLFileManager.NAME_PATTERN.pattern();

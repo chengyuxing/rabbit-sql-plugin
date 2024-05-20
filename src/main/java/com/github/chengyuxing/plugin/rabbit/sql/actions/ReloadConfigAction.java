@@ -24,7 +24,7 @@ public class ReloadConfigAction extends AnAction {
             xqlConfigManager.getConfigMap(project)
                     .forEach((module, configs) -> configs.forEach(config -> {
                         if (config.isValid() && config.isActive()) {
-                            config.fire(true);
+                            config.fire();
                         }
                     }));
             xqlConfigManager.cleanup(project);

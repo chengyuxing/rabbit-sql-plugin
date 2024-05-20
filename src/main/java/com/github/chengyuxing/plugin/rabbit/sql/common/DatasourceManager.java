@@ -14,7 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DatasourceManager {
+public final class DatasourceManager {
     private static volatile DatasourceManager instance;
     /**
      * key: project dir, value: database resource which be owned by project

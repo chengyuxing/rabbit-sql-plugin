@@ -36,7 +36,7 @@ public class ToggleActiveAction extends AnAction {
                 return;
             }
             xqlConfigManager.toggleActive(project, config);
-            config.fire(true);
+            config.fire();
             XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
         }
     }

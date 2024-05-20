@@ -6,7 +6,6 @@ import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.common.utils.ResourceUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ArrayListValueSet;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
-import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
@@ -24,7 +23,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class XQLConfigManager {
+public final class XQLConfigManager {
     private static final Logger log = Logger.getInstance(XQLConfigManager.class);
 
     private static volatile XQLConfigManager instance;
@@ -147,7 +146,6 @@ public class XQLConfigManager {
         private VirtualFile configVfs;
         private Path configPath;
 
-        private final NotificationExecutor notificationExecutor;
         private final XQLFileManagerConfig xqlFileManagerConfig;
         private final XQLFileManager xqlFileManager;
         private final Set<String> originalXqlFiles;
@@ -163,9 +161,6 @@ public class XQLConfigManager {
 
             this.originalXqlFiles = new HashSet<>();
 
-            this.notificationExecutor = new NotificationExecutor(messages ->
-                    messages.forEach(m ->
-                            NotificationUtil.showMessage(project, m.getText(), m.getType())), 1500);
             this.xqlFileManagerConfig = new XQLFileManagerConfig();
             this.xqlFileManager = new XQLFileManager() {
                 private final Path classesPath = modulePath.resolve(Path.of("target", "classes"));
@@ -186,7 +181,7 @@ public class XQLConfigManager {
                             var pipeClassName = e.getValue();
                             var pipeClassPath = classesPath.resolve(ResourceUtil.package2path(pipeClassName) + ".class");
                             if (!Files.exists(pipeClassPath)) {
-                                notificationExecutor.show(Message.warning(messagePrefix() + "pipe '" + pipeClassName + "' not found, maybe should re-compile project."));
+                                NotificationManager.getInstance().show(project, Message.warning(messagePrefix() + "pipe '" + pipeClassName + "' not found, maybe should re-compile project."));
                                 continue;
                             }
                             try {
@@ -196,7 +191,7 @@ public class XQLConfigManager {
                                 }
                                 pipeInstances.put(pipeName, (IPipe<?>) ReflectUtil.getInstance(pipeClass));
                             } catch (Throwable ex) {
-                                notificationExecutor.show(Message.warning(messagePrefix() + "load pipe '" + pipeClassName + "' error: " + ex.getMessage()));
+                                NotificationManager.getInstance().show(project, Message.warning(messagePrefix() + "load pipe '" + pipeClassName + "' error: " + ex.getMessage()));
                             }
                         }
                     } finally {
@@ -273,15 +268,9 @@ public class XQLConfigManager {
             return "[" + getModuleName() + ":" + getConfigName() + "] " + " ";
         }
 
-        public void fire(boolean showNotification) {
-            var messages = initXqlFileManager();
-            if (showNotification) {
-                notificationExecutor.show(messages);
-            }
-        }
-
         public void fire() {
-            fire(false);
+            var messages = initXqlFileManager();
+            messages.forEach(m -> NotificationManager.getInstance().show(project, m));
         }
 
         public SqlGenerator getSqlGenerator() {
@@ -386,9 +375,7 @@ public class XQLConfigManager {
 
         @Override
         public void close() {
-            xqlFileManager.close();
-            originalXqlFiles.clear();
-            notificationExecutor.close();
+            clear();
         }
 
         public void clear() {

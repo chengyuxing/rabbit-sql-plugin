@@ -3,7 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.common;
 import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.sql.Args;
 
-public class Global {
+public final class Global {
     /**
      * System (USER, DATE, TIME)
      *
