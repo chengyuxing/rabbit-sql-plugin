@@ -74,6 +74,7 @@
                 <li>Toolwindow: <b>XQL File Manager</b> add support speed search <i>sql statement</i> and <i>description</i>.</li>
                 <li>Toolwindow: <b>XQL File Manager</b> add support action for toggle xql display view mode(tree and flat)</li>
                 <li>Support <code>rabbit-sql 7.9.4+</code> and <code>rabbit-sql-spring-boot-starter 2.9.3+</code></li>
+                <li>Notification shown optimized.</li>
                 <li>Fixed Toolwindow <b>XQL File Manager</b> tree node mouse right button click empty location cannot trigger menu popup.</li>
                 <li>Some optimized.</li>
             </ul>
