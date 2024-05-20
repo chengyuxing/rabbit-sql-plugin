@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
-import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
+import com.intellij.notification.Notification;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 
 import java.util.HashSet;
@@ -32,13 +33,13 @@ public final class NotificationManager {
     }
 
     /**
-     * Show System message.
+     * Show message.
      *
      * @param project project
      * @param message message
      * @param active  message cache active milliseconds
      */
-    public void show(Project project, Message message, int active) {
+    public void show(Project project, String title, Message message, int active) {
         if (Objects.isNull(future) || future.isCancelled() || future.isDone()) {
             future = service.schedule(() -> {
                 messages.clear();
@@ -48,17 +49,28 @@ public final class NotificationManager {
         }
         if (messages.isEmpty() || !messages.contains(message)) {
             messages.add(message);
-            NotificationUtil.showMessage(project, message.getText(), message.getType());
+            var notice = new Notification("Rabbit-SQL Notification Group", title, message.getText(), message.getType());
+            Notifications.Bus.notify(notice, project);
         }
     }
 
     /**
-     * Show System message (message cache active 3000 milliseconds).
+     * Show message (message cache active 3000 milliseconds).
+     *
+     * @param project project
+     * @param message message
+     */
+    public void show(Project project, String title, Message message) {
+        show(project, title, message, 3000);
+    }
+
+    /**
+     * Show message with title 'XQL file manager' (message cache active 3000 milliseconds).
      *
      * @param project project
      * @param message message
      */
     public void show(Project project, Message message) {
-        show(project, message, 3000);
+        show(project, "XQL file manager", message);
     }
 }
