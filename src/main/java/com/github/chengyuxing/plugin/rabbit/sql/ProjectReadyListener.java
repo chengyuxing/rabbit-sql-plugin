@@ -52,7 +52,7 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
                         continue;
                     }
                     if (config.isActive()) {
-                        config.fire();
+                        config.silentFire();
                     }
                     xqlConfigManager.add(project, moduleNioPath, config);
                 }

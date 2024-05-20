@@ -289,6 +289,10 @@ public class XQLConfigManager {
             notificationExecutor.get().ifPresent(n -> n.show(messages));
         }
 
+        public void silentFire() {
+            initXqlFileManager();
+        }
+
         public SqlGenerator getSqlGenerator() {
             if (sqlGenerator.getNamedParamPrefix().charAt(0) != xqlFileManager.getNamedParamPrefix()) {
                 sqlGenerator = new SqlGenerator(xqlFileManager.getNamedParamPrefix());
