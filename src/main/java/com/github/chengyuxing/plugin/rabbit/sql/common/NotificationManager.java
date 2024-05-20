@@ -55,17 +55,17 @@ public final class NotificationManager {
     }
 
     /**
-     * Show message (message cache active 3000 milliseconds).
+     * Show message (message cache active 5000 milliseconds).
      *
      * @param project project
      * @param message message
      */
     public void show(Project project, String title, Message message) {
-        show(project, title, message, 3000);
+        show(project, title, message, 5000);
     }
 
     /**
-     * Show message with title 'XQL file manager' (message cache active 3000 milliseconds).
+     * Show message with title 'XQL file manager' (message cache active 5000 milliseconds).
      *
      * @param project project
      * @param message message
