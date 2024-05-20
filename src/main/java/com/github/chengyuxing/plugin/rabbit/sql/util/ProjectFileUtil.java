@@ -90,7 +90,7 @@ public class ProjectFileUtil {
             Files.writeString(absFilename, template, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
             then.run();
         } catch (IOException ex) {
-            NotificationUtil.showMessage(project, "Error", ex.getMessage(), NotificationType.ERROR);
+            NotificationUtil.showMessage(project, ex.getMessage(), NotificationType.ERROR);
         }
     }
 
