@@ -4,7 +4,6 @@ import com.intellij.database.console.JdbcConsole;
 import com.intellij.database.console.session.DatabaseSessionManager;
 import com.intellij.database.dataSource.DatabaseConnectionPoint;
 import com.intellij.database.dataSource.LocalDataSourceManager;
-import com.intellij.database.psi.DataSourceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
 
@@ -12,6 +11,7 @@ import javax.swing.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class DatasourceManager {
@@ -101,39 +101,35 @@ public final class DatasourceManager {
                 }
             }
             if (!consoles.containsKey(id)) {
-                DataSourceManager.getManagers(project).stream()
-                        .filter(dsm -> dsm instanceof LocalDataSourceManager)
-                        .findFirst()
-                        .ifPresent(dsm -> {
-                            var dss = dsm.getDataSources();
-                            for (var ds : dss) {
-                                var cfg = ds.getConnectionConfig();
-                                if (cfg != null) {
-                                    if (id.equals(DatabaseId.of(ds.getName(), ds.getUniqueId()))) {
-                                        var console = JdbcConsole.getActiveConsoles(project)
-                                                .stream()
-                                                .filter(c -> c.getDataSource() == ds)
-                                                .findFirst()
-                                                .map(c -> {
-                                                    var session = c.getSession();
-                                                    session.setAutoCommit(false);
-                                                    session.setTitle("Rabbit-SQL-Plugin");
-                                                    return c;
-                                                })
-                                                .orElseGet(() -> {
-                                                    var session = DatabaseSessionManager.getSession(project, (DatabaseConnectionPoint) cfg, "Rabbit-SQL-Plugin");
-                                                    session.setAutoCommit(false);
-                                                    return JdbcConsole.newConsole(project)
-                                                            .fromDataSource(ds)
-                                                            .useSession(session)
-                                                            .build();
-                                                });
-                                        consoles.put(id, console);
-                                        break;
-                                    }
-                                }
-                            }
-                        });
+                var dss = LocalDataSourceManager.getInstance(project).getDataSources();
+                for (var ds : dss) {
+                    var cfg = ds.getConnectionConfig();
+                    if (Objects.isNull(cfg)) {
+                        continue;
+                    }
+                    if (!Objects.equals(id, DatabaseId.of(ds.getName(), ds.getUniqueId()))) {
+                        continue;
+                    }
+                    var console = JdbcConsole.getActiveConsoles(project)
+                            .stream()
+                            .filter(c -> c.getDataSource() == ds)
+                            .findFirst()
+                            .map(c -> {
+                                var session = c.getSession();
+                                session.setAutoCommit(false);
+                                session.setTitle("Rabbit-SQL-Plugin");
+                                return c;
+                            }).orElseGet(() -> {
+                                var session = DatabaseSessionManager.getSession(project, (DatabaseConnectionPoint) cfg, "Rabbit-SQL-Plugin");
+                                session.setAutoCommit(false);
+                                return JdbcConsole.newConsole(project)
+                                        .fromDataSource(ds)
+                                        .useSession(session)
+                                        .build();
+                            });
+                    consoles.put(id, console);
+                    break;
+                }
             }
             if (consoles.containsKey(id)) {
                 return consoles.get(id);
@@ -143,10 +139,10 @@ public final class DatasourceManager {
 
         public Map<DatabaseId, Icon> getConfiguredDatabases() {
             Map<DatabaseId, Icon> dsInfo = new LinkedHashMap<>();
-            DataSourceManager.getManagers(project).stream()
-                    .filter(dsm -> dsm instanceof LocalDataSourceManager)
-                    .flatMap(dsm -> dsm.getDataSources().stream())
-                    .filter(ds -> ds.getConnectionConfig() != null)
+            LocalDataSourceManager.getInstance(project)
+                    .getDataSources()
+                    .stream()
+                    .filter(ds -> Objects.nonNull(ds.getConnectionConfig()))
                     .forEach(ds -> dsInfo.put(DatabaseId.of(ds.getName(), ds.getUniqueId()), ds.getIcon(Iconable.ICON_FLAG_VISIBILITY)));
             return dsInfo;
         }
