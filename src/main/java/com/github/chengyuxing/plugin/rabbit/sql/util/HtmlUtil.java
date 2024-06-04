@@ -12,6 +12,7 @@ public class HtmlUtil {
             case POSTGRESQL_FUNCTION_BODY_SYMBOL, SINGLE_QUOTE_STRING -> span(content, Color.STRING);
             case ASTERISK -> span(content, Color.HIGHLIGHT);
             case LINE_ANNOTATION, BLOCK_ANNOTATION -> span(content, Color.ANNOTATION);
+            case NAMED_PARAMETER -> code(content, Color.HIGHLIGHT);
         });
         return "<pre>" + highlighted + "</pre>";
     }
@@ -47,6 +48,7 @@ public class HtmlUtil {
         KEYWORD("#CC7832"),
         NUMBER("#48A0A2"),
         FUNCTION("#54ADF9"),
+        NAMED_PARAM("#499ee7"),
         STRING("#79A978"),
         ANNOTATION("#7B7E84"),
         DANGER("#E56068"),
