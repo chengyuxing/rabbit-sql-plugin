@@ -52,7 +52,7 @@ public class StringUtil {
 
     public static Map<String, Set<String>> getParamsMappingInfo(SqlGenerator sqlGenerator, String sql) {
         var p = sqlGenerator.getNamedParamPattern();
-        var substrMapPair = SqlUtil.replaceSqlSubstr(sql);
+        var substrMapPair = SqlUtil.replaceSubstring(sql);
         var nonSubstringSql = substrMapPair.getItem1();
         var substrMap = substrMapPair.getItem2();
 

@@ -294,7 +294,7 @@ public class XQLConfigManager {
         }
 
         public SqlGenerator getSqlGenerator() {
-            if (sqlGenerator.getNamedParamPrefix().charAt(0) != xqlFileManager.getNamedParamPrefix()) {
+            if (sqlGenerator.getNamedParamPrefix() != xqlFileManager.getNamedParamPrefix()) {
                 sqlGenerator = new SqlGenerator(xqlFileManager.getNamedParamPrefix());
             }
             return sqlGenerator;

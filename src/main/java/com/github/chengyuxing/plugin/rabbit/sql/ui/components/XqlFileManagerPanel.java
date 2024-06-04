@@ -12,7 +12,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
-import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
@@ -156,12 +155,12 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                     if (treeNodeData.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
                         // (alias, sqlName, sql Object, config)
                         @SuppressWarnings("unchecked") var source = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) treeNodeData.source();
-                        return title + SqlUtil.SYMBOL + source.getItem3().getDescription() + SqlUtil.SYMBOL + source.getItem3().getContent();
+                        return title + ' ' + source.getItem3().getDescription() + ' ' + source.getItem3().getContent();
                     }
                     if (treeNodeData.type() == XqlTreeNodeData.Type.XQL_FILE) {
                         // (_, _, _, _, description)
                         @SuppressWarnings("unchecked") var source = (Quintuple<String, String, String, XQLConfigManager.Config, String>) treeNodeData.source();
-                        return title + SqlUtil.SYMBOL + source.getItem5();
+                        return title + ' ' + source.getItem5();
                     }
                 }
             }

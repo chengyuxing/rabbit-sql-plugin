@@ -40,6 +40,10 @@ public class ExecuteSqlAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
+        var project = e.getProject();
+        if (Objects.isNull(project)) {
+            return;
+        }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
         if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
             @SuppressWarnings("unchecked")
