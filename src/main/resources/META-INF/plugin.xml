@@ -46,7 +46,7 @@
     <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.9.3+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.9.7+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -54,7 +54,7 @@
     </ol>
     <h3>Other</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.9.4+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.9.8+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -68,6 +68,12 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.3.1</h3>
+            <ul>
+                <li>Support <code>rabbit-sql 7.9.8+</code> and <code>rabbit-sql-spring-boot-starter 2.9.7+</code></li>
+                <li>Sql quick doc support highlight named parameter.</li>
+                <li>Some optimized.</li>
+            </ul>
             <h3>2.3.0</h3>
             <ul>
                 <li>Compatible with IDEA IU 2024.2.* .</li>
