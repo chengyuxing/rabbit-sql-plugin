@@ -99,7 +99,7 @@ public class XqlFileAnnotator implements Annotator {
     }
 
     void highlightVarName(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content) {
-        Pattern p = Pattern.compile("\\s(?<var>:" + Patterns.VAR_KEY_PATTERN + ")(\\s|\\W)");
+        Pattern p = Pattern.compile("\\s(?<var>:" + Patterns.VAR_KEY_PATTERN + ")(\\s|\\W|$)");
         Matcher m = p.matcher(content);
         while (m.find()) {
             String var = m.group("var");

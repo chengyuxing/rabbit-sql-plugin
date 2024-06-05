@@ -10,10 +10,8 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.IconListCellRenderer
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
-import com.intellij.database.dataSource.DatabaseConnectionCore;
-import com.intellij.database.dataSource.connection.statements.SmartStatementFactoryService;
-import com.intellij.database.dataSource.connection.statements.StagedException;
-import com.intellij.database.datagrid.DataRequest;
+import com.intellij.database.run.ConsoleDataRequest;
+import com.intellij.database.util.DbImplUtil;
 import com.intellij.database.view.ui.DataSourceManagerDialog;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.ui.ComboBox;
@@ -26,11 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.*;
 
 import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 
@@ -147,7 +141,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                         var console = datasourceResource.getConsole(db);
                         if (console != null) {
                             datasourceResource.setSelected(db);
-                            var request = new ExecuteRequest(console, rawSql, DataRequest.newConstraints(), null);
+                            var request = ConsoleDataRequest.newRequest(console, rawSql, DbImplUtil.getDbms(console));
                             console.getMessageBus().getDataProducer().processRequest(request);
                             dispose();
                             return;
@@ -216,37 +210,5 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         var userHeight = Math.max(height, userSize.getHeight());
         var userWidth = Math.max(width, userSize.getWidth());
         setSize((int) userWidth, (int) userHeight);
-    }
-
-    public static class ExecuteRequest extends DataRequest.QueryRequest {
-        protected ExecuteRequest(@NotNull Owner owner, @NotNull String query, @NotNull Constraints constraints, @Nullable Object params) {
-            super(owner, query, constraints, params);
-        }
-    }
-
-    public static class ErrorTestRequest extends DataRequest.RawRequest {
-        private final String sql;
-        private Consumer<StagedException> errorConsumer = err -> {
-        };
-
-        protected ErrorTestRequest(OwnerEx owner, String sql) {
-            super(owner);
-            this.sql = sql;
-        }
-
-        @Override
-        public void processRaw(Context context, DatabaseConnectionCore databaseConnectionCore) {
-            var res = SmartStatementFactoryService.getInstance()
-                    .poweredBy(databaseConnectionCore)
-                    .simple()
-                    .execute(sql, r -> r);
-            if (Objects.nonNull(res.getLeft())) {
-                errorConsumer.accept(res.getLeft());
-            }
-        }
-
-        public void setErrorConsumer(Consumer<StagedException> errorConsumer) {
-            this.errorConsumer = errorConsumer;
-        }
     }
 }

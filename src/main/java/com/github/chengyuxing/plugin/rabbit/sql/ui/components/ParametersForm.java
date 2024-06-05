@@ -5,6 +5,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.script.Comparators;
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.utils.StringUtil;
@@ -58,7 +59,20 @@ public class ParametersForm extends JPanel {
             var v = row.get(1);
             if (v != null) {
                 var sv = v.toString().trim();
-                if (sv.startsWith("[") && sv.endsWith("]")) {
+                if (sv.matches(".+::[a-zA-Z]+$")) {
+                    try {
+                        var type = sv.substring(sv.lastIndexOf("::") + 2);
+                        var value = sv.substring(0, sv.lastIndexOf("::"));
+                        v = switch (type) {
+                            case "number" -> Long.parseLong(value);
+                            case "date" -> MostDateTime.of(value).toDate();
+                            default -> value;
+                        };
+                    } catch (Exception e) {
+                        errors.add("Type parse of parameter '" + k + "' error.");
+                        errors.addAll(ExceptionUtil.getCauseMessages(e));
+                    }
+                } else if (sv.startsWith("[") && sv.endsWith("]")) {
                     try {
                         v = JSON.std.listFrom(sv);
                     } catch (Exception e) {
