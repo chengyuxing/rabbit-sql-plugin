@@ -17,12 +17,14 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.components.fields.ExpandableTextField;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.JBUI;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.plaf.basic.BasicComboBoxEditor;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -154,6 +156,12 @@ public class ParametersForm extends JPanel {
         cbx.addItem("true");
         cbx.addItem("false");
         cbx.setEditable(true);
+        cbx.setEditor(new BasicComboBoxEditor() {
+            @Override
+            protected JTextField createEditorComponent() {
+                return new ExpandableTextField();
+            }
+        });
         return new DefaultCellEditor(cbx);
     }
 
