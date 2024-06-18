@@ -67,7 +67,7 @@ public class NewSQLDialog extends DialogWrapper {
             }
             var sqlFile = xqlFileManager.getResource(alias).getFilename();
             if (!ProjectFileUtil.isLocalFileUri(sqlFile)) {
-                NotificationUtil.showMessage(project, "Only support local file.", NotificationType.WARNING);
+                NotificationUtil.showMessage(project, "only support local file.", NotificationType.WARNING);
                 return;
             }
             var sqlFileVf = VirtualFileManager.getInstance().findFileByNioPath(Path.of(URI.create(sqlFile)));

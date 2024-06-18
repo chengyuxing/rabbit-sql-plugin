@@ -60,7 +60,7 @@ public class OpenInEditorAction extends AnAction {
                 var sqlMeta = (Triple<String, String, String>) nodeData.source();
                 var filepath = sqlMeta.getItem3();
                 if (!ProjectFileUtil.isLocalFileUri(filepath)) {
-                    NotificationUtil.showMessage(project, "Only support local file.", NotificationType.WARNING);
+                    NotificationUtil.showMessage(project, "only support local file.", NotificationType.WARNING);
                     yield null;
                 }
                 yield Path.of(URI.create(filepath));

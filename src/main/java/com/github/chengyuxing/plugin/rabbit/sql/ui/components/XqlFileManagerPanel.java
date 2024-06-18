@@ -107,7 +107,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                                 if (ProjectFileUtil.isLocalFileUri(sqlMeta.getItem2())) {
                                     PsiUtil.navigate2xqlFile(sqlMeta.getItem1(), sqlMeta.getItem2(), sqlMeta.getItem4());
                                 } else {
-                                    NotificationUtil.showMessage(project, "Only support local file.", NotificationType.WARNING);
+                                    NotificationUtil.showMessage(project, "only support local file.", NotificationType.WARNING);
                                 }
                             }
                         }
