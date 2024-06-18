@@ -6,6 +6,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.ui.ColoredTreeCellRenderer;
@@ -50,7 +51,11 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                     case XQL_FILE -> {
                         @SuppressWarnings("unchecked")
                         var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
-                        setIcon(XqlIcons.XQL_FILE);
+                        if (ProjectFileUtil.isLocalFileUri(sqlMeta.getItem3())) {
+                            setIcon(XqlIcons.XQL_FILE);
+                        } else {
+                            setIcon(XqlIcons.XQL_FILE_REMOTE);
+                        }
                         String secondaryText;
                         append(sqlMeta.getItem1() + " ");
                         if (Objects.nonNull(sqlMeta.getItem5()) && !Objects.equals(sqlMeta.getItem5().trim(), "")) {
