@@ -109,8 +109,9 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
                     var alias = StringUtil.extraSqlReference(name).getItem1();
                     var resource = xqlFileManager.getResource(alias);
                     var filename = FileResource.getFileName(resource.getFilename(), true);
+                    var icon = ProjectFileUtil.isLocalFileUri(resource.getFilename()) ? XqlIcons.XQL_FILE_ITEM : XqlIcons.XQL_FILE_ITEM_REMOTE;
                     return LookupElementBuilder.create(name)
-                            .withIcon(XqlIcons.XQL_FILE_ITEM)
+                            .withIcon(icon)
                             .withTypeText(filename)
                             .withTailText(" " + description)
                             .withCaseSensitivity(true);
