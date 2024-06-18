@@ -193,20 +193,21 @@ public class StatisticsForm extends JPanel {
                                             var resource = xqlFileManager.getResources().get(alias);
                                             var filePath = resource.getFilename();
                                             var filename = FileResource.getFileName(filePath, true);
-                                            var lines = 0L;
-                                            var fileLength = 0L;
+                                            var lines = -1L;
+                                            var fileLength = -1L;
                                             var lastModified = "--";
                                             try {
                                                 if (ProjectFileUtil.isLocalFileUri(filePath)) {
-                                                    lines = ProjectFileUtil.lineNumber(Path.of(URI.create(filePath)));
-                                                    fileLength = Files.size(Path.of(URI.create(filePath)));
-                                                    var fileModifiedDate = Files.getLastModifiedTime(Path.of(URI.create(filePath))).toInstant();
+                                                    var path = Path.of(URI.create(filePath));
+                                                    lines = ProjectFileUtil.lineNumber(path);
+                                                    fileLength = Files.size(path);
+                                                    var fileModifiedDate = Files.getLastModifiedTime(path).toInstant();
                                                     lastModified = MostDateTime.of(fileModifiedDate).toString("yyyy/MM/dd HH:mm:ss");
                                                 }
                                             } catch (IOException ignored) {
 
                                             }
-                                            var size = StringUtil.formatFileSize(fileLength);
+                                            var size = fileLength >= 0 ? StringUtil.formatFileSize(fileLength) : "-1";
                                             return new Object[]{
                                                     new DataCell(filename, table),
                                                     alias,
