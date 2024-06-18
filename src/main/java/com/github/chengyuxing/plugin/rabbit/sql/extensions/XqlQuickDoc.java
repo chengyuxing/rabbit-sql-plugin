@@ -34,9 +34,6 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
         if (!(originalElement instanceof PsiJavaTokenImpl) || !(originalElement.getParent() instanceof PsiLiteralExpression literalExpression)) {
             return null;
         }
-        if (!(element instanceof PsiComment)) {
-            return null;
-        }
         String sqlRef = literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
         if (sqlRef == null) {
             return null;
@@ -48,12 +45,13 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
             var config = xqlConfigManager.getActiveConfig(originalElement);
             if (Objects.nonNull(config) && config.getXqlFileManager().contains(sqlName)) {
                 var xqlFileManager = config.getXqlFileManager();
-                var fileDescription = xqlFileManager.getResource(alias).getDescription();
+                var resource = xqlFileManager.getResource(alias);
+                var fileDescription = resource.getDescription();
                 var sql = xqlFileManager.getSqlObject(sqlName);
                 var sqlDefinition = SqlUtil.trimEnd(sql.getContent());
                 var sqlContent = HtmlUtil.highlightSql(sqlDefinition);
                 var sqlDescription = sql.getDescription();
-                var xqlFile = element.getContainingFile().getName();
+                var xqlFile = element instanceof PsiComment ? element.getContainingFile().getName() : resource.getFilename();
 
                 var doc = DEFINITION_START + HtmlUtil.wrap("span", element.getText(), HtmlUtil.Color.EMPTY);
 

@@ -1,7 +1,9 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
+import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
@@ -51,6 +53,9 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
                 var allXqlFiles = config.getXqlFileManager().getFiles();
                 if (allXqlFiles.containsKey(alias)) {
                     var xqlFilePath = allXqlFiles.get(alias);
+                    if (!ProjectFileUtil.isLocalFileUri(xqlFilePath)) {
+                        return ResolveResult.EMPTY_ARRAY;
+                    }
                     var xqlPath = Path.of(URI.create(xqlFilePath));
                     var vf = VirtualFileManager.getInstance().findFileByNioPath(xqlPath);
                     if (vf == null) return ResolveResult.EMPTY_ARRAY;
@@ -101,9 +106,12 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
                 .stream()
                 .map(name -> {
                     var description = xqlFileManager.getSqlObject(name).getDescription();
+                    var alias = StringUtil.extraSqlReference(name).getItem1();
+                    var resource = xqlFileManager.getResource(alias);
+                    var filename = FileResource.getFileName(resource.getFilename(), true);
                     return LookupElementBuilder.create(name)
                             .withIcon(XqlIcons.XQL_FILE_ITEM)
-                            .withTypeText(name.substring(0, name.lastIndexOf(".")) + ".xql")
+                            .withTypeText(filename)
                             .withTailText(" " + description)
                             .withCaseSensitivity(true);
                 })
