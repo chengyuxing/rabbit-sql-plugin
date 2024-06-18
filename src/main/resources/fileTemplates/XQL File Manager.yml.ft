@@ -4,12 +4,9 @@
 # Time: $TIME
 # https://github.com/chengyuxing/rabbit-sql/blob/master/XQL_FILE_MANAGER.md
 
-#constants:
-#  db: &db pgsql
-
 files:
-#  foo: !path [ *db, a.xql ]
-#  bar: b.xql
+#  foo: !path [ main, a.xql ]
+#  bar: main/b.xql
 
 #delimiter: ;
 
