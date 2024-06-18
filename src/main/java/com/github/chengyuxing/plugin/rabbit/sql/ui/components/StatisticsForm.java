@@ -96,6 +96,9 @@ public class StatisticsForm extends JPanel {
             long totalLines = 0;
             long totalSize = 0;
             for (var file : xqlFileManager.getFiles().values()) {
+                if (!ProjectFileUtil.isLocalFileUri(file)) {
+                    continue;
+                }
                 var filePath = Path.of(URI.create(file));
                 totalLines += ProjectFileUtil.lineNumber(filePath);
                 try {
@@ -190,13 +193,16 @@ public class StatisticsForm extends JPanel {
                                             var resource = xqlFileManager.getResources().get(alias);
                                             var filePath = resource.getFilename();
                                             var filename = FileResource.getFileName(filePath, true);
-                                            var lines = ProjectFileUtil.lineNumber(Path.of(URI.create(filePath)));
+                                            var lines = 0L;
                                             var fileLength = 0L;
                                             var lastModified = "--";
                                             try {
-                                                fileLength = Files.size(Path.of(URI.create(filePath)));
-                                                var fileModifiedDate = Files.getLastModifiedTime(Path.of(URI.create(filePath))).toInstant();
-                                                lastModified = MostDateTime.of(fileModifiedDate).toString("yyyy/MM/dd HH:mm:ss");
+                                                if (ProjectFileUtil.isLocalFileUri(filePath)) {
+                                                    lines = ProjectFileUtil.lineNumber(Path.of(URI.create(filePath)));
+                                                    fileLength = Files.size(Path.of(URI.create(filePath)));
+                                                    var fileModifiedDate = Files.getLastModifiedTime(Path.of(URI.create(filePath))).toInstant();
+                                                    lastModified = MostDateTime.of(fileModifiedDate).toString("yyyy/MM/dd HH:mm:ss");
+                                                }
                                             } catch (IOException ignored) {
 
                                             }
