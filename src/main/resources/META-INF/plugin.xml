@@ -46,7 +46,7 @@
     <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.9.10+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.9.11+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -54,7 +54,7 @@
     </ol>
     <h3>Other</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.9.11+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.9.12+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -70,7 +70,7 @@
         <![CDATA[
             <h3>2.3.2</h3>
             <ul>
-                <li>Support <code>rabbit-sql 7.9.11+</code> and <code>rabbit-sql-spring-boot-starter 2.9.10+</code></li>
+                <li>Support <code>rabbit-sql 7.9.12+</code> and <code>rabbit-sql-spring-boot-starter 2.9.11+</code></li>
                 <li>Add supports for xql file protocol: <code>file://, http(s)://, ftp://</code></li>
                 <li>Add supports for yml config variable placeholder: <code>${env.Name}</code> (<code>System.getenv()</code>) e.g.
                  <i>http://server/home.xql?token=${env.TOKEN}</i></li>
