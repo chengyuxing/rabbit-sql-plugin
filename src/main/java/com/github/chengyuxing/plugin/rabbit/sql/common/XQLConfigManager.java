@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.nio.file.Files;
@@ -247,18 +248,10 @@ public class XQLConfigManager {
                         warnings.add(Message.warning(messagePrefix() + "'" + alias + "' associated invalid location."));
                         continue;
                     }
-                    Path abPath;
-                    if (filename.startsWith("file:")) {
-                        // e.g. file:/Users/.../home.xql
-                        abPath = Path.of(URI.create(filename));
-                    } else {
-                        // e.g. src/main/resources/xqls/home.xql
-                        abPath = resourcesRoot.resolve(filename);
-                    }
-                    var uri = abPath.toUri().toString();
+                    String uri = getUri(filename);
                     // whatever valid or not, save original xql-file-manager.yml files.
                     originalXqlFiles.add(uri);
-                    if (!Files.exists(abPath)) {
+                    if (ProjectFileUtil.isLocalFileUri(uri) && !Files.exists(Path.of(URI.create(uri)))) {
                         warnings.add(Message.warning(messagePrefix() + filename + " not exists."));
                         continue;
                     }
@@ -278,6 +271,17 @@ public class XQLConfigManager {
                 return successes;
             }
             return warnings;
+        }
+
+        private @NotNull String getUri(String filename) {
+            String uri;
+            if (ProjectFileUtil.isURI(filename)) {
+                uri = filename;
+            } else {
+                // e.g. src/main/resources/xqls/home.xql
+                uri = resourcesRoot.resolve(filename).toUri().toString();
+            }
+            return uri;
         }
 
         private String messagePrefix() {

@@ -3,10 +3,14 @@ package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +36,7 @@ public class OpenInEditorAction extends AnAction {
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
         if (Objects.nonNull(nodeSource)) {
-            var filePath = detectedExistsFilePath(nodeSource);
+            var filePath = detectedExistsFilePath(project, nodeSource);
             if (Objects.nonNull(filePath)) {
                 var xqlVf = VirtualFileManager.getInstance().findFileByNioPath(filePath);
                 if (Objects.nonNull(xqlVf) && xqlVf.exists()) {
@@ -45,7 +49,7 @@ public class OpenInEditorAction extends AnAction {
         }
     }
 
-    private Path detectedExistsFilePath(XqlTreeNodeData nodeData) {
+    private Path detectedExistsFilePath(Project project, XqlTreeNodeData nodeData) {
         return switch (nodeData.type()) {
             case XQL_CONFIG -> {
                 var config = (XQLConfigManager.Config) nodeData.source();
@@ -55,6 +59,10 @@ public class OpenInEditorAction extends AnAction {
                 @SuppressWarnings("unchecked")
                 var sqlMeta = (Triple<String, String, String>) nodeData.source();
                 var filepath = sqlMeta.getItem3();
+                if (!ProjectFileUtil.isLocalFileUri(filepath)) {
+                    NotificationUtil.showMessage(project, "Only support local file.", NotificationType.WARNING);
+                    yield null;
+                }
                 yield Path.of(URI.create(filepath));
             }
             case XQL_FILE_FOLDER, MODULE, XQL_FRAGMENT -> null;

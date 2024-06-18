@@ -4,10 +4,13 @@ import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.common.tuple.Quintuple;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.icons.AllIcons;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
@@ -96,13 +99,15 @@ public class CopySqlAction extends AnAction {
                 case ALIAS -> clipboard.setContents(new StringSelection(sqlMeta.getItem1()), null);
                 case ABSOLUTE_PATH -> clipboard.setContents(new StringSelection(sqlMeta.getItem3()), null);
                 case PATH_FROM_CLASSPATH -> {
-                    if (sqlMeta.getItem2().startsWith("file:")) {
+                    if (ProjectFileUtil.isURI(sqlMeta.getItem2())) {
+                        NotificationUtil.showMessage(project, "Only support local file.", NotificationType.WARNING);
                         return;
                     }
                     clipboard.setContents(new StringSelection(sqlMeta.getItem2()), null);
                 }
                 case YML_ARRAY_PATH_FROM_CLASSPATH -> {
-                    if (sqlMeta.getItem2().startsWith("file:")) {
+                    if (ProjectFileUtil.isURI(sqlMeta.getItem2())) {
+                        NotificationUtil.showMessage(project, "Only support local file.", NotificationType.WARNING);
                         return;
                     }
                     var classpathPath = sqlMeta.getItem2().split("/");

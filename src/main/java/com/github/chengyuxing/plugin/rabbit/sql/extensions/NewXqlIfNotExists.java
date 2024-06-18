@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
+import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
@@ -9,6 +10,7 @@ import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
 import com.intellij.icons.AllIcons;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.ControlFlowException;
@@ -68,6 +70,10 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
 
             // do append xql fragment
             var sqlFile = resource.getFilename();
+            if (!ProjectFileUtil.isLocalFileUri(sqlFile)) {
+                NotificationUtil.showMessage(project, "Only support local file.", NotificationType.WARNING);
+                return;
+            }
             var sqlFileVf = VirtualFileManager.getInstance().findFileByNioPath(Path.of(URI.create(sqlFile)));
             if (Objects.isNull(sqlFileVf)) {
                 return;

@@ -146,4 +146,12 @@ public class ProjectFileUtil {
             return 0;
         }
     }
+
+    public static boolean isURI(String path) {
+        return path.matches("(file|http|https|ftp)://.+") || path.startsWith("file:");
+    }
+
+    public static boolean isLocalFileUri(String path) {
+        return path.startsWith("file:");
+    }
 }

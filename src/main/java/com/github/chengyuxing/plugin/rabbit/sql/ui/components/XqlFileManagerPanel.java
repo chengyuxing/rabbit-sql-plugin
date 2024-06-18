@@ -9,9 +9,12 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TreeNodeRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
+import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
@@ -26,6 +29,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -100,7 +104,11 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                             case XQL_FRAGMENT -> {
                                 @SuppressWarnings("unchecked")
                                 var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
-                                PsiUtil.navigate2xqlFile(sqlMeta.getItem1(), sqlMeta.getItem2(), sqlMeta.getItem4());
+                                if (ProjectFileUtil.isLocalFileUri(sqlMeta.getItem2())) {
+                                    PsiUtil.navigate2xqlFile(sqlMeta.getItem1(), sqlMeta.getItem2(), sqlMeta.getItem4());
+                                } else {
+                                    NotificationUtil.showMessage(project, "Only support local file.", NotificationType.WARNING);
+                                }
                             }
                         }
                     }
@@ -219,8 +227,10 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                                 var nestTreeNodes = new LinkedHashMap<String, Object>();
                                 config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
                                     String newFilename = filename;
-                                    if (newFilename.startsWith("file:")) {
-                                        newFilename = newFilename.substring(5);
+                                    if (ProjectFileUtil.isURI(newFilename)) {
+                                        // http://server/home.xql
+                                        // /home.xql
+                                        newFilename = URI.create(filename).getPath();
                                         newFilename = StringUtil.trimStarts(newFilename, "/");
                                     }
                                     int dIdx = newFilename.lastIndexOf("/");
