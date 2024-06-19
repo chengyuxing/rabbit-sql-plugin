@@ -34,8 +34,7 @@ public class StringUtil {
     }
 
     public static Set<String> getTemplateParameters(String str, String keyPrefix, String keySuffix) {
-        var sql = SqlUtil.removeBlockAnnotation(str);
-        String[] lines = sql.split(NEW_LINE);
+        String[] lines = str.split(NEW_LINE);
         if (lines.length > 0) {
             var cleanedSql = Stream.of(lines).filter(line -> !line.trim().startsWith("--"))
                     .collect(Collectors.joining(NEW_LINE));
@@ -66,12 +65,12 @@ public class StringUtil {
             var m = p.matcher(tl);
             if (com.github.chengyuxing.common.utils.StringUtil.startsWithsIgnoreCase(tl, IF, SWITCH, WHEN, CASE, FOR)) {
                 while (m.find()) {
-                    var name = m.group("name");
+                    var name = m.group(1);
                     var kl = getKeyAndRestLength(name);
                     var key = kl.getItem1();
-                    var endIdx = m.end("name") - kl.getItem2();
+                    var endIdx = m.end(1) - kl.getItem2();
                     tl = safeEscape(tl);
-                    var part = code(tl.substring(0, m.start("name") - 1), HtmlUtil.Color.ANNOTATION) + "_" + code(tl.substring(endIdx), HtmlUtil.Color.ANNOTATION);
+                    var part = code(tl.substring(0, m.start(1) - 1), HtmlUtil.Color.ANNOTATION) + "_" + code(tl.substring(endIdx), HtmlUtil.Color.ANNOTATION);
                     if (!keyMapping.containsKey(key)) {
                         var parts = new LinkedHashSet<String>();
                         keyMapping.put(key, parts);
@@ -81,7 +80,7 @@ public class StringUtil {
                 continue;
             }
             while (m.find()) {
-                var name = m.group("name");
+                var name = m.group(1);
                 // ignore for local variables
                 if (name.startsWith(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY + ".")) {
                     continue;

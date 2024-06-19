@@ -23,7 +23,10 @@ public class CopySqlParamsInJava extends SqlNameIntentionActionInJava implements
     @Override
     public void invokeIfSuccess(Project project, PsiElement element, XQLConfigManager.Config config, String sqlName) {
         var sqlDefinition = config.getXqlFileManager().get(sqlName);
-        var namedParams = config.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of()).getItem2()
+        sqlDefinition = sqlDefinition.replaceAll("--\\s*#", "");
+        var namedParams = config.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of())
+                .getItem2()
+                .keySet()
                 .stream()
                 .filter(name -> !name.startsWith(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY + "."))
                 .distinct()

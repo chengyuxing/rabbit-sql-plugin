@@ -65,8 +65,10 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                 doc += DEFINITION_END + CONTENT_START + sqlContent + CONTENT_END +
                         SECTIONS_START;
 
+                sqlDefinition = sqlDefinition.replaceAll("--\\s*#", "");
                 var prepareParams = config.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of())
                         .getItem2()
+                        .keySet()
                         .stream()
                         // ignore for local variables.
                         .filter(name -> !name.startsWith(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY + "."))
