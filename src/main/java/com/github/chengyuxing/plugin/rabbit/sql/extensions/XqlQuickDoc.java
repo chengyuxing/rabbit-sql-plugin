@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
+import com.github.chengyuxing.common.script.lexer.FlowControlLexer;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
@@ -65,7 +66,9 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                 doc += DEFINITION_END + CONTENT_START + sqlContent + CONTENT_END +
                         SECTIONS_START;
 
-                sqlDefinition = sqlDefinition.replaceAll("--\\s*#", "");
+                for (String keyword : FlowControlLexer.KEYWORDS) {
+                    sqlDefinition = sqlDefinition.replaceAll("--\\s*" + keyword, keyword);
+                }
                 var prepareParams = config.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of())
                         .getItem2()
                         .keySet()
