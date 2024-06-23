@@ -1,7 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.github.chengyuxing.common.io.FileResource;
-import com.github.chengyuxing.common.script.IPipe;
+import com.github.chengyuxing.common.script.expression.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.common.utils.ResourceUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ArrayListValueSet;

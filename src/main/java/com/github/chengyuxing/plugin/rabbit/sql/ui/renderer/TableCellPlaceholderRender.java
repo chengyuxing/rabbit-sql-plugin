@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.renderer;
 
-import com.github.chengyuxing.common.script.Comparators;
+import com.github.chengyuxing.common.script.expression.Comparators;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.intellij.ui.JBColor;
 

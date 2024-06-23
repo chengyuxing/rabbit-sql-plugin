@@ -1,7 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
 import com.fasterxml.jackson.jr.ob.JSON;
-import com.github.chengyuxing.common.script.Comparators;
+import com.github.chengyuxing.common.script.expression.Comparators;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceManager;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;

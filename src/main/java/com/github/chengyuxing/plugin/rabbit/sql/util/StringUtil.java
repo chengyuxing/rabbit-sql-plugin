@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.chengyuxing.common.script.SimpleScriptParser.*;
+import static com.github.chengyuxing.common.script.lexer.FlowControlLexer.*;
 import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.code;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.safeEscape;

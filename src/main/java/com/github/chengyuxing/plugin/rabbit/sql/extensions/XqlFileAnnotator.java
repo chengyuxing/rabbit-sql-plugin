@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
-import com.github.chengyuxing.common.script.Patterns;
+import com.github.chengyuxing.common.script.expression.Patterns;
+import com.github.chengyuxing.common.script.lexer.FlowControlLexer;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -16,9 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.github.chengyuxing.common.script.SimpleScriptParser.FOR;
-import static com.github.chengyuxing.common.script.SimpleScriptParser.TAGS;
 
 public class XqlFileAnnotator implements Annotator {
     static final String[] XQL_KEYWORDS = new String[]{"delimiter", "of", "open", "close"};
@@ -82,7 +80,7 @@ public class XqlFileAnnotator implements Annotator {
     }
 
     void highlightWord(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content, String xqlTag, String keyword) {
-        if (xqlTag.equals(FOR)) {
+        if (xqlTag.equals(FlowControlLexer.FOR)) {
             Pattern p = Pattern.compile("\\s(?<keyword>" + keyword + ")(\\s|$)");
             Matcher m = p.matcher(content);
             if (m.find()) {
@@ -115,7 +113,7 @@ public class XqlFileAnnotator implements Annotator {
     }
 
     String getTag(String prefix) {
-        for (String keyword : TAGS) {
+        for (String keyword : FlowControlLexer.KEYWORDS) {
             if (StringUtil.startsWithIgnoreCase(prefix, keyword)) {
                 return keyword;
             }
