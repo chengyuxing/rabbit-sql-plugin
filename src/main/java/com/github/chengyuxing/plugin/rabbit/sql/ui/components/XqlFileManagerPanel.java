@@ -18,7 +18,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.ui.TreeSpeedSearch;
+import com.intellij.ui.TreeUIHelper;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 import org.jetbrains.annotations.NotNull;
@@ -156,7 +156,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     }
 
     private @NotNull JBScrollPane createTreeSpeedSearchPane() {
-        var searchTree = new TreeSpeedSearch(tree, true, t -> {
+        TreeUIHelper.getInstance().installTreeSpeedSearch(tree, t -> {
             if (t.getLastPathComponent() instanceof XqlTreeNode treeNode) {
                 if (treeNode.getUserObject() instanceof XqlTreeNodeData treeNodeData) {
                     var title = treeNodeData.title();
@@ -173,9 +173,9 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                 }
             }
             return null;
-        });
+        }, true);
 
-        var scrollPane = new JBScrollPane(searchTree.getComponent());
+        var scrollPane = new JBScrollPane(tree);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         return scrollPane;
     }

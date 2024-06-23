@@ -28,13 +28,16 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.DataCell;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.*;
 import com.intellij.ui.tabs.TabInfo;
-import com.intellij.ui.tabs.impl.JBTabsImpl;
+import com.intellij.ui.tabs.impl.JBEditorTabs;
 import net.miginfocom.swing.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +46,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StatisticsForm extends JPanel {
     private final Project project;
-    private JBTabsImpl tabPane;
+    private JBEditorTabs tabPane;
     // (module, configs)
     private final Map<Path, Set<XQLConfigManager.Config>> configMap;
     // (table, configs)
@@ -55,9 +58,12 @@ public class StatisticsForm extends JPanel {
     private Consumer<Path> clickEmptyTableTextLink = (module) -> {
     };
 
-    public StatisticsForm(Project project, Map<Path, Set<XQLConfigManager.Config>> configMap) {
+    private final Disposable disposable;
+
+    public StatisticsForm(Project project, Map<Path, Set<XQLConfigManager.Config>> configMap, Disposable disposable) {
         this.project = project;
         this.configMap = configMap;
+        this.disposable = disposable;
         initComponents();
         customInitComponents();
         initTableDatasource();
@@ -132,7 +138,12 @@ public class StatisticsForm extends JPanel {
     }
 
     private void customInitComponents() {
-        tabPane = new JBTabsImpl(project);
+        tabPane = new JBEditorTabs(project, IdeFocusManager.getInstance(project), disposable) {
+            @Override
+            public String getPopupPlace() {
+                return ActionPlaces.POPUP;
+            }
+        };
         configMap.forEach((path, configs) -> {
             var validConfigs = configs.stream()
                     .filter(XQLConfigManager.Config::isValid)

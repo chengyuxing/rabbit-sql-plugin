@@ -23,7 +23,7 @@ public class StatisticsDialog extends DialogWrapper {
     public StatisticsDialog(@Nullable Project project) {
         super(true);
         XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
-        this.statisticsForm = new StatisticsForm(project, xqlConfigManager.getConfigMap(project));
+        this.statisticsForm = new StatisticsForm(project, xqlConfigManager.getConfigMap(project), getDisposable());
         this.statisticsForm.setClickEmptyTableTextLink(module -> {
             dispose();
             var primaryAbsFilename = module.resolve(Constants.CONFIG_PATH);
