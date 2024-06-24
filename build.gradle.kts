@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:7.9.14") {
+    implementation("com.github.chengyuxing:rabbit-sql:7.9.15") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.yaml", "snakeyaml")
     }

@@ -29,7 +29,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -138,12 +137,7 @@ public class StatisticsForm extends JPanel {
     }
 
     private void customInitComponents() {
-        tabPane = new JBEditorTabs(project, IdeFocusManager.getInstance(project), disposable) {
-            @Override
-            public String getPopupPlace() {
-                return ActionPlaces.POPUP;
-            }
-        };
+        tabPane = new JBEditorTabs(project, IdeFocusManager.getInstance(project), disposable);
         configMap.forEach((path, configs) -> {
             var validConfigs = configs.stream()
                     .filter(XQLConfigManager.Config::isValid)
