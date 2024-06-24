@@ -7,7 +7,7 @@
 
 语言: [English](README.md) | 简体中文
 
-IDEA 旗舰版版本兼容 2023.1.* - 2024.1.* 。
+IDEA 旗舰版版本兼容 2023.1.* - 2024.2.* 。
 
 - 支持识别 xql（`.xql`） 文件类型；
 - 支持动态sql表达式脚本 live templates（例如：`xql:if`）；
