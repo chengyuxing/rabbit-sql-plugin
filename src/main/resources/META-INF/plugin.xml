@@ -68,11 +68,12 @@
 
     <change-notes>
         <![CDATA[
-            <h3>
+            <h3>2.3.4</h3>
+            <ul>
                 <li>Support <code>rabbit-sql 7.10.0+</code> and <code>rabbit-sql-spring-boot-starter 2.10.0+</code></li>
                 <li>Support Dynamic sql script syntax verify when XQL File Manager reload.</li>
                 <li>Some optimized.</li>
-            </h3>
+            </ul>
             <h3>2.3.3</h3>
             <ul>
                 <li>Support <code>rabbit-sql 7.9.18+</code> and <code>rabbit-sql-spring-boot-starter 2.9.17+</code></li>
