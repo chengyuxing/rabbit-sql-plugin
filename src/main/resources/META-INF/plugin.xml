@@ -46,7 +46,7 @@
     <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.10.2+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.10.3+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -54,7 +54,7 @@
     </ol>
     <h3>Other</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.11.0+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.11.1+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -70,7 +70,7 @@
         <![CDATA[
             <h3>2.4.0</h3>
             <ul>
-                <li>Support <code>rabbit-sql 7.11.0+</code> and <code>rabbit-sql-spring-boot-starter 2.10.2+</code></li>
+                <li>Support <code>rabbit-sql 7.11.1+</code> and <code>rabbit-sql-spring-boot-starter 2.10.3+</code></li>
                 <li>Support Dynamic sql script syntax verify when XQL File Manager reload.</li>
                 <li>Support verify invalid nested dynamic sql script.</li>
                 <li>Support <code>switch-case</code> and <code>choose-when</code> branch nest <code>switch</code> and <code>choose</code> expression.</li>
