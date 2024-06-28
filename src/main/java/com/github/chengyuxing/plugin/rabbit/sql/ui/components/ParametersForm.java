@@ -12,6 +12,7 @@ import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.FieldInfoRender;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TableCellPlaceholderRender;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.JBSplitter;
@@ -19,7 +20,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.fields.ExpandableTextField;
 import com.intellij.ui.table.JBTable;
-import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.UIUtil;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -109,10 +110,10 @@ public class ParametersForm extends JPanel {
     }
 
     public void setSqlHtml(String sql) {
-        sqlContent.setText(sql);
         if (!scrollPane2.isVisible()) {
             scrollPane2.setVisible(true);
         }
+        sqlContent.setText(HtmlUtil.toHtml(sql));
     }
 
     private void initCustomComponents() {
@@ -174,7 +175,7 @@ public class ParametersForm extends JPanel {
         scrollPane1 = new JBScrollPane();
         paramsTable = new JBTable();
         scrollPane2 = new JBScrollPane();
-        sqlContent = new JTextPane();
+        sqlContent = new JEditorPane();
 
         //======== this ========
         setBorder(BorderFactory.createEmptyBorder());
@@ -210,10 +211,11 @@ public class ParametersForm extends JPanel {
             scrollPane2.setBorder(new LineBorder(new JBColor(new Color(0xD2D2D2), new Color(0x323232))));
             scrollPane2.setVisible(false);
             //---- sqlContent ----
+            UIUtil.addInsets(sqlContent, 2, 10, 2, 10);
             sqlContent.setContentType("text/html");
-            sqlContent.setFont(new Font("JetBrains Mono", Font.PLAIN, 13));
             sqlContent.setEditable(false);
-            sqlContent.setMargin(JBUI.insets(3,10));
+            sqlContent.setOpaque(false);
+            sqlContent.setBackground(UIManager.getColor("Label.background"));
             scrollPane2.setViewportView(sqlContent);
         }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
@@ -223,6 +225,6 @@ public class ParametersForm extends JPanel {
     private JBScrollPane scrollPane1;
     private JBTable paramsTable;
     private JBScrollPane scrollPane2;
-    private JTextPane sqlContent;
+    private JEditorPane sqlContent;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }
