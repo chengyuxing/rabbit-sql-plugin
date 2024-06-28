@@ -50,7 +50,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
 
 
     public XqlFileManagerPanel(boolean vertical, Project project) {
-        super(vertical);
+        super(vertical, true);
         this.project = project;
         setBorder(BorderFactory.createEmptyBorder());
         initToolbar();
@@ -294,6 +294,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                 return new AnAction[]{
                         new NewSQLAction(tree),
                         new Separator(),
+                        new CopyXqlFile(tree),
                         copyGroup,
                         new OpenInEditorAction(tree)
                 };
