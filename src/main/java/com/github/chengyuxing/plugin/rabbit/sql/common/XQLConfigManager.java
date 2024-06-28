@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.github.chengyuxing.common.io.FileResource;
+import com.github.chengyuxing.common.script.exception.ScriptSyntaxException;
 import com.github.chengyuxing.common.script.expression.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.common.utils.ResourceUtil;
@@ -260,6 +261,12 @@ public class XQLConfigManager {
                 xqlFileManager.setFiles(newFiles);
                 xqlFileManager.init();
                 successes.add(Message.info(messagePrefix() + "updated!"));
+            } catch (ScriptSyntaxException e) {
+                warnings.add(Message.warning(messagePrefix() + e.getMessage()));
+                var cause = e.getCause();
+                if (Objects.nonNull(cause)) {
+                    warnings.add(Message.warning(messagePrefix() + cause.getMessage()));
+                }
             } catch (YamlDeserializeException e) {
                 warnings.add(Message.error(messagePrefix() + "config content invalid: " + e.getMessage()));
                 log.warn(e);
