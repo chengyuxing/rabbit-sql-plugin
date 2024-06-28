@@ -9,15 +9,13 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TreeNodeRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
-import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.*;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
+import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.ui.TreeUIHelper;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
@@ -27,11 +25,15 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     private final Project project;
@@ -88,9 +90,44 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         moduleMenu = createModuleMenu(tree);
         xqlFolderMenu = createXqlFolderPopMenu(tree);
 
+        AtomicReference<Point> pointRef = new AtomicReference<>();
+        tree.addKeyListener(new KeyAdapter() {
+            private JBPopup popup;
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (Objects.nonNull(popup) && !popup.isDisposed()) {
+                    popup.dispose();
+                    return;
+                }
+                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    var selection = tree.getSelectionPath();
+                    if (Objects.isNull(selection)) {
+                        return;
+                    }
+                    var node = (XqlTreeNode) selection.getLastPathComponent();
+                    if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
+                        if (Objects.requireNonNull(nodeSource.type()) == XqlTreeNodeData.Type.XQL_FRAGMENT) {
+                            var point = pointRef.get();
+                            if (Objects.nonNull(point)) {
+                                @SuppressWarnings("unchecked") var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
+                                var sql = sqlMeta.getItem3();
+                                var html = HtmlUtil.highlightSql(sql.getContent());
+                                if (!sql.getDescription().isEmpty()) {
+                                    var desc = HtmlUtil.pre("/*" + sql.getDescription() + "*/", HtmlUtil.Color.ANNOTATION);
+                                    html = HtmlUtil.wrap("div", desc + html, HtmlUtil.Color.EMPTY);
+                                }
+                                popup = SwingUtil.showPreview(html, tree.getComponentAt(point), point);
+                            }
+                        }
+                    }
+                }
+            }
+        });
         tree.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                pointRef.set(e.getPoint());
                 if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
                     var selected = tree.getSelectionPath();
                     if (Objects.isNull(selected)) {
