@@ -9,6 +9,8 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -37,7 +39,10 @@ public class ToggleActiveAction extends AnAction {
             }
             xqlConfigManager.toggleActive(project, config);
             config.fire();
-            XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
+            ApplicationManager.getApplication().invokeLater(() -> {
+                VirtualFileManager.getInstance().syncRefresh();
+                XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
+            });
         }
     }
 
