@@ -5,10 +5,16 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.sql.XQLFileManager;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.*;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -88,5 +94,28 @@ public class SwingUtil {
                 XQLNode.add(sqlNode);
             }
         });
+    }
+
+    public static JBPopup showPreview(String content, Component target, Point point) {
+        var editorPane = new JEditorPane();
+        editorPane.setContentType("text/html");
+        editorPane.setText(HtmlUtil.toHtml(content));
+        editorPane.setEditable(false);
+        editorPane.setOpaque(false);
+        editorPane.setFocusable(true);
+        editorPane.setBackground(UIManager.getColor("Label.background"));
+        UIUtil.addInsets(editorPane, 2, 10, 2, 10);
+        var scrollPane = new JBScrollPane(editorPane);
+        scrollPane.setFocusable(true);
+        scrollPane.setPreferredSize(new Dimension(520, 330));
+        var popup = JBPopupFactory.getInstance()
+                .createComponentPopupBuilder(scrollPane, editorPane)
+                .setResizable(true)
+                .setMovable(true)
+                .setShowShadow(true)
+                .setRequestFocus(true)
+                .createPopup();
+        popup.show(new RelativePoint(target, point));
+        return popup;
     }
 }
