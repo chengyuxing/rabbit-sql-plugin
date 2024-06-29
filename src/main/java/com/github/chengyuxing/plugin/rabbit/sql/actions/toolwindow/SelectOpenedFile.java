@@ -78,7 +78,7 @@ public class SelectOpenedFile extends AnAction {
                         if (nodeData.type() == XqlTreeNodeData.Type.XQL_FILE) {
                             @SuppressWarnings("unchecked") var sqlMeta = (Triple<String, String, String>) nodeData.source();
                             var filepath = sqlMeta.getItem3();
-                            return filepath.equals(currentFile.getUrl());
+                            return filepath.equals(currentFile.toNioPath().toUri().toString());
                         }
                     }
                     return false;
