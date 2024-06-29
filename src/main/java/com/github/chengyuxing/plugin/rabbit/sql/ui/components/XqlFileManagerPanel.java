@@ -30,9 +30,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.net.URI;
-import java.nio.file.Path;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
@@ -147,7 +146,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                                 if (ProjectFileUtil.isLocalFileUri(sqlMeta.getItem2())) {
                                     PsiUtil.navigate2xqlFile(sqlMeta.getItem1(), sqlMeta.getItem2(), sqlMeta.getItem4());
                                 } else {
-                                    NotificationUtil.showMessage(project, "only support local file.", NotificationType.WARNING);
+                                    NotificationUtil.showMessage(project, "only support local file", NotificationType.WARNING);
                                 }
                             }
                         }
@@ -266,16 +265,9 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                             if (treeViewNodes) {
                                 var nestTreeNodes = new LinkedHashMap<String, Object>();
                                 config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
-                                    String newFilename = filename;
-                                    if (ProjectFileUtil.isURI(newFilename)) {
-                                        // http://server/home.xql
-                                        // /home.xql
-                                        newFilename = URI.create(filename).getPath();
-                                        newFilename = StringUtil.trimStarts(newFilename, "/");
-                                    }
-                                    int dIdx = newFilename.lastIndexOf("/");
-                                    String aliasPath = dIdx != -1 ? newFilename.substring(0, dIdx + 1) + alias : alias;
-                                    SwingUtil.path2tree(Path.of(aliasPath), nestTreeNodes);
+                                    var isURI = ProjectFileUtil.isURI(filename);
+                                    var paths = getPaths(alias, filename, isURI);
+                                    SwingUtil.path2tree(paths, nestTreeNodes);
                                 });
                                 SwingUtil.buildXQLTree(nestTreeNodes, config, configNode);
                             } else {
@@ -294,6 +286,31 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                 });
         model.reload();
         restoreTreeExpandedState();
+    }
+
+    private static @NotNull ArrayList<String> getPaths(String alias, String filename, boolean isURI) {
+        String newFilename = filename;
+        if (isURI) {
+            // http://server/home.xql?id=1
+            // server/home.xql
+            int qIdx = newFilename.indexOf('?');
+            if (qIdx > 0) {
+                newFilename = newFilename.substring(0, qIdx);
+            }
+            int hashIdx = newFilename.indexOf('#');
+            if (hashIdx > 0) {
+                newFilename = newFilename.substring(0, hashIdx);
+            }
+            newFilename = newFilename.replaceAll("(?:file|http|https|ftp):/+(.+)", "$1");
+        }
+        int dIdx = newFilename.lastIndexOf("/");
+        String aliasPath = dIdx != -1 ? newFilename.substring(0, dIdx + 1) + alias : alias;
+        var paths = new ArrayList<>(List.of(aliasPath.split("/+")));
+        if (isURI) {
+            int colonIdx = filename.indexOf(':');
+            paths.add(0, filename.substring(0, colonIdx + 3));
+        }
+        return paths;
     }
 
     public Tree getTree() {

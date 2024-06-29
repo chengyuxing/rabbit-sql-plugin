@@ -4,10 +4,12 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.intellij.icons.AllIcons;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -57,6 +59,14 @@ public class NewXqlFileAction extends AnAction {
                     .filter(n -> n.type() == XqlTreeNodeData.Type.XQL_FILE_FOLDER)
                     .map(XqlTreeNodeData::title)
                     .toList();
+            if (folderClasspath.isEmpty()) {
+                return;
+            }
+            var first = folderClasspath.get(0);
+            if (ProjectFileUtil.isURI(first)) {
+                NotificationUtil.showMessage(project, "only support classpath folder", NotificationType.WARNING);
+                return;
+            }
             openNewXqlDialog(project, config, folderClasspath);
         }
     }

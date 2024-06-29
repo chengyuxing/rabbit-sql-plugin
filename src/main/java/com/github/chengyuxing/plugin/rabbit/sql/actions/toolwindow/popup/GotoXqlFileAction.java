@@ -37,7 +37,7 @@ public class GotoXqlFileAction extends AnAction {
             var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
             var xqlFile = sqlMeta.getItem4().getXqlFileManager().getResource(sqlMeta.getItem1()).getFilename();
             if (!ProjectFileUtil.isLocalFileUri(xqlFile)) {
-                NotificationUtil.showMessage(project, "only support local file.", NotificationType.WARNING);
+                NotificationUtil.showMessage(project, "only support local file", NotificationType.WARNING);
                 return;
             }
             PsiUtil.navigate2xqlFile(sqlMeta.getItem1(), sqlMeta.getItem2(), sqlMeta.getItem4());

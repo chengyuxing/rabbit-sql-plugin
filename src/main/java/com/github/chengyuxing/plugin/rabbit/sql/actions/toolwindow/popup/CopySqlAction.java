@@ -100,14 +100,14 @@ public class CopySqlAction extends AnAction {
                 case ABSOLUTE_PATH -> clipboard.setContents(new StringSelection(sqlMeta.getItem3()), null);
                 case PATH_FROM_CLASSPATH -> {
                     if (ProjectFileUtil.isURI(sqlMeta.getItem2())) {
-                        NotificationUtil.showMessage(project, "only support local file.", NotificationType.WARNING);
+                        NotificationUtil.showMessage(project, "only support classpath file", NotificationType.WARNING);
                         return;
                     }
                     clipboard.setContents(new StringSelection(sqlMeta.getItem2()), null);
                 }
                 case YML_ARRAY_PATH_FROM_CLASSPATH -> {
                     if (ProjectFileUtil.isURI(sqlMeta.getItem2())) {
-                        NotificationUtil.showMessage(project, "only support local file.", NotificationType.WARNING);
+                        NotificationUtil.showMessage(project, "only support classpath file", NotificationType.WARNING);
                         return;
                     }
                     var classpathPath = sqlMeta.getItem2().split("/");

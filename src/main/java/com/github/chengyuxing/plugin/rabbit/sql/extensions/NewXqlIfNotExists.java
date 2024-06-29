@@ -71,7 +71,7 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
             // do append xql fragment
             var sqlFile = resource.getFilename();
             if (!ProjectFileUtil.isLocalFileUri(sqlFile)) {
-                NotificationUtil.showMessage(project, "only support local file.", NotificationType.WARNING);
+                NotificationUtil.showMessage(project, "only support local file", NotificationType.WARNING);
                 return;
             }
             var sqlFileVf = VirtualFileManager.getInstance().findFileByNioPath(Path.of(URI.create(sqlFile)));

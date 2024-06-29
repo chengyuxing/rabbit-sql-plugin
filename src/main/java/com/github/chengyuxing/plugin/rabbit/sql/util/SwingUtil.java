@@ -15,8 +15,8 @@ import javax.swing.*;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.nio.file.Path;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -53,15 +53,15 @@ public class SwingUtil {
         }
     }
 
-    public static void path2tree(Path path, Map<String, Object> container) {
-        var first = path.getName(0).toString();
+    public static void path2tree(List<String> paths, Map<String, Object> container) {
+        var first = paths.get(0);
         if (!container.containsKey(first)) {
             container.put(first, new LinkedHashMap<>());
         }
-        if (path.getNameCount() == 1) {
+        if (paths.size() == 1) {
             return;
         }
-        var children = path.subpath(1, path.getNameCount());
+        var children = paths.subList(1, paths.size());
         //noinspection unchecked
         path2tree(children, (Map<String, Object>) container.get(first));
     }
