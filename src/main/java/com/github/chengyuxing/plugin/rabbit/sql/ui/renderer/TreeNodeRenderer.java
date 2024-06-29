@@ -72,7 +72,16 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                         append(secondaryText, SimpleTextAttributes.GRAY_ATTRIBUTES);
                     }
                     case XQL_FILE_FOLDER -> {
-                        setIcon(AllIcons.Nodes.Folder);
+                        var title = nodeSource.title();
+                        if (ProjectFileUtil.isURI(title)) {
+                            if (!ProjectFileUtil.isLocalFileUri(title)) {
+                                setIcon(AllIcons.Nodes.PpWeb);
+                            } else {
+                                setIcon(AllIcons.Nodes.Folder);
+                            }
+                        } else {
+                            setIcon(AllIcons.Nodes.Folder);
+                        }
                         append(nodeSource.toString());
                     }
                     case XQL_FRAGMENT -> {
