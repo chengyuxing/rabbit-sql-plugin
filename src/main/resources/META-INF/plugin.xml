@@ -68,6 +68,16 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.1</h3>
+            <ul>
+                <li>Dynamic sql script syntax error message show details.</li>
+                <li>XQL File Manager toolwindow xql file node support action <b>Copy</b> to copy file to clipboard.</li>
+                <li>XQL File Manager toolwindow sql fragment node support press <code>SPACE</code> to preview sql content.</li>
+                <li>New Action: XQL File Manager Toolwindow <code>Select Opened File</code> takes effect in xql file and java string literal sql reference.</li>
+                <li>Update xql tree icons.</li>
+                <li>Fixed active another config not trigger file refresh.</li>
+                <li>Some optimized and bug fixed.</li>
+            </ul>
             <h3>2.4.0</h3>
             <ul>
                 <li>Support <code>rabbit-sql 7.11.1+</code> and <code>rabbit-sql-spring-boot-starter 2.10.3+</code></li>
@@ -547,5 +557,10 @@
                 id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ToggleViewModeAction"
                 text="Show XQL Files As Tree"
                 icon="AllIcons.Actions.ListFiles"/>
+        <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.SelectOpenedFile"
+                class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.SelectOpenedFile"
+                text="Select Opened File"
+                description="Select opened file."
+                icon="AllIcons.General.Locate"/>
     </actions>
 </idea-plugin>
