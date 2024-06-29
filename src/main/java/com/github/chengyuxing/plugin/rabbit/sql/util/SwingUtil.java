@@ -109,7 +109,7 @@ public class SwingUtil {
         var scrollPane = new JBScrollPane(editorPane);
         scrollPane.setFocusable(true);
         int max = Math.min(800, contentHeight);
-        max = Math.max(max, 350);
+        max = Math.max(max, 330);
         scrollPane.setPreferredSize(new Dimension(680, max));
         var popup = JBPopupFactory.getInstance()
                 .createComponentPopupBuilder(scrollPane, editorPane)
