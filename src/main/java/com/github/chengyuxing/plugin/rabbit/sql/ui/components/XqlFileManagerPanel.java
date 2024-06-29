@@ -35,6 +35,8 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
+
 public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     private final Project project;
     private final ActionManager actionManager = ActionManager.getInstance();
@@ -117,7 +119,8 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                                     var desc = HtmlUtil.pre("/*" + sql.getDescription() + "*/", HtmlUtil.Color.ANNOTATION);
                                     html = HtmlUtil.wrap("div", desc + html, HtmlUtil.Color.EMPTY);
                                 }
-                                popup = SwingUtil.showPreview(html, tree.getComponentAt(point), point);
+                                var height = StringUtil.countOfContains(sql.getContent(), NEW_LINE) * 21 + 39;
+                                popup = SwingUtil.showPreview(html, height, tree.getComponentAt(point), point);
                             }
                         }
                     }

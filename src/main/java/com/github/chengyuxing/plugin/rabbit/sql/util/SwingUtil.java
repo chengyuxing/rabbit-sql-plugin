@@ -96,7 +96,7 @@ public class SwingUtil {
         });
     }
 
-    public static JBPopup showPreview(String content, Component target, Point point) {
+    public static JBPopup showPreview(String content, int contentHeight, Component target, Point point) {
         var editorPane = new JEditorPane();
         editorPane.setContentType("text/html");
         editorPane.setText(HtmlUtil.toHtml(content));
@@ -108,7 +108,9 @@ public class SwingUtil {
         UIUtil.addInsets(editorPane, 2, 10, 2, 10);
         var scrollPane = new JBScrollPane(editorPane);
         scrollPane.setFocusable(true);
-        scrollPane.setPreferredSize(new Dimension(680, 350));
+        int max = Math.min(800, contentHeight);
+        max = Math.max(max, 350);
+        scrollPane.setPreferredSize(new Dimension(680, max));
         var popup = JBPopupFactory.getInstance()
                 .createComponentPopupBuilder(scrollPane, editorPane)
                 .setResizable(true)
