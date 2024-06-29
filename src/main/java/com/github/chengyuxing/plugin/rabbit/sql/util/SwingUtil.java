@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class SwingUtil {
     public static XqlTreeNodeData getTreeSelectionNodeUserData(JTree tree) {
@@ -120,5 +121,19 @@ public class SwingUtil {
                 .createPopup();
         popup.show(new RelativePoint(target, point));
         return popup;
+    }
+
+    public static XqlTreeNode findNode(XqlTreeNode root, Predicate<XqlTreeNode> predicate) {
+        if (predicate.test(root)) {
+            return root;
+        }
+        for (int i = 0; i < root.getChildCount(); i++) {
+            var childNode = (XqlTreeNode) root.getChildAt(i);
+            var result = findNode(childNode, predicate);
+            if (Objects.nonNull(result)) {
+                return result;
+            }
+        }
+        return null;
     }
 }

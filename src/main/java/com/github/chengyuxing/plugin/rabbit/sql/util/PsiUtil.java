@@ -6,6 +6,7 @@ import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -140,5 +141,28 @@ public class PsiUtil {
             return null;
         }
         return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
+    }
+
+    public static VirtualFile getActiveFile(Project project) {
+        var editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+        if (editor != null) {
+            var pf = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+            if (Objects.nonNull(pf)) {
+                return pf.getVirtualFile();
+            }
+        }
+        return null;
+    }
+
+    public static PsiElement getElementAtCaret(Project project) {
+        var editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+        if (editor != null) {
+            var pf = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+            if (Objects.nonNull(pf)) {
+                int caretOffset = editor.getCaretModel().getOffset();
+                return pf.findElementAt(caretOffset);
+            }
+        }
+        return null;
     }
 }

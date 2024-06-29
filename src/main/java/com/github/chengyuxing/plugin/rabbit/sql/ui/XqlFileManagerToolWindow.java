@@ -3,6 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 import com.github.chengyuxing.plugin.rabbit.sql.Helper;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -11,10 +12,13 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
 public class XqlFileManagerToolWindow implements ToolWindowFactory, DumbAware {
+    private final ActionManager actionManager = ActionManager.getInstance();
+
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         var xqlFileManagerToolPanel = new XqlFileManagerPanel(true, project);
@@ -27,6 +31,9 @@ public class XqlFileManagerToolWindow implements ToolWindowFactory, DumbAware {
         toolWindow.setTitle("XQL File Manager");
         toolWindow.setHelpId(Helper.XQL_FILE_MANAGER);
         toolWindow.setIcon(XqlIcons.XQL_FILE_MANAGER_TOOL_WINDOW);
+        toolWindow.setTitleActions(List.of(
+                actionManager.getAction("com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.SelectOpenedFile")
+        ));
     }
 
     public static void getXqlFileManagerPanel(Project project, Consumer<XqlFileManagerPanel> consumer) {
