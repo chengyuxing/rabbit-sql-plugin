@@ -114,6 +114,7 @@ public class ParametersForm extends JPanel {
             scrollPane2.setVisible(true);
         }
         sqlContent.setText(HtmlUtil.toHtml(sql));
+        sqlContent.setCaretPosition(0);
     }
 
     private void initCustomComponents() {
@@ -215,7 +216,8 @@ public class ParametersForm extends JPanel {
             sqlContent.setContentType("text/html");
             sqlContent.setEditable(false);
             sqlContent.setOpaque(false);
-            sqlContent.setBackground(UIManager.getColor("Label.background"));
+            var color = UIManager.getColor("Label.background");
+            sqlContent.setBackground(new JBColor(color, color.darker()));
             scrollPane2.setViewportView(sqlContent);
         }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on

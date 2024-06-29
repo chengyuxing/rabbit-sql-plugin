@@ -104,10 +104,11 @@ public class SwingUtil {
         editorPane.setOpaque(false);
         editorPane.setFocusable(true);
         editorPane.setBackground(UIManager.getColor("Label.background"));
+        editorPane.setCaretPosition(0);
         UIUtil.addInsets(editorPane, 2, 10, 2, 10);
         var scrollPane = new JBScrollPane(editorPane);
         scrollPane.setFocusable(true);
-        scrollPane.setPreferredSize(new Dimension(520, 330));
+        scrollPane.setPreferredSize(new Dimension(680, 350));
         var popup = JBPopupFactory.getInstance()
                 .createComponentPopupBuilder(scrollPane, editorPane)
                 .setResizable(true)
