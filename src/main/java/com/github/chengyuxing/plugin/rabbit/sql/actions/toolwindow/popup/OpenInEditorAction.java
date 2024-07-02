@@ -38,7 +38,7 @@ public class OpenInEditorAction extends AnAction {
         if (Objects.nonNull(nodeSource)) {
             var filePath = detectedExistsFilePath(project, nodeSource);
             if (Objects.nonNull(filePath)) {
-                var xqlVf = VirtualFileManager.getInstance().findFileByNioPath(filePath);
+                var xqlVf = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(filePath);
                 if (Objects.nonNull(xqlVf) && xqlVf.exists()) {
                     var psi = PsiManager.getInstance(project).findFile(xqlVf);
                     if (Objects.nonNull(psi)) {

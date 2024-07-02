@@ -143,7 +143,8 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                             case XQL_FRAGMENT -> {
                                 @SuppressWarnings("unchecked")
                                 var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
-                                if (ProjectFileUtil.isLocalFileUri(sqlMeta.getItem2())) {
+                                var sqlPath = sqlMeta.getItem4().getXqlFileManager().getResource(sqlMeta.getItem1()).getFilename();
+                                if (ProjectFileUtil.isLocalFileUri(sqlPath)) {
                                     PsiUtil.navigate2xqlFile(sqlMeta.getItem1(), sqlMeta.getItem2(), sqlMeta.getItem4());
                                 } else {
                                     NotificationUtil.showMessage(project, "only support local file", NotificationType.WARNING);
