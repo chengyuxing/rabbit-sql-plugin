@@ -1,14 +1,11 @@
 package com.github.chengyuxing.plugin.tests;
 
 import com.fasterxml.jackson.jr.ob.JSON;
-import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.script.IPipe;
-import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SimpleJavaCompiler;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
-import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
 import org.junit.Test;
 
@@ -18,12 +15,10 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class MyCode {
     //    @Test
