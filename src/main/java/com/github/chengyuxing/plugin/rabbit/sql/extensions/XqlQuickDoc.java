@@ -4,7 +4,6 @@ import com.github.chengyuxing.common.script.lexer.FlowControlLexer;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
-import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.psi.PsiComment;
@@ -73,8 +72,6 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                         .getItem2()
                         .keySet()
                         .stream()
-                        // ignore for local variables.
-                        .filter(name -> !name.startsWith(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY + "."))
                         .map(name -> xqlFileManager.getNamedParamPrefix() + name)
                         .distinct()
                         .collect(Collectors.joining("  "))

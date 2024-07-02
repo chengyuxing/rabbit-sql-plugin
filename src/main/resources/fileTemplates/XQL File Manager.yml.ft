@@ -8,6 +8,8 @@ files:
 #  foo: !path [ main, a.xql ]
 #  bar: main/b.xql
 
+#constants:
+
 #delimiter: ;
 
 #charset: UTF-8

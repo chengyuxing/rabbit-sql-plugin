@@ -10,6 +10,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.IconListCellRenderer
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
+import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.database.run.ConsoleDataRequest;
 import com.intellij.database.util.DbImplUtil;
 import com.intellij.database.view.ui.DataSourceManagerDialog;
@@ -133,6 +134,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                 args.put(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY, forVars);
                 var rawSql = config.getSqlGenerator()
                         .generateSql(finalSql, args);
+                rawSql = SqlUtil.repairSyntaxError(rawSql);
                 // execute sql
                 var idx = datasourceList.getSelectedIndex();
                 if (datasourceResource != null) {
