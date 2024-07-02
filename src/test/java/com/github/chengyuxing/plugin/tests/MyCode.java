@@ -1,7 +1,7 @@
 package com.github.chengyuxing.plugin.tests;
 
 import com.fasterxml.jackson.jr.ob.JSON;
-import com.github.chengyuxing.common.script.IPipe;
+import com.github.chengyuxing.common.script.expression.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SimpleJavaCompiler;
