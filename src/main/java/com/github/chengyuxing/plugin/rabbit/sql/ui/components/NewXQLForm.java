@@ -7,6 +7,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.common.tuple.Tuples;
+import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.fields.*;
@@ -241,6 +242,10 @@ public class NewXQLForm extends JPanel {
         panel1 = new JPanel();
         message = new JLabel();
         CellConstraints cc = new CellConstraints();
+
+        filename.setFont(Global.getEditorFont(filename.getFont().getSize()));
+        alias.setFont(Global.getEditorFont(filename.getFont().getSize()));
+        description.setFont(Global.getEditorFont(filename.getFont().getSize()));
 
         //======== this ========
         setMinimumSize(new Dimension(500, 160));

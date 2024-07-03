@@ -9,6 +9,7 @@ import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.script.expression.Comparators;
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.FieldInfoRender;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TableCellPlaceholderRender;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
@@ -158,6 +159,7 @@ public class ParametersForm extends JPanel {
         cbx.addItem("true");
         cbx.addItem("false");
         cbx.setEditable(true);
+        cbx.setFont(Global.getEditorFont(cbx.getFont().getSize()));
         cbx.setEditor(new BasicComboBoxEditor() {
             @Override
             protected JTextField createEditorComponent() {

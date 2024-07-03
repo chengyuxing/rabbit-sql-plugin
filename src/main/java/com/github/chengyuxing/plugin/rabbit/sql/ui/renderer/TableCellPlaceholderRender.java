@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.renderer;
 
 import com.github.chengyuxing.common.script.expression.Comparators;
 import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.intellij.ui.JBColor;
 
 import javax.swing.*;
@@ -26,6 +27,7 @@ public class TableCellPlaceholderRender extends DefaultTableCellRenderer {
 
         if ((value == null) || (value.equals(""))) {
             var placeHolderCom = super.getTableCellRendererComponent(table, this.placeholder, isSelected, hasFocus, row, column);
+            placeHolderCom.setFont(Global.getEditorFont(placeHolderCom.getFont().getSize()));
             placeHolderCom.setForeground(JBColor.GRAY);
             return placeHolderCom;
         } else {
@@ -38,6 +40,7 @@ public class TableCellPlaceholderRender extends DefaultTableCellRenderer {
             } else if (Comparators.isString(typedValue)) {
                 valueCom.setForeground(new JBColor(new Color(0x097C52), new Color(0x79A978)));
             }
+            valueCom.setFont(Global.getEditorFont(valueCom.getFont().getSize()));
             valueCom.setBackground(null);
             return valueCom;
         }
