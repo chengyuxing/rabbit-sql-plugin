@@ -11,6 +11,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.fields.*;
+import com.intellij.util.ui.JBUI;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 
@@ -298,7 +299,7 @@ public class NewXQLForm extends JPanel {
             anchorTag.setVisible(false);
             panel2.add(anchorTag, cc.xy(3, 1, CellConstraints.RIGHT, CellConstraints.CENTER));
         }
-        add(panel2, new CellConstraints(3, 3, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(0, 4, 0, 4)));
+        add(panel2, new CellConstraints(3, 3, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, JBUI.insets(0, 4)));
 
         //---- label2 ----
         label2.setText("Alias:");
