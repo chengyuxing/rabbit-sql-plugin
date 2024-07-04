@@ -12,6 +12,7 @@ import javax.swing.event.DocumentListener;
 
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
+import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.intellij.ui.JBColor;
 import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
@@ -73,6 +74,8 @@ public class NewXQLFileManagerForm extends JPanel {
         panel1 = new JPanel();
         message = new JLabel();
         CellConstraints cc = new CellConstraints();
+
+        secondaryFileName.setFont(Global.getEditorFont(secondaryFileName.getFont().getSize()));
 
         //======== this ========
         setMinimumSize(new Dimension(200, 55));

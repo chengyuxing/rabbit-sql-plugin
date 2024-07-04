@@ -71,7 +71,7 @@ public class NewSQLForm extends JPanel {
         CellConstraints cc = new CellConstraints();
 
         name.setFont(Global.getEditorFont(name.getFont().getSize()));
-        description.setFont(Global.getEditorFont(name.getFont().getSize()));
+        description.setFont(Global.getEditorFont(description.getFont().getSize()));
 
         //======== this ========
         setMinimumSize(new Dimension(350, 103));

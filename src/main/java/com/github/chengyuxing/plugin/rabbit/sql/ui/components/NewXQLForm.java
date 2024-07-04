@@ -244,8 +244,8 @@ public class NewXQLForm extends JPanel {
         CellConstraints cc = new CellConstraints();
 
         filename.setFont(Global.getEditorFont(filename.getFont().getSize()));
-        alias.setFont(Global.getEditorFont(filename.getFont().getSize()));
-        description.setFont(Global.getEditorFont(filename.getFont().getSize()));
+        alias.setFont(Global.getEditorFont(alias.getFont().getSize()));
+        description.setFont(Global.getEditorFont(description.getFont().getSize()));
 
         //======== this ========
         setMinimumSize(new Dimension(500, 160));
