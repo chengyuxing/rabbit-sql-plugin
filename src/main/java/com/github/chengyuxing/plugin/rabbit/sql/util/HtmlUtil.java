@@ -1,5 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
+import com.github.chengyuxing.common.script.lexer.FlowControlLexer;
+import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.sql.utils.SqlHighlighter;
 
 public class HtmlUtil {
@@ -13,8 +15,14 @@ public class HtmlUtil {
             case ASTERISK -> span(content, Color.HIGHLIGHT);
             case LINE_ANNOTATION, BLOCK_ANNOTATION -> span(content, Color.ANNOTATION);
             case NAMED_PARAMETER -> code(content, Color.HIGHLIGHT);
+            case OTHER -> {
+                if (StringUtil.equalsAnyIgnoreCase(content, FlowControlLexer.KEYWORDS)) {
+                    yield span(content, Color.FUNCTION);
+                }
+                yield content;
+            }
         });
-        return "<pre>" + highlighted + "</pre>";
+        return pre(highlighted, Color.EMPTY);
     }
 
     public static String pre(String s, Color color, String... attrs) {

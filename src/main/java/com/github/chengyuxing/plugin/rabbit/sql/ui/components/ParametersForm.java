@@ -68,7 +68,7 @@ public class ParametersForm extends JPanel {
                         var type = sv.substring(sv.lastIndexOf("::") + 2);
                         var value = sv.substring(0, sv.lastIndexOf("::"));
                         v = switch (type) {
-                            case "number" -> Long.parseLong(value);
+                            case "number" -> Double.parseDouble(value);
                             case "date" -> MostDateTime.of(value).toDate();
                             default -> value;
                         };
