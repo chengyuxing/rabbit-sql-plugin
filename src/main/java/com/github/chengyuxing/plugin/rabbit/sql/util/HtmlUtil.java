@@ -14,10 +14,16 @@ public class HtmlUtil {
             case POSTGRESQL_FUNCTION_BODY_SYMBOL, SINGLE_QUOTE_STRING -> span(content, Color.STRING);
             case ASTERISK -> span(content, Color.HIGHLIGHT);
             case LINE_ANNOTATION, BLOCK_ANNOTATION -> span(content, Color.ANNOTATION);
-            case NAMED_PARAMETER -> code(content, Color.HIGHLIGHT);
+            case NAMED_PARAMETER -> code(content, Color.LIGHT);
             case OTHER -> {
-                if (StringUtil.equalsAnyIgnoreCase(content, FlowControlLexer.KEYWORDS)) {
-                    yield span(content, Color.FUNCTION);
+                var maybeKeyword = content;
+                var pos = 0;
+                if (content.startsWith("--")) {
+                    maybeKeyword = content.substring(2);
+                    pos = 2;
+                }
+                if (StringUtil.equalsAnyIgnoreCase(maybeKeyword, FlowControlLexer.KEYWORDS)) {
+                    yield content.substring(0, pos) + span(maybeKeyword, Color.HIGHLIGHT);
                 }
                 yield content;
             }
