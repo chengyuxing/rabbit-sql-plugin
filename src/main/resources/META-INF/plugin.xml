@@ -46,7 +46,7 @@
     <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.10.6+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.10.7+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -54,7 +54,7 @@
     </ol>
     <h3>Other</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.11.4+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.11.5+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -68,6 +68,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.4</h3>
+            <ul>
+                <li>Support <code>rabbit-sql 7.11.5+</code> and <code>rabbit-sql-spring-boot-starter 2.10.7+</code></li>
+                <li>Some optimized.</li>
+            </ul>
             <h3>2.4.3</h3>
             <ul>
                 <li>Support <code>rabbit-sql 7.11.4+</code> and <code>rabbit-sql-spring-boot-starter 2.10.6+</code></li>
