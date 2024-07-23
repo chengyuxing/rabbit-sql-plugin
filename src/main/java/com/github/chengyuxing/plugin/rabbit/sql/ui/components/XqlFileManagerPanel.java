@@ -1,7 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.tuple.Quadruple;
-import com.github.chengyuxing.common.tuple.Quintuple;
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup.*;
@@ -196,25 +195,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     }
 
     private @NotNull JBScrollPane createTreeSpeedSearchPane() {
-        TreeUIHelper.getInstance().installTreeSpeedSearch(tree, t -> {
-            if (t.getLastPathComponent() instanceof XqlTreeNode treeNode) {
-                if (treeNode.getUserObject() instanceof XqlTreeNodeData treeNodeData) {
-                    var title = treeNodeData.title();
-                    if (treeNodeData.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
-                        // (alias, sqlName, sql Object, config)
-                        @SuppressWarnings("unchecked") var source = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) treeNodeData.source();
-                        return title + ' ' + source.getItem3().getDescription() + ' ' + source.getItem3().getContent();
-                    }
-                    if (treeNodeData.type() == XqlTreeNodeData.Type.XQL_FILE) {
-                        // (_, _, _, _, description)
-                        @SuppressWarnings("unchecked") var source = (Quintuple<String, String, String, XQLConfigManager.Config, String>) treeNodeData.source();
-                        return title + ' ' + source.getItem5();
-                    }
-                }
-            }
-            return null;
-        }, true);
-
+        TreeUIHelper.getInstance().installTreeSpeedSearch(tree);
         var scrollPane = new JBScrollPane(tree);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         return scrollPane;
