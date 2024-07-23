@@ -19,8 +19,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class XqlFileAnnotator implements Annotator {
-    static final String[] XQL_KEYWORDS = new String[]{"delimiter", "of", "open", "close"};
-
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
         if (!(element instanceof PsiComment)) {
@@ -73,14 +71,14 @@ public class XqlFileAnnotator implements Annotator {
                 .textAttributes(DefaultLanguageHighlighterColors.METADATA)
                 .create();
         int whiteSpaceLen = whiteSpace == null ? 0 : whiteSpace.getTextLength();
-        for (String k : XQL_KEYWORDS) {
+        for (String k : Constants.XQL_KEYWORDS) {
             highlightWord(holder, element, whiteSpaceLen, value, tag, k);
         }
         highlightVarName(holder, element, whiteSpaceLen, value);
     }
 
     void highlightWord(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content, String xqlTag, String keyword) {
-        if (xqlTag.equals(FlowControlLexer.FOR)) {
+        if (StringUtil.equalsAnyIgnoreCase(xqlTag, FlowControlLexer.KEYWORDS)) {
             Pattern p = Pattern.compile("\\s(?<keyword>" + keyword + ")(\\s|$)");
             Matcher m = p.matcher(content);
             if (m.find()) {

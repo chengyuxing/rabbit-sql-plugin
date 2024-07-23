@@ -66,7 +66,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                         SECTIONS_START;
 
                 for (String keyword : FlowControlLexer.KEYWORDS) {
-                    sqlDefinition = sqlDefinition.replaceAll("--\\s*" + keyword, keyword);
+                    sqlDefinition = sqlDefinition.replaceAll("(?i)--\\s*" + keyword, keyword);
                 }
                 var prepareParams = config.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of())
                         .getItem2()

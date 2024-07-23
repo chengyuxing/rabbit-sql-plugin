@@ -25,7 +25,7 @@ public class CopySqlParamsInJava extends SqlNameIntentionActionInJava implements
     public void invokeIfSuccess(Project project, PsiElement element, XQLConfigManager.Config config, String sqlName) {
         var sqlDefinition = config.getXqlFileManager().get(sqlName);
         for (String keyword : FlowControlLexer.KEYWORDS) {
-            sqlDefinition = sqlDefinition.replaceAll("--\\s*" + keyword, keyword);
+            sqlDefinition = sqlDefinition.replaceAll("(?i)--\\s*" + keyword, keyword);
         }
         var namedParams = config.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of())
                 .getItem2()
