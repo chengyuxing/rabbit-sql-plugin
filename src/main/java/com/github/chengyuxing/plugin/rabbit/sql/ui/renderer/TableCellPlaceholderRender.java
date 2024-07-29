@@ -36,6 +36,8 @@ public class TableCellPlaceholderRender extends DefaultTableCellRenderer {
                 valueCom.setForeground(new JBColor(new Color(0x364FED), new Color(0x56A9B6)));
             } else if (Comparators.isQuote(value.toString())) {
                 valueCom.setForeground(new JBColor(new Color(0x097C52), new Color(0x79A978)));
+            } else if (isJSON(value.toString())) {
+                valueCom.setForeground(new JBColor(new Color(0x9C9715), new Color(0xBBB529)));
             } else if (Comparators.valueOf(value) instanceof Comparators.ValueType) {
                 valueCom.setForeground(new JBColor(new Color(0x1D31BC), new Color(0xCC7832)));
             } else {
@@ -45,5 +47,12 @@ public class TableCellPlaceholderRender extends DefaultTableCellRenderer {
             valueCom.setBackground(null);
             return valueCom;
         }
+    }
+
+    static boolean isJSON(String text) {
+        if (text.startsWith("[") && text.endsWith("]")) {
+            return true;
+        }
+        return text.startsWith("{") && text.endsWith("}");
     }
 }
