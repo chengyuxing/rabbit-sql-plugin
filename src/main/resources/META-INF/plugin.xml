@@ -70,6 +70,7 @@
         <![CDATA[
             <h3>2.4.5</h3>
             <ul>
+                <li>Support <code>rabbit-sql-spring-boot-starter 2.10.9+</code></li>
                 <li>Some optimized.</li>
             </ul>
             <h3>2.4.4</h3>
