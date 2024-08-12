@@ -195,7 +195,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     }
 
     private @NotNull JBScrollPane createTreeSpeedSearchPane() {
-        TreeUIHelper.getInstance().installTreeSpeedSearch(tree);
+        TreeUIHelper.getInstance().installTreeSpeedSearch(tree, TreePath::toString, true);
         var scrollPane = new JBScrollPane(tree);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         return scrollPane;
