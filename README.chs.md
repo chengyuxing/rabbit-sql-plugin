@@ -37,7 +37,7 @@ IDEA 旗舰版版本兼容 2023.1.* - 2024.2.* 。
 
 ### Springboot支持
 
-1. 项目中引入 **rabbit-sql-spring-boot-starter 2.10.9+**；
+1. 项目中引入 **rabbit-sql-spring-boot-starter 2.10.10+**；
 2. 在源文件根目录: `.../src/main/resources/` 下创建 `xql-file-manager.yml`；
 3. 为属性: `files` 配置你的xql文件；
 
