@@ -81,7 +81,6 @@ public class XQLConfigManager {
     public void toggleActive(Project project, Config _config) {
         var configs = getConfigs(project, _config.getModulePath());
         for (var config : configs) {
-            config.clear();
             config.setActive(config == _config);
         }
     }

@@ -23,7 +23,7 @@ public class ReloadConfigAction extends AnAction {
             PsiUtil.saveUnsavedXqlAndConfig(project);
             xqlConfigManager.getConfigMap(project)
                     .forEach((module, configs) -> configs.forEach(config -> {
-                        if (config.isValid() && config.isActive()) {
+                        if (config.isValid()) {
                             config.fire();
                         }
                     }));

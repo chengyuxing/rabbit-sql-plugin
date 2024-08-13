@@ -38,7 +38,6 @@ public class ToggleActiveAction extends AnAction {
                 return;
             }
             xqlConfigManager.toggleActive(project, config);
-            config.fire();
             ApplicationManager.getApplication().invokeLater(() -> {
                 VirtualFileManager.getInstance().syncRefresh();
                 XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);

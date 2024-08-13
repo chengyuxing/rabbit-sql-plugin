@@ -32,23 +32,10 @@ public class ReloadSelectedAction extends AnAction {
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
         if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_CONFIG) {
             var config = (XQLConfigManager.Config) nodeSource.source();
-            if (config.isActive()) {
-                PsiUtil.saveUnsavedXqlAndConfig(project);
-                config.fire();
-                XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
-            }
+            PsiUtil.saveUnsavedXqlAndConfig(project);
+            config.fire();
+            XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
         }
-    }
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-        e.getPresentation().setEnabled(false);
-        var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_CONFIG) {
-            var config = (XQLConfigManager.Config) nodeSource.source();
-            e.getPresentation().setEnabled(config.isActive());
-        }
-
     }
 
     @Override
