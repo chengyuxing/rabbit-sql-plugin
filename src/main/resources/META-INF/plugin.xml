@@ -46,7 +46,7 @@
     <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.10.9+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.10.10+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -68,6 +68,12 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.6</h3>
+            <ul>
+                <li>Support <code>rabbit-sql-spring-boot-starter 2.10.10+</code></li>
+                <li>XQL File Manager toolwindow change to load all configs.</li>
+                <li>Fixed XQL File Manager toolwindow Speed Search cannot expand bug.</li>
+            </ul>
             <h3>2.4.5</h3>
             <ul>
                 <li>Support <code>rabbit-sql-spring-boot-starter 2.10.9+</code></li>
