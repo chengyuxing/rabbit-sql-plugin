@@ -81,7 +81,7 @@ public class XqlFileAnnotator implements Annotator {
         if (StringUtil.equalsAnyIgnoreCase(xqlTag, FlowControlLexer.KEYWORDS)) {
             Pattern p = Pattern.compile("\\s(?<keyword>" + keyword + ")(\\s|$)");
             Matcher m = p.matcher(content);
-            if (m.find()) {
+            while (m.find()) {
                 int offset = m.start("keyword");
                 if (offset != -1) {
                     TextRange range = TextRange.from(element.getTextRange().getStartOffset() - whiteSpaceLength + offset, keyword.length());
