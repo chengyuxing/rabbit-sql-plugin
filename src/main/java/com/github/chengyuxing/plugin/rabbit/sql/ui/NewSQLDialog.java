@@ -57,7 +57,7 @@ public class NewSQLDialog extends DialogWrapper {
     protected void doOKAction() {
         var data = newSQLForm.getData();
         var name = data.getItem1();
-        var desc = data.getItem2().replaceAll("\\s+", "\n");
+        var desc = data.getItem2();
         var sqlReference = alias + "." + name;
         var xqlFileManager = config.getXqlFileManager();
         if (Objects.nonNull(xqlFileManager)) {
