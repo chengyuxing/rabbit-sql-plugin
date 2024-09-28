@@ -125,4 +125,97 @@ public class GotoJavaCallable extends RelatedItemLineMarkerProvider {
             }
         }
     }
+
+    List<PsiElement> handlerJava(Project project, Module module, String sqlRef) {
+        return FilenameIndex.getAllFilesByExt(project, "java", GlobalSearchScope.moduleScope(module))
+                .stream()
+                .filter(vf -> vf != null && vf.isValid())
+                .map(vf -> PsiManager.getInstance(project).findFile(vf))
+                .filter(Objects::nonNull)
+                .map(psi -> {
+                    final List<PsiElement> psiElements = new ArrayList<>();
+                    var psiClasses = ((PsiJavaFile) psi).getClasses();
+                    if (psiClasses.length > 0) {
+                        var psiClass = psiClasses[0];
+                        var psiMethods = psiClass.getMethods();
+                        var mapper = psiClass.getAnnotation("com.github.chengyuxing.sql.annotation.XQLMapper");
+                        if (Objects.nonNull(mapper)) {
+                            var psiAnnoAttr = mapper.findAttributeValue("value");
+                            if (Objects.nonNull(psiAnnoAttr)) {
+                                var psiAlias = psiAnnoAttr.getText();
+                                psiAlias = psiAlias.substring(1, psiAlias.length() - 1);
+                                for (var psiMethod : psiMethods) {
+                                    if (psiMethod.hasAnnotation("com.github.chengyuxing.sql.annotation.Insert") ||
+                                            psiMethod.hasAnnotation("com.github.chengyuxing.sql.annotation.Update") ||
+                                            psiMethod.hasAnnotation("com.github.chengyuxing.sql.annotation.Delete") ||
+                                            psiMethod.hasAnnotation("com.github.chengyuxing.sql.annotation.Procedure")) {
+                                        continue;
+                                    }
+                                    var xqlAnno = psiMethod.getAnnotation("com.github.chengyuxing.sql.annotation.XQL");
+                                    if (Objects.nonNull(xqlAnno)) {
+                                        var psiMethodAnnoAttr = xqlAnno.findAttributeValue("value");
+                                        if (Objects.nonNull(psiMethodAnnoAttr)) {
+                                            var attrValue = psiMethodAnnoAttr.getText();
+                                            attrValue = attrValue.substring(1, attrValue.length() - 1);
+                                            // @XQL(type = Type.insert)
+                                            // int addGuest(DataRow dataRow);
+                                            if (Objects.equals("", attrValue)) {
+                                                if (Objects.equals(sqlRef, "&" + psiAlias + "." + psiMethod.getName())) {
+                                                    psiElements.add(psiMethod);
+                                                }
+                                                // @XQL("queryGuests")
+                                                // Stream<Guest> queryGuests(Map<String, Object> args);
+                                            } else {
+                                                if (Objects.equals(sqlRef, "&" + psiAlias + "." + attrValue)) {
+                                                    psiElements.add(psiMethodAnnoAttr);
+                                                }
+                                            }
+                                        }
+                                        // List<DataRow> queryGuests(Map<String, Object> args);
+                                    } else {
+                                        if (Objects.equals(sqlRef, "&" + psiAlias + "." + psiMethod.getName())) {
+                                            psiElements.add(psiMethod);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    psi.accept(new JavaRecursiveElementWalkingVisitor() {
+                        @Override
+                        public void visitLiteralExpression(@NotNull PsiLiteralExpression expression) {
+                            String v = expression.getValue() instanceof String ? (String) expression.getValue() : null;
+                            if (v != null && v.equals(sqlRef)) {
+                                psiElements.add(expression);
+                            }
+                            // unnecessary to do that anymore.
+                            // super.visitElement(expression);
+                        }
+                    });
+                    return psiElements;
+                }).flatMap(Collection::stream)
+                .toList();
+    }
+
+    List<PsiElement> handleKt(Project project, Module module, String sqlRef) {
+        return FilenameIndex.getAllFilesByExt(project, "kt", GlobalSearchScope.moduleScope(module))
+                .stream()
+                .filter(vf -> vf != null && vf.isValid())
+                .map(vf -> PsiManager.getInstance(project).findFile(vf))
+                .filter(Objects::nonNull)
+                .map(psi -> {
+                    final List<PsiElement> psiElements = new ArrayList<>();
+                    psi.accept(new KotlinRecursiveElementWalkingVisitor() {
+                        @Override
+                        public void visitLiteralStringTemplateEntry(@NotNull KtLiteralStringTemplateEntry entry) {
+                            var v = entry.getText();
+                            if (Objects.nonNull(v) && v.equals(sqlRef)) {
+                                psiElements.add(entry);
+                            }
+                        }
+                    });
+                    return psiElements;
+                }).flatMap(Collection::stream)
+                .toList();
+    }
 }
