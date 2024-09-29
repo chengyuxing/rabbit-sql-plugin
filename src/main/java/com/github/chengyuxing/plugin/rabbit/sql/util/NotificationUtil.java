@@ -12,6 +12,6 @@ public class NotificationUtil {
     }
 
     public static void showMessage(Project project, String message, NotificationType type) {
-        showMessage(project, "XQL file manager", message, type);
+        showMessage(project, "XQL File Manager", message, type);
     }
 }

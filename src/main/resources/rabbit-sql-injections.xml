@@ -64,4 +64,14 @@
                             .definedInClass("com.github.chengyuxing.sql.page.IPageable"))
             ]]></place>
     </injection>
+
+    <injection language="SQL" injector-id="kotlin">
+        <display-name>Baki (com.github.chengyuxing.sql.Baki)</display-name>
+        <ignore-pattern><![CDATA[^&[\s\S]+]]></ignore-pattern>
+        <place><![CDATA[
+            kotlinParameter()
+                    .ofFunction(0, kotlinFunction().withName("query")
+                            .definedInClass("com.github.chengyuxing.sql.Baki"))
+            ]]></place>
+    </injection>
 </component>

@@ -22,7 +22,6 @@ import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +39,10 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
         try {
-            @SuppressWarnings("DataFlowIssue") var sqlName = ((PsiLiteralExpression) element.getParent()).getValue().toString().substring(1);
+            var sqlName = PsiUtil.getJvmLangLiteral(element);
+            if (Objects.isNull(sqlName)) {
+                return;
+            }
             var config = xqlConfigManager.getActiveConfig(element);
             var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(project, element);
             var sqlRefParts = StringUtil.extraSqlReference(sqlName);
@@ -101,7 +103,7 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        String sqlRef = PsiUtil.getJavaLiteral(element);
+        String sqlRef = PsiUtil.getJvmLangLiteral(element);
         if (sqlRef == null) {
             return false;
         }

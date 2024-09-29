@@ -31,7 +31,8 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
 
     @Override
     public @Nullable @Nls String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
-        if (!(originalElement instanceof PsiJavaTokenImpl) || !(originalElement.getParent() instanceof PsiLiteralExpression literalExpression)) {
+        String sqlRef = PsiUtil.getJvmLangLiteral(originalElement);
+        if (Objects.isNull(sqlRef)) {
             return null;
         }
         String sqlRef = literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;

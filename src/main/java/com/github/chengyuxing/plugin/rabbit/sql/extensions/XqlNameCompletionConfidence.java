@@ -11,16 +11,20 @@ import org.jetbrains.annotations.NotNull;
 public class XqlNameCompletionConfidence extends CompletionConfidence {
     @Override
     public @NotNull ThreeState shouldSkipAutopopup(@NotNull PsiElement contextElement, @NotNull PsiFile psiFile, int offset) {
-        if (!(contextElement instanceof PsiJavaTokenImpl) || !(contextElement.getParent() instanceof PsiLiteralExpression literalExpression)) {
-            return ThreeState.UNSURE;
-        }
-        String sqlRef = literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
-        if (sqlRef == null) {
+        String sqlRef = handlerSqlRef(contextElement);
+        if (Objects.isNull(sqlRef)) {
             return ThreeState.UNSURE;
         }
         if (sqlRef.startsWith("&")) {
             return ThreeState.NO;
         }
         return ThreeState.UNSURE;
+    }
+
+    protected String handlerSqlRef(PsiElement sourceElement) {
+        if (!(sourceElement instanceof PsiJavaTokenImpl) || !(sourceElement.getParent() instanceof PsiLiteralExpression literalExpression)) {
+            return null;
+        }
+        return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
     }
 }

@@ -2,7 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceManager;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.extensions.support.SqlNameIntentionActionInJava;
+import com.github.chengyuxing.plugin.rabbit.sql.extensions.support.SqlNameIntentionActionInJvmLang;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.Objects;
 
-public class OpenParamsDialogInJava extends SqlNameIntentionActionInJava implements Iconable {
+public class OpenParamsDialogInJava extends SqlNameIntentionActionInJvmLang implements Iconable {
     private final DatasourceManager datasourceManager = DatasourceManager.getInstance();
 
     @Override

@@ -34,7 +34,7 @@ public class SelectOpenedFile extends AnAction {
             return;
         }
 
-        String javaLiteral = PsiUtil.getJavaLiteral(element);
+        String jvmLangLiteral = PsiUtil.getJvmLangLiteral(element);
 
         String sqlRef;
         if (element instanceof PsiComment comment) {
@@ -46,8 +46,8 @@ public class SelectOpenedFile extends AnAction {
             } else {
                 sqlRef = null;
             }
-        } else if (Objects.nonNull(javaLiteral) && javaLiteral.matches(SQL_NAME_PATTERN)) {
-            sqlRef = javaLiteral;
+        } else if (Objects.nonNull(jvmLangLiteral) && jvmLangLiteral.matches(SQL_NAME_PATTERN)) {
+            sqlRef = jvmLangLiteral;
         } else {
             sqlRef = null;
         }

@@ -9,7 +9,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +16,7 @@ import java.util.Objects;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 
-public abstract class SqlNameIntentionActionInJava extends PsiElementBaseIntentionAction {
+public abstract class SqlNameIntentionActionInJvmLang extends PsiElementBaseIntentionAction {
     private static final Logger log = Logger.getInstance(OpenParamsDialogInJava.class);
     private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
 
@@ -28,12 +27,15 @@ public abstract class SqlNameIntentionActionInJava extends PsiElementBaseIntenti
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
         try {
-            @SuppressWarnings("DataFlowIssue") var sqlName = ((PsiLiteralExpression) element.getParent()).getValue().toString().substring(1);
             var config = xqlConfigManager.getActiveConfig(element);
             if (Objects.isNull(config)) {
                 return;
             }
-            invokeIfSuccess(project, element, config, sqlName);
+            var sqlName = PsiUtil.getJvmLangLiteral(element);
+            if (Objects.isNull(sqlName)) {
+                return;
+            }
+            invokeIfSuccess(project, element, config, sqlName.substring(1));
         } catch (Exception e) {
             if (e instanceof ControlFlowException) {
                 throw e;
@@ -44,8 +46,8 @@ public abstract class SqlNameIntentionActionInJava extends PsiElementBaseIntenti
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        String sqlRef = PsiUtil.getJavaLiteral(element);
-        if (sqlRef == null) {
+        String sqlRef = PsiUtil.getJvmLangLiteral(element);
+        if (Objects.isNull(sqlRef)) {
             return false;
         }
         if (sqlRef.matches(SQL_NAME_PATTERN)) {

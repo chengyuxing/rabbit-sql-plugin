@@ -136,11 +136,26 @@ public class PsiUtil {
         return "";
     }
 
-    public static String getJavaLiteral(PsiElement element) {
-        if (!(element instanceof PsiJavaTokenImpl) || !(element.getParent() instanceof PsiLiteralExpression literalExpression)) {
-            return null;
+    public static String getJvmLangLiteral(PsiElement element) {
+        // handle kotlin
+        if (element instanceof KtLiteralStringTemplateEntry stringTemplateEntry) {
+            return stringTemplateEntry.getText();
         }
-        return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
+        if (element instanceof LeafPsiElement && element.getParent() instanceof KtLiteralStringTemplateEntry stringTemplateEntry) {
+            return stringTemplateEntry.getText();
+        }
+        if (element instanceof KtStringTemplateExpression expression) {
+            var text = expression.getText();
+            return text.substring(1, text.length() - 1);
+        }
+        // handle java
+        if (element instanceof PsiLiteralExpression literalExpression) {
+            return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
+        }
+        if (element instanceof PsiJavaTokenImpl && element.getParent() instanceof PsiLiteralExpression literalExpression) {
+            return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
+        }
+        return null;
     }
 
     public static VirtualFile getActiveFile(Project project) {

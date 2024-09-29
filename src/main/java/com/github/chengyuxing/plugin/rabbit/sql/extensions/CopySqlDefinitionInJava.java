@@ -1,7 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.extensions.support.SqlNameIntentionActionInJava;
+import com.github.chengyuxing.plugin.rabbit.sql.extensions.support.SqlNameIntentionActionInJvmLang;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
 import com.intellij.icons.AllIcons;
@@ -15,7 +15,7 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
-public class CopySqlDefinitionInJava extends SqlNameIntentionActionInJava implements Iconable {
+public class CopySqlDefinitionInJava extends SqlNameIntentionActionInJvmLang implements Iconable {
     @Override
     public void invokeIfSuccess(Project project, PsiElement element, XQLConfigManager.Config config, String sqlName) {
         var sqlDefinition = config.getXqlFileManager().get(sqlName);

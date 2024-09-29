@@ -5,10 +5,16 @@ import com.github.chengyuxing.common.script.TokenType;
 import com.github.chengyuxing.common.script.lexer.FlowControlLexer;
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.tuple.Tuples;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
 import com.github.chengyuxing.sql.utils.SqlUtil;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,6 +33,46 @@ public class StringUtil {
         var alias = sqlName.substring(0, dotIdx).trim();
         var name = sqlName.substring(dotIdx + 1).trim();
         return Tuples.of(alias, name);
+    }
+
+    public static void copySqlParams(XQLConfigManager.Config config, String sqlName) {
+        var sqlDefinition = config.getXqlFileManager().get(sqlName);
+        for (String keyword : FlowControlLexer.KEYWORDS) {
+            sqlDefinition = sqlDefinition.replaceAll("(?i)--\\s*" + keyword, keyword);
+        }
+        var namedParams = config.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of())
+                .getArgNameIndexMapping()
+                .keySet()
+                .stream()
+                .filter(name -> !name.startsWith(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY + "."))
+                .distinct()
+                .map(key -> "\"" + key + "\", " + key)
+                .toList();
+
+        var templateParams = StringUtil.getTemplateParameters(sqlDefinition, "", "")
+                .stream()
+                .distinct()
+                .map(key -> "\"" + key + "\", " + key)
+                .toList();
+
+        if (namedParams.isEmpty() && templateParams.isEmpty()) {
+            return;
+        }
+
+        var paramsGroup = new ArrayList<String>();
+
+        if (!templateParams.isEmpty()) {
+            paramsGroup.add("// template parameters\n" + String.join(",\n", templateParams));
+        }
+
+        if (!namedParams.isEmpty()) {
+            paramsGroup.add("// named parameters\n" + String.join(",\n", namedParams));
+        }
+
+        var result = String.join(",\n", paramsGroup);
+
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(new StringSelection(result), null);
     }
 
     public static Set<String> getTemplateParameters(String str) {
@@ -115,7 +161,7 @@ public class StringUtil {
         var plainSql = sqlTokens.stream()
                 .map(Token::getValue)
                 .collect(Collectors.joining(NEW_LINE));
-        sqlGenerator.generatePreparedSql(plainSql, Map.of()).getItem2()
+        sqlGenerator.generatePreparedSql(plainSql, Map.of()).getArgNameIndexMapping()
                 .keySet()
                 .forEach(k -> {
                     var kp = getKeyAndProp(k);
