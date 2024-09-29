@@ -23,12 +23,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class XqlNameReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
     private static final Logger log = Logger.getInstance(XqlNameReference.class);
-    private final String key;
-    private final XQLConfigManager.Config config;
+    protected final String key;
+    protected final XQLConfigManager.Config config;
 
-    public XqlNameReference(@NotNull PsiElement element, TextRange rangeInElement) {
+    public XqlNameReference(@NotNull PsiElement element, TextRange rangeInElement, String key) {
         super(element, rangeInElement);
-        key = element.getText().substring(rangeInElement.getStartOffset(), rangeInElement.getEndOffset());
+        this.key = key;
         config = XQLConfigManager.getInstance().getActiveConfig(element);
     }
 
@@ -115,7 +115,6 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
                             .withTypeText(filename)
                             .withTailText(" " + description)
                             .withCaseSensitivity(true);
-                })
-                .toArray();
+                }).toArray();
     }
 }

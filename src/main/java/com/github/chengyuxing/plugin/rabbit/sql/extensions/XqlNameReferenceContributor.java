@@ -1,10 +1,15 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
+import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
+import com.github.chengyuxing.sql.annotation.CountQuery;
+import com.github.chengyuxing.sql.annotation.XQL;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class XqlNameReferenceContributor extends PsiReferenceContributor {
 

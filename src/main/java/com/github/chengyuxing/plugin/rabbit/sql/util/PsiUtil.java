@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.util;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.sql.annotation.*;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.editor.Document;
@@ -11,8 +12,12 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.impl.source.tree.java.PsiJavaTokenImpl;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.yaml.psi.YAMLAnchor;
 import org.jetbrains.yaml.psi.YamlRecursivePsiElementVisitor;
 
@@ -179,5 +184,100 @@ public class PsiUtil {
             }
         }
         return null;
+    }
+
+    public static boolean isParentAXQLMapperInterface(PsiElement chileElement) {
+        var psiClass = PsiTreeUtil.getParentOfType(chileElement, PsiClass.class);
+        if (Objects.isNull(psiClass)) {
+            return false;
+        }
+        if (!psiClass.isInterface()) {
+            return false;
+        }
+        return psiClass.hasAnnotation(XQLMapper.class.getName());
+    }
+
+    public static String getXQLMapperAlias(PsiClass psiClass) {
+        var mapper = psiClass.getAnnotation(XQLMapper.class.getName());
+        if (Objects.isNull(mapper)) {
+            return null;
+        }
+        if (!psiClass.isInterface()) {
+            return null;
+        }
+        var psiAnnoAttr = mapper.findAttributeValue("value");
+        if (Objects.isNull(psiAnnoAttr)) {
+            return null;
+        }
+        return getAnnoTextValue(psiAnnoAttr);
+    }
+
+    public static String getXQLMapperAlias(PsiElement childElement) {
+        var psiClass = PsiTreeUtil.getParentOfType(childElement, PsiClass.class);
+        if (Objects.isNull(psiClass)) {
+            return null;
+        }
+        return getXQLMapperAlias(psiClass);
+    }
+
+    public static String getAnnoTextValue(PsiAnnotationMemberValue psiAnnoAttr) {
+        if (psiAnnoAttr instanceof PsiLiteralExpression literalExpression) {
+            if (literalExpression.getValue() instanceof String s) {
+                return s;
+            }
+        }
+        var psiAlias = psiAnnoAttr.getText();
+        psiAlias = psiAlias.substring(1, psiAlias.length() - 1);
+        return psiAlias;
+    }
+
+    public static PsiAnnotationMemberValue getMethodAnnoValue(PsiIdentifier element, String annoClassName, String attrName) {
+        if (element.getParent() instanceof PsiMethod psiMethod) {
+            return getMethodAnnoValue(psiMethod, annoClassName, attrName);
+        }
+        return null;
+    }
+
+    public static PsiAnnotationMemberValue getMethodAnnoValue(PsiMethod psiMethod, String annoClassName, String attrName) {
+        var methodAnno = psiMethod.getAnnotation(annoClassName);
+        if (Objects.nonNull(methodAnno)) {
+            var psiMethodAnnoAttr = methodAnno.findAttributeValue(attrName);
+            if (Objects.nonNull(psiMethodAnnoAttr)) {
+                return psiMethodAnnoAttr;
+            }
+        }
+        return null;
+    }
+
+    public static PsiAnnotationMemberValue getIfElementIsAnnotationAttr(PsiElement element, String annotationName, String attrName) {
+        var psiAttrValuePair = PsiTreeUtil.getParentOfType(element, PsiNameValuePair.class);
+        if (Objects.isNull(psiAttrValuePair)) {
+            return null;
+        }
+        var psiAnnotation = PsiTreeUtil.getParentOfType(psiAttrValuePair, PsiAnnotation.class);
+        if (Objects.isNull(psiAnnotation)) {
+            return null;
+        }
+        if (!psiAnnotation.hasQualifiedName(annotationName)) {
+            return null;
+        }
+        if (psiAttrValuePair.getAttributeName().equals(attrName)) {
+            return psiAttrValuePair.getValue();
+        }
+        return null;
+    }
+
+    public static boolean isXQLMapperMethod(PsiMethod psiMethod) {
+        return !psiMethod.hasAnnotation(Insert.class.getName()) &&
+                !psiMethod.hasAnnotation(Update.class.getName()) &&
+                !psiMethod.hasAnnotation(Delete.class.getName()) &&
+                !psiMethod.hasAnnotation(Procedure.class.getName());
+    }
+
+    public static boolean isXQLMapperMethodIdentifier(PsiElement element) {
+        if (element instanceof PsiIdentifier && element.getParent() instanceof PsiMethod psiMethod) {
+            return isXQLMapperMethod(psiMethod);
+        }
+        return false;
     }
 }
