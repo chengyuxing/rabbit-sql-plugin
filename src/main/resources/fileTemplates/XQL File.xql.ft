@@ -7,5 +7,5 @@
  $Description
  @@@
  Typing "xql" keyword to get suggestions,
- e.g: "xql:new" will be create a sql fragment.
+ e.g: "xql:new" will create a sql fragment.
 */

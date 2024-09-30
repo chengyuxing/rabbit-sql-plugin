@@ -37,11 +37,7 @@ public class StringUtil {
 
     public static void copySqlParams(XQLConfigManager.Config config, String sqlName) {
         var sqlDefinition = config.getXqlFileManager().get(sqlName);
-        for (String keyword : FlowControlLexer.KEYWORDS) {
-            sqlDefinition = sqlDefinition.replaceAll("(?i)--\\s*" + keyword, keyword);
-        }
-        var namedParams = config.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of())
-                .getArgNameIndexMapping()
+        var namedParams = getParamsMappingInfo(config.getSqlGenerator(), sqlDefinition, true)
                 .keySet()
                 .stream()
                 .filter(name -> !name.startsWith(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY + "."))
@@ -49,7 +45,7 @@ public class StringUtil {
                 .map(key -> "\"" + key + "\", " + key)
                 .toList();
 
-        var templateParams = StringUtil.getTemplateParameters(sqlDefinition, "", "")
+        var templateParams = getTemplateParameters(sqlDefinition, "", "")
                 .stream()
                 .distinct()
                 .map(key -> "\"" + key + "\", " + key)
@@ -96,6 +92,10 @@ public class StringUtil {
     }
 
     public static Map<String, Set<String>> getParamsMappingInfo(SqlGenerator sqlGenerator, String sql) {
+        return getParamsMappingInfo(sqlGenerator, sql, false);
+    }
+
+    public static Map<String, Set<String>> getParamsMappingInfo(SqlGenerator sqlGenerator, String sql, boolean excludeTemplateHolder) {
         Map<String, Set<String>> paramsMap = new LinkedHashMap<>();
         FlowControlLexer lexer = new FlowControlLexer(sql) {
             @Override
@@ -175,7 +175,9 @@ public class StringUtil {
                     }
                     paramsMap.get(kp.getItem1()).add(holder);
                 });
-
+        if (excludeTemplateHolder) {
+            return paramsMap;
+        }
         var tempP = SqlUtil.FMT.getPattern();
         var tempM = tempP.matcher(plainSql);
         while (tempM.find()) {

@@ -1,7 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.common.io.FileResource;
-import com.github.chengyuxing.common.script.lexer.FlowControlLexer;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
@@ -11,12 +10,10 @@ import com.github.chengyuxing.sql.annotation.XQL;
 import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -70,15 +67,10 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                 doc += DEFINITION_END + CONTENT_START + sqlContent + CONTENT_END +
                         SECTIONS_START;
 
-                for (String keyword : FlowControlLexer.KEYWORDS) {
-                    sqlDefinition = sqlDefinition.replaceAll("(?i)--\\s*" + keyword, keyword);
-                }
-                var prepareParams = config.getSqlGenerator().generatePreparedSql(sqlDefinition, Map.of())
-                        .getArgNameIndexMapping()
+                var prepareParams = StringUtil.getParamsMappingInfo(config.getSqlGenerator(), sqlDefinition, true)
                         .keySet()
                         .stream()
                         .map(name -> xqlFileManager.getNamedParamPrefix() + name)
-                        .distinct()
                         .collect(Collectors.joining("  "))
                         .trim();
 
