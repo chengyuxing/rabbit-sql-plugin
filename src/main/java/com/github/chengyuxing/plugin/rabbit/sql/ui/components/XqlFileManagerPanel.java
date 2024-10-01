@@ -333,6 +333,8 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                 return new AnAction[]{
                         new NewSQLAction(tree),
                         new Separator(),
+                        new GenerateXqlMapperAction(tree),
+                        new Separator(),
                         new CopyXqlFile(tree),
                         copyGroup,
                         new OpenInEditorAction(tree)

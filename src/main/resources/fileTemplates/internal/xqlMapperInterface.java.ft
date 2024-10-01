@@ -1,0 +1,94 @@
+/*
+ * Created by IntelliJ IDEA Rabbit-SQL plugin.
+ * User: $user
+ * Update: $date
+ */
+
+package $packageName;
+
+import com.github.chengyuxing.common.DataRow;
+import com.github.chengyuxing.sql.page.IPageable;
+import com.github.chengyuxing.sql.PagedResource;
+import com.github.chengyuxing.sql.annotation.*;
+import com.github.chengyuxing.sql.types.Param;
+#if($baki)
+import com.github.chengyuxing.sql.spring.autoconfigure.mapping.Baki;
+#end
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+#if($entityImports.size() > 0)
+
+#foreach($entityImport in $entityImports)
+import $entityImport;
+#end
+#end
+
+// Rabbit-SQL-Plugin - Your imports  //CODE-BEGIN:imports
+$userImports
+// Rabbit-SQL-Plugin - End of your imports  //CODE-END:imports
+
+#if($description != "")
+/**
+* $description
+*/
+#end
+#if($baki)
+@Baki("$baki")
+#end
+@XQLMapper("$mapperAlias")
+public interface ${mapperInterfaceName} {
+    // Rabbit-SQL-Plugin - Your methods  //CODE-BEGIN:methods
+$userMethods
+    // Rabbit-SQL-Plugin - End of your methods  //CODE-END:methods
+
+#foreach($method in $methods)
+#set($isMethodProc = $method.sqlType == 'procedure' || $method.sqlType == 'function')
+    /**
+#if($method.description != "")
+     * $method.description
+#end
+#if($method.parameters.size() > 0)
+#if($method.paramType == "@Arg")
+#foreach($param in $method.parameters)
+     * @param $param $param
+#end
+#elseif($method.paramType == "Map")
+     * @param args args (#foreach($param in $method.parameters)$param#if(!$foreach.last), #end#end)
+#else
+     * @param ${method.paramType.toLowerCase()} ${method.paramType.toLowerCase()}
+#end
+#end
+     * @return ${method.returnType.replace("<","[").replace(">","]")}
+     */
+#if($method.annotationValue && $method.sqlType != "")
+    @XQL(value = "$method.annotationValue", type = Type.$method.sqlType)
+#elseif($method.annotationValue)
+    @XQL("$method.annotationValue")
+#elseif($method.sqlType != "")
+    @XQL(type = Type.$method.sqlType)
+#end
+#if($method.parameters.size() == 0)
+    $method.returnType ${method.name}();
+#else
+#if($method.paramType == "@Arg")
+    $method.returnType ${method.name}(
+#foreach($param in $method.parameters)
+            @Arg("$param") #if($isMethodProc)Param#{else}Object#end $param#if(!$foreach.last),
+#end
+#end
+
+    );
+#else
+#if($method.paramType == "Map")
+    $method.returnType ${method.name}(Map<String, #if($isMethodProc)Param#{else}Object#end> args);
+#else
+    $method.returnType ${method.name}($method.paramType ${method.paramType.toLowerCase()});
+#end
+#end
+#end
+
+#end
+}
