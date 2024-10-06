@@ -72,7 +72,7 @@
             <ul>
                 <li>Support <code>rabbit-sql 7.12.0+</code> and <code>rabbit-sql-spring-boot-starter 2.11.0+</code></li>
                 <li>New Action <b>Generate code</b> support generate XQL Mapper interface.</li>
-                <li>Add support <code>@CountQuery</code> for <b>Generate code</b> when xql file manager contains sql name which ends withs <code>count</code>, <code>Count</code> or <code>-count</code>.</li>
+                <li>Add support auto <code>@CountQuery</code> on method if method is page query for <b>Generate code</b> when xql file manager contains sql name which ends withs <code>count</code>, <code>Count</code> or <code>-count</code>.</li>
                 <li>Add support xql reference for XQL Mapper interface method.</li>
                 <li>Add Basic support for <b>kotlin</b>.</li>
                 <li>Remove SQL Language injection on <code>baki</code>.</li>
