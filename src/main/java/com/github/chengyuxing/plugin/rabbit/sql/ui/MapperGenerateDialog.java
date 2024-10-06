@@ -3,8 +3,10 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLMapperTemplateData;
+import com.github.chengyuxing.plugin.rabbit.sql.types.XQLMapperConfig;
+import com.github.chengyuxing.plugin.rabbit.sql.types.XQLMapperTemplateData;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.MapperGenerateForm;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ReturnTypesForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.Args;
@@ -13,6 +15,7 @@ import com.github.chengyuxing.sql.utils.SqlGenerator;
 import com.github.chengyuxing.sql.yaml.HyphenatedPropertyUtil;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -21,6 +24,7 @@ import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.Yaml;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -28,6 +32,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,6 +50,7 @@ public class MapperGenerateDialog extends DialogWrapper {
     private final JBCheckBox bakiCheck;
     private final JTextField bakiInput;
     private final JTextField packageInput;
+    private final Path configPath;
 
     public MapperGenerateDialog(@Nullable Project project, String alias, XQLConfigManager.Config config) {
         super(project, true);
@@ -53,7 +59,6 @@ public class MapperGenerateDialog extends DialogWrapper {
         this.config = config;
         this.xqlFileManager = this.config.getXqlFileManager();
         this.sqlGenerator = this.config.getSqlGenerator();
-        this.myForm = new MapperGenerateForm(project, this.alias, this.xqlFileManager);
 
         {
             bakiCheck = new JBCheckBox();
@@ -88,7 +93,23 @@ public class MapperGenerateDialog extends DialogWrapper {
                     setOKActionEnabled(isPackageValid());
                 }
             });
+
+            // load mapper config
+            var resource = xqlFileManager.getResource(alias);
+            configPath = Path.of(URI.create(resource.getFilename() + ".rbm"));
+            var mapperConfig = XQLMapperConfig.load(configPath);
+
+            if (Objects.nonNull(mapperConfig.getBaki())) {
+                bakiCheck.setSelected(true);
+                bakiInput.setText(mapperConfig.getBaki());
+            }
+            if (Objects.nonNull(mapperConfig.getPackageName())) {
+                packageInput.setText(mapperConfig.getPackageName());
+            }
+
+            this.myForm = new MapperGenerateForm(project, this.alias, this.xqlFileManager, mapperConfig);
         }
+
 
         setTitle("XQL Mapper Interface Generator");
         setOKButtonText("Generate");
@@ -122,9 +143,14 @@ public class MapperGenerateDialog extends DialogWrapper {
 
     @Override
     protected void doOKAction() {
+        var newMapperConfig = new XQLMapperConfig();
         var resource = this.xqlFileManager.getResource(alias);
         var packageName = packageInput.getText().trim();
+
+        newMapperConfig.setPackageName(packageName);
+
         var templateData = new XQLMapperTemplateData(packageName, alias);
+
         templateData.setUser(System.getProperty("user.name"));
         templateData.setDate(MostDateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
         if (bakiCheck.isSelected()) {
@@ -133,6 +159,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                 bakiBean = "baki";
             }
             templateData.setBaki(bakiBean);
+            newMapperConfig.setBaki(bakiBean);
         }
         templateData.setDescription(resource.getDescription());
 
@@ -141,7 +168,11 @@ public class MapperGenerateDialog extends DialogWrapper {
         var data = myForm.getData();
         data.forEach(row -> {
             var sqlName = row.get(0).toString();
+
+            var mapperMethod = new XQLMapperConfig.XQLMethod();
+
             var methodName = row.get(1).toString().trim();
+
             if (methodName.isEmpty()) {
                 methodName = sqlName.replace("_", "-");
                 methodName = HyphenatedPropertyUtil.camelize(methodName);
@@ -149,18 +180,26 @@ public class MapperGenerateDialog extends DialogWrapper {
             }
 
             var sqlType = row.get(2).toString();
+            mapperMethod.setSqlType(sqlType);
 
             var paramType = row.get(3).toString().trim();
+            mapperMethod.setParamType(paramType);
+
             if (paramType.isEmpty()) {
                 paramType = "Map";
             }
 
-            var returnTypes = row.get(4).toString().trim().split(" & ");
-            if (returnTypes.length == 0) {
-                returnTypes = new String[]{"List<T>"};
+            var returnTypes = row.get(4).toString().trim();
+            mapperMethod.setReturnType(returnTypes);
+
+            var returnTypeArr = returnTypes.split(ReturnTypesForm.RETURN_TYPE_SPLITTER);
+            if (returnTypeArr.length == 0) {
+                returnTypeArr = new String[]{"List<T>"};
             }
 
             var returnGenericType = row.get(5).toString().trim();
+            mapperMethod.setReturnGenericType(returnGenericType);
+
             if (returnGenericType.isEmpty()) {
                 returnGenericType = "DataRow";
             }
@@ -181,12 +220,12 @@ public class MapperGenerateDialog extends DialogWrapper {
                 returnGenericType = genericUserEntity;
             }
 
-            if (returnTypes.length == 1) {
-                var method = new XQLMapperTemplateData.Method(replaceGenericT(returnTypes[0], returnGenericType), methodName);
+            if (returnTypeArr.length == 1) {
+                var method = new XQLMapperTemplateData.Method(replaceGenericT(returnTypeArr[0], returnGenericType), methodName);
                 addMethod(methods, sqlName, methodName, sqlType, paramType, sql, params, method);
             } else {
                 var newReturnTypes = new LinkedHashSet<String>();
-                for (var returnType : returnTypes) {
+                for (var returnType : returnTypeArr) {
                     newReturnTypes.add(replaceGenericT(returnType, returnGenericType));
                 }
                 for (var returnType : newReturnTypes) {
@@ -195,6 +234,8 @@ public class MapperGenerateDialog extends DialogWrapper {
                     addMethod(methods, sqlName, extMethodName, sqlType, paramType, sql, params, method);
                 }
             }
+
+            newMapperConfig.getMethods().put(sqlName, mapperMethod);
         });
 
         templateData.setMethods(methods);
@@ -263,10 +304,22 @@ public class MapperGenerateDialog extends DialogWrapper {
             var vf = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(absFilename);
             if (Objects.nonNull(vf)) {
                 vf.refresh(false, false);
+                ApplicationManager.getApplication().runWriteAction(() -> generateMapperConfig(newMapperConfig));
             }
             dispose();
         } catch (IOException e) {
             NotificationUtil.showMessage(project, e.getMessage(), NotificationType.WARNING);
+            log.warn(e);
+        }
+    }
+
+    private void generateMapperConfig(XQLMapperConfig config) {
+        var yaml = new Yaml();
+        try {
+            var result = yaml.dumpAsMap(config);
+            result = "# Rabbit-SQL-Plugin - XQL mapper generate configuration - DO NOT MODIFY\n\n" + result;
+            Files.writeString(configPath, result, StandardCharsets.UTF_8);
+        } catch (IOException e) {
             log.warn(e);
         }
     }

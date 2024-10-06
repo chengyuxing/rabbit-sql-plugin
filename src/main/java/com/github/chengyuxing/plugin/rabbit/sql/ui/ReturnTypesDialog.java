@@ -17,7 +17,7 @@ public class ReturnTypesDialog extends DialogWrapper {
         this.returnTypesForm = new ReturnTypesForm(selected, checked -> setOKActionEnabled(checked != 0));
         this.doOkAction = doOkAction;
         setTitle("[ " + method + " ] return types");
-        setSize(360, 105);
+        setSize(360, 130);
         init();
     }
 

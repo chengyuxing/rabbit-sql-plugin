@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.types.XQLMapperConfig;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.ReturnTypesDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.ColorfulCellRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.SqlTypePlaceHolder;
@@ -14,6 +15,7 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.JBTable;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -21,19 +23,14 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
-
-// Baki:
-// Package:{method:{
-// return types
-// method
-// sql type (Type.query)
-// param type(Map, Collection, @Arg,...)}}
 public class MapperGenerateForm extends JPanel {
     private final Project project;
     private final String alias;
     private final XQLFileManager xqlFileManager;
+    private final XQLMapperConfig mapperConfig;
     private JBTable table;
     private static final Object[] thead = new Object[]{
             "SQL",
@@ -44,14 +41,15 @@ public class MapperGenerateForm extends JPanel {
             "<T>"};
     public static final List<String> RETURN_TYPES = List.of(
             "List<T>",
+            "Set<T>",
             "Stream<T>",
             "PagedResource<T>",
             "Optional<T>",
             "<T>",
-            "DataRow",
-            "Map<String, Object>",
             "IPageable",
-            "Integer");
+            "Integer",
+            "Long",
+            "Double");
     public static final List<String> SQL_TYPES = List.of("query",
             "insert",
             "update",
@@ -63,10 +61,11 @@ public class MapperGenerateForm extends JPanel {
     public static final List<String> GENERIC_TYPES = List.of("Map<String, Object>", "DataRow");
     public static final List<String> PARAM_TYPES = List.of("Map", "@Arg");
 
-    public MapperGenerateForm(Project project, String alias, XQLFileManager xqlFileManager) {
+    public MapperGenerateForm(Project project, String alias, XQLFileManager xqlFileManager, XQLMapperConfig mapperConfig) {
         this.project = project;
         this.alias = alias;
         this.xqlFileManager = xqlFileManager;
+        this.mapperConfig = mapperConfig;
         initComponents();
     }
 
@@ -110,6 +109,7 @@ public class MapperGenerateForm extends JPanel {
             }
         };
         table.setModel(model);
+
         var tbody = xqlFileManager.getResource(alias).getEntry()
                 .keySet()
                 .stream()
@@ -140,13 +140,33 @@ public class MapperGenerateForm extends JPanel {
                             returnType = "<T>";
                         }
                     }
+
+                    var paramType = "Map";
+                    var returnGenericType = "DataRow";
+
+                    var mappingConfig = this.mapperConfig.getMethods().get(sqlName);
+                    if (Objects.nonNull(mappingConfig)) {
+                        if (StringUtils.isNotEmpty(mappingConfig.getSqlType())) {
+                            sqlType = mappingConfig.getSqlType();
+                        }
+                        if (StringUtils.isNotEmpty(mappingConfig.getReturnType())) {
+                            returnType = mappingConfig.getReturnType();
+                        }
+                        if (StringUtils.isNotEmpty(mappingConfig.getParamType())) {
+                            paramType = mappingConfig.getParamType();
+                        }
+                        if (StringUtils.isNotEmpty(mappingConfig.getReturnGenericType())) {
+                            returnGenericType = mappingConfig.getReturnGenericType();
+                        }
+                    }
+
                     return new Object[]{
                             sqlName,
                             methodName,
                             sqlType,
-                            "Map",
+                            paramType,
                             returnType,
-                            "DataRow"
+                            returnGenericType
                     };
                 }).toArray(i -> new Object[i][6]);
         model.setDataVector(tbody, thead);

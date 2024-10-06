@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.ui.types;
+package com.github.chengyuxing.plugin.rabbit.sql.types;
 
 import java.util.*;
 
