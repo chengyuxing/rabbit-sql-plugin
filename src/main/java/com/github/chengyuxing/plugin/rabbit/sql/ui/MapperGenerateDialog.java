@@ -23,6 +23,8 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 
@@ -138,6 +140,21 @@ public class MapperGenerateDialog extends DialogWrapper {
         panel.add(new JBLabel("Package:"));
         panel.add(packageInput);
         return panel;
+    }
+
+    @Override
+    protected void setHelpTooltip(@NotNull JButton helpButton) {
+        helpButton.setToolTipText("Custom java bean for 'Param Type' and '&lt;T&gt;' must be fully qualified class name.");
+    }
+
+    @Override
+    protected @NonNls @Nullable String getHelpId() {
+        return "help";
+    }
+
+    @Override
+    protected void doHelpAction() {
+
     }
 
     @Override
