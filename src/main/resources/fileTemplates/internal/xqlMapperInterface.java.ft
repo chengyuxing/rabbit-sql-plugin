@@ -71,6 +71,9 @@ $userMethods
 #elseif($method.sqlType != "")
     @XQL(type = Type.$method.sqlType)
 #end
+#if($method.countQuery)
+    @CountQuery("$method.countQuery")
+#end
 #if($method.parameters.size() == 0)
     $method.returnType ${method.name}();
 #else

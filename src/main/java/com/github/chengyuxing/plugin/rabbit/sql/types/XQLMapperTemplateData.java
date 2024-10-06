@@ -108,6 +108,7 @@ public class XQLMapperTemplateData {
         private String sqlType;
         private String paramType;
         private Set<String> parameters = new LinkedHashSet<>();
+        private String countQuery;
 
         public Method(String returnType, String methodName) {
             this.returnType = returnType;
@@ -162,6 +163,14 @@ public class XQLMapperTemplateData {
 
         public void setParamType(String paramType) {
             this.paramType = paramType;
+        }
+
+        public String getCountQuery() {
+            return countQuery;
+        }
+
+        public void setCountQuery(String countQuery) {
+            this.countQuery = countQuery;
         }
     }
 }

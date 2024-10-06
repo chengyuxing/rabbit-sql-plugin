@@ -338,6 +338,19 @@ public class MapperGenerateDialog extends DialogWrapper {
         }
         method.setParameters(newParams);
 
+        if (com.github.chengyuxing.common.utils.StringUtil.startsWithsIgnoreCase(method.getReturnType(), "PagedResource<", "IPageable")) {
+            var cqName = sqlName + "Count";
+            if (!xqlFileManager.contains(alias + "." + cqName)) {
+                cqName = sqlName + "count";
+            }
+            if (!xqlFileManager.contains(alias + "." + cqName)) {
+                cqName = sqlName + "-count";
+            }
+            if (xqlFileManager.contains(alias + "." + cqName)) {
+                method.setCountQuery(cqName);
+            }
+        }
+
         methods.add(method);
     }
 
