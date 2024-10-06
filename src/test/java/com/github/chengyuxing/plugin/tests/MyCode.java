@@ -1,13 +1,20 @@
 package com.github.chengyuxing.plugin.tests;
 
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.script.expression.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.types.XQLMapperConfig;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SimpleJavaCompiler;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+import com.github.chengyuxing.sql.Args;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
 import org.junit.Test;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -99,5 +106,27 @@ public class MyCode {
         System.out.println(String.join("/", List.of()));
     }
 
+    @Test
+    public void testYml() {
+        Map<String, Object> nodeMap = new LinkedHashMap<>();
+        nodeMap.put("name", "cyx");
+        nodeMap.put("age", 23);
+        nodeMap.put("nodeMap", Args.of("a", "b", "c", 1));
+        nodeMap.put("nodeList", List.of(1, 2, 3, 4));
 
+        var yml = new Yaml();
+        var res = yml.dump(nodeMap);
+        System.out.println("---");
+        System.out.println(res);
+
+        var loaded = yml.load("# Rabbit-SQL-Plugin - XQL mapper generate configuration - DO NOT MODIFY\n" + res);
+        System.out.println(loaded);
+    }
+
+    @Test
+    public void testYml2() {
+        var yml = new Yaml();
+        var c = yml.loadAs(new FileResource("file:///Users/chengyuxing/IdeaProjects/rabbit-sql-quick-start/src/main/resources/xqls/home.xql.mappers").getInputStream(), XQLMapperConfig.class);
+        System.out.println(c);
+    }
 }
