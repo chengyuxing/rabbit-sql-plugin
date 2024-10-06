@@ -110,8 +110,7 @@ public class MapperGenerateDialog extends DialogWrapper {
             this.myForm = new MapperGenerateForm(project, this.alias, this.xqlFileManager, mapperConfig);
         }
 
-
-        setTitle("XQL Mapper Interface Generator");
+        setTitle("[ " + alias + " ] XQL Mapper Interface Generator");
         setOKButtonText("Generate");
         setCancelButtonText("Close");
         setSize(750, 300);
@@ -245,8 +244,13 @@ public class MapperGenerateDialog extends DialogWrapper {
         try {
             var packages = packageName.split("\\.");
 
-            var absFilename = config.getModulePath()
-                    .resolve(Constants.SOURCE_ROOT)
+            var sourceRoot = config.getModulePath()
+                    .resolve(Constants.KT_SOURCE_ROOT);
+            if (!Files.exists(sourceRoot)) {
+                sourceRoot = config.getModulePath().resolve(Constants.JAVA_SOURCE_ROOT);
+            }
+
+            var absFilename = sourceRoot
                     .resolve(Path.of(packages[0], Arrays.copyOfRange(packages, 1, packages.length)))
                     .resolve(templateData.getMapperInterfaceName() + ".java");
 
