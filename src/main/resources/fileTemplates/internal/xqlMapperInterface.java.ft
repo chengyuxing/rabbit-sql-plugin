@@ -57,7 +57,7 @@ $userMethods
      * @param $param $param
 #end
 #elseif($method.paramType == "Map")
-     * @param args args (#foreach($param in $method.parameters)$param#if(!$foreach.last), #end#end)
+     * @param args (#foreach($param in $method.parameters)$param#if(!$foreach.last), #end#end)
 #else
      * @param ${method.paramType.toLowerCase()} ${method.paramType.toLowerCase()}
 #end
