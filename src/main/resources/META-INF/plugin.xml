@@ -75,7 +75,9 @@
                 <li>Add support auto <code>@CountQuery</code> on method if method is page query for <b>Generate code</b> when xql file manager contains sql name which ends withs <code>count</code>, <code>Count</code> or <code>-count</code>.</li>
                 <li>Add support xql reference for XQL Mapper interface method.</li>
                 <li>Add Basic support for <b>kotlin</b>.</li>
+                <li>Update xql file template.</li>
                 <li>Remove SQL Language injection on <code>baki</code>.</li>
+                <li>Compatible with IDEA IU 2024.3.* .</li>
                 <li>Some optimized.</li>
             </ul>
             <h3>2.4.9</h3>
