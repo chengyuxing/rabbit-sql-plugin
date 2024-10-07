@@ -1,11 +1,13 @@
 /*
- Created by IntelliJ IDEA.
+ Created by IntelliJ IDEA Rabbit-SQL plugin.
  User: $USER
  Date: $DATE
  Time: $TIME
+#if($Description)
  @@@
  $Description
  @@@
+#end
  Typing "xql" keyword to get suggestions,
  e.g: "xql:new" will create a sql fragment.
 */
