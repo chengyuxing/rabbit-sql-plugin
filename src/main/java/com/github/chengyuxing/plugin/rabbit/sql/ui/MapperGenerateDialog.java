@@ -12,7 +12,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.Args;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
-import com.github.chengyuxing.sql.yaml.HyphenatedPropertyUtil;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -190,9 +189,7 @@ public class MapperGenerateDialog extends DialogWrapper {
             var methodName = row.get(1).toString().trim();
 
             if (methodName.isEmpty()) {
-                methodName = sqlName.replace("_", "-");
-                methodName = HyphenatedPropertyUtil.camelize(methodName);
-                methodName = methodName.replaceAll("\\W", "");
+                methodName = StringUtil.camelizeAndClean(methodName);
             }
 
             var sqlType = row.get(2).toString();

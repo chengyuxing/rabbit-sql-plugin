@@ -1,5 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.types;
 
+import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+
 import java.util.*;
 
 public class XQLMapperTemplateData {
@@ -56,7 +58,7 @@ public class XQLMapperTemplateData {
 
     public XQLMapperTemplateData(String packageName, String mapperAlias) {
         this.packageName = packageName;
-        this.mapperAlias = mapperAlias;
+        this.mapperAlias = StringUtil.camelizeAndClean(mapperAlias);
         this.mapperInterfaceName = mapperAlias.substring(0, 1).toUpperCase() + mapperAlias.substring(1) + "Mapper";
     }
 

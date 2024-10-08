@@ -9,6 +9,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
 import com.github.chengyuxing.sql.utils.SqlUtil;
+import com.github.chengyuxing.sql.yaml.HyphenatedPropertyUtil;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -207,5 +208,12 @@ public class StringUtil {
             prop = name.substring(dotIdx);
         }
         return Pair.of(key, prop);
+    }
+
+    public static String camelizeAndClean(String content) {
+        var result = content.replace("_", "-");
+        result = HyphenatedPropertyUtil.camelize(result);
+        result = result.replaceAll("\\W", "");
+        return result;
     }
 }

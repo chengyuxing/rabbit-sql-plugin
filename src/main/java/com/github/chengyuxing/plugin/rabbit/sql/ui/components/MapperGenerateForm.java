@@ -8,7 +8,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.SqlTypePlaceHolder;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLInvocationHandler;
-import com.github.chengyuxing.sql.yaml.HyphenatedPropertyUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
@@ -115,9 +114,7 @@ public class MapperGenerateForm extends JPanel {
                 .stream()
                 .filter(key -> !key.startsWith("${"))
                 .map(sqlName -> {
-                    var methodName = sqlName.replace("_", "-");
-                    methodName = HyphenatedPropertyUtil.camelize(methodName);
-                    methodName = methodName.replaceAll("\\W", "");
+                    var methodName = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.camelizeAndClean(sqlName);
                     var sqlType = "query";
                     var returnType = "List<T>";
                     if (methodName.matches(XQLInvocationHandler.INSERT_PATTERN)) {
