@@ -152,7 +152,7 @@ public class NewXqlDialog extends DialogWrapper {
         var alias = data.getItem1();
         var userInput = formatUserInputPath(data.getItem2());
         var abPath = formatAbPath(data.getItem3());
-        var description = data.getItem4().replaceAll("\\s+", "\n");
+        var description = data.getItem4();
 
         if (config.getXqlFileManagerConfig().getFiles().containsKey(alias)) {
             newXqlFileForm.alert("Alias '" + alias + "' already configured.");
