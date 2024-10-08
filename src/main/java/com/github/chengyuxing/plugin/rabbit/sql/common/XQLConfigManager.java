@@ -409,10 +409,5 @@ public class XQLConfigManager {
             originalXqlFiles.clear();
             notificationExecutor.get().ifPresent(NotificationExecutor::close);
         }
-
-        public void clear() {
-            xqlFileManager.close();
-            originalXqlFiles.clear();
-        }
     }
 }

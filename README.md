@@ -7,12 +7,12 @@
 
 Language: English | [简体中文](README.chs.md)
 
-IDEA IU 2023.1.* - 2024.2.* is required.
+IDEA IU 2023.1.* - 2024.3.* is required.
 
 - Support the identification of xql(`.xql`) file type.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
 - Support quick look sql definition by name(e.g: `&my.users`).
-- `Baki` interface support inject SQL language(e.g: `.query("select ...")`).
+- Support generate mapper interface by registered xql file.
 - Support java and xql file references to navigate each other.
 - Support copy sql by focus in sql name.(macOS:<kbd>Option</kbd> + <kbd>Enter</kbd> , Windows: <kbd>Alt</kbd> + <kbd>Enter</kbd>) > <kbd>Copy sql definition</kbd> .
 - Support Execute Dynamic SQL by focus in sql name.(macOS:<kbd>Option</kbd> + <kbd>Enter</kbd> , Windows: <kbd>Alt</kbd> + <kbd>Enter</kbd>) > <kbd>Execute Dynamic sql</kbd> .
@@ -30,7 +30,7 @@ IDEA IU 2023.1.* - 2024.2.* is required.
 
 ## Getting Started
 
-1. Add dependency **Rabbit-sql 7.12.0+** to your project;
+1. Add dependency **Rabbit-sql 7.12.2+** to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 4. Configure [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
@@ -38,7 +38,7 @@ IDEA IU 2023.1.* - 2024.2.* is required.
 
 ### Springboot support
 
-1. Add dependency **rabbit-sql-spring-boot-starter 2.11.0+** to your project;
+1. Add dependency **rabbit-sql-spring-boot-starter 2.11.2+** to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 
