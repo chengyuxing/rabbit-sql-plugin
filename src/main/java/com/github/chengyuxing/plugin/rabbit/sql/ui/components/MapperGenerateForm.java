@@ -118,19 +118,19 @@ public class MapperGenerateForm extends JPanel {
                     var sqlType = "query";
                     var returnType = "List<T>";
                     if (methodName.matches(XQLInvocationHandler.INSERT_PATTERN)) {
-                        sqlType = "";
+                        sqlType = "insert";
                         returnType = "Integer";
                     } else if (methodName.matches(XQLInvocationHandler.UPDATE_PATTERN)) {
-                        sqlType = "";
+                        sqlType = "update";
                         returnType = "Integer";
                     } else if (methodName.matches(XQLInvocationHandler.DELETE_PATTERN)) {
-                        sqlType = "";
+                        sqlType = "delete";
                         returnType = "Integer";
                     } else if (methodName.matches(XQLInvocationHandler.CALL_PATTERN)) {
-                        sqlType = "";
+                        sqlType = "procedure";
                         returnType = "DataRow";
                     } else if (methodName.matches(XQLInvocationHandler.QUERY_PATTERN)) {
-                        sqlType = "";
+                        sqlType = "query";
                         if (StringUtil.startsWiths(methodName, "query", "search", "select")) {
                             returnType = "List<T>";
                         } else {
