@@ -50,6 +50,7 @@ $userMethods
     /**
 #if($method.description != "")
      * $method.description
+     *
 #end
 #if($method.parameters.size() > 0)
 #if($method.paramType == "@Arg")
