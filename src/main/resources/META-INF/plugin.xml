@@ -16,7 +16,7 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    <h2>Rabbit-sql lib support</h2>
+    <h2>rabbit-sql framework support</h2>
     <p>Provides support for <a href="https://github.com/chengyuxing/rabbit-sql">rabbit-sql</a> to JetBrains IDEA Ultimate.</p>
     <p>Easily to use <a href="https://github.com/chengyuxing/rabbit-sql">rabbit-sql</a> and <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQL</a> file.</p>
     <h2>Features</h2>
@@ -25,7 +25,7 @@
         <li>Support dynamic sql expression script live templates(e.g: <code>xql:if</code>).</li>
         <li>Support intention action <kbd>Execute Dynamic sql</kbd> and <kbd>Copy sql definition</kbd> by sql name(e.g: <code>&my.users</code>).</li>
         <li>Support quick look sql definition by sql name(e.g: <code>&my.users</code>).</li>
-        <li>Baki interface Support inject SQL language(e.g: <code>.query("select ...")</code>).</li>
+        <li>Support generate mapper interface by registered xql file.</li>
         <li>Support java and xql file references to navigate each other.</li>
         <li>Support sql name suggestions auto complete in java string literal where start with <code>"&"</code>.</li>
         <li>Toolwindow:
@@ -46,7 +46,7 @@
     <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.11.0+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.11.2+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -54,7 +54,7 @@
     </ol>
     <h3>Other</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.12.0+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.12.2+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -70,7 +70,8 @@
         <![CDATA[
             <h3>2.4.11</h3>
             <ul>
-                <li>Fixed generate mapper error when xql name contains '-' or '_'.</li>
+                <li>Support <code>rabbit-sql 7.12.2+</code> and <code>rabbit-sql-spring-boot-starter 2.11.2+</code></li>
+                <li>Fixed generate mapper interface error when xql alias contains '-' or '_'.</li>
                 <li>Generate mapper optimized.</li>
             </ul>
             <h3>2.4.10</h3>
