@@ -58,8 +58,8 @@ public class XQLMapperTemplateData {
 
     public XQLMapperTemplateData(String packageName, String mapperAlias) {
         this.packageName = packageName;
-        this.mapperAlias = StringUtil.camelizeAndClean(mapperAlias);
-        this.mapperInterfaceName = mapperAlias.substring(0, 1).toUpperCase() + mapperAlias.substring(1) + "Mapper";
+        this.mapperAlias = mapperAlias;
+        this.mapperInterfaceName = StringUtil.camelizeAndClean(mapperAlias.substring(0, 1).toUpperCase() + mapperAlias.substring(1)) + "Mapper";
     }
 
     public String getDescription() {
