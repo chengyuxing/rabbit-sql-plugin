@@ -85,7 +85,7 @@ public class NewSQLDialog extends DialogWrapper {
                         if (!desc.trim().isEmpty()) {
                             sqlFragment += "\n/*#" + desc + "#*/";
                         }
-                        sqlFragment += "\n\n;\n";
+                        sqlFragment += "\n\n" + xqlFileManager.getDelimiter() + "\n";
                         var lastIdx = doc.getTextLength();
                         doc.insertString(lastIdx, sqlFragment);
                         PsiDocumentManager.getInstance(project).commitDocument(doc);
