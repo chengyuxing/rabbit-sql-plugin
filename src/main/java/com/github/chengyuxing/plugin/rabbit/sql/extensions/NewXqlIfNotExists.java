@@ -62,7 +62,7 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
                     var d = new NewXqlDialog(project, config, doc, anchors);
                     d.setDefaultAlias(alias);
                     d.setEnableAutoGenAlias(false);
-                    d.setTemplateContent("/*[" + name + "]*/\n\n;\n");
+                    d.setTemplateContent("/*[" + name + "]*/\n\n" + xqlFileManager.getDelimiter() + "\n");
                     d.setWhenComplete(psi -> PsiUtil.navigate2xqlFile(psi, name));
                     d.initContent();
                     d.showAndGet();
@@ -87,7 +87,7 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
             ApplicationManager.getApplication().runWriteAction(() ->
                     WriteCommandAction.runWriteCommandAction(project, "Modify '" + sqlFileVf.getName() + "'", null, () -> {
                         var lastIdx = doc.getTextLength();
-                        doc.insertString(lastIdx, "\n/*[" + name + "]*/\n\n;\n");
+                        doc.insertString(lastIdx, "\n/*[" + name + "]*/\n\n" + xqlFileManager.getDelimiter() + "\n");
                         PsiDocumentManager.getInstance(project).commitDocument(doc);
                         FileDocumentManager.getInstance().saveDocument(doc);
                         PsiUtil.navigate2xqlFile(alias, name, config);
