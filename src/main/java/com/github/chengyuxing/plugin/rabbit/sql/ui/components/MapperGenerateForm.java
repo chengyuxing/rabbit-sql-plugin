@@ -1,16 +1,20 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.utils.StringUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.types.XQLMapperConfig;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.CheckboxCellRenderer;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLJavaType;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLMapperConfig;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.ReturnTypesDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.ColorfulCellRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.SqlTypePlaceHolder;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLInvocationHandler;
+import com.github.chengyuxing.sql.annotation.Type;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.JBTable;
 import net.miginfocom.swing.MigLayout;
@@ -39,26 +43,26 @@ public class MapperGenerateForm extends JPanel {
             "Return Types",
             "<T>"};
     public static final List<String> RETURN_TYPES = List.of(
-            "List<T>",
-            "Set<T>",
-            "Stream<T>",
-            "PagedResource<T>",
-            "Optional<T>",
-            "<T>",
-            "IPageable",
-            "Integer",
-            "Long",
-            "Double");
-    public static final List<String> SQL_TYPES = List.of("query",
-            "insert",
-            "update",
-            "delete",
-            "procedure",
-            "function",
-            "ddl",
-            "plsql");
-    public static final List<String> GENERIC_TYPES = List.of("Map<String, Object>", "DataRow");
-    public static final List<String> PARAM_TYPES = List.of("Map", "@Arg");
+            XQLJavaType.List.toString(),
+            XQLJavaType.Set.toString(),
+            XQLJavaType.Stream.toString(),
+            XQLJavaType.PagedResource.toString(),
+            XQLJavaType.Optional.toString(),
+            XQLJavaType.GenericT.getValue(),
+            XQLJavaType.IPageable.getValue(),
+            XQLJavaType.Integer.getValue(),
+            XQLJavaType.Long.getValue(),
+            XQLJavaType.Double.getValue());
+    public static final List<String> SQL_TYPES = List.of(Type.query.name(),
+            Type.insert.name(),
+            Type.update.name(),
+            Type.delete.name(),
+            Type.procedure.name(),
+            Type.function.name(),
+            Type.ddl.name(),
+            Type.plsql.name());
+    public static final List<String> GENERIC_TYPES = List.of(XQLJavaType.Map.toString(), XQLJavaType.DataRow.toString());
+    public static final List<String> PARAM_TYPES = List.of(XQLJavaType.Map.getValue(), XQLJavaType.MultiArgs.toString());
 
     public MapperGenerateForm(Project project, String alias, XQLFileManager xqlFileManager, XQLMapperConfig mapperConfig) {
         this.project = project;
@@ -115,31 +119,31 @@ public class MapperGenerateForm extends JPanel {
                 .filter(key -> !key.startsWith("${"))
                 .map(sqlName -> {
                     var methodName = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.camelizeAndClean(sqlName);
-                    var sqlType = "query";
-                    var returnType = "List<T>";
+                    var sqlType = Type.query.name();
+                    var returnType = XQLJavaType.List.toString();
                     if (methodName.matches(XQLInvocationHandler.INSERT_PATTERN)) {
-                        sqlType = "insert";
-                        returnType = "Integer";
+                        sqlType = Type.insert.name();
+                        returnType = XQLJavaType.Integer.getValue();
                     } else if (methodName.matches(XQLInvocationHandler.UPDATE_PATTERN)) {
-                        sqlType = "update";
-                        returnType = "Integer";
+                        sqlType = Type.update.name();
+                        returnType = XQLJavaType.Integer.getValue();
                     } else if (methodName.matches(XQLInvocationHandler.DELETE_PATTERN)) {
-                        sqlType = "delete";
-                        returnType = "Integer";
+                        sqlType = Type.delete.name();
+                        returnType = XQLJavaType.Integer.getValue();
                     } else if (methodName.matches(XQLInvocationHandler.CALL_PATTERN)) {
-                        sqlType = "procedure";
-                        returnType = "DataRow";
+                        sqlType = Type.procedure.name();
+                        returnType = XQLJavaType.DataRow.getValue();
                     } else if (methodName.matches(XQLInvocationHandler.QUERY_PATTERN)) {
-                        sqlType = "query";
+                        sqlType = Type.query.name();
                         if (StringUtil.startsWiths(methodName, "query", "search", "select")) {
-                            returnType = "List<T>";
+                            returnType = XQLJavaType.List.toString();
                         } else {
-                            returnType = "<T>";
+                            returnType = XQLJavaType.GenericT.getValue();
                         }
                     }
 
-                    var paramType = "Map";
-                    var returnGenericType = "DataRow";
+                    var paramType = XQLJavaType.Map.getValue();
+                    var returnGenericType = XQLJavaType.DataRow.getValue();
 
                     var mappingConfig = this.mapperConfig.getMethods().get(sqlName);
                     if (Objects.nonNull(mappingConfig)) {

@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.types;
+package com.github.chengyuxing.plugin.rabbit.sql.ui.types;
 
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 

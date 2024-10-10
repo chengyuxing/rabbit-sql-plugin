@@ -3,8 +3,9 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.types.XQLMapperConfig;
-import com.github.chengyuxing.plugin.rabbit.sql.types.XQLMapperTemplateData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLJavaType;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLMapperConfig;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLMapperTemplateData;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.MapperGenerateForm;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ReturnTypesForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
@@ -199,7 +200,7 @@ public class MapperGenerateDialog extends DialogWrapper {
             mapperMethod.setParamType(paramType);
 
             if (paramType.isEmpty()) {
-                paramType = "Map";
+                paramType = XQLJavaType.Map.getValue();
             }
 
             var returnTypes = row.get(4).toString().trim();
@@ -207,14 +208,14 @@ public class MapperGenerateDialog extends DialogWrapper {
 
             var returnTypeArr = returnTypes.split(ReturnTypesForm.RETURN_TYPE_SPLITTER);
             if (returnTypeArr.length == 0) {
-                returnTypeArr = new String[]{"List<T>"};
+                returnTypeArr = new String[]{XQLJavaType.List.toString()};
             }
 
             var returnGenericType = row.get(5).toString().trim();
             mapperMethod.setReturnGenericType(returnGenericType);
 
             if (returnGenericType.isEmpty()) {
-                returnGenericType = "DataRow";
+                returnGenericType = XQLJavaType.DataRow.getValue();
             }
 
             var sql = resource.getEntry().get(sqlName);
@@ -350,13 +351,16 @@ public class MapperGenerateDialog extends DialogWrapper {
         }
         method.setSqlType(sqlType);
         var newParams = new LinkedHashSet<>(params);
-        if (method.getReturnType().startsWith("PagedResource<")) {
+        if (method.getReturnType().equals(XQLJavaType.PagedResource.getValue()) || method.getReturnType().startsWith(XQLJavaType.PagedResource.getValue() + "<")) {
             newParams.add("page");
             newParams.add("size");
         }
         method.setParameters(newParams);
 
-        if (com.github.chengyuxing.common.utils.StringUtil.startsWithsIgnoreCase(method.getReturnType(), "PagedResource<", "IPageable")) {
+        if (com.github.chengyuxing.common.utils.StringUtil.startsWiths(method.getReturnType(),
+                XQLJavaType.PagedResource.getValue() + "<",
+                XQLJavaType.PagedResource.getValue() + " ",
+                XQLJavaType.IPageable.getValue())) {
             var cqName = sqlName + "Count";
             if (!xqlFileManager.contains(alias + "." + cqName)) {
                 cqName = sqlName + "count";
@@ -373,14 +377,14 @@ public class MapperGenerateDialog extends DialogWrapper {
     }
 
     private static String replaceGenericT(String returnType, String genericType) {
-        if (returnType.equals("<T>")) {
+        if (returnType.equals(XQLJavaType.GenericT.getValue())) {
             return genericType;
         }
-        return returnType.replace("<T>", "<" + genericType + ">");
+        return returnType.replace(XQLJavaType.GenericT.getValue(), "<" + genericType + ">");
     }
 
     private static String returnTypeName(String returnType, String genericType) {
-        if (returnType.equals("<T>")) {
+        if (returnType.equals(XQLJavaType.GenericT.getValue())) {
             return genericType;
         }
         if (returnType.contains("<")) {
