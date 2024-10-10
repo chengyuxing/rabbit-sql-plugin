@@ -4,17 +4,14 @@ import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.script.expression.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.types.XQLMapperConfig;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLMapperConfig;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SimpleJavaCompiler;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.Args;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
-import com.intellij.ide.fileTemplates.FileTemplateManager;
 import org.junit.Test;
-import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
