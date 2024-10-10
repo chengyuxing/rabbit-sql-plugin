@@ -25,6 +25,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
@@ -41,7 +42,8 @@ public class MapperGenerateForm extends JPanel {
             "SQL Type",
             "Param Type",
             "Return Types",
-            "<T>"};
+            "<T>",
+            "Enable"};
     public static final List<String> RETURN_TYPES = List.of(
             XQLJavaType.List.toString(),
             XQLJavaType.Set.toString(),
@@ -139,7 +141,7 @@ public class MapperGenerateForm extends JPanel {
                         returnType = XQLJavaType.Integer.getValue();
                     } else if (methodName.matches(XQLInvocationHandler.CALL_PATTERN)) {
                         sqlType = Type.procedure.name();
-                        returnType = XQLJavaType.DataRow.getValue();
+                        returnType = XQLJavaType.GenericT.getValue();
                     } else if (methodName.matches(XQLInvocationHandler.QUERY_PATTERN)) {
                         sqlType = Type.query.name();
                         if (StringUtil.startsWiths(methodName, "query", "search", "select")) {
@@ -153,19 +155,20 @@ public class MapperGenerateForm extends JPanel {
                     var returnGenericType = XQLJavaType.DataRow.getValue();
                     var enable = true;
 
-                    var mappingConfig = this.mapperConfig.getMethods().get(sqlName);
-                    if (Objects.nonNull(mappingConfig)) {
-                        if (StringUtils.isNotEmpty(mappingConfig.getSqlType())) {
-                            sqlType = mappingConfig.getSqlType();
+                    var xqlMethod = this.mapperConfig.getMethods().get(sqlName);
+                    if (Objects.nonNull(xqlMethod)) {
+                        if (StringUtils.isNotEmpty(xqlMethod.getSqlType()) && SQL_TYPES.contains(xqlMethod.getSqlType())) {
+                            sqlType = xqlMethod.getSqlType();
                         }
-                        if (StringUtils.isNotEmpty(mappingConfig.getReturnType())) {
-                            returnType = mappingConfig.getReturnType();
+                        if (StringUtils.isNotEmpty(xqlMethod.getReturnType()) &&
+                                new HashSet<>(RETURN_TYPES).containsAll(ReturnTypesForm.splitReturnTypes(xqlMethod.getReturnType()))) {
+                            returnType = xqlMethod.getReturnType();
                         }
-                        if (StringUtils.isNotEmpty(mappingConfig.getParamType())) {
-                            paramType = mappingConfig.getParamType();
+                        if (StringUtils.isNotEmpty(xqlMethod.getParamType())) {
+                            paramType = xqlMethod.getParamType();
                         }
-                        if (StringUtils.isNotEmpty(mappingConfig.getReturnGenericType())) {
-                            returnGenericType = mappingConfig.getReturnGenericType();
+                        if (StringUtils.isNotEmpty(xqlMethod.getReturnGenericType())) {
+                            returnGenericType = xqlMethod.getReturnGenericType();
                         }
                         enable = ObjectUtil.coalesce(xqlMethod.getEnable(), true);
                     }
@@ -176,7 +179,8 @@ public class MapperGenerateForm extends JPanel {
                             sqlType,
                             paramType,
                             returnType,
-                            returnGenericType
+                            returnGenericType,
+                            enable
                     };
                 }).toArray(i -> new Object[i][6]);
         model.setDataVector(tbody, thead);

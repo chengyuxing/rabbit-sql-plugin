@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.intellij.ui.components.JBCheckBox;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,16 +12,25 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ReturnTypesForm extends JPanel {
-    public static final String RETURN_TYPE_SPLITTER = " & ";
+    private static final String SYMBOL = "&";
     private final List<JBCheckBox> checkBoxes;
     private int checked = 0;
+
+    public static List<String> splitReturnTypes(String returnType) {
+        if (StringUtils.isEmpty(returnType)) {
+            return List.of();
+        }
+        return Arrays.stream(returnType.split("\\s*" + SYMBOL + "\\s*"))
+                .map(String::trim)
+                .toList();
+    }
 
     public ReturnTypesForm(String selected, Consumer<Integer> checkedCount) {
         setLayout(new FlowLayout(FlowLayout.LEFT, 10, 6));
         setMinimumSize(new Dimension(360, 100));
 
         this.checkBoxes = new ArrayList<>();
-        var values = Arrays.asList(selected.split(RETURN_TYPE_SPLITTER));
+        var values = splitReturnTypes(selected);
         for (String type : MapperGenerateForm.RETURN_TYPES) {
             var check = new JBCheckBox(type);
             if (values.contains(type)) {
@@ -45,6 +55,6 @@ public class ReturnTypesForm extends JPanel {
         return checkBoxes.stream()
                 .filter(AbstractButton::isSelected)
                 .map(AbstractButton::getText)
-                .collect(Collectors.joining(RETURN_TYPE_SPLITTER));
+                .collect(Collectors.joining(" " + SYMBOL + " "));
     }
 }

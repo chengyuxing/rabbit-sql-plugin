@@ -210,9 +210,9 @@ public class MapperGenerateDialog extends DialogWrapper {
             var returnTypes = row.get(4).toString().trim();
             mapperMethod.setReturnType(returnTypes);
 
-            var returnTypeArr = returnTypes.split(ReturnTypesForm.RETURN_TYPE_SPLITTER);
-            if (returnTypeArr.length == 0) {
-                returnTypeArr = new String[]{XQLJavaType.List.toString()};
+            var returnTypeList = ReturnTypesForm.splitReturnTypes(returnTypes);
+            if (returnTypeList.isEmpty()) {
+                returnTypeList = List.of(XQLJavaType.List.toString());
             }
 
             var returnGenericType = row.get(5).toString().trim();
@@ -238,17 +238,19 @@ public class MapperGenerateDialog extends DialogWrapper {
                 returnGenericType = genericUserEntity;
             }
 
-            if (returnTypeArr.length == 1) {
-                var method = new XQLMapperTemplateData.Method(replaceGenericT(returnTypeArr[0], returnGenericType), methodName);
+            if (returnTypeList.size() == 1) {
+                var method = new XQLMapperTemplateData.Method(replaceGenericT(returnTypeList.get(0), returnGenericType), methodName);
+                method.setEnable(enable);
                 addMethod(methods, sqlName, methodName, sqlType, paramType, sql, params, method);
             } else {
                 var newReturnTypes = new LinkedHashSet<String>();
-                for (var returnType : returnTypeArr) {
+                for (var returnType : returnTypeList) {
                     newReturnTypes.add(replaceGenericT(returnType, returnGenericType));
                 }
                 for (var returnType : newReturnTypes) {
                     var extMethodName = methodName + returnTypeName(returnType, returnGenericType);
                     var method = new XQLMapperTemplateData.Method(replaceGenericT(returnType, returnGenericType), extMethodName);
+                    method.setEnable(enable);
                     addMethod(methods, sqlName, extMethodName, sqlType, paramType, sql, params, method);
                 }
             }
