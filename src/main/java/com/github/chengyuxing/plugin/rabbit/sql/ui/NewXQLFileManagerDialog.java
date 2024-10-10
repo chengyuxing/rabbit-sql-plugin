@@ -53,10 +53,9 @@ public class NewXQLFileManagerDialog extends DialogWrapper {
             newXQLFileManagerForm.setMessage(HtmlUtil.toHtml(HtmlUtil.span("'" + secondaryFilename + "' already exists.", HtmlUtil.Color.WARNING)));
             return;
         }
-        ProjectFileUtil.createXqlConfigByTemplate(project, secondaryAbsFilename, () -> {
-            dispose();
-            ApplicationManager.getApplication().runWriteAction(() ->
-                    ProjectFileUtil.openFile(project, secondaryAbsFilename, true));
-        });
+        ProjectFileUtil.createXqlConfigByTemplate(project, secondaryAbsFilename, () ->
+                ApplicationManager.getApplication().runWriteAction(() ->
+                        ProjectFileUtil.openFile(project, secondaryAbsFilename, true)));
+        dispose();
     }
 }

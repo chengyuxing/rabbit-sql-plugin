@@ -4,6 +4,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
@@ -48,7 +49,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                         }
                     }
                     xqlConfigManager.cleanup(project);
-                    XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
+                    ApplicationManager.getApplication().invokeLater(() -> XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates));
                 } else if (Objects.equals(vf.getExtension(), "xql")) {
                     var xqlPath = vf.toNioPath().toUri().toString();
                     var validXqlVf = vf;
@@ -97,7 +98,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                         }
                     }
                     xqlConfigManager.cleanup(project);
-                    XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
+                    ApplicationManager.getApplication().invokeLater(() -> XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates));
                 }
             }
         }

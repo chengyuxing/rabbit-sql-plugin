@@ -6,8 +6,13 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -16,10 +21,12 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -29,6 +36,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class ProjectFileUtil {
+    private final static Logger log = Logger.getInstance(ProjectFileUtil.class);
+
     public static Document getDocument(Project project, VirtualFile virtualFile) {
         if (Objects.isNull(virtualFile)) {
             return null;
@@ -80,18 +89,34 @@ public class ProjectFileUtil {
     }
 
     public static void createXqlConfigByTemplate(Project project, Path absFilename, Runnable then) {
-        try {
-            var xqlConfig = FileTemplateManager.getInstance(project).getTemplate("XQL File Manager.yml");
-            var path = absFilename.getParent();
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Create XQL file manager.", false) {
+            @Override
+            public void run(@NotNull ProgressIndicator indicator) {
+                indicator.setIndeterminate(true);
+                try {
+                    var xqlConfig = FileTemplateManager.getInstance(project).getTemplate("XQL File Manager.yml");
+                    var path = absFilename.getParent();
+                    if (!Files.exists(path)) {
+                        Files.createDirectories(path);
+                    }
+                    var template = xqlConfig.getText(Global.usefulArgs());
+                    Files.writeString(absFilename, template, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
             }
-            var template = xqlConfig.getText(Global.usefulArgs());
-            Files.writeString(absFilename, template, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
-            then.run();
-        } catch (IOException ex) {
-            NotificationUtil.showMessage(project, ex.getMessage(), NotificationType.ERROR);
-        }
+
+            @Override
+            public void onSuccess() {
+                ApplicationManager.getApplication().invokeLater(then);
+            }
+
+            @Override
+            public void onThrowable(@NotNull Throwable error) {
+                ApplicationManager.getApplication().invokeLater(() -> NotificationUtil.showMessage(project, error.getMessage(), NotificationType.ERROR));
+                log.warn(error);
+            }
+        });
     }
 
     public static VirtualFile findXqlByAlias(String alias, XQLConfigManager.Config config) {

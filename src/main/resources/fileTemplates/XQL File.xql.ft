@@ -3,7 +3,7 @@
  User: $USER
  Date: $DATE
  Time: $TIME
-#if($Description)
+#if($Description && $Description != "")
  @@@
  $Description
  @@@

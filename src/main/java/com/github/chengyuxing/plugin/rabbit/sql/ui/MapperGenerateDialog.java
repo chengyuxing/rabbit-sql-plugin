@@ -17,6 +17,9 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -34,6 +37,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -182,160 +186,179 @@ public class MapperGenerateDialog extends DialogWrapper {
 
         var methods = new ArrayList<XQLMapperTemplateData.Method>();
         var entityImports = new LinkedHashSet<String>();
+
+        var packages = packageName.split("\\.");
+        var sourceRoot = config.getModulePath()
+                .resolve(Constants.KT_SOURCE_ROOT);
+        if (!Files.exists(sourceRoot)) {
+            sourceRoot = config.getModulePath().resolve(Constants.JAVA_SOURCE_ROOT);
+        }
+
+        var absFilename = sourceRoot
+                .resolve(Path.of(packages[0], Arrays.copyOfRange(packages, 1, packages.length)))
+                .resolve(templateData.getMapperInterfaceName() + ".java");
+
         var data = myForm.getData();
-        data.forEach(row -> {
-            var enable = (Boolean) row.get(6);
 
-            var sqlName = row.get(0).toString();
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Generate interface mapper.", false) {
+            @Override
+            public void run(@NotNull ProgressIndicator indicator) {
+                indicator.setIndeterminate(true);
+                try {
+                    data.forEach(row -> {
+                        var enable = (Boolean) row.get(6);
 
-            var mapperMethod = new XQLMapperConfig.XQLMethod();
-            mapperMethod.setEnable(enable);
+                        var sqlName = row.get(0).toString();
 
-            var methodName = row.get(1).toString().trim();
+                        var mapperMethod = new XQLMapperConfig.XQLMethod();
+                        mapperMethod.setEnable(enable);
 
-            if (methodName.isEmpty()) {
-                methodName = StringUtil.camelizeAndClean(methodName);
-            }
+                        var methodName = row.get(1).toString().trim();
 
-            var sqlType = row.get(2).toString();
-            mapperMethod.setSqlType(sqlType);
-
-            var paramType = row.get(3).toString().trim();
-            mapperMethod.setParamType(paramType);
-
-            if (paramType.isEmpty()) {
-                paramType = XQLJavaType.Map.getValue();
-            }
-
-            var returnTypes = row.get(4).toString().trim();
-            mapperMethod.setReturnType(returnTypes);
-
-            var returnTypeList = ReturnTypesForm.splitReturnTypes(returnTypes);
-            if (returnTypeList.isEmpty()) {
-                returnTypeList = List.of(XQLJavaType.List.toString());
-            }
-
-            var returnGenericType = row.get(5).toString().trim();
-            mapperMethod.setReturnGenericType(returnGenericType);
-
-            if (returnGenericType.isEmpty()) {
-                returnGenericType = XQLJavaType.DataRow.getValue();
-            }
-
-            var sql = resource.getEntry().get(sqlName);
-            var sqlDefinition = sql.getContent();
-            var params = StringUtil.getParamsMappingInfo(sqlGenerator, sqlDefinition, true)
-                    .keySet();
-
-            var paramUserEntity = getUserEntity(paramType);
-            if (Objects.nonNull(paramUserEntity)) {
-                entityImports.add(paramType);
-                paramType = paramUserEntity;
-            }
-            var genericUserEntity = getUserEntity(returnGenericType);
-            if (Objects.nonNull(genericUserEntity)) {
-                entityImports.add(returnGenericType);
-                returnGenericType = genericUserEntity;
-            }
-
-            if (returnTypeList.size() == 1) {
-                var method = new XQLMapperTemplateData.Method(replaceGenericT(returnTypeList.get(0), returnGenericType), methodName);
-                method.setEnable(enable);
-                addMethod(methods, sqlName, methodName, sqlType, paramType, sql, params, method);
-            } else {
-                var newReturnTypes = new LinkedHashSet<String>();
-                for (var returnType : returnTypeList) {
-                    newReturnTypes.add(replaceGenericT(returnType, returnGenericType));
-                }
-                for (var returnType : newReturnTypes) {
-                    var extMethodName = methodName + returnTypeName(returnType, returnGenericType);
-                    var method = new XQLMapperTemplateData.Method(replaceGenericT(returnType, returnGenericType), extMethodName);
-                    method.setEnable(enable);
-                    addMethod(methods, sqlName, extMethodName, sqlType, paramType, sql, params, method);
-                }
-            }
-
-            newMapperConfig.getMethods().put(sqlName, mapperMethod);
-        });
-
-        templateData.setMethods(methods);
-        templateData.setEntityImports(entityImports);
-
-        var template = FileTemplateManager.getInstance(project).getInternalTemplate("xqlMapperInterface.java");
-        try {
-            var packages = packageName.split("\\.");
-
-            var sourceRoot = config.getModulePath()
-                    .resolve(Constants.KT_SOURCE_ROOT);
-            if (!Files.exists(sourceRoot)) {
-                sourceRoot = config.getModulePath().resolve(Constants.JAVA_SOURCE_ROOT);
-            }
-
-            var absFilename = sourceRoot
-                    .resolve(Path.of(packages[0], Arrays.copyOfRange(packages, 1, packages.length)))
-                    .resolve(templateData.getMapperInterfaceName() + ".java");
-
-            if (Files.exists(absFilename)) {
-                var userImports = new StringJoiner("\n");
-                var userMethods = new StringJoiner("\n");
-                var importsBlockFlag = 0;
-                var methodsBlockFlag = 0;
-                try (var reader = Files.newBufferedReader(absFilename)) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        if (importsBlockFlag == 2 && methodsBlockFlag == 2) {
-                            break;
+                        if (methodName.isEmpty()) {
+                            methodName = StringUtil.camelizeAndClean(methodName);
                         }
-                        if (line.contains("//CODE-BEGIN:imports")) {
-                            importsBlockFlag++;
-                            String importContent;
-                            while ((importContent = reader.readLine()) != null) {
-                                if (importContent.contains(" //CODE-END:imports")) {
+
+                        var sqlType = row.get(2).toString();
+                        mapperMethod.setSqlType(sqlType);
+
+                        var paramType = row.get(3).toString().trim();
+                        mapperMethod.setParamType(paramType);
+
+                        if (paramType.isEmpty()) {
+                            paramType = XQLJavaType.Map.getValue();
+                        }
+
+                        var returnTypes = row.get(4).toString().trim();
+                        mapperMethod.setReturnType(returnTypes);
+
+                        var returnTypeList = ReturnTypesForm.splitReturnTypes(returnTypes);
+                        if (returnTypeList.isEmpty()) {
+                            returnTypeList = List.of(XQLJavaType.List.toString());
+                        }
+
+                        var returnGenericType = row.get(5).toString().trim();
+                        mapperMethod.setReturnGenericType(returnGenericType);
+
+                        if (returnGenericType.isEmpty()) {
+                            returnGenericType = XQLJavaType.DataRow.getValue();
+                        }
+
+                        var sql = resource.getEntry().get(sqlName);
+                        var sqlDefinition = sql.getContent();
+                        var params = StringUtil.getParamsMappingInfo(sqlGenerator, sqlDefinition, true)
+                                .keySet();
+
+                        var paramUserEntity = getUserEntity(paramType);
+                        if (Objects.nonNull(paramUserEntity)) {
+                            entityImports.add(paramType);
+                            paramType = paramUserEntity;
+                        }
+                        var genericUserEntity = getUserEntity(returnGenericType);
+                        if (Objects.nonNull(genericUserEntity)) {
+                            entityImports.add(returnGenericType);
+                            returnGenericType = genericUserEntity;
+                        }
+
+                        if (returnTypeList.size() == 1) {
+                            var method = new XQLMapperTemplateData.Method(replaceGenericT(returnTypeList.get(0), returnGenericType), methodName);
+                            method.setEnable(enable);
+                            addMethod(methods, sqlName, methodName, sqlType, paramType, sql, params, method);
+                        } else {
+                            var newReturnTypes = new LinkedHashSet<String>();
+                            for (var returnType : returnTypeList) {
+                                newReturnTypes.add(replaceGenericT(returnType, returnGenericType));
+                            }
+                            for (var returnType : newReturnTypes) {
+                                var extMethodName = methodName + returnTypeName(returnType, returnGenericType);
+                                var method = new XQLMapperTemplateData.Method(replaceGenericT(returnType, returnGenericType), extMethodName);
+                                method.setEnable(enable);
+                                addMethod(methods, sqlName, extMethodName, sqlType, paramType, sql, params, method);
+                            }
+                        }
+
+                        newMapperConfig.getMethods().put(sqlName, mapperMethod);
+                    });
+
+                    templateData.setMethods(methods);
+                    templateData.setEntityImports(entityImports);
+
+                    var template = FileTemplateManager.getInstance(project).getInternalTemplate("xqlMapperInterface.java");
+                    if (Files.exists(absFilename)) {
+                        var userImports = new StringJoiner("\n");
+                        var userMethods = new StringJoiner("\n");
+                        var importsBlockFlag = 0;
+                        var methodsBlockFlag = 0;
+                        try (var reader = Files.newBufferedReader(absFilename)) {
+                            String line;
+                            while ((line = reader.readLine()) != null) {
+                                if (importsBlockFlag == 2 && methodsBlockFlag == 2) {
+                                    break;
+                                }
+                                if (line.contains("//CODE-BEGIN:imports")) {
                                     importsBlockFlag++;
-                                    break;
+                                    String importContent;
+                                    while ((importContent = reader.readLine()) != null) {
+                                        if (importContent.contains(" //CODE-END:imports")) {
+                                            importsBlockFlag++;
+                                            break;
+                                        }
+                                        userImports.add(importContent);
+                                    }
                                 }
-                                userImports.add(importContent);
+                                if (line.contains("//CODE-BEGIN:methods")) {
+                                    methodsBlockFlag++;
+                                    String declarationContent;
+                                    while ((declarationContent = reader.readLine()) != null) {
+                                        if (declarationContent.contains("//CODE-END:methods")) {
+                                            methodsBlockFlag++;
+                                            break;
+                                        }
+                                        userMethods.add(declarationContent);
+                                    }
+                                }
                             }
                         }
-                        if (line.contains("//CODE-BEGIN:methods")) {
-                            methodsBlockFlag++;
-                            String declarationContent;
-                            while ((declarationContent = reader.readLine()) != null) {
-                                if (declarationContent.contains("//CODE-END:methods")) {
-                                    methodsBlockFlag++;
-                                    break;
-                                }
-                                userMethods.add(declarationContent);
-                            }
+                        if (importsBlockFlag == 2) {
+                            templateData.setUserImports(userImports.toString());
+                        }
+                        if (methodsBlockFlag == 2) {
+                            templateData.setUserMethods(userMethods.toString());
                         }
                     }
-                }
-                if (importsBlockFlag == 2) {
-                    templateData.setUserImports(userImports.toString());
-                }
-                if (methodsBlockFlag == 2) {
-                    templateData.setUserMethods(userMethods.toString());
+
+                    var abs = absFilename.getParent();
+                    if (!Files.exists(abs)) {
+                        Files.createDirectories(abs);
+                    }
+
+                    var args = Args.ofEntity(templateData);
+                    var result = template.getText(args);
+                    Files.writeString(absFilename, result, StandardCharsets.UTF_8);
+                    generateMapperConfig(newMapperConfig);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
                 }
             }
 
-            var abs = absFilename.getParent();
-            if (!Files.exists(abs)) {
-                Files.createDirectories(abs);
+            @Override
+            public void onSuccess() {
+                ApplicationManager.getApplication().invokeLater(() ->
+                        ApplicationManager.getApplication().runWriteAction(() -> {
+                            var vf = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(absFilename);
+                            if (Objects.nonNull(vf)) {
+                                vf.refresh(false, false);
+                            }
+                        }));
             }
 
-            var args = Args.ofEntity(templateData);
-            var result = template.getText(args);
-            Files.writeString(absFilename, result, StandardCharsets.UTF_8);
-            var vf = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(absFilename);
-            if (Objects.nonNull(vf)) {
-                vf.refresh(false, false);
-                ApplicationManager.getApplication().runWriteAction(() -> generateMapperConfig(newMapperConfig));
+            @Override
+            public void onThrowable(@NotNull Throwable error) {
+                ApplicationManager.getApplication().invokeLater(() -> NotificationUtil.showMessage(project, error.getMessage(), NotificationType.WARNING));
+                log.warn(error);
             }
-            dispose();
-        } catch (IOException e) {
-            NotificationUtil.showMessage(project, e.getMessage(), NotificationType.WARNING);
-            log.warn(e);
-        }
+        });
+        dispose();
     }
 
     private void generateMapperConfig(XQLMapperConfig config) {

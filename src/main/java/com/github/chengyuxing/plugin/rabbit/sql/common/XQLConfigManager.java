@@ -5,6 +5,8 @@ import com.github.chengyuxing.common.script.exception.ScriptSyntaxException;
 import com.github.chengyuxing.common.script.expression.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.common.utils.ResourceUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ArrayListValueSet;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
@@ -13,7 +15,12 @@ import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
+import com.intellij.notification.NotificationType;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -52,7 +59,8 @@ public class XQLConfigManager {
         if (!notificationMap.containsKey(project)) {
             var notificationExecutor = new NotificationExecutor(messages ->
                     messages.forEach(m ->
-                            NotificationUtil.showMessage(project, m.getText(), m.getType())), 1500);
+                            NotificationUtil.showMessage(project, m.getText(), m.getType()))
+                    , 1500);
             notificationMap.put(project, notificationExecutor);
         }
         if (!configMap.containsKey(project)) {
@@ -294,13 +302,36 @@ public class XQLConfigManager {
             return "[" + getModuleName() + ":" + getConfigName() + "] " + " ";
         }
 
+        private void fire(boolean silent) {
+            ProgressManager.getInstance().run(new Task.Backgroundable(project, "Loading XQL files.", true) {
+                @Override
+                public void run(@NotNull ProgressIndicator indicator) {
+                    indicator.setIndeterminate(true);
+                    var messages = initXqlFileManager();
+                    if (silent) {
+                        return;
+                    }
+                    notificationExecutor.get().ifPresent(n -> n.show(messages));
+                }
+
+                @Override
+                public void onSuccess() {
+                    ApplicationManager.getApplication().invokeLater(() -> XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates));
+                }
+
+                @Override
+                public void onCancel() {
+                    ApplicationManager.getApplication().invokeLater(() -> NotificationUtil.showMessage(project, "Loading XQL files canceled.", NotificationType.WARNING));
+                }
+            });
+        }
+
         public void fire() {
-            var messages = initXqlFileManager();
-            notificationExecutor.get().ifPresent(n -> n.show(messages));
+            fire(false);
         }
 
         public void silentFire() {
-            initXqlFileManager();
+            fire(true);
         }
 
         public SqlGenerator getSqlGenerator() {

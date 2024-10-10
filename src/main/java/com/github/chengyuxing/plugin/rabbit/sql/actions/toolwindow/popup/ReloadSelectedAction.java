@@ -2,8 +2,6 @@ package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.intellij.icons.AllIcons;
@@ -34,7 +32,6 @@ public class ReloadSelectedAction extends AnAction {
             var config = (XQLConfigManager.Config) nodeSource.source();
             PsiUtil.saveUnsavedXqlAndConfig(project);
             config.fire();
-            XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
         }
     }
 
