@@ -62,7 +62,8 @@
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#bakidao">BakiDao#setXqlFileManager</a>;</li>
     </ol>
-    <p>Get <a href="https://github.com/chengyuxing/rabbit-sql/blob/master/BEST_PRACTICE.md">best practice</a> to quick start.</p>
+    <p>Get <a href="https://github.com/chengyuxing/rabbit-sql/blob/master/BEST_PRACTICE.md">Best Practice</a> document
+    or a <a href="https://github.com/chengyuxing/rabbit-sql-quickstart">Demo</a> to quick start.</p>
     <p>Get more information from <a href="https://github.com/chengyuxing/rabbit-sql">Rabbit-sql</a> homepage
     and <a href="https://github.com/chengyuxing/rabbit-sql-spring-boot-starter">Springboot support document</a>.</p>
   ]]></description>
