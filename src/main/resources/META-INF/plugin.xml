@@ -16,7 +16,7 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    <h2>rabbit-sql framework support</h2>
+    <h2>Rabbit SQL Framework Support</h2>
     <p>Provides support for <a href="https://github.com/chengyuxing/rabbit-sql">rabbit-sql</a> to JetBrains IDEA Ultimate.</p>
     <p>Easily to use <a href="https://github.com/chengyuxing/rabbit-sql">rabbit-sql</a> and <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQL</a> file.</p>
     <h2>Features</h2>
@@ -69,6 +69,14 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.12</h3>
+            <ul>
+                <li>Fixed <b>New SQL action</b> the delimiter always is ';' when <code>xql-file-manager.yml</code> delimiter is not ';'.</li>
+                <li><b>Generate Code...</b> support deselect methods to generate.)</li>
+                <li>Interface Mapper doc generate optimized.</li>
+                <li>XQL file loading and parsing performance optimized.</li>
+                <li>Some codes optimized and bugs fixed.</li>
+            </ul>
             <h3>2.4.11</h3>
             <ul>
                 <li>Support <code>rabbit-sql 7.12.2+</code> and <code>rabbit-sql-spring-boot-starter 2.11.2+</code></li>
@@ -609,10 +617,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup toolWindowId="Rabbit-SQL Notification" displayType="BALLOON"
                            id="Rabbit-SQL Notification Group"/>
-    </extensions>
-
-    <extensions defaultExtensionNs="com.intellij">
-        <iconMapper mappingFile="Rabbit SQLIconMappings.json"/>
     </extensions>
 
     <actions>
