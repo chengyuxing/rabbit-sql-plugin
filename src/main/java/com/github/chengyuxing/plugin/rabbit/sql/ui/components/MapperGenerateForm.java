@@ -109,6 +109,7 @@ public class MapperGenerateForm extends JPanel {
         initTable();
     }
 
+    @SuppressWarnings("rawtypes")
     public Vector<Vector> getData() {
         return ((DefaultTableModel) table.getModel()).getDataVector();
     }
