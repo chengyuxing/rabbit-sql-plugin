@@ -111,6 +111,7 @@ public class XQLMapperTemplateData {
         private String paramType;
         private Set<String> parameters = new LinkedHashSet<>();
         private String countQuery;
+        protected Boolean enable = true;
 
         public Method(String returnType, String methodName) {
             this.returnType = returnType;
@@ -173,6 +174,14 @@ public class XQLMapperTemplateData {
 
         public void setCountQuery(String countQuery) {
             this.countQuery = countQuery;
+        }
+
+        public Boolean isEnable() {
+            return enable;
+        }
+
+        public void setEnable(Boolean enable) {
+            this.enable = enable;
         }
     }
 }

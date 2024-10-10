@@ -39,6 +39,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.List;
 
 public class MapperGenerateDialog extends DialogWrapper {
     private final static Logger log = Logger.getInstance(MapperGenerateDialog.class);
@@ -183,9 +184,12 @@ public class MapperGenerateDialog extends DialogWrapper {
         var entityImports = new LinkedHashSet<String>();
         var data = myForm.getData();
         data.forEach(row -> {
+            var enable = (Boolean) row.get(6);
+
             var sqlName = row.get(0).toString();
 
             var mapperMethod = new XQLMapperConfig.XQLMethod();
+            mapperMethod.setEnable(enable);
 
             var methodName = row.get(1).toString().trim();
 

@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
+import com.github.chengyuxing.common.utils.ObjectUtil;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.CheckboxCellRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLJavaType;
@@ -14,7 +15,6 @@ import com.github.chengyuxing.sql.annotation.Type;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
-import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.JBTable;
 import net.miginfocom.swing.MigLayout;
@@ -83,7 +83,15 @@ public class MapperGenerateForm extends JPanel {
                 // rows
                 "[fill]"));
 
-        table = new JBTable();
+        table = new JBTable() {
+            @Override
+            public Class<?> getColumnClass(int column) {
+                if (column == 6) {
+                    return Boolean.class;
+                }
+                return super.getColumnClass(column);
+            }
+        };
         table.setBorder(BorderFactory.createEmptyBorder());
         table.setShowVerticalLines(false);
         table.setShowLastHorizontalLine(false);
@@ -91,7 +99,6 @@ public class MapperGenerateForm extends JPanel {
         table.setSelectionForeground(null);
         table.setSelectionBackground(null);
         table.setFillsViewportHeight(true);
-        table.setIntercellSpacing(new Dimension(0, 0));
         table.getEmptyText().setText("No SQLs in " + alias + ".");
         var scrollPane = new JBScrollPane();
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -144,6 +151,7 @@ public class MapperGenerateForm extends JPanel {
 
                     var paramType = XQLJavaType.Map.getValue();
                     var returnGenericType = XQLJavaType.DataRow.getValue();
+                    var enable = true;
 
                     var mappingConfig = this.mapperConfig.getMethods().get(sqlName);
                     if (Objects.nonNull(mappingConfig)) {
@@ -159,6 +167,7 @@ public class MapperGenerateForm extends JPanel {
                         if (StringUtils.isNotEmpty(mappingConfig.getReturnGenericType())) {
                             returnGenericType = mappingConfig.getReturnGenericType();
                         }
+                        enable = ObjectUtil.coalesce(xqlMethod.getEnable(), true);
                     }
 
                     return new Object[]{
@@ -179,28 +188,35 @@ public class MapperGenerateForm extends JPanel {
 
         table.getColumnModel().getColumn(3).setCellEditor(buildSelector(true, PARAM_TYPES));
         table.getColumnModel().getColumn(5).setCellEditor(buildSelector(true, GENERIC_TYPES));
+
+        table.getColumnModel().getColumn(6).setCellRenderer(new CheckboxCellRenderer());
+        table.getColumnModel().getColumn(6).setMaxWidth(60);
+
         table.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     var x = table.rowAtPoint(e.getPoint());
                     var y = table.columnAtPoint(e.getPoint());
-                    if (x >= 0 && y >= 0) {
-                        if (y == 4) {
-                            var method = table.getValueAt(x, 1).toString();
-                            var values = table.getValueAt(x, y).toString();
-                            ApplicationManager.getApplication().invokeLater(() -> {
-                                var queryTypesDialog = new ReturnTypesDialog(project, method, values, selected -> table.setValueAt(selected, x, y));
-                                queryTypesDialog.showAndGet();
-                            });
-                        }
+                    if (x >= 0 && y == 4) {
+                        var method = table.getValueAt(x, 1).toString();
+                        var values = table.getValueAt(x, y).toString();
+                        ApplicationManager.getApplication().invokeLater(() -> {
+                            var queryTypesDialog = new ReturnTypesDialog(project, method, values, selected -> table.setValueAt(selected, x, y));
+                            queryTypesDialog.showAndGet();
+                        });
                     }
                 }
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-
+                var x = table.rowAtPoint(e.getPoint());
+                var y = table.columnAtPoint(e.getPoint());
+                if (x >= 0 && y == 6) {
+                    var currentValue = (Boolean) table.getValueAt(x, y);
+                    table.setValueAt(!currentValue, x, y);
+                }
             }
 
             @Override

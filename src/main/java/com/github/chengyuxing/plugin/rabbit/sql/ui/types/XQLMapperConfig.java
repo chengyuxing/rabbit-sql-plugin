@@ -58,6 +58,7 @@ public class XQLMapperConfig {
         private String returnGenericType;
         private String sqlType;
         private String paramType;
+        private Boolean enable = true;
 
         public String getReturnType() {
             return returnType;
@@ -89,6 +90,14 @@ public class XQLMapperConfig {
 
         public void setReturnGenericType(String returnGenericType) {
             this.returnGenericType = returnGenericType;
+        }
+
+        public Boolean getEnable() {
+            return enable;
+        }
+
+        public void setEnable(Boolean enable) {
+            this.enable = enable;
         }
     }
 }

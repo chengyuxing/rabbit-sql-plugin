@@ -46,6 +46,7 @@ $userMethods
     // Rabbit-SQL plugin - End of your methods  //CODE-END:methods
 
 #foreach($method in $methods)
+#if($method.enable)
 #set($isMethodProc = $method.sqlType == 'procedure' || $method.sqlType == 'function')
     /**
 #if($method.description != "")
@@ -95,5 +96,6 @@ $userMethods
 #end
 #end
 
+#end
 #end
 }
