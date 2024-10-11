@@ -145,7 +145,7 @@ public class MapperGenerateForm extends JPanel {
                         returnType = XQLJavaType.GenericT.getValue();
                     } else if (methodName.matches(XQLInvocationHandler.QUERY_PATTERN)) {
                         sqlType = Type.query.name();
-                        if (StringUtil.startsWiths(methodName, "query", "search", "select")) {
+                        if (StringUtil.startsWiths(methodName, "get", "query", "search", "select", "list")) {
                             returnType = XQLJavaType.List.toString();
                         } else {
                             returnType = XQLJavaType.GenericT.getValue();
