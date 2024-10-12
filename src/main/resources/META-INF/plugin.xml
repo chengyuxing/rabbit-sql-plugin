@@ -22,16 +22,16 @@
     <h2>Features</h2>
     <ul>
         <li>Support the identification of xql(<code>.xql</code>) file type.</li>
-        <li>Support dynamic sql expression script live templates(e.g: <code>xql:if</code>).</li>
+        <li>Support dynamic sql expression script <b>live templates</b>(e.g: <code>xql:if</code>).</li>
         <li>Support intention action <kbd>Execute Dynamic sql</kbd> and <kbd>Copy sql definition</kbd> by sql name(e.g: <code>&my.users</code>).</li>
         <li>Support quick look sql definition by sql name(e.g: <code>&my.users</code>).</li>
-        <li>Support generate mapper interface by registered xql file.</li>
+        <li>Support <n>generate mapper interface</n> by registered xql file.</li>
         <li>Support java and xql file references to navigate each other.</li>
         <li>Support sql name suggestions auto complete in java string literal where start with <code>"&"</code>.</li>
         <li>Toolwindow:
             <ul>
                 <li>Structured tree view.</li>
-                <li>Manage multiple xql-file-manager.yml.</li>
+                <li>Manage multiple <b>xql-file-manager.yml</b>.</li>
                 <li>Some more useful actions.</li>
             </ul>
         </li>
@@ -46,7 +46,7 @@
     <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.11.2+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.11.5+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -54,7 +54,7 @@
     </ol>
     <h3>Other</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.12.2+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.12.5+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -70,6 +70,14 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.13</h3>
+            <ul>
+                <li>Support <code>rabbit-sql 7.12.5+</code> and <code>rabbit-sql-spring-boot-starter 2.11.5+</code></li>
+                <li>Interface Mapper generate optimized.</li>
+                <li>Add support method prefix <code>get</code>, <code>list</code> for <b>generate Mapper interface</b> detect to return <code>List[T]</code>.)</li>
+                <li>Popup window size adjustment.</li>
+                <li>Some optimized.</li>
+            </ul>
             <h3>2.4.12</h3>
             <ul>
                 <li>Fixed <b>New SQL action</b> the delimiter always is ';' when <code>xql-file-manager.yml</code> delimiter is not ';'.</li>
