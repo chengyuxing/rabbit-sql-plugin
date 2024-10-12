@@ -75,7 +75,7 @@ public class NewSQLForm extends JPanel {
 
         //======== this ========
         setMinimumSize(new Dimension(350, 103));
-        setPreferredSize(new Dimension(350, 103));
+        setPreferredSize(new Dimension(450, 103));
         setLayout(new FormLayout(
             new ColumnSpec[] {
                 new ColumnSpec(Sizes.dluX(40)),

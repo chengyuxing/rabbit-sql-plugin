@@ -28,6 +28,7 @@ public class ReturnTypesForm extends JPanel {
     public ReturnTypesForm(String selected, Consumer<Integer> checkedCount) {
         setLayout(new FlowLayout(FlowLayout.LEFT, 10, 6));
         setMinimumSize(new Dimension(360, 100));
+        setPreferredSize(new Dimension(370, 110));
 
         this.checkBoxes = new ArrayList<>();
         var values = splitReturnTypes(selected);

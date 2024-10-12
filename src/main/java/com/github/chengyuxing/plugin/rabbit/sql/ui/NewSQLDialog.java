@@ -43,7 +43,6 @@ public class NewSQLDialog extends DialogWrapper {
             }
         });
         setOKActionEnabled(false);
-        setSize(450, 103);
         setTitle("New SQL");
         init();
     }

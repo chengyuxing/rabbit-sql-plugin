@@ -120,7 +120,6 @@ public class MapperGenerateDialog extends DialogWrapper {
         setTitle("[ " + alias + " ] XQL Mapper Interface Generator");
         setOKButtonText("Generate");
         setCancelButtonText("Close");
-        setSize(750, 300);
         setOKActionEnabled(isPackageValid());
         init();
     }
