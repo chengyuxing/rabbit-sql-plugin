@@ -274,6 +274,8 @@ public class XQLConfigManager {
                 if (Objects.nonNull(cause)) {
                     warnings.add(Message.warning(messagePrefix() + cause.getMessage()));
                 }
+            } catch (ConcurrentModificationException e) {
+                log.warn(e);
             } catch (YamlDeserializeException e) {
                 warnings.add(Message.error(messagePrefix() + "config content invalid: " + e.getMessage()));
                 log.warn(e);
