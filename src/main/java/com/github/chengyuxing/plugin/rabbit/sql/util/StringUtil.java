@@ -212,7 +212,7 @@ public class StringUtil {
 
     public static String camelizeAndClean(String content) {
         var result = content.replace("_", "-");
-        result = HyphenatedPropertyUtil.camelize(result);
+        result = com.github.chengyuxing.common.utils.StringUtil.camelize(result);
         result = result.replaceAll("\\W", "");
         return result;
     }

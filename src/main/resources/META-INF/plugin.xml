@@ -46,7 +46,7 @@
     <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.11.5+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.11.6+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -54,7 +54,7 @@
     </ol>
     <h3>Other</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.12.5+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.12.6+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -72,7 +72,7 @@
         <![CDATA[
             <h3>2.4.13</h3>
             <ul>
-                <li>Support <code>rabbit-sql 7.12.5+</code> and <code>rabbit-sql-spring-boot-starter 2.11.5+</code></li>
+                <li>Support <code>rabbit-sql 7.12.6+</code> and <code>rabbit-sql-spring-boot-starter 2.11.6+</code></li>
                 <li>Interface Mapper generate optimized.</li>
                 <li>Add support method prefix <code>get</code>, <code>list</code> for <b>generate Mapper interface</b> detect to return <code>List[T]</code>.)</li>
                 <li>Popup window size adjustment.</li>
