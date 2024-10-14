@@ -78,7 +78,6 @@ public class NewXQLFileManagerForm extends JPanel {
         secondaryFileName.setFont(Global.getEditorFont(secondaryFileName.getFont().getSize()));
 
         //======== this ========
-        setMinimumSize(new Dimension(200, 60));
         setPreferredSize(new Dimension(370, 60));
         setLayout(new FormLayout(
             new ColumnSpec[] {

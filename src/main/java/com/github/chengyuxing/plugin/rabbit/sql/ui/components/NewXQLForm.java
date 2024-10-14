@@ -249,7 +249,6 @@ public class NewXQLForm extends JPanel {
         description.setFont(Global.getEditorFont(description.getFont().getSize()));
 
         //======== this ========
-        setMinimumSize(new Dimension(500, 160));
         setPreferredSize(new Dimension(500, 160));
         setLayout(new FormLayout(
             new ColumnSpec[] {

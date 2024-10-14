@@ -75,7 +75,6 @@ public class MapperGenerateForm extends JPanel {
     }
 
     private void initComponents() {
-        setMinimumSize(new Dimension(750, 300));
         setPreferredSize(new Dimension(750, 300));
         setBorder(BorderFactory.createEmptyBorder());
         setLayout(new MigLayout(

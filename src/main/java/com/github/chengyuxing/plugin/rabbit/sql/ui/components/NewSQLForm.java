@@ -74,7 +74,6 @@ public class NewSQLForm extends JPanel {
         description.setFont(Global.getEditorFont(description.getFont().getSize()));
 
         //======== this ========
-        setMinimumSize(new Dimension(350, 103));
         setPreferredSize(new Dimension(450, 103));
         setLayout(new FormLayout(
             new ColumnSpec[] {
