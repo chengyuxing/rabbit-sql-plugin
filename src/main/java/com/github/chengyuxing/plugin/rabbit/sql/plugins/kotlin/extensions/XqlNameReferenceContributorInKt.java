@@ -1,5 +1,6 @@
-package com.github.chengyuxing.plugin.rabbit.sql.extensions;
+package com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions;
 
+import com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameReferenceContributor;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
 import com.intellij.util.ProcessingContext;

@@ -2,7 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
-import com.github.chengyuxing.plugin.rabbit.sql.plugins.utils.YmlUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.yml.YmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;

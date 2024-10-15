@@ -2,7 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
-import com.github.chengyuxing.plugin.rabbit.sql.plugins.utils.YmlUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.yml.YmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.util.*;

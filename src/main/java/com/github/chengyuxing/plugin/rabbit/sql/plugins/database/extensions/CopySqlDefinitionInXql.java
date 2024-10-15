@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.extensions;
+package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.extensions.support.SqlNameIntentionActionInXql;

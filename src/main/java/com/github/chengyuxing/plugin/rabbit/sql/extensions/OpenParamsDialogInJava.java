@@ -1,6 +1,5 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceManager;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.extensions.support.SqlNameIntentionActionInJvmLang;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
@@ -17,12 +16,9 @@ import javax.swing.*;
 import java.util.Objects;
 
 public class OpenParamsDialogInJava extends SqlNameIntentionActionInJvmLang implements Iconable {
-    private final DatasourceManager datasourceManager = DatasourceManager.getInstance();
-
     @Override
     public void invokeIfSuccess(Project project, PsiElement element, XQLConfigManager.Config config, String sqlName) {
-        var dsResource = datasourceManager.getResource(project);
-        ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlName, config, dsResource).showAndGet());
+        ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlName, config, project).showAndGet());
     }
 
     @Override

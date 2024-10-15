@@ -1,5 +1,6 @@
-package com.github.chengyuxing.plugin.rabbit.sql.extensions;
+package com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions;
 
+import com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinitionInJava;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import org.jetbrains.annotations.NotNull;
 

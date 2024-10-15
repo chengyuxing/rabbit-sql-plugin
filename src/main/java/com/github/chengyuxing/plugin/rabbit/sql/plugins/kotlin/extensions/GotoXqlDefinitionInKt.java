@@ -1,6 +1,7 @@
-package com.github.chengyuxing.plugin.rabbit.sql.extensions;
+package com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions;
 
 import com.github.chengyuxing.common.tuple.Pair;
+import com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoXqlDefinition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;

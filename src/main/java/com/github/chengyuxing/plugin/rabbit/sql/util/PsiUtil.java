@@ -2,6 +2,8 @@ package com.github.chengyuxing.plugin.rabbit.sql.util;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.KotlinUtil;
 import com.github.chengyuxing.sql.annotation.*;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
@@ -12,12 +14,8 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.impl.source.tree.java.PsiJavaTokenImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -113,25 +111,13 @@ public class PsiUtil {
     }
 
     public static String getJvmLangLiteral(PsiElement element) {
-        // handle kotlin
-        if (element instanceof KtLiteralStringTemplateEntry stringTemplateEntry) {
-            return stringTemplateEntry.getText();
+        if (FeatureChecker.isPluginEnabled(FeatureChecker.KOTLIN_PLUGIN_ID)) {
+            var s = KotlinUtil.getStringLiteral(element);
+            if (s != null) {
+                return s;
+            }
         }
-        if (element instanceof LeafPsiElement && element.getParent() instanceof KtLiteralStringTemplateEntry stringTemplateEntry) {
-            return stringTemplateEntry.getText();
-        }
-        if (element instanceof KtStringTemplateExpression expression) {
-            var text = expression.getText();
-            return text.substring(1, text.length() - 1);
-        }
-        // handle java
-        if (element instanceof PsiLiteralExpression literalExpression) {
-            return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
-        }
-        if (element instanceof PsiJavaTokenImpl && element.getParent() instanceof PsiLiteralExpression literalExpression) {
-            return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
-        }
-        return null;
+        return JavaUtil.getStringLiteral(element);
     }
 
     public static VirtualFile getActiveFile(Project project) {
