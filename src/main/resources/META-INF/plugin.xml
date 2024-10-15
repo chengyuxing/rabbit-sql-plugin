@@ -491,10 +491,10 @@
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.database</depends>
     <depends>com.intellij.java</depends>
-    <depends>org.intellij.intelliLang</depends>
-    <depends>org.jetbrains.kotlin</depends>
+    <depends optional="true" config-file="plugin.kotlin.xml">org.jetbrains.kotlin</depends>
+    <depends optional="true" config-file="plugin.database.xml">com.intellij.modules.database</depends>
+    <depends optional="true" config-file="plugin.yaml.xml">org.jetbrains.plugins.yaml</depends>
 
     <projectListeners>
         <listener class="com.github.chengyuxing.plugin.rabbit.sql.ProjectReadyListener"
@@ -508,17 +508,7 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <fileType name="XQL"
-                  implementationClass="com.github.chengyuxing.plugin.rabbit.sql.file.XqlFileType"
-                  fieldName="INSTANCE"
-                  language="SQL"
-                  extensions="xql"/>
-        <annotator language="SQL"
-                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlFileAnnotator"/>
-
         <annotator language="JAVA"
-                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameAnnotator"/>
-        <annotator language="kotlin"
                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameAnnotator"/>
 
         <!--Java:Copy sql definition-->
@@ -527,22 +517,12 @@
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinitionInJava</className>
         </intentionAction>
-        <intentionAction id="CopySqlDefinitionInKt">
-            <language>kotlin</language>
-            <category>Rabbit-SQL</category>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinitionInKt</className>
-        </intentionAction>
 
         <!--Java:Copy sql parameters-->
         <intentionAction id="CopySqlParamsInJava">
             <language>JAVA</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlParamsInJava</className>
-        </intentionAction>
-        <intentionAction id="CopySqlParamsInKt">
-            <language>kotlin</language>
-            <category>Rabbit-SQL</category>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlParamsInKt</className>
         </intentionAction>
 
         <!--Java:Execute Dynamic sql-->
@@ -551,11 +531,6 @@
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInJava</className>
         </intentionAction>
-        <intentionAction id="TestDynamicSqlInKt">
-            <language>kotlin</language>
-            <category>Rabbit-SQL</category>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInKt</className>
-        </intentionAction>
 
         <!--Java:Create/Append-->
         <intentionAction id="CreateOrAppendXql">
@@ -563,49 +538,20 @@
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.NewXqlIfNotExists</className>
         </intentionAction>
-        <intentionAction id="CreateOrAppendXqlInKt">
-            <language>kotlin</language>
-            <category>Rabbit-SQL</category>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.NewXqlIfNotExistsInKt</className>
-        </intentionAction>
-
-        <!--Xql:Execute Dynamic sql-->
-        <intentionAction>
-            <language>SQL</language>
-            <category>Rabbit-SQL</category>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInXql</className>
-        </intentionAction>
-        <!--Xql:Copy sql definition-->
-        <intentionAction>
-            <language>SQL</language>
-            <category>Rabbit-SQL</category>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinitionInXql</className>
-        </intentionAction>
 
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoXqlDefinition"/>
-        <codeInsight.lineMarkerProvider language="kotlin"
-                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoXqlDefinitionInKt"/>
-
-        <codeInsight.lineMarkerProvider language="SQL"
-                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoJvmLangCallable"/>
 
         <psi.referenceContributor language="JAVA"
                                   implementation="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameReferenceContributor"/>
-        <psi.referenceContributor language="kotlin"
-                                  implementation="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameReferenceContributorInKt"/>
 
         <completion.confidence language="JAVA" order="before javaSkipAutopopupInStrings"
                                implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameCompletionConfidence"/>
-        <completion.confidence language="kotlin" order="first"
-                               implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameCompletionConfidenceInKt"/>
 
         <lang.documentationProvider language="JAVA" id="XqlQuickDoc"
                                     implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlQuickDoc"/>
-        <lang.documentationProvider language="kotlin" id="XqlQuickDocInKt"
-                                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlQuickDoc"/>
 
-        <iconProvider implementation="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlFileManagerIconProvider"/>
+        <iconProvider implementation="com.github.chengyuxing.plugin.rabbit.sql.extensions.MyIconProvider"/>
 
         <toolWindow factoryClass="com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow"
                     id="XQL File Manager" anchor="right"/>
@@ -618,10 +564,6 @@
         <liveTemplateContext contextId="SQL"
                              implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlContext"/>
     </extensions>
-
-    <!--    <extensions defaultExtensionNs="org.intellij.intelliLang">-->
-    <!--        <injectionConfig id="sqlInBaki" config="rabbit-sql-injections.xml"/>-->
-    <!--    </extensions>-->
 
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup toolWindowId="Rabbit-SQL Notification" displayType="BALLOON"

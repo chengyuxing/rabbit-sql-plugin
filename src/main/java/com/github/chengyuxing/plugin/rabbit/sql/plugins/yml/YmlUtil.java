@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.plugins.utils;
+package com.github.chengyuxing.plugin.rabbit.sql.plugins.yml;
 
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
