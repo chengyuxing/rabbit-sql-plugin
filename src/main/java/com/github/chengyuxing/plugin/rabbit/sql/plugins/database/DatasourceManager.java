@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.common;
+package com.github.chengyuxing.plugin.rabbit.sql.plugins.database;
 
 import com.intellij.database.console.JdbcConsole;
 import com.intellij.database.console.session.DatabaseSessionManager;

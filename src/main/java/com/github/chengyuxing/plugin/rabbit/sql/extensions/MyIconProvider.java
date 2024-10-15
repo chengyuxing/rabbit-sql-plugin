@@ -9,16 +9,19 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class XqlFileManagerIconProvider extends IconProvider {
+public class MyIconProvider extends IconProvider {
     @Override
     public @Nullable Icon getIcon(@NotNull PsiElement element, int flags) {
         var psiFile = element.getContainingFile();
         if (psiFile != null) {
-            if (psiFile.getName().equals(Constants.CONFIG_NAME)) {
+            var name = psiFile.getName();
+            if (name.endsWith(".xql")) {
+                return XqlIcons.XQL_FILE;
+            }
+            if (name.equals(Constants.CONFIG_NAME)) {
                 return XqlIcons.XQL_FILE_MANAGER;
             }
-            var name = psiFile.getName();
-            if (name.matches(Constants.CONFIG_PATTERN) && !name.equals(Constants.CONFIG_NAME)) {
+            if (name.matches(Constants.CONFIG_PATTERN)) {
                 return XqlIcons.XQL_FILE_MANAGER_SECONDARY;
             }
         }

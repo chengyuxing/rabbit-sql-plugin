@@ -1,7 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.common.tuple.Quadruple;
-import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
@@ -20,7 +19,6 @@ import java.util.Objects;
 
 public class ExecuteSqlAction extends AnAction {
     private final JTree tree;
-    private final DatasourceManager datasourceManager = DatasourceManager.getInstance();
 
     public ExecuteSqlAction(JTree tree) {
         super(() -> {
@@ -52,7 +50,7 @@ public class ExecuteSqlAction extends AnAction {
             var name = sqlMeta.getItem2();
             var config = sqlMeta.getItem4();
             ApplicationManager.getApplication().invokeLater(() -> {
-                var dialog = new DynamicSqlCalcDialog(alias + "." + name, config, datasourceManager.getResource(e.getProject()));
+                var dialog = new DynamicSqlCalcDialog(alias + "." + name, config, project);
                 dialog.showAndGet();
             });
         }

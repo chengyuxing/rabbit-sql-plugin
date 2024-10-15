@@ -1,0 +1,28 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType name="XQL"
+                  implementationClass="com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions.XqlFileType"
+                  fieldName="INSTANCE"
+                  language="SQL"
+                  extensions="xql"/>
+
+        <annotator language="SQL"
+                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions.XqlFileAnnotator"/>
+
+        <!--Xql:Execute Dynamic sql-->
+        <intentionAction>
+            <language>SQL</language>
+            <category>Rabbit-SQL</category>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions.OpenParamsDialogInXql</className>
+        </intentionAction>
+        <!--Xql:Copy sql definition-->
+        <intentionAction>
+            <language>SQL</language>
+            <category>Rabbit-SQL</category>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions.CopySqlDefinitionInXql</className>
+        </intentionAction>
+
+        <codeInsight.lineMarkerProvider language="SQL"
+                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions.GotoJvmLangCallable"/>
+    </extensions>
+</idea-plugin>

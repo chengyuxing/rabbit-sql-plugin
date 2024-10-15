@@ -1,5 +1,6 @@
-package com.github.chengyuxing.plugin.rabbit.sql.file;
+package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
+import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.sql.psi.SqlLanguage;
 import org.jetbrains.annotations.NonNls;

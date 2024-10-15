@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.extensions;
+package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
 import com.github.chengyuxing.common.script.expression.Patterns;
 import com.github.chengyuxing.common.script.lexer.FlowControlLexer;

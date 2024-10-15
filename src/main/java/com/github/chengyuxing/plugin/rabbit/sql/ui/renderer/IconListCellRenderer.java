@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.renderer;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.DatasourceManager;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.database.DatasourceManager;
 
 import javax.swing.*;
 import java.awt.*;
