@@ -1,13 +1,12 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.utils.YmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
-import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.*;
 import com.intellij.icons.AllIcons;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -19,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -78,7 +78,13 @@ public class NewXqlFileAction extends AnAction {
         if (Objects.isNull(doc)) {
             return;
         }
-        var anchors = PsiUtil.getYmlAnchors(project, configVf);
+        Map<String, String> anchors;
+        if (FeatureChecker.isPluginEnabled(FeatureChecker.YML_PLUGIN_ID)) {
+            anchors = YmlUtil.getYmlAnchors(project, configVf);
+        } else {
+            anchors = Map.of();
+            NotificationUtil.showMessage(project, "YAML plugin is not enabled. YAML-anchor features are disabled.", NotificationType.WARNING);
+        }
         ApplicationManager.getApplication().invokeLater(() -> {
             var d = new NewXqlDialog(project, config, doc, anchors);
             d.setPathPrefix(pathPrefix);

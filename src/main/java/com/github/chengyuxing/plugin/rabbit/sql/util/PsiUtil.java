@@ -18,40 +18,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
-import org.jetbrains.yaml.psi.YAMLAnchor;
-import org.jetbrains.yaml.psi.YamlRecursivePsiElementVisitor;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 
 public class PsiUtil {
-
-    public static Map<String, String> getYmlAnchors(Project project, VirtualFile configYml) {
-        var anchors = new LinkedHashMap<String, String>();
-        if (Objects.isNull(configYml) || !configYml.exists()) {
-            return Map.of();
-        }
-        var ymlPsi = PsiManager.getInstance(project).findFile(configYml);
-        if (Objects.isNull(ymlPsi)) {
-            return Map.of();
-        }
-        ProgressManager.checkCanceled();
-        ymlPsi.acceptChildren(new YamlRecursivePsiElementVisitor() {
-            @Override
-            public void visitAnchor(@NotNull YAMLAnchor anchor) {
-                var name = anchor.getName();
-                var markedValue = anchor.getMarkedValue();
-                if (Objects.nonNull(markedValue)) {
-                    var value = markedValue.getText().substring(name.length() + 1).trim();
-                    anchors.put(name, value);
-                }
-            }
-        });
-        return anchors;
-    }
-
     public static void navigate2xqlFile(String alias, String name, XQLConfigManager.Config config) {
         var xqlVf = ProjectFileUtil.findXqlByAlias(alias, config);
         if (Objects.nonNull(xqlVf) && xqlVf.exists()) {

@@ -1,11 +1,11 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
-import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.utils.YmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
+import com.github.chengyuxing.plugin.rabbit.sql.util.*;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
@@ -57,7 +58,13 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
                 if (Objects.isNull(doc)) {
                     return;
                 }
-                var anchors = PsiUtil.getYmlAnchors(project, configVf);
+                Map<String, String> anchors;
+                if (FeatureChecker.isPluginEnabled(FeatureChecker.YML_PLUGIN_ID)) {
+                    anchors = YmlUtil.getYmlAnchors(project, configVf);
+                } else {
+                    anchors = Map.of();
+                    NotificationUtil.showMessage(project, "YAML plugin is not enabled. YAML-anchor features are disabled.", NotificationType.WARNING);
+                }
                 ApplicationManager.getApplication().invokeLater(() -> {
                     var d = new NewXqlDialog(project, config, doc, anchors);
                     d.setDefaultAlias(alias);
