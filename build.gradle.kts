@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.4.13"
+version = "2.4.14"
 
 repositories {
     mavenLocal()
@@ -28,7 +28,6 @@ intellij {
 
     plugins.set(listOf("com.intellij.database",
             "com.intellij.java",
-            "org.intellij.intelliLang",
             "org.jetbrains.kotlin",
             "org.jetbrains.plugins.yaml"))
 }

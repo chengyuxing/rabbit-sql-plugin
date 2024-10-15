@@ -17,7 +17,7 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
     <h2>Rabbit SQL Framework Support</h2>
-    <p>Provides support for <a href="https://github.com/chengyuxing/rabbit-sql">rabbit-sql</a> to JetBrains IDEA Ultimate.</p>
+    <p>Provides support for <a href="https://github.com/chengyuxing/rabbit-sql">rabbit-sql</a> to JetBrains IDEA.</p>
     <p>Easily to use <a href="https://github.com/chengyuxing/rabbit-sql">rabbit-sql</a> and <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQL</a> file.</p>
     <h2>Features</h2>
     <ul>
@@ -70,6 +70,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.14</h3>
+            <ul>
+                <li>Add support for compatible with <b>IDEA IC</b>.</li>
+                <li>Add support kotlin/yaml/database plugin can be optional.</li>
+            </ul>
             <h3>2.4.13</h3>
             <ul>
                 <li>Support <code>rabbit-sql 7.12.6+</code> and <code>rabbit-sql-spring-boot-starter 2.11.6+</code></li>
