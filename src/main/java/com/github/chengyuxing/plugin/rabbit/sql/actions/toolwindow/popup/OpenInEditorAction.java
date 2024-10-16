@@ -49,7 +49,7 @@ public class OpenInEditorAction extends AnAction {
         }
     }
 
-    private Path detectedExistsFilePath(Project project, XqlTreeNodeData nodeData) {
+    private static Path detectedExistsFilePath(Project project, XqlTreeNodeData nodeData) {
         return switch (nodeData.type()) {
             case XQL_CONFIG -> {
                 var config = (XQLConfigManager.Config) nodeData.source();

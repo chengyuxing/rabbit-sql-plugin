@@ -118,7 +118,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
         return null;
     }
 
-    String getSqlRefOnMapperMethod(PsiElement originalElement) {
+    private static String getSqlRefOnMapperMethod(PsiElement originalElement) {
         var alias = PsiUtil.getXQLMapperAlias(originalElement);
         if (Objects.isNull(alias)) {
             return null;

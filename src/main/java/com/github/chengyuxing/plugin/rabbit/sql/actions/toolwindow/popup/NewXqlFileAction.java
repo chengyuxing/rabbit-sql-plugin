@@ -71,7 +71,7 @@ public class NewXqlFileAction extends AnAction {
         }
     }
 
-    private void openNewXqlDialog(Project project, XQLConfigManager.Config config, List<String> pathPrefix) {
+    private static void openNewXqlDialog(Project project, XQLConfigManager.Config config, List<String> pathPrefix) {
         var configPath = config.getConfigPath();
         var configVf = VirtualFileManager.getInstance().findFileByNioPath(configPath);
         var doc = ProjectFileUtil.getDocument(project, configVf);

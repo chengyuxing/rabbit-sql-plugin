@@ -77,7 +77,7 @@ public class XqlFileAnnotator implements Annotator {
         highlightVarName(holder, element, whiteSpaceLen, value);
     }
 
-    void highlightWord(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content, String xqlTag, String keyword) {
+    private static void highlightWord(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content, String xqlTag, String keyword) {
         if (StringUtil.equalsAnyIgnoreCase(xqlTag, FlowControlLexer.KEYWORDS)) {
             Pattern p = Pattern.compile("\\s(?<keyword>" + keyword + ")(\\s|$)");
             Matcher m = p.matcher(content);
@@ -94,7 +94,7 @@ public class XqlFileAnnotator implements Annotator {
         }
     }
 
-    void highlightVarName(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content) {
+    private static void highlightVarName(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content) {
         Pattern p = Pattern.compile("(?<var>:" + Patterns.VAR_KEY_PATTERN + ")(\\s|\\W|$)");
         Matcher m = p.matcher(content);
         while (m.find()) {
@@ -110,7 +110,7 @@ public class XqlFileAnnotator implements Annotator {
         }
     }
 
-    String getTag(String prefix) {
+    private static String getTag(String prefix) {
         for (String keyword : FlowControlLexer.KEYWORDS) {
             if (StringUtil.startsWithIgnoreCase(prefix, keyword)) {
                 return keyword;
