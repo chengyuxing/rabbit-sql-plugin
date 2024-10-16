@@ -7,7 +7,7 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
     <name>Rabbit SQL</name>
 
-    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <!-- XQLMapperBeanProvider displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="chengyuxingo@gmail.com" url="https://github.com/chengyuxing/rabbit-sql-plugin">
         com.github.chengyuxing
     </vendor>
@@ -74,6 +74,7 @@
             <ul>
                 <li>Add support for compatible with <b>IDEA IC</b>.</li>
                 <li>Add support kotlin/yaml/database plugin can be optional.</li>
+                <li>Add support <b>Springboot</b> project detect XQL mapper interface as bean if startup class with <code>@XQLMapperScan</code>.</li>
             </ul>
             <h3>2.4.13</h3>
             <ul>
@@ -500,6 +501,7 @@
     <depends optional="true" config-file="plugin.kotlin.xml">org.jetbrains.kotlin</depends>
     <depends optional="true" config-file="plugin.database.xml">com.intellij.modules.database</depends>
     <depends optional="true" config-file="plugin.yaml.xml">org.jetbrains.plugins.yaml</depends>
+    <depends optional="true" config-file="plugin.spring.xml">com.intellij.spring</depends>
 
     <projectListeners>
         <listener class="com.github.chengyuxing.plugin.rabbit.sql.ProjectReadyListener"

@@ -28,6 +28,7 @@ intellij {
 
     plugins.set(listOf("com.intellij.database",
             "com.intellij.java",
+            "com.intellij.spring",
             "org.jetbrains.kotlin",
             "org.jetbrains.plugins.yaml"))
 }
