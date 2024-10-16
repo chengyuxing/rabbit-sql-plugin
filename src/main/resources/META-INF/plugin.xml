@@ -7,7 +7,7 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
     <name>Rabbit SQL</name>
 
-    <!-- XQLMapperBeanProvider displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="chengyuxingo@gmail.com" url="https://github.com/chengyuxing/rabbit-sql-plugin">
         com.github.chengyuxing
     </vendor>
