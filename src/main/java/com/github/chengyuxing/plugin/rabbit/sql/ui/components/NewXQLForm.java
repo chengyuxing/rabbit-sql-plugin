@@ -287,7 +287,7 @@ public class NewXQLForm extends JPanel {
             filenameTooltip.setText("Divided by '/' or array e.g. [a, b, c]");
             filenameTooltip.setVerticalAlignment(SwingConstants.TOP);
             filenameTooltip.setFont(filenameTooltip.getFont().deriveFont(filenameTooltip.getFont().getSize() - 1f));
-            filenameTooltip.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
+            filenameTooltip.setForeground(InlineHelpText.COLOR);
             panel2.add(filenameTooltip, cc.xy(1, 1, CellConstraints.LEFT, CellConstraints.CENTER));
 
             //---- anchorTag ----
@@ -317,7 +317,7 @@ public class NewXQLForm extends JPanel {
             //---- message ----
             message.setText("...");
             message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
-            message.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
+            message.setForeground(InlineHelpText.COLOR);
             panel1.add(message);
         }
         add(panel1, cc.xy(3, 9, CellConstraints.FILL, CellConstraints.DEFAULT));

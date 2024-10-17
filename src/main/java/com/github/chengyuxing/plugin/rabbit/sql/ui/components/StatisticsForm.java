@@ -37,6 +37,7 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.*;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
+import com.jgoodies.forms.layout.*;
 import net.miginfocom.swing.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -144,12 +145,23 @@ public class StatisticsForm extends JPanel {
                     .filter(config -> Objects.nonNull(config.getXqlFileManager()))
                     .toList();
             var module = path.getFileName().toString();
+
+            var panel = new JPanel();
+            panel.setLayout(new MigLayout(
+                    "insets 8 0 0 0,hidemode 3",
+                    // columns
+                    "[grow 1,fill]",
+                    // rows
+                    "[grow 1,fill]"));
+            CellConstraints cc = new CellConstraints();
+
             var tablePanel = new JBScrollPane();
             tablePanel.setBorder(BorderFactory.createEmptyBorder());
             var table = createTable();
             dataMap.put(table, validConfigs);
             tablePanel.setViewportView(table);
-            var info = new TabInfo(tablePanel);
+            panel.add(tablePanel);
+            var info = new TabInfo(panel);
             info.setIcon(AllIcons.Nodes.Module);
             info.setText(module + (validConfigs.isEmpty() ? " *" : ""));
             info.setTooltipText(path.toString());
@@ -273,7 +285,7 @@ public class StatisticsForm extends JPanel {
 
         //======== this ========
         setPreferredSize(new Dimension(650, 320));
-        setBorder(null);
+        setBorder(BorderFactory.createEmptyBorder());
         setLayout(new MigLayout(
             "fill,hidemode 3,align left top",
             // columns

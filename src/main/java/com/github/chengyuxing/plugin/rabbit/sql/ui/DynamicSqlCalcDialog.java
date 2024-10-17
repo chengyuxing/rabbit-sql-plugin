@@ -68,6 +68,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     protected @Nullable JPanel createSouthAdditionalPanel() {
         var panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 0));
+        datasourceList.setSwingPopup(false);
         if (!isDatabasePluginEnabled) {
             datasourceList.addItem(DatasourceManager.DatabaseId.empty("<Configured database>"));
             datasourceList.setEnabled(false);
@@ -85,7 +86,6 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         datasourceList.addItem(DatasourceManager.DatabaseId.empty("<Configured database>"));
         datasourceList.setRenderer(new IconListCellRenderer(dsInfo));
         dsInfo.forEach((k, v) -> datasourceList.addItem(k));
-        datasourceList.setSwingPopup(false);
         var selected = datasourceResource.getSelected();
         if (selected != null) {
             if (dsInfo.containsKey(selected)) {
@@ -193,8 +193,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     }
 
     private JButton createOpenDatabaseButton() {
-        var btn = new FixedSizeButton(30);
-        btn.setBorder(BorderFactory.createEmptyBorder());
+        var btn = new FixedSizeButton();
         btn.setIcon(AllIcons.Actions.AddMulticaret);
         if (isDatabasePluginEnabled) {
             btn.setToolTipText("Configure database");

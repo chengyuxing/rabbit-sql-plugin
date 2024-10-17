@@ -12,17 +12,25 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLInvocationHandler;
 import com.github.chengyuxing.sql.annotation.Type;
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
-import com.intellij.ui.components.JBScrollPane;
+import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.ui.components.*;
 import com.intellij.ui.table.JBTable;
+import com.intellij.ui.tabs.TabInfo;
+import com.intellij.ui.tabs.impl.JBEditorTabs;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.*;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashSet;
@@ -35,7 +43,19 @@ public class MapperGenerateForm extends JPanel {
     private final String alias;
     private final XQLFileManager xqlFileManager;
     private final XQLMapperConfig mapperConfig;
+
     private JBTable table;
+    private JBCheckBox bakiCheckBox;
+    private JBTextField bakiTextField;
+    private JBTextField packageTextField;
+
+    private JBTextField pageTextField;
+    private JBTextField sizeTextField;
+
+    private JBEditorTabs tabs;
+
+    private final Disposable disposable;
+
     private static final Object[] thead = new Object[]{
             "SQL",
             "Method",
@@ -66,11 +86,12 @@ public class MapperGenerateForm extends JPanel {
     public static final List<String> GENERIC_TYPES = List.of(XQLJavaType.Map.toString(), XQLJavaType.DataRow.toString());
     public static final List<String> PARAM_TYPES = List.of(XQLJavaType.Map.getValue(), XQLJavaType.MultiArgs.toString());
 
-    public MapperGenerateForm(Project project, String alias, XQLFileManager xqlFileManager, XQLMapperConfig mapperConfig) {
+    public MapperGenerateForm(Project project, String alias, XQLFileManager xqlFileManager, XQLMapperConfig mapperConfig, Disposable disposable) {
         this.project = project;
         this.alias = alias;
         this.xqlFileManager = xqlFileManager;
         this.mapperConfig = mapperConfig;
+        this.disposable = disposable;
         initComponents();
     }
 
@@ -83,6 +104,96 @@ public class MapperGenerateForm extends JPanel {
                 "[grow,left]",
                 // rows
                 "[fill]"));
+
+        tabs = new JBEditorTabs(project, IdeFocusManager.getInstance(project), disposable);
+
+        var mapperPanel = createMapperPanel();
+        var settingPanel = createSettingPanel();
+        var aboutPanel = createAboutPanel();
+
+        var tableInfo = new TabInfo(mapperPanel);
+        tableInfo.setIcon(AllIcons.Nodes.Interface);
+        tableInfo.setText(com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.generateInterfaceMapperName(alias));
+        tabs.addTab(tableInfo);
+
+        var configInfo = new TabInfo(settingPanel);
+        configInfo.setIcon(AllIcons.General.Settings);
+        configInfo.setText("Configuration");
+        tabs.addTab(configInfo);
+
+        var aboutInfo = new TabInfo(aboutPanel);
+        aboutInfo.setIcon(AllIcons.General.ShowInfos);
+        aboutInfo.setText("About");
+        tabs.addTab(aboutInfo);
+
+        add(tabs, "cell 0 0,grow");
+    }
+
+    public void selectConfigTab() {
+        var tab = tabs.getTabAt(1);
+        tabs.select(tab, true);
+        packageTextField.requestFocus();
+    }
+
+    public String getBaki() {
+        if (bakiCheckBox.isSelected()) {
+            return bakiTextField.getText().trim();
+        }
+        return null;
+    }
+
+    public void setBaki(String baki) {
+        if (Objects.nonNull(baki)) {
+            bakiCheckBox.setSelected(true);
+            bakiTextField.setEnabled(true);
+            bakiTextField.setText(baki);
+        }
+    }
+
+    public String getPackage() {
+        return packageTextField.getText().trim();
+    }
+
+    public void setPackage(String packageName) {
+        if (Objects.nonNull(packageName)) {
+            packageTextField.setText(packageName);
+        }
+    }
+
+    public String getPageKey() {
+        return pageTextField.getText().trim();
+    }
+
+    public void setPageKey(String pageKey) {
+        if (Objects.nonNull(pageKey)) {
+            pageTextField.setText(pageKey);
+        }
+    }
+
+    public String getSizeKey() {
+        return sizeTextField.getText().trim();
+    }
+
+    public void setSizeKey(String sizeKey) {
+        if (Objects.nonNull(sizeKey)) {
+            sizeTextField.setText(sizeKey);
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    public Vector<Vector> getData() {
+        return ((DefaultTableModel) table.getModel()).getDataVector();
+    }
+
+    private JPanel createMapperPanel() {
+        var panel = new JPanel();
+        panel.setBorder(BorderFactory.createEmptyBorder());
+        panel.setLayout(new MigLayout(
+                "insets 8 0 0 0,hidemode 3",
+                // columns
+                "[grow 1,fill]",
+                // rows
+                "[grow 1,fill]"));
 
         table = new JBTable() {
             @Override
@@ -101,16 +212,103 @@ public class MapperGenerateForm extends JPanel {
         table.setSelectionBackground(null);
         table.setFillsViewportHeight(true);
         table.getEmptyText().setText("No SQLs in " + alias + ".");
-        var scrollPane = new JBScrollPane();
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        scrollPane.setViewportView(table);
-        add(scrollPane, "cell 0 0,grow");
+        var tableScrollPane = new JBScrollPane();
+        tableScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        tableScrollPane.setViewportView(table);
         initTable();
+        panel.add(tableScrollPane);
+        return panel;
     }
 
-    @SuppressWarnings("rawtypes")
-    public Vector<Vector> getData() {
-        return ((DefaultTableModel) table.getModel()).getDataVector();
+    private JPanel createSettingPanel() {
+        var panel = new JPanel();
+        panel.setLayout(new FormLayout(new ColumnSpec[]{
+                new ColumnSpec(Sizes.dluX(32)),
+                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                new ColumnSpec(Sizes.dluX(75)),
+                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                new ColumnSpec(Sizes.dluX(32)),
+                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                new ColumnSpec(Sizes.dluX(75)),
+                new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(10), FormSpec.DEFAULT_GROW)
+        }, new RowSpec[]{
+                new RowSpec(Sizes.DLUY4),
+
+                FormFactory.DEFAULT_ROWSPEC,
+                new RowSpec(Sizes.DLUY1),
+                FormFactory.MIN_ROWSPEC,
+
+                new RowSpec(Sizes.DLUY4),
+
+                FormFactory.DEFAULT_ROWSPEC,
+                new RowSpec(Sizes.DLUY1),
+                FormFactory.MIN_ROWSPEC,
+
+                new RowSpec(Sizes.DLUY4),
+
+                FormFactory.DEFAULT_ROWSPEC,
+                new RowSpec(Sizes.DLUY1),
+                FormFactory.MIN_ROWSPEC,
+                FormFactory.MIN_ROWSPEC,
+                FormFactory.MIN_ROWSPEC,
+        }));
+        CellConstraints cc = new CellConstraints();
+
+        bakiCheckBox = new JBCheckBox("Baki:");
+        bakiTextField = new JBTextField();
+        bakiTextField.setEnabled(false);
+        bakiCheckBox.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                bakiTextField.setEnabled(bakiCheckBox.isSelected());
+            }
+        });
+
+        JBLabel packageLabel = new JBLabel("Package:");
+        packageTextField = new JBTextField();
+        JBLabel pageLabel = new JBLabel("Page key:");
+        pageTextField = new JBTextField("page");
+        JBLabel sizeLabel = new JBLabel("Size key:");
+        sizeTextField = new JBTextField("size");
+
+        panel.add(bakiCheckBox, cc.xy(1, 2));
+        panel.add(bakiTextField, cc.xyw(3, 2, 5));
+        panel.add(new InlineHelpText("Specify the name if there are multiple baki in the spring context."), cc.xyw(3, 4, 6, CellConstraints.LEFT, CellConstraints.CENTER));
+
+        panel.add(packageLabel, cc.xy(1, 6));
+        panel.add(packageTextField, cc.xyw(3, 6, 5));
+        panel.add(new InlineHelpText("Where the mapper interface generated."), cc.xyw(3, 8, 6, CellConstraints.LEFT, CellConstraints.CENTER));
+
+        panel.add(pageLabel, cc.xy(1, 10));
+        panel.add(pageTextField, cc.xy(3, 10));
+        panel.add(sizeLabel, cc.xy(5, 10));
+        panel.add(sizeTextField, cc.xy(7, 10));
+        panel.add(new InlineHelpText("The default page arg name of the PagedResource&lt;T&gt; return type,"), cc.xyw(3, 12, 6, CellConstraints.LEFT, CellConstraints.CENTER));
+        panel.add(new InlineHelpText("it must be consistent with BakiDao's properties: <code>pageKey</code> and"), cc.xyw(3, 13, 6, CellConstraints.LEFT, CellConstraints.CENTER));
+        panel.add(new InlineHelpText("<code>sizeKey</code> when the <b>Param Type</b> is <code>@Arg</code>."), cc.xyw(3, 14, 6, CellConstraints.LEFT, CellConstraints.CENTER));
+        return panel;
+    }
+
+    private JPanel createAboutPanel() {
+        var panel = new JPanel();
+        panel.setLayout(new FormLayout(new ColumnSpec[]{
+                new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(10), FormSpec.DEFAULT_GROW)
+        }, new RowSpec[]{
+                new RowSpec(Sizes.DLUY4),
+                FormFactory.DEFAULT_ROWSPEC,
+                FormFactory.DEFAULT_ROWSPEC,
+        }));
+        CellConstraints cc = new CellConstraints();
+
+        var label1 = new JBLabel("Custom java bean for 'Param Type' and '<T>' must be fully qualified class name.");
+        label1.setForeground(InlineHelpText.COLOR);
+        var label2 = new JBLabel("Example: org.example.User");
+        label2.setForeground(InlineHelpText.COLOR);
+
+        panel.add(label1, cc.xy(1, 2));
+        panel.add(label2, cc.xy(1, 3));
+
+        return panel;
     }
 
     private void initTable() {

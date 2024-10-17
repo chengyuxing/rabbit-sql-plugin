@@ -216,4 +216,8 @@ public class StringUtil {
         result = result.replaceAll("\\W", "");
         return result;
     }
+
+    public static String generateInterfaceMapperName(String alias) {
+        return camelizeAndClean(alias.substring(0, 1).toUpperCase() + alias.substring(1)) + "Mapper";
+    }
 }

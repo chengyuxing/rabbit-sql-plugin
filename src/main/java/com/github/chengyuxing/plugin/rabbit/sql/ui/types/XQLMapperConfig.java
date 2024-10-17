@@ -14,6 +14,8 @@ public class XQLMapperConfig {
     private String baki;
     private String packageName;
     private Map<String, XQLMethod> methods = new HashMap<>();
+    private String pageKey;
+    private String sizeKey;
 
     public static XQLMapperConfig load(Path path) {
         if (Files.exists(path)) {
@@ -51,6 +53,22 @@ public class XQLMapperConfig {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public String getPageKey() {
+        return pageKey;
+    }
+
+    public void setPageKey(String pageKey) {
+        this.pageKey = pageKey;
+    }
+
+    public String getSizeKey() {
+        return sizeKey;
+    }
+
+    public void setSizeKey(String sizeKey) {
+        this.sizeKey = sizeKey;
     }
 
     public static class XQLMethod {

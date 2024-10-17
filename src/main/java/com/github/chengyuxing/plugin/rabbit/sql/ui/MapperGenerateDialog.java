@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
 import com.github.chengyuxing.common.MostDateTime;
+import com.github.chengyuxing.plugin.rabbit.sql.Helper;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLJavaType;
@@ -8,6 +9,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLMapperConfig;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLMapperTemplateData;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.MapperGenerateForm;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ReturnTypesForm;
+import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.Args;
@@ -23,19 +25,13 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.ui.components.JBCheckBox;
-import com.intellij.ui.components.JBLabel;
-import com.intellij.ui.components.JBTextField;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;
@@ -54,9 +50,7 @@ public class MapperGenerateDialog extends DialogWrapper {
     private final XQLFileManager xqlFileManager;
     private final SqlGenerator sqlGenerator;
     private final MapperGenerateForm myForm;
-    private final JBCheckBox bakiCheck;
-    private final JTextField bakiInput;
-    private final JTextField packageInput;
+    private final JButton message;
     private final Path configPath;
 
     public MapperGenerateDialog(@Nullable Project project, String alias, XQLConfigManager.Config config) {
@@ -66,66 +60,25 @@ public class MapperGenerateDialog extends DialogWrapper {
         this.config = config;
         this.xqlFileManager = this.config.getXqlFileManager();
         this.sqlGenerator = this.config.getSqlGenerator();
+        this.message = new JButton();
 
         {
-            bakiCheck = new JBCheckBox();
-            bakiCheck.setText("Baki:");
-            bakiCheck.setToolTipText("Specify the name if there are multiple baki in the spring context.");
-
-            bakiInput = new JBTextField();
-            bakiInput.setPreferredSize(new Dimension(70, (int) bakiInput.getPreferredSize().getHeight()));
-            bakiInput.setEditable(false);
-
-            bakiCheck.addActionListener(new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    bakiInput.setEditable(bakiCheck.isSelected());
-                }
-            });
-            packageInput = new JBTextField();
-            packageInput.setPreferredSize(new Dimension(230, (int) packageInput.getPreferredSize().getHeight()));
-            packageInput.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    setOKActionEnabled(isPackageValid());
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    setOKActionEnabled(isPackageValid());
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    setOKActionEnabled(isPackageValid());
-                }
-            });
-
             // load mapper config
             var resource = xqlFileManager.getResource(alias);
             configPath = Path.of(URI.create(resource.getFilename() + ".rbm"));
             var mapperConfig = XQLMapperConfig.load(configPath);
 
-            if (Objects.nonNull(mapperConfig.getBaki())) {
-                bakiCheck.setSelected(true);
-                bakiInput.setText(mapperConfig.getBaki());
-            }
-            if (Objects.nonNull(mapperConfig.getPackageName())) {
-                packageInput.setText(mapperConfig.getPackageName());
-            }
-
-            this.myForm = new MapperGenerateForm(project, this.alias, this.xqlFileManager, mapperConfig);
+            this.myForm = new MapperGenerateForm(project, this.alias, this.xqlFileManager, mapperConfig, getDisposable());
+            myForm.setBaki(mapperConfig.getBaki());
+            myForm.setPackage(mapperConfig.getPackageName());
+            myForm.setPageKey(mapperConfig.getPageKey());
+            myForm.setSizeKey(mapperConfig.getSizeKey());
         }
 
         setTitle("[ " + alias + " ] XQL Mapper Interface Generator");
         setOKButtonText("Generate");
         setCancelButtonText("Close");
-        setOKActionEnabled(isPackageValid());
         init();
-    }
-
-    boolean isPackageValid() {
-        return this.packageInput.getText().trim().matches(PACKAGE_PATTERN);
     }
 
     @Override
@@ -137,44 +90,48 @@ public class MapperGenerateDialog extends DialogWrapper {
     protected @Nullable JPanel createSouthAdditionalPanel() {
         var panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 0));
-
-        panel.add(bakiCheck);
-        panel.add(bakiInput);
-
-        panel.add(new JBLabel("Package:"));
-        panel.add(packageInput);
+        message.setVisible(false);
+        panel.add(message);
         return panel;
     }
 
     @Override
-    protected void setHelpTooltip(@NotNull JButton helpButton) {
-        helpButton.setToolTipText("Custom java bean for 'Param Type' and '&lt;T&gt;' must be fully qualified class name.");
-    }
-
-    @Override
     protected @NonNls @Nullable String getHelpId() {
-        return "help";
-    }
-
-    @Override
-    protected void doHelpAction() {
-
+        return Helper.SPRING_INTERFACE_MAPPER_USAGE;
     }
 
     @Override
     protected void doOKAction() {
         var newMapperConfig = new XQLMapperConfig();
         var resource = this.xqlFileManager.getResource(alias);
-        var packageName = packageInput.getText().trim();
+        var baki = myForm.getBaki();
+        var packageName = myForm.getPackage();
+        var pageKey = myForm.getPageKey();
+        var sizeKey = myForm.getSizeKey();
+
+        if (!packageName.matches(PACKAGE_PATTERN)) {
+            myForm.selectConfigTab();
+            this.message.setVisible(true);
+            this.message.setText(HtmlUtil.toHtml(HtmlUtil.span("Package '" + packageName + "' is invalid.", HtmlUtil.Color.WARNING)));
+            return;
+        }
+        if (pageKey.isEmpty() || sizeKey.isEmpty()) {
+            myForm.selectConfigTab();
+            this.message.setVisible(true);
+            this.message.setText(HtmlUtil.toHtml(HtmlUtil.span("Page or Size key is invalid.", HtmlUtil.Color.WARNING)));
+            return;
+        }
 
         newMapperConfig.setPackageName(packageName);
+        newMapperConfig.setPageKey(pageKey);
+        newMapperConfig.setSizeKey(sizeKey);
 
         var templateData = new XQLMapperTemplateData(packageName, alias);
 
         templateData.setUser(System.getProperty("user.name"));
         templateData.setDate(MostDateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
-        if (bakiCheck.isSelected()) {
-            var bakiBean = bakiInput.getText().trim();
+        if (baki != null) {
+            var bakiBean = baki;
             if (bakiBean.isEmpty()) {
                 bakiBean = "baki";
             }
@@ -262,7 +219,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                         if (returnTypeList.size() == 1) {
                             var method = new XQLMapperTemplateData.Method(replaceGenericT(returnTypeList.get(0), returnGenericType), methodName);
                             method.setEnable(enable);
-                            addMethod(methods, sqlName, methodName, sqlType, paramType, sql, params, method);
+                            addMethod(methods, sqlName, methodName, sqlType, paramType, sql, params, method, pageKey, sizeKey);
                         } else {
                             var newReturnTypes = new LinkedHashSet<String>();
                             for (var returnType : returnTypeList) {
@@ -272,7 +229,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                                 var extMethodName = methodName + returnTypeName(returnType, returnGenericType);
                                 var method = new XQLMapperTemplateData.Method(replaceGenericT(returnType, returnGenericType), extMethodName);
                                 method.setEnable(enable);
-                                addMethod(methods, sqlName, extMethodName, sqlType, paramType, sql, params, method);
+                                addMethod(methods, sqlName, extMethodName, sqlType, paramType, sql, params, method, pageKey, sizeKey);
                             }
                         }
 
@@ -371,7 +328,7 @@ public class MapperGenerateDialog extends DialogWrapper {
         }
     }
 
-    private void addMethod(ArrayList<XQLMapperTemplateData.Method> methods, String sqlName, String methodName, String sqlType, String paramType, XQLFileManager.Sql sql, Set<String> params, XQLMapperTemplateData.Method method) {
+    private void addMethod(ArrayList<XQLMapperTemplateData.Method> methods, String sqlName, String methodName, String sqlType, String paramType, XQLFileManager.Sql sql, Set<String> params, XQLMapperTemplateData.Method method, String pageKey, String sizeKey) {
         method.setParamType(paramType);
         method.setDescription(sql.getDescription());
         if (!sqlName.equals(methodName)) {
@@ -380,8 +337,8 @@ public class MapperGenerateDialog extends DialogWrapper {
         method.setSqlType(sqlType);
         var newParams = new LinkedHashSet<>(params);
         if (method.getReturnType().equals(XQLJavaType.PagedResource.getValue()) || method.getReturnType().startsWith(XQLJavaType.PagedResource.getValue() + "<")) {
-            newParams.add("page");
-            newParams.add("size");
+            newParams.add(pageKey);
+            newParams.add(sizeKey);
         }
         method.setParameters(newParams);
 

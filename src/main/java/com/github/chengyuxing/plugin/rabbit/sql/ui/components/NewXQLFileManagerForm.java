@@ -98,7 +98,7 @@ public class NewXQLFileManagerForm extends JPanel {
 
             //---- message ----
             message.setText("xql-file-manager-*.yml");
-            message.setForeground(new JBColor(new Color(0x7A7A7A), new Color(0x727782)));
+            message.setForeground(InlineHelpText.COLOR);
             message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
             panel1.add(message);
         }
