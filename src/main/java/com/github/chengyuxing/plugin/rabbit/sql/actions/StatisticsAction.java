@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.ui.StatisticsDialog;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -18,5 +19,10 @@ public class StatisticsAction extends AnAction {
             var d = new StatisticsDialog(e.getProject());
             d.showAndGet();
         });
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
     }
 }

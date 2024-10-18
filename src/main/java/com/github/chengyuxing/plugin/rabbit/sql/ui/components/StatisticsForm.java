@@ -286,11 +286,11 @@ public class StatisticsForm extends JPanel {
         setPreferredSize(new Dimension(650, 320));
         setBorder(BorderFactory.createEmptyBorder());
         setLayout(new MigLayout(
-            "fill,hidemode 3,align left top",
-            // columns
-            "[grow,left]",
-            // rows
-            "[fill]"));
+                "insets 0,hidemode 3",
+                // columns
+                "[grow 1,fill]",
+                // rows
+                "[grow 1,fill]"));
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
 

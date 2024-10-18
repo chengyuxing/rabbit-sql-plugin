@@ -99,11 +99,11 @@ public class MapperGenerateForm extends JPanel {
         setPreferredSize(new Dimension(750, 300));
         setBorder(BorderFactory.createEmptyBorder());
         setLayout(new MigLayout(
-                "fill,hidemode 3,align left top",
+                "insets 0,hidemode 3",
                 // columns
-                "[grow,left]",
+                "[grow 1,fill]",
                 // rows
-                "[fill]"));
+                "[grow 1,fill]"));
 
         tabs = new JBEditorTabs(project, IdeFocusManager.getInstance(project), disposable);
 
