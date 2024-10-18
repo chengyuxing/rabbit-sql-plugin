@@ -11,6 +11,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -43,17 +44,19 @@ public class CopyXqlFile extends AnAction {
             //noinspection unchecked
             var sqlMeta = (Triple<String, String, String>) nodeSource.getSource();
             var filepath = sqlMeta.getItem3();
-            try {
-                var file = createFileByUri(filepath);
-                var clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(new FileTransferable(List.of(file)), null);
-            } catch (IOException ex) {
-                NotificationUtil.showMessage(project, ex.getMessage(), NotificationType.WARNING);
-            }
+            ApplicationManager.getApplication().executeOnPooledThread(() -> {
+                try {
+                    var file = createFileByUri(filepath);
+                    var clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(new FileTransferable(List.of(file)), null);
+                } catch (IOException ex) {
+                    NotificationUtil.showMessage(project, ex.getMessage(), NotificationType.WARNING);
+                }
+            });
         }
     }
 
-    File createFileByUri(String path) throws IOException {
+    private static File createFileByUri(String path) throws IOException {
         if (ProjectFileUtil.isLocalFileUri(path)) {
             return Path.of(URI.create(path)).toFile();
         }
