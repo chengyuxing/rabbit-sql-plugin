@@ -6,6 +6,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -51,5 +52,10 @@ public class ToggleActiveAction extends AnAction {
         if (Objects.nonNull(nodeSource) && nodeSource.getType() == XqlTreeNodeData.Type.XQL_CONFIG) {
             e.getPresentation().setEnabled(true);
         }
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
     }
 }

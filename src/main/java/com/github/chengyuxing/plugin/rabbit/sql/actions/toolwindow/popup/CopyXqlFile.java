@@ -9,6 +9,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
@@ -65,5 +66,10 @@ public class CopyXqlFile extends AnAction {
             fr.transferTo(out);
         }
         return file;
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
     }
 }

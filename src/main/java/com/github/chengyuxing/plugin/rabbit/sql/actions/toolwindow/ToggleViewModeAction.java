@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow;
 
 import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
@@ -41,5 +42,10 @@ public class ToggleViewModeAction extends AnAction {
                 e.getPresentation().setText(title);
             }
         });
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
     }
 }

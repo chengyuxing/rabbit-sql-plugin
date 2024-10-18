@@ -9,6 +9,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.util.*;
 import com.intellij.icons.AllIcons;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -92,5 +93,10 @@ public class NewXqlFileAction extends AnAction {
             d.initContent();
             d.showAndGet();
         });
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
     }
 }
