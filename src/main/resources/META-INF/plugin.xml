@@ -589,7 +589,7 @@
                     id="com.github.chengyuxing.plugin.rabbit.sql.actions.StatisticsAction"
                     text="Statistics"
                     description="Statistics of XQL File Manager configs."
-                    icon="AllIcons.Actions.PreviewDetails"
+                    icon="AllIcons.Actions.DependencyAnalyzer"
             />
             <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.ReloadConfigAction"
                     class="com.github.chengyuxing.plugin.rabbit.sql.actions.ReloadConfigAction"

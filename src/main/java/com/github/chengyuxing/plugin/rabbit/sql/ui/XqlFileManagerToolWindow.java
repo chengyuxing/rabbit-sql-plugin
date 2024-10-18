@@ -22,7 +22,7 @@ public class XqlFileManagerToolWindow implements ToolWindowFactory, DumbAware {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         var xqlFileManagerToolPanel = new XqlFileManagerPanel(true, project);
-        var content = ContentFactory.SERVICE.getInstance().createContent(xqlFileManagerToolPanel, "", false);
+        var content = ContentFactory.getInstance().createContent(xqlFileManagerToolPanel, "", false);
         toolWindow.getContentManager().addContent(content);
     }
 
