@@ -102,6 +102,10 @@ public class MapperGenerateDialog extends DialogWrapper {
 
     @Override
     protected void doOKAction() {
+        if (Objects.isNull(project)) {
+            this.message.setText(HtmlUtil.toHtml(HtmlUtil.span("Cannot find current project.", HtmlUtil.Color.WARNING)));
+            return;
+        }
         var newMapperConfig = new XQLMapperConfig();
         var resource = this.xqlFileManager.getResource(alias);
         var baki = myForm.getBaki();

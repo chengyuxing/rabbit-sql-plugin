@@ -12,7 +12,6 @@ import javax.swing.event.DocumentListener;
 
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.components.fields.ExpandableTextField;
 import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;

@@ -175,7 +175,6 @@ public class StatisticsForm extends JPanel {
         var table = new JBTable();
         table.setBorder(BorderFactory.createEmptyBorder());
         table.setShowVerticalLines(false);
-        table.setShowLastHorizontalLine(false);
         table.setRowHeight(30);
         table.setSelectionForeground(null);
         table.setSelectionBackground(null);

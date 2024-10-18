@@ -206,7 +206,6 @@ public class MapperGenerateForm extends JPanel {
         };
         table.setBorder(BorderFactory.createEmptyBorder());
         table.setShowVerticalLines(false);
-        table.setShowLastHorizontalLine(false);
         table.setRowHeight(30);
         table.setSelectionForeground(null);
         table.setSelectionBackground(null);
@@ -272,7 +271,7 @@ public class MapperGenerateForm extends JPanel {
         sizeTextField = new JBTextField("size");
 
         panel.add(bakiCheckBox, cc.xy(1, 2));
-        panel.add(bakiTextField, cc.xyw(3, 2, 5));
+        panel.add(bakiTextField, cc.xy(3, 2));
         panel.add(new InlineHelpText("Specify the name if there are multiple baki in the spring context."), cc.xyw(3, 4, 6, CellConstraints.LEFT, CellConstraints.CENTER));
 
         panel.add(packageLabel, cc.xy(1, 6));
