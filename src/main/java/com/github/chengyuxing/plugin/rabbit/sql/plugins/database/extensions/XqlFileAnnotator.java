@@ -38,8 +38,8 @@ public class XqlFileAnnotator implements Annotator {
         }
 
         PsiWhiteSpace whiteSpace = null;
-        if (element.getPrevSibling() instanceof PsiWhiteSpace w) {
-            whiteSpace = w;
+        if (element.getPrevSibling() instanceof PsiWhiteSpace) {
+            whiteSpace = (PsiWhiteSpace) element.getPrevSibling();
         }
 
         if (whiteSpace != null) {

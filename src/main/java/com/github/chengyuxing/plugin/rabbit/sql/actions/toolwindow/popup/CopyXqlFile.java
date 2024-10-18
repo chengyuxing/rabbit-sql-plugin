@@ -39,9 +39,9 @@ public class CopyXqlFile extends AnAction {
         if (Objects.isNull(nodeSource)) {
             return;
         }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
+        if (nodeSource.getType() == XqlTreeNodeData.Type.XQL_FILE) {
             //noinspection unchecked
-            var sqlMeta = (Triple<String, String, String>) nodeSource.source();
+            var sqlMeta = (Triple<String, String, String>) nodeSource.getSource();
             var filepath = sqlMeta.getItem3();
             try {
                 var file = createFileByUri(filepath);

@@ -5,6 +5,8 @@ import com.github.chengyuxing.plugin.rabbit.sql.extensions.support.SqlNameIntent
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
 import com.intellij.icons.AllIcons;
+import com.intellij.lang.Language;
+import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
@@ -14,6 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.util.Objects;
 
 public class CopySqlDefinitionInJava extends SqlNameIntentionActionInJvmLang implements Iconable {
     @Override
@@ -21,6 +24,11 @@ public class CopySqlDefinitionInJava extends SqlNameIntentionActionInJvmLang imp
         var sqlDefinition = config.getXqlFileManager().get(sqlName);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(sqlDefinition), null);
+    }
+
+    @Override
+    public boolean isValidFileLanguage(Language language) {
+        return language == JavaLanguage.INSTANCE;
     }
 
     @Override

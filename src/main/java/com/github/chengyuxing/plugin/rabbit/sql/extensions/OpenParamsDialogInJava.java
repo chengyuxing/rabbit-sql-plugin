@@ -6,6 +6,8 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
 import com.intellij.icons.AllIcons;
+import com.intellij.lang.Language;
+import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
@@ -19,6 +21,11 @@ public class OpenParamsDialogInJava extends SqlNameIntentionActionInJvmLang impl
     @Override
     public void invokeIfSuccess(Project project, PsiElement element, XQLConfigManager.Config config, String sqlName) {
         ApplicationManager.getApplication().invokeLater(() -> new DynamicSqlCalcDialog(sqlName, config, project).showAndGet());
+    }
+
+    @Override
+    public boolean isValidFileLanguage(Language language) {
+        return language == JavaLanguage.INSTANCE;
     }
 
     @Override

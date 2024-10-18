@@ -29,8 +29,8 @@ public class NewSQLAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
-            @SuppressWarnings("unchecked") var data = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
+        if (Objects.nonNull(nodeSource) && nodeSource.getType() == XqlTreeNodeData.Type.XQL_FILE) {
+            @SuppressWarnings("unchecked") var data = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.getSource();
             var alias = data.getItem1();
             var config = data.getItem4();
             ApplicationManager.getApplication().invokeLater(() -> {

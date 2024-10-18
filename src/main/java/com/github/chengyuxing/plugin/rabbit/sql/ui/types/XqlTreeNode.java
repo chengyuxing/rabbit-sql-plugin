@@ -11,7 +11,8 @@ public class XqlTreeNode extends DefaultMutableTreeNode {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof XqlTreeNode that)) return false;
+        if (!(o instanceof XqlTreeNode)) return false;
+        var that = (XqlTreeNode) o;
 
         return getUserObject().equals(that.getUserObject());
     }

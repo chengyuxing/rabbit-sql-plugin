@@ -32,7 +32,7 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
                     continue;
                 }
                 var moduleNioPath = moduleVfs.toNioPath();
-                var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", module.getModuleProductionSourceScope());
+                var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", module.getModuleRuntimeScope(false));
                 if (allConfigVfs.isEmpty()) {
                     var config = xqlConfigManager.newConfig(project, moduleVfs);
                     xqlConfigManager.add(project, moduleNioPath, config);

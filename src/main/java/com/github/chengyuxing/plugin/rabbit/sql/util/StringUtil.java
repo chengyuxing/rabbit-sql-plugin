@@ -9,7 +9,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
 import com.github.chengyuxing.sql.utils.SqlUtil;
-import com.github.chengyuxing.sql.yaml.HyphenatedPropertyUtil;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -44,13 +43,13 @@ public class StringUtil {
                 .filter(name -> !name.startsWith(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY + "."))
                 .distinct()
                 .map(key -> "\"" + key + "\", " + key)
-                .toList();
+                .collect(Collectors.toList());
 
         var templateParams = getTemplateParameters(sqlDefinition, "", "")
                 .stream()
                 .distinct()
                 .map(key -> "\"" + key + "\", " + key)
-                .toList();
+                .collect(Collectors.toList());
 
         if (namedParams.isEmpty() && templateParams.isEmpty()) {
             return;

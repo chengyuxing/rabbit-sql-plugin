@@ -75,7 +75,7 @@ public class GotoJvmLangCallable extends RelatedItemLineMarkerProvider {
                                 if (!founded.isEmpty()) {
                                     var markInfo = NavigationGutterIconBuilder.create(AllIcons.Actions.DiagramDiff)
                                             .setTargets(founded)
-                                            .setCellRenderer(() -> new DefaultPsiElementCellRenderer() {
+                                            .setCellRenderer(new DefaultPsiElementCellRenderer() {
                                                 @Override
                                                 protected Icon getIcon(PsiElement element) {
                                                     return AllIcons.Nodes.Class;

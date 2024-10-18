@@ -23,7 +23,7 @@ dependencies {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2023.1.1")
+    version.set("2021.1.1")
     type.set("IU") // Target IDE Platform
 
     plugins.set(listOf("com.intellij.database",
@@ -36,12 +36,12 @@ intellij {
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
+        sourceCompatibility = "11"
+        targetCompatibility = "11"
     }
 
     patchPluginXml {
-        sinceBuild.set("231")
+        sinceBuild.set("211")
         untilBuild.set("243.*")
     }
 

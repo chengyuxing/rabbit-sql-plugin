@@ -22,6 +22,11 @@ public class OpenParamsDialogInXql extends SqlNameIntentionActionInXql implement
     }
 
     @Override
+    protected boolean isValidFileExtension(String extension) {
+        return Objects.equals(extension, "xql");
+    }
+
+    @Override
     public @NotNull @IntentionFamilyName String getFamilyName() {
         return "Execute dynamic sql In xql";
     }

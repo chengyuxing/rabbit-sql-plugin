@@ -37,8 +37,8 @@ public class SelectOpenedFile extends AnAction {
         String jvmLangLiteral = PsiUtil.getJvmLangLiteral(element);
 
         String sqlRef;
-        if (element instanceof PsiComment comment) {
-            var commentText = comment.getText();
+        if (element instanceof PsiComment) {
+            var commentText = element.getText();
             var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
             var m = pattern.matcher(commentText);
             if (m.matches()) {
@@ -63,15 +63,18 @@ public class SelectOpenedFile extends AnAction {
                 var alias = sqlRefParts.getItem1();
                 var name = sqlRefParts.getItem2();
                 node = SwingUtil.findNode((XqlTreeNode) root, treeNode -> {
-                    if (treeNode.getUserObject() instanceof XqlTreeNodeData nodeData) {
-                        if (nodeData.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
-                            if (!nodeData.title().equals(name)) {
+                    if (treeNode.getUserObject() instanceof XqlTreeNodeData) {
+                        var nodeData = (XqlTreeNodeData) treeNode.getUserObject();
+                        if (nodeData.getType() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
+                            if (!nodeData.getTitle().equals(name)) {
                                 return false;
                             }
-                            if (treeNode.getParent() instanceof XqlTreeNode parentTreeNode) {
-                                if (parentTreeNode.getUserObject() instanceof XqlTreeNodeData parentNodeData) {
-                                    if (parentNodeData.type() == XqlTreeNodeData.Type.XQL_FILE) {
-                                        return parentNodeData.title().equals(alias);
+                            if (treeNode.getParent() instanceof XqlTreeNode) {
+                                var parentTreeNode = (XqlTreeNode) treeNode.getParent();
+                                if (parentTreeNode.getUserObject() instanceof XqlTreeNodeData) {
+                                    var parentNodeData = (XqlTreeNodeData) parentTreeNode.getUserObject();
+                                    if (parentNodeData.getType() == XqlTreeNodeData.Type.XQL_FILE) {
+                                        return parentNodeData.getTitle().equals(alias);
                                     }
                                 }
                             }
@@ -88,16 +91,19 @@ public class SelectOpenedFile extends AnAction {
                     return;
                 }
                 node = SwingUtil.findNode((XqlTreeNode) root, treeNode -> {
-                    if (treeNode.getUserObject() instanceof XqlTreeNodeData nodeData) {
-                        if (nodeData.type() == XqlTreeNodeData.Type.XQL_FILE) {
-                            @SuppressWarnings("unchecked") var sqlMeta = (Triple<String, String, String>) nodeData.source();
+                    if (treeNode.getUserObject() instanceof XqlTreeNodeData) {
+                        var nodeData = (XqlTreeNodeData) treeNode.getUserObject();
+                        if (nodeData.getType() == XqlTreeNodeData.Type.XQL_FILE) {
+                            @SuppressWarnings("unchecked") var sqlMeta = (Triple<String, String, String>) nodeData.getSource();
                             var filepath = sqlMeta.getItem3();
                             var matchFile = filepath.equals(currentFile.toNioPath().toUri().toString());
 
                             for (int i = 0, j = treeNode.getChildCount(); i < j; i++) {
-                                if (treeNode.getChildAt(i) instanceof XqlTreeNode childNode) {
-                                    if (childNode.getUserObject() instanceof XqlTreeNodeData childNodeData) {
-                                        var matchSqlName = childNodeData.title().equals(sqlRef);
+                                if (treeNode.getChildAt(i) instanceof XqlTreeNode) {
+                                    var childNode = (XqlTreeNode) treeNode.getChildAt(i);
+                                    if (childNode.getUserObject() instanceof XqlTreeNodeData) {
+                                        var childNodeData = (XqlTreeNodeData) childNode.getUserObject();
+                                        var matchSqlName = childNodeData.getTitle().equals(sqlRef);
                                         if (matchSqlName) {
                                             sqlCommentNode.set(childNode);
                                             return true;

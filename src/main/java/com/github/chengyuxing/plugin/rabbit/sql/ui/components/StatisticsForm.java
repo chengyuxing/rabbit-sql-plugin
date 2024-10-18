@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -143,7 +144,7 @@ public class StatisticsForm extends JPanel {
             var validConfigs = configs.stream()
                     .filter(XQLConfigManager.Config::isValid)
                     .filter(config -> Objects.nonNull(config.getXqlFileManager()))
-                    .toList();
+                    .collect(Collectors.toList());
             var module = path.getFileName().toString();
 
             var panel = new JPanel();
@@ -201,9 +202,10 @@ public class StatisticsForm extends JPanel {
                     var y = table.columnAtPoint(e.getPoint());
                     if (x >= 0 && y >= 0) {
                         var value = table.getValueAt(x, y);
-                        if (value instanceof DataCell dataCell) {
-                            var source = dataCell.getData();
-                            if (source instanceof XQLFileManager xqlFileManager) {
+                        if (value instanceof DataCell) {
+                            var source = ((DataCell)value).getData();
+                            if (source instanceof XQLFileManager) {
+                                var xqlFileManager = (XQLFileManager) source;
                                 var tbody = xqlFileManager.getResources().keySet().stream()
                                         .map(alias -> {
                                             var resource = xqlFileManager.getResources().get(alias);
@@ -243,8 +245,8 @@ public class StatisticsForm extends JPanel {
                                 model.setDataVector(tbody, detailsTableHeader);
                                 return;
                             }
-                            if (source instanceof JBTable jbTable) {
-                                var configs = dataMap.get(jbTable);
+                            if (source instanceof JBTable) {
+                                var configs = dataMap.get(source);
                                 initTableData(table, configs);
                             }
                         }
@@ -286,11 +288,11 @@ public class StatisticsForm extends JPanel {
         setPreferredSize(new Dimension(650, 320));
         setBorder(BorderFactory.createEmptyBorder());
         setLayout(new MigLayout(
-            "fill,hidemode 3,align left top",
-            // columns
-            "[grow,left]",
-            // rows
-            "[fill]"));
+                "insets 0,hidemode 3",
+                // columns
+                "[grow 1,fill]",
+                // rows
+                "[grow 1,fill]"));
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
 

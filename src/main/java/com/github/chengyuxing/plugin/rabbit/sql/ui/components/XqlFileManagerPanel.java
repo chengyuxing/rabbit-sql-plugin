@@ -106,11 +106,12 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         return;
                     }
                     var node = (XqlTreeNode) selection.getLastPathComponent();
-                    if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
-                        if (Objects.requireNonNull(nodeSource.type()) == XqlTreeNodeData.Type.XQL_FRAGMENT) {
+                    if (node.getUserObject() instanceof XqlTreeNodeData) {
+                        var nodeSource = (XqlTreeNodeData) node.getUserObject();
+                        if (Objects.requireNonNull(nodeSource.getType()) == XqlTreeNodeData.Type.XQL_FRAGMENT) {
                             var point = pointRef.get();
                             if (Objects.nonNull(point)) {
-                                @SuppressWarnings("unchecked") var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
+                                @SuppressWarnings("unchecked") var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.getSource();
                                 var sql = sqlMeta.getItem3();
                                 var html = HtmlUtil.highlightSql(sql.getContent());
                                 if (!sql.getDescription().isEmpty()) {
@@ -135,20 +136,24 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         return;
                     }
                     var node = (XqlTreeNode) selected.getLastPathComponent();
-                    if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
-                        switch (nodeSource.type()) {
-                            case MODULE, XQL_CONFIG, XQL_FILE, XQL_FILE_FOLDER -> {
-                            }
-                            case XQL_FRAGMENT -> {
+                    if (node.getUserObject() instanceof XqlTreeNodeData) {
+                        var nodeSource = (XqlTreeNodeData) node.getUserObject();
+                        switch (nodeSource.getType()) {
+                            case MODULE:
+                            case XQL_CONFIG:
+                            case XQL_FILE:
+                            case XQL_FILE_FOLDER:
+                                break;
+                            case XQL_FRAGMENT:
                                 @SuppressWarnings("unchecked")
-                                var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
+                                var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.getSource();
                                 var sqlPath = sqlMeta.getItem4().getXqlFileManager().getResource(sqlMeta.getItem1()).getFilename();
                                 if (ProjectFileUtil.isLocalFileUri(sqlPath)) {
                                     PsiUtil.navigate2xqlFile(sqlMeta.getItem1(), sqlMeta.getItem2(), sqlMeta.getItem4());
                                 } else {
                                     NotificationUtil.showMessage(project, "only support local file", NotificationType.WARNING);
                                 }
-                            }
+                                break;
                         }
                     }
                 }
@@ -162,13 +167,24 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         return;
                     }
                     var node = (XqlTreeNode) selected.getLastPathComponent();
-                    if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
-                        switch (nodeSource.type()) {
-                            case MODULE -> moduleMenu.getComponent().show(tree, e.getX(), e.getY());
-                            case XQL_CONFIG -> xqlFileManagerMenu.getComponent().show(tree, e.getX(), e.getY());
-                            case XQL_FILE -> xqlFileMenu.getComponent().show(tree, e.getX(), e.getY());
-                            case XQL_FRAGMENT -> xqlFragmentMenu.getComponent().show(tree, e.getX(), e.getY());
-                            case XQL_FILE_FOLDER -> xqlFolderMenu.getComponent().show(tree, e.getX(), e.getY());
+                    if (node.getUserObject() instanceof XqlTreeNodeData) {
+                        var nodeSource = (XqlTreeNodeData) node.getUserObject();
+                        switch (nodeSource.getType()) {
+                            case MODULE:
+                                moduleMenu.getComponent().show(tree, e.getX(), e.getY());
+                                break;
+                            case XQL_CONFIG:
+                                xqlFileManagerMenu.getComponent().show(tree, e.getX(), e.getY());
+                                break;
+                            case XQL_FILE:
+                                xqlFileMenu.getComponent().show(tree, e.getX(), e.getY());
+                                break;
+                            case XQL_FRAGMENT:
+                                xqlFragmentMenu.getComponent().show(tree, e.getX(), e.getY());
+                                break;
+                            case XQL_FILE_FOLDER:
+                                xqlFolderMenu.getComponent().show(tree, e.getX(), e.getY());
+                                break;
                         }
                     }
                 }
@@ -321,12 +337,9 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         new CopySqlAction(tree, CopySqlAction.CopyType.YML_ARRAY_PATH_FROM_CLASSPATH),
                 };
             }
-        }) {
-            @Override
-            public void update(@NotNull AnActionEvent e) {
-                e.getPresentation().setText("Copy Path/Reference...");
-            }
-        };
+        });
+        copyGroup.getTemplatePresentation().setText("Copy Path/Reference...");
+
         return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
             @Override
             public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
@@ -380,12 +393,9 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         new CopySqlAction(tree, CopySqlAction.CopyType.SQL_DEFINITION)
                 };
             }
-        }) {
-            @Override
-            public void update(@NotNull AnActionEvent e) {
-                e.getPresentation().setText("Copy Name/Definition...");
-            }
-        };
+        });
+        copyGroup.getTemplatePresentation().setText("Copy Name/Definition...");
+
         return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
             @Override
             public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {

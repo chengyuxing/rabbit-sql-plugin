@@ -423,8 +423,8 @@ public class XQLConfigManager {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof Config config)) return false;
-
+            if (!(o instanceof Config)) return false;
+            var config = (Config) o;
             return Objects.equals(getProject(), config.getProject()) && getModulePath().equals(config.getModulePath()) && Objects.equals(getConfigPath(), config.getConfigPath());
         }
 

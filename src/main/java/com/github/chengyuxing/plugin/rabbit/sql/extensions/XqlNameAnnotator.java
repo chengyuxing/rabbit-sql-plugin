@@ -34,7 +34,8 @@ public class XqlNameAnnotator implements Annotator {
     }
 
     protected String getSqlRef(PsiElement element) {
-        if (element instanceof PsiLiteralExpression literalExpression) {
+        if (element instanceof PsiLiteralExpression) {
+            var literalExpression = (PsiLiteralExpression) element;
             return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
         }
         return null;

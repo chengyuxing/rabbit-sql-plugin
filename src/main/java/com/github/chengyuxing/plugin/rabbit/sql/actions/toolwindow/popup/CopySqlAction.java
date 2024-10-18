@@ -29,36 +29,29 @@ public class CopySqlAction extends AnAction {
         super(() -> {
             var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
             if (Objects.nonNull(nodeSource)) {
-                if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
+                if (nodeSource.getType() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
                     @SuppressWarnings("unchecked")
-                    var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
+                    var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.getSource();
                     var name = sqlMeta.getItem2();
                     switch (copyType) {
-                        case SQL_NAME -> {
+                        case SQL_NAME:
                             return "SQL Name " + SqlUtil.quote(name);
-                        }
-                        case SQL_PATH -> {
+                        case SQL_PATH:
                             return "SQL Path From " + SqlUtil.quote(name);
-                        }
-                        case SQL_DEFINITION -> {
+                        case SQL_DEFINITION:
                             return "SQL Definition From " + SqlUtil.quote(name);
-                        }
                     }
-                } else if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
-                    @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
+                } else if (nodeSource.getType() == XqlTreeNodeData.Type.XQL_FILE) {
+                    @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.getSource();
                     switch (copyType) {
-                        case ALIAS -> {
+                        case ALIAS:
                             return "Alias " + SqlUtil.quote(sqlMeta.getItem1());
-                        }
-                        case ABSOLUTE_PATH -> {
+                        case ABSOLUTE_PATH:
                             return "Absolute Path From " + SqlUtil.quote(sqlMeta.getItem1());
-                        }
-                        case PATH_FROM_CLASSPATH -> {
+                        case PATH_FROM_CLASSPATH:
                             return "Classpath Path From " + SqlUtil.quote(sqlMeta.getItem1());
-                        }
-                        case YML_ARRAY_PATH_FROM_CLASSPATH -> {
+                        case YML_ARRAY_PATH_FROM_CLASSPATH:
                             return "Classpath YAML Array Path From " + SqlUtil.quote(sqlMeta.getItem1());
-                        }
                     }
                 }
             }
@@ -78,34 +71,44 @@ public class CopySqlAction extends AnAction {
         if (Objects.isNull(nodeSource)) {
             return;
         }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
+        if (nodeSource.getType() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
             @SuppressWarnings("unchecked")
-            var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
+            var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.getSource();
             var alias = sqlMeta.getItem1();
             var name = sqlMeta.getItem2();
             var sql = sqlMeta.getItem3();
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             switch (copyType) {
-                case SQL_NAME -> clipboard.setContents(new StringSelection(name), null);
-                case SQL_PATH -> clipboard.setContents(new StringSelection("&" + alias + "." + name), null);
-                case SQL_DEFINITION -> clipboard.setContents(new StringSelection(sql.getContent()), null);
+                case SQL_NAME:
+                    clipboard.setContents(new StringSelection(name), null);
+                    break;
+                case SQL_PATH:
+                    clipboard.setContents(new StringSelection("&" + alias + "." + name), null);
+                    break;
+                case SQL_DEFINITION:
+                    clipboard.setContents(new StringSelection(sql.getContent()), null);
+                    break;
             }
             return;
         }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
-            @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
+        if (nodeSource.getType() == XqlTreeNodeData.Type.XQL_FILE) {
+            @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.getSource();
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             switch (copyType) {
-                case ALIAS -> clipboard.setContents(new StringSelection(sqlMeta.getItem1()), null);
-                case ABSOLUTE_PATH -> clipboard.setContents(new StringSelection(sqlMeta.getItem3()), null);
-                case PATH_FROM_CLASSPATH -> {
+                case ALIAS:
+                    clipboard.setContents(new StringSelection(sqlMeta.getItem1()), null);
+                    break;
+                case ABSOLUTE_PATH:
+                    clipboard.setContents(new StringSelection(sqlMeta.getItem3()), null);
+                    break;
+                case PATH_FROM_CLASSPATH:
                     if (ProjectFileUtil.isURI(sqlMeta.getItem2())) {
                         NotificationUtil.showMessage(project, "only support classpath file", NotificationType.WARNING);
                         return;
                     }
                     clipboard.setContents(new StringSelection(sqlMeta.getItem2()), null);
-                }
-                case YML_ARRAY_PATH_FROM_CLASSPATH -> {
+                    break;
+                case YML_ARRAY_PATH_FROM_CLASSPATH:
                     if (ProjectFileUtil.isURI(sqlMeta.getItem2())) {
                         NotificationUtil.showMessage(project, "only support classpath file", NotificationType.WARNING);
                         return;
@@ -113,7 +116,7 @@ public class CopySqlAction extends AnAction {
                     var classpathPath = sqlMeta.getItem2().split("/");
                     var arrayPath = "[ " + String.join(", ", classpathPath) + " ]";
                     clipboard.setContents(new StringSelection(arrayPath), null);
-                }
+                    break;
             }
         }
     }

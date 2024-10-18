@@ -31,8 +31,8 @@ public class NewXqlFileManagerAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.MODULE) {
-            var module = (Path) nodeSource.source();
+        if (Objects.nonNull(nodeSource) && nodeSource.getType() == XqlTreeNodeData.Type.MODULE) {
+            var module = (Path) nodeSource.getSource();
 
             var primaryAbsFilename = module.resolve(Constants.CONFIG_PATH);
             if (Files.exists(primaryAbsFilename)) {

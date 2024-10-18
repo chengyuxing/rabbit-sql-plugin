@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
 public class GotoXqlDefinitionInKt extends GotoXqlDefinition {
     @Override
     protected Pair<String, PsiElement> handlerSqlRef(PsiElement sourceElement) {
-        if (sourceElement instanceof LeafPsiElement && sourceElement.getParent() instanceof KtLiteralStringTemplateEntry entry) {
+        if (sourceElement instanceof LeafPsiElement && sourceElement.getParent() instanceof KtLiteralStringTemplateEntry) {
+            var entry = (KtLiteralStringTemplateEntry) sourceElement.getParent();
             return Pair.of(entry.getText(), sourceElement);
         }
         return null;

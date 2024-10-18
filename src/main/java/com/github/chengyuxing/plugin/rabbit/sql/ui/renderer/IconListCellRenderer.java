@@ -16,8 +16,8 @@ public class IconListCellRenderer extends DefaultListCellRenderer {
     @Override
     public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         var label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        if (value instanceof DatasourceManager.DatabaseId dbId) {
-            var icon = info.get(dbId);
+        if (value instanceof DatasourceManager.DatabaseId) {
+            var icon = info.get(value);
             if (icon != null) {
                 label.setIcon(icon);
             }

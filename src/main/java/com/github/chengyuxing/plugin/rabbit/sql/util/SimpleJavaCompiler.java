@@ -44,7 +44,7 @@ public class SimpleJavaCompiler {
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
-        }).toList();
+        }).collect(Collectors.toList());
         final MyJavaFileManager JAVA_FILE_MANAGER = new MyJavaFileManager(COMPILER.getStandardFileManager(null, null, StandardCharsets.UTF_8));
         var task = COMPILER.getTask(null, JAVA_FILE_MANAGER, new DiagnosticCollector<>(), null, null, files);
         var success = task.call();

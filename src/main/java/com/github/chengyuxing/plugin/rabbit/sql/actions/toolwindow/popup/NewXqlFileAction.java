@@ -20,6 +20,7 @@ import javax.swing.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class NewXqlFileAction extends AnAction {
@@ -40,13 +41,13 @@ public class NewXqlFileAction extends AnAction {
         if (Objects.isNull(nodeSource)) {
             return;
         }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_CONFIG) {
-            var config = (XQLConfigManager.Config) nodeSource.source();
+        if (nodeSource.getType() == XqlTreeNodeData.Type.XQL_CONFIG) {
+            var config = (XQLConfigManager.Config) nodeSource.getSource();
             openNewXqlDialog(project, config, List.of());
             return;
         }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE_FOLDER) {
-            var config = (XQLConfigManager.Config) nodeSource.source();
+        if (nodeSource.getType() == XqlTreeNodeData.Type.XQL_FILE_FOLDER) {
+            var config = (XQLConfigManager.Config) nodeSource.getSource();
             var selected = tree.getSelectionPath();
             if (Objects.isNull(selected)) {
                 return;
@@ -56,9 +57,9 @@ public class NewXqlFileAction extends AnAction {
                     .map(p -> ((XqlTreeNode) p).getUserObject())
                     .filter(n -> n instanceof XqlTreeNodeData)
                     .map(n -> (XqlTreeNodeData) n)
-                    .filter(n -> n.type() == XqlTreeNodeData.Type.XQL_FILE_FOLDER)
-                    .map(XqlTreeNodeData::title)
-                    .toList();
+                    .filter(n -> n.getType() == XqlTreeNodeData.Type.XQL_FILE_FOLDER)
+                    .map(XqlTreeNodeData::getTitle)
+                    .collect(Collectors.toList());
             if (folderClasspath.isEmpty()) {
                 return;
             }

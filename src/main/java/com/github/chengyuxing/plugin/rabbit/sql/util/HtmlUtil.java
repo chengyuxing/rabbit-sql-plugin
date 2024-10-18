@@ -10,42 +10,53 @@ public class HtmlUtil {
 
     public static String highlightSql(String sqlString) {
         var sql = safeEscape(sqlString);
-        var highlighted = SqlHighlighter.highlight(sql, (tag, content) -> switch (tag) {
-            case FUNCTION -> span(content, Color.FUNCTION);
-            case KEYWORD -> span(content, Color.KEYWORD);
-            case NUMBER -> span(content, Color.NUMBER);
-            case POSTGRESQL_FUNCTION_BODY_SYMBOL, SINGLE_QUOTE_STRING -> span(content, Color.STRING);
-            case ASTERISK -> span(content, Color.HIGHLIGHT);
-            case LINE_ANNOTATION -> {
-                var nc = content;
-                var isAnno = true;
-                for (var k : FlowControlLexer.KEYWORDS) {
-                    if (StringUtil.containsIgnoreCase(nc, ">" + k + "</")) {
-                        isAnno = false;
-                        break;
+        var highlighted = SqlHighlighter.highlight(sql, (tag, content) -> {
+            switch (tag) {
+                case FUNCTION:
+                    return span(content, Color.FUNCTION);
+                case KEYWORD:
+                    return span(content, Color.KEYWORD);
+                case NUMBER:
+                    return span(content, Color.NUMBER);
+                case POSTGRESQL_FUNCTION_BODY_SYMBOL:
+                case SINGLE_QUOTE_STRING:
+                    return span(content, Color.STRING);
+                case ASTERISK:
+                    return span(content, Color.HIGHLIGHT);
+                case LINE_ANNOTATION:
+                    var nc = content;
+                    var isAnno = true;
+                    for (var k : FlowControlLexer.KEYWORDS) {
+                        if (StringUtil.containsIgnoreCase(nc, ">" + k + "</")) {
+                            isAnno = false;
+                            break;
+                        }
                     }
+                    if (isAnno) {
+                        nc = removeStyles(nc);
+                    }
+                    return span(nc, Color.ANNOTATION);
+                case BLOCK_ANNOTATION:
+                    return span(removeStyles(content), Color.ANNOTATION);
+                case NAMED_PARAMETER:
+                    return code(content, Color.LIGHT);
+                case OTHER: {
+                    if (StringUtil.equalsAny(content, Constants.XQL_KEYWORDS)) {
+                        return span(content, Color.KEYWORD);
+                    }
+                    var maybeKeyword = content;
+                    var pos = 0;
+                    if (content.startsWith("--")) {
+                        maybeKeyword = content.substring(2);
+                        pos = 2;
+                    }
+                    if (StringUtil.equalsAnyIgnoreCase(maybeKeyword, FlowControlLexer.KEYWORDS)) {
+                        return content.substring(0, pos) + span(maybeKeyword, Color.HIGHLIGHT);
+                    }
+                    return content;
                 }
-                if (isAnno) {
-                    nc = removeStyles(nc);
-                }
-                yield span(nc, Color.ANNOTATION);
-            }
-            case BLOCK_ANNOTATION -> span(removeStyles(content), Color.ANNOTATION);
-            case NAMED_PARAMETER -> code(content, Color.LIGHT);
-            case OTHER -> {
-                if (StringUtil.equalsAny(content, Constants.XQL_KEYWORDS)) {
-                    yield span(content, Color.KEYWORD);
-                }
-                var maybeKeyword = content;
-                var pos = 0;
-                if (content.startsWith("--")) {
-                    maybeKeyword = content.substring(2);
-                    pos = 2;
-                }
-                if (StringUtil.equalsAnyIgnoreCase(maybeKeyword, FlowControlLexer.KEYWORDS)) {
-                    yield content.substring(0, pos) + span(maybeKeyword, Color.HIGHLIGHT);
-                }
-                yield content;
+                default:
+                    return content;
             }
         });
         return pre(highlighted, Color.EMPTY);

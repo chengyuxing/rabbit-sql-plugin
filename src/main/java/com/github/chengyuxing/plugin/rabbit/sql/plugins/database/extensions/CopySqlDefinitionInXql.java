@@ -5,15 +5,18 @@ import com.github.chengyuxing.plugin.rabbit.sql.extensions.support.SqlNameIntent
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
 import com.intellij.icons.AllIcons;
+import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
+import com.intellij.sql.dialects.generic.GenericDialect;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.util.Objects;
 
 public class CopySqlDefinitionInXql extends SqlNameIntentionActionInXql implements Iconable {
     @Override
@@ -22,6 +25,11 @@ public class CopySqlDefinitionInXql extends SqlNameIntentionActionInXql implemen
         var sqlDefinition = xqlFileManager.get(sqlName);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(sqlDefinition), null);
+    }
+
+    @Override
+    protected boolean isValidFileExtension(String extension) {
+        return Objects.equals(extension, "xql");
     }
 
     @Override

@@ -14,13 +14,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class JavaUtil {
     public static String getStringLiteral(PsiElement element) {
-        if (element instanceof PsiLiteralExpression literalExpression) {
+        if (element instanceof PsiLiteralExpression) {
+            var literalExpression = (PsiLiteralExpression) element;
             return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
         }
-        if (element instanceof PsiJavaTokenImpl && element.getParent() instanceof PsiLiteralExpression literalExpression) {
+        if (element instanceof PsiJavaTokenImpl && element.getParent() instanceof PsiLiteralExpression) {
+            var literalExpression = (PsiLiteralExpression) element.getParent();
             return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
         }
         return null;
@@ -92,6 +95,6 @@ public class JavaUtil {
                     });
                     return psiElements;
                 }).flatMap(Collection::stream)
-                .toList();
+                .collect(Collectors.toList());
     }
 }

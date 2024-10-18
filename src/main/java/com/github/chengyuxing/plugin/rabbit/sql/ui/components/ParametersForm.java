@@ -4,7 +4,6 @@
 
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
-import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.script.expression.Comparators;
 import com.github.chengyuxing.common.tuple.Pair;
@@ -14,6 +13,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.FieldInfoRender;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TableCellPlaceholderRender;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.JSON;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.JBSplitter;
@@ -67,25 +67,31 @@ public class ParametersForm extends JPanel {
                     try {
                         var type = sv.substring(sv.lastIndexOf("::") + 2);
                         var value = sv.substring(0, sv.lastIndexOf("::"));
-                        v = switch (type) {
-                            case "number" -> Double.parseDouble(value);
-                            case "date" -> MostDateTime.of(value).toDate();
-                            default -> value;
-                        };
+                        switch (type) {
+                            case "number":
+                                v = Double.parseDouble(value);
+                                break;
+                            case "date":
+                                v = MostDateTime.of(value).toDate();
+                                break;
+                            default:
+                                v = value;
+                                break;
+                        }
                     } catch (Exception e) {
                         errors.add("Type parse of parameter '" + k + "' error.");
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
                 } else if (sv.startsWith("[") && sv.endsWith("]")) {
                     try {
-                        v = JSON.std.listFrom(sv);
+                        v = JSON.std.readValue(sv, List.class);
                     } catch (Exception e) {
                         errors.add("JSON array of parameter '" + k + "' serialized error.");
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
                 } else if (sv.startsWith("{") && sv.endsWith("}")) {
                     try {
-                        v = JSON.std.mapFrom(sv);
+                        v = JSON.std.readValue(sv, Map.class);
                     } catch (Exception e) {
                         errors.add("JSON object of parameter '" + k + "' serialized error.");
                         errors.addAll(ExceptionUtil.getCauseMessages(e));

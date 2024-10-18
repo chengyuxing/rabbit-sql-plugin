@@ -50,22 +50,22 @@ public class OpenInEditorAction extends AnAction {
     }
 
     private static Path detectedExistsFilePath(Project project, XqlTreeNodeData nodeData) {
-        return switch (nodeData.type()) {
-            case XQL_CONFIG -> {
-                var config = (XQLConfigManager.Config) nodeData.source();
-                yield config.getConfigPath();
-            }
-            case XQL_FILE -> {
+        switch (nodeData.getType()) {
+            case XQL_CONFIG:
+                var config = (XQLConfigManager.Config) nodeData.getSource();
+                return config.getConfigPath();
+
+            case XQL_FILE:
                 @SuppressWarnings("unchecked")
-                var sqlMeta = (Triple<String, String, String>) nodeData.source();
+                var sqlMeta = (Triple<String, String, String>) nodeData.getSource();
                 var filepath = sqlMeta.getItem3();
                 if (!ProjectFileUtil.isLocalFileUri(filepath)) {
                     NotificationUtil.showMessage(project, "only support local file", NotificationType.WARNING);
-                    yield null;
+                    return null;
                 }
-                yield Path.of(URI.create(filepath));
-            }
-            case XQL_FILE_FOLDER, MODULE, XQL_FRAGMENT -> null;
-        };
+                return Path.of(URI.create(filepath));
+            default:
+                return null;
+        }
     }
 }

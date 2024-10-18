@@ -22,7 +22,7 @@ public class ReturnTypesForm extends JPanel {
         }
         return Arrays.stream(returnType.split("\\s*" + SYMBOL + "\\s*"))
                 .map(String::trim)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public ReturnTypesForm(String selected, Consumer<Integer> checkedCount) {

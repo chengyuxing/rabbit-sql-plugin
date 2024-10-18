@@ -35,7 +35,8 @@ public class PsiUtil {
             psi.acceptChildren(new PsiRecursiveElementVisitor() {
                 @Override
                 public void visitElement(@NotNull PsiElement element) {
-                    if (element instanceof PsiComment comment) {
+                    if (element instanceof PsiComment) {
+                        var comment = (PsiComment) element;
                         if (comment.getText().matches("/\\*\\s*\\[\\s*" + sqlFragmentName + "\\s*]\\s*\\*/")) {
                             var nav = comment.getNavigationElement();
                             NavigationUtil.activateFileWithPsiElement(nav);
@@ -178,9 +179,10 @@ public class PsiUtil {
     }
 
     public static String getAnnoTextValue(PsiAnnotationMemberValue psiAnnoAttr) {
-        if (psiAnnoAttr instanceof PsiLiteralExpression literalExpression) {
-            if (literalExpression.getValue() instanceof String s) {
-                return s;
+        if (psiAnnoAttr instanceof PsiLiteralExpression) {
+            var literalExpression = (PsiLiteralExpression) psiAnnoAttr;
+            if (literalExpression.getValue() instanceof String) {
+                return (String) literalExpression.getValue();
             }
         }
         var psiAlias = psiAnnoAttr.getText();
@@ -189,7 +191,8 @@ public class PsiUtil {
     }
 
     public static PsiAnnotationMemberValue getMethodAnnoValue(PsiIdentifier element, String annoClassName, String attrName) {
-        if (element.getParent() instanceof PsiMethod psiMethod) {
+        if (element.getParent() instanceof PsiMethod) {
+            var psiMethod = (PsiMethod) element.getParent();
             return getMethodAnnoValue(psiMethod, annoClassName, attrName);
         }
         return null;
@@ -232,7 +235,8 @@ public class PsiUtil {
     }
 
     public static boolean isXQLMapperMethodIdentifier(PsiElement element) {
-        if (element instanceof PsiIdentifier && element.getParent() instanceof PsiMethod psiMethod) {
+        if (element instanceof PsiIdentifier && element.getParent() instanceof PsiMethod) {
+            var psiMethod = (PsiMethod) element.getParent();
             return isXQLMapperMethod(psiMethod);
         }
         return false;

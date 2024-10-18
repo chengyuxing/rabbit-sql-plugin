@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
-import com.fasterxml.jackson.jr.ob.JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.chengyuxing.common.script.expression.Comparators;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.database.DatasourceManager;
@@ -11,6 +11,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ParametersForm;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.IconListCellRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.JSON;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.icons.AllIcons;
@@ -24,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.util.*;
 
 import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
@@ -109,8 +109,8 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                 cache.put(k, "");
             } else if (v instanceof Collection || v instanceof Map) {
                 try {
-                    cache.put(k, JSON.std.asString(v));
-                } catch (IOException ignore) {
+                    cache.put(k, JSON.std.writeValueAsString(v));
+                } catch (JsonProcessingException ignore) {
                 }
             } else {
                 cache.put(k, v.toString());

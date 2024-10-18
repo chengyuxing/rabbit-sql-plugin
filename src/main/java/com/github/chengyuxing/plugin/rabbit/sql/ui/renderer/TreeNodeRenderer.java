@@ -26,17 +26,19 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
 
     @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        if (value instanceof XqlTreeNode node) {
-            if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
-                var type = nodeSource.type();
+        if (value instanceof XqlTreeNode) {
+            var node = (XqlTreeNode) value;
+            if (node.getUserObject() instanceof XqlTreeNodeData) {
+                var nodeSource = (XqlTreeNodeData) node.getUserObject();
+                var type = nodeSource.getType();
                 setToolTipText(null);
                 switch (type) {
-                    case MODULE -> {
+                    case MODULE:
                         setIcon(AllIcons.Nodes.Module);
                         append(nodeSource.toString());
-                    }
-                    case XQL_CONFIG -> {
-                        var config = (XQLConfigManager.Config) nodeSource.source();
+                        break;
+                    case XQL_CONFIG:
+                        var config = (XQLConfigManager.Config) nodeSource.getSource();
                         append(nodeSource.toString());
                         if (config.isPrimary()) {
                             setIcon(XqlIcons.XQL_FILE_MANAGER);
@@ -47,32 +49,32 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                         if (config.isActive()) {
                             append(" (active)", SimpleTextAttributes.GRAY_ATTRIBUTES);
                         }
-                    }
-                    case XQL_FILE -> {
+                        break;
+                    case XQL_FILE:
                         @SuppressWarnings("unchecked")
-                        var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
-                        if (ProjectFileUtil.isLocalFileUri(sqlMeta.getItem3())) {
+                        var xqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.getSource();
+                        if (ProjectFileUtil.isLocalFileUri(xqlMeta.getItem3())) {
                             setIcon(XqlIcons.XQL_FILE);
                         } else {
                             setIcon(XqlIcons.XQL_FILE_REMOTE);
                         }
                         String secondaryText;
-                        append(sqlMeta.getItem1() + " ");
-                        if (Objects.nonNull(sqlMeta.getItem5()) && !Objects.equals(sqlMeta.getItem5().trim(), "")) {
-                            secondaryText = "(" + sqlMeta.getItem5() + ")";
-                            setToolTipText(sqlMeta.getItem2());
+                        append(xqlMeta.getItem1() + " ");
+                        if (Objects.nonNull(xqlMeta.getItem5()) && !Objects.equals(xqlMeta.getItem5().trim(), "")) {
+                            secondaryText = "(" + xqlMeta.getItem5() + ")";
+                            setToolTipText(xqlMeta.getItem2());
                         } else {
                             if (xqlFileTreeView.get()) {
                                 secondaryText = "";
                             } else {
-                                secondaryText = "(" + sqlMeta.getItem2() + ")";
+                                secondaryText = "(" + xqlMeta.getItem2() + ")";
                             }
                             setToolTipText(null);
                         }
                         append(secondaryText, SimpleTextAttributes.GRAY_ATTRIBUTES);
-                    }
-                    case XQL_FILE_FOLDER -> {
-                        var title = nodeSource.title();
+                        break;
+                    case XQL_FILE_FOLDER:
+                        var title = nodeSource.getTitle();
                         if (ProjectFileUtil.isURI(title)) {
                             if (!ProjectFileUtil.isLocalFileUri(title)) {
                                 setIcon(AllIcons.Nodes.PpWeb);
@@ -83,10 +85,10 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                             setIcon(AllIcons.Nodes.Folder);
                         }
                         append(nodeSource.toString());
-                    }
-                    case XQL_FRAGMENT -> {
+                        break;
+                    case XQL_FRAGMENT:
                         @SuppressWarnings("unchecked")
-                        var sqlMeta = (Triple<String, String, XQLFileManager.Sql>) nodeSource.source();
+                        var sqlMeta = (Triple<String, String, XQLFileManager.Sql>) nodeSource.getSource();
                         setIcon(AllIcons.FileTypes.Text);
                         append(sqlMeta.getItem2() + " -> ");
                         var info = getInfo(sqlMeta);
@@ -96,7 +98,7 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                         } else {
                             setToolTipText(info);
                         }
-                    }
+                        break;
                 }
             }
         }

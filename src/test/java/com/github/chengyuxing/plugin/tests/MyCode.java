@@ -1,6 +1,5 @@
 package com.github.chengyuxing.plugin.tests;
 
-import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.script.expression.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
@@ -56,10 +55,10 @@ public class MyCode {
 
     //    @Test
     public void test38() throws IOException {
-        var a = JSON.std.anyFrom("[{\"name\":\"cyx\"},{\"name\":\"jackson\"},{\"name\":\"ikun\"}]");
-        var b = JSON.std.anyFrom("{\"id\":1}");
-        System.out.println(a);
-        System.out.println(b);
+//        var a = JSON.std.anyFrom("[{\"name\":\"cyx\"},{\"name\":\"jackson\"},{\"name\":\"ikun\"}]");
+//        var b = JSON.std.anyFrom("{\"id\":1}");
+//        System.out.println(a);
+//        System.out.println(b);
     }
 
     //    @Test
@@ -79,21 +78,17 @@ public class MyCode {
 
     //    @Test
     public void test23() {
-        var user1 = new User("cyx", 23);
-        var user2 = new User("cyx", 23);
-        System.out.println(user1.hashCode());
-        System.out.println(user2.hashCode());
-        System.out.println(user1.equals(user2));
+//        var user1 = new User("cyx", 23);
+//        var user2 = new User("cyx", 23);
+//        System.out.println(user1.hashCode());
+//        System.out.println(user2.hashCode());
+//        System.out.println(user1.equals(user2));
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> clazz = SimpleJavaCompiler.getInstance().compile("org.example.pipes.Big", Path.of("/Users/chengyuxing/IdeaProjects/sbp-test1/src/main/java/org/example/pipes/Big.java"));
         IPipe<?> pipe = (IPipe<?>) clazz.getConstructor().newInstance();
         System.out.println(pipe.transform(175));
-    }
-
-    public record User(String name, int age) {
-
     }
 
     private static final Map<String, Object> nodeMap = new LinkedHashMap<>();

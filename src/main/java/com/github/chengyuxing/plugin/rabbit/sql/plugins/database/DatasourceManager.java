@@ -2,7 +2,6 @@ package com.github.chengyuxing.plugin.rabbit.sql.plugins.database;
 
 import com.intellij.database.console.JdbcConsole;
 import com.intellij.database.console.session.DatabaseSessionManager;
-import com.intellij.database.dataSource.DatabaseConnectionPoint;
 import com.intellij.database.dataSource.LocalDataSourceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
@@ -53,7 +52,15 @@ public final class DatasourceManager {
         return cache.get(project);
     }
 
-    public record DatabaseId(String name, String id) {
+    public static class DatabaseId {
+        private final String name;
+        private final String id;
+
+        public DatabaseId(String name, String id) {
+            this.name = name;
+            this.id = id;
+        }
+
         public static DatabaseId of(String name, String id) {
             return new DatabaseId(name, id);
         }
@@ -62,9 +69,33 @@ public final class DatasourceManager {
             return of(placeholder, "");
         }
 
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
         @Override
         public String toString() {
             return name;
+        }
+
+        @Override
+        public final boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof DatabaseId)) return false;
+
+            DatabaseId that = (DatabaseId) o;
+            return Objects.equals(getName(), that.getName()) && Objects.equals(getId(), that.getId());
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Objects.hashCode(getName());
+            result = 31 * result + Objects.hashCode(getId());
+            return result;
         }
     }
 
@@ -120,7 +151,7 @@ public final class DatasourceManager {
                                 session.setTitle("Rabbit-SQL-Plugin");
                                 return c;
                             }).orElseGet(() -> {
-                                var session = DatabaseSessionManager.getSession(project, (DatabaseConnectionPoint) cfg, "Rabbit-SQL-Plugin");
+                                var session = DatabaseSessionManager.getSession(project, ds, "Rabbit-SQL-Plugin");
                                 session.setAutoCommit(false);
                                 return JdbcConsole.newConsole(project)
                                         .fromDataSource(ds)

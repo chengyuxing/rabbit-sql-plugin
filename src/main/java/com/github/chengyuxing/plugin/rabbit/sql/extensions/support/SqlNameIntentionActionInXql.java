@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,8 +62,17 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
         }
     }
 
+    protected abstract boolean isValidFileExtension(String extension);
+
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+        var xqlVf = PsiUtilCore.getVirtualFile(element);
+        if(Objects.isNull(xqlVf)) {
+            return false;
+        }
+        if (!isValidFileExtension(xqlVf.getExtension())) {
+            return false;
+        }
         if (!(element instanceof PsiComment)) {
             return false;
         }
@@ -73,18 +83,7 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
         var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
         var m = pattern.matcher(sqlNameTag);
         if (m.matches()) {
-            var xqlFile = element.getContainingFile();
-            if (xqlFile == null || !xqlFile.isPhysical() || !xqlFile.isValid()) {
-                return false;
-            }
-            var xqlVf = xqlFile.getVirtualFile();
-            if (xqlVf == null) {
-                return false;
-            }
-            if (!Objects.equals(xqlVf.getExtension(), "xql")) {
-                return false;
-            }
-            var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(xqlFile);
+            var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(element);
             if (xqlFileManager != null) {
                 for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
                     if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {

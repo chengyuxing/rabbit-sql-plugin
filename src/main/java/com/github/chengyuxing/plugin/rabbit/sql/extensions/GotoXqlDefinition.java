@@ -74,7 +74,8 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
                         xqlFile.acceptChildren(new PsiRecursiveElementVisitor() {
                             @Override
                             public void visitElement(@NotNull PsiElement element) {
-                                if (element instanceof PsiComment comment) {
+                                if (element instanceof PsiComment) {
+                                    var comment = (PsiComment) element;
                                     if (comment.getText().matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/")) {
                                         var markInfo = NavigationGutterIconBuilder.create(XqlIcons.XQL_FILE)
                                                 .setTarget(comment)
@@ -147,9 +148,10 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
     }
 
     protected Pair<String, PsiElement> handlerSqlRef(PsiElement sourceElement) {
-        if (!(sourceElement instanceof PsiJavaTokenImpl) || !(sourceElement.getParent() instanceof PsiLiteralExpression literalExpression)) {
+        if (!(sourceElement instanceof PsiJavaTokenImpl) || !(sourceElement.getParent() instanceof PsiLiteralExpression)) {
             return null;
         }
+        var literalExpression = (PsiLiteralExpression) sourceElement.getParent();
         return literalExpression.getValue() instanceof String ? Pair.of((String) literalExpression.getValue(), sourceElement) : null;
     }
 }

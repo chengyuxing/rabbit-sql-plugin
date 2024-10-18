@@ -10,6 +10,8 @@ import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
 import com.intellij.icons.AllIcons;
+import com.intellij.lang.Language;
+import com.intellij.lang.java.JavaLanguage;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -108,8 +110,15 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
         }
     }
 
+    protected boolean isValidFileLanguage(Language language) {
+        return language == JavaLanguage.INSTANCE;
+    }
+
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+        if (!isValidFileLanguage(element.getLanguage())) {
+            return false;
+        }
         String sqlRef = PsiUtil.getJvmLangLiteral(element);
         if (sqlRef == null) {
             return false;

@@ -4,25 +4,21 @@
                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions.XqlNameAnnotatorInKt"/>
 
         <intentionAction id="CopySqlDefinitionInKt">
-            <language>kotlin</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions.CopySqlDefinitionInKt</className>
         </intentionAction>
 
         <intentionAction id="CopySqlParamsInKt">
-            <language>kotlin</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions.CopySqlParamsInKt</className>
         </intentionAction>
 
         <intentionAction id="TestDynamicSqlInKt">
-            <language>kotlin</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions.OpenParamsDialogInKt</className>
         </intentionAction>
 
         <intentionAction id="CreateOrAppendXqlInKt">
-            <language>kotlin</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions.NewXqlIfNotExistsInKt</className>
         </intentionAction>

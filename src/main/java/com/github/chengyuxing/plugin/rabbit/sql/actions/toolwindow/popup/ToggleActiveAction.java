@@ -6,7 +6,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -32,8 +31,8 @@ public class ToggleActiveAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_CONFIG) {
-            var config = (XQLConfigManager.Config) nodeSource.source();
+        if (Objects.nonNull(nodeSource) && nodeSource.getType() == XqlTreeNodeData.Type.XQL_CONFIG) {
+            var config = (XQLConfigManager.Config) nodeSource.getSource();
             if (config.isActive()) {
                 return;
             }
@@ -49,13 +48,8 @@ public class ToggleActiveAction extends AnAction {
     public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setEnabled(false);
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_CONFIG) {
+        if (Objects.nonNull(nodeSource) && nodeSource.getType() == XqlTreeNodeData.Type.XQL_CONFIG) {
             e.getPresentation().setEnabled(true);
         }
-    }
-
-    @Override
-    public @NotNull ActionUpdateThread getActionUpdateThread() {
-        return ActionUpdateThread.EDT;
     }
 }

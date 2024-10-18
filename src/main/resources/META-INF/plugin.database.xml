@@ -11,13 +11,11 @@
 
         <!--Xql:Execute Dynamic sql-->
         <intentionAction>
-            <language>SQL</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions.OpenParamsDialogInXql</className>
         </intentionAction>
         <!--Xql:Copy sql definition-->
         <intentionAction>
-            <language>SQL</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions.CopySqlDefinitionInXql</className>
         </intentionAction>

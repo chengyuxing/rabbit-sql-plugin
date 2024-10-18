@@ -65,7 +65,8 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
                     xqlFile.acceptChildren(new PsiRecursiveElementVisitor() {
                         @Override
                         public void visitElement(@NotNull PsiElement element) {
-                            if (element instanceof PsiComment comment) {
+                            if (element instanceof PsiComment) {
+                                var comment = (PsiComment) element;
                                 if (comment.getText().matches("/\\*\\s*\\[\\s*(" + name + ")\\s*]\\s*\\*/")) {
                                     elem.set(comment);
                                     return;

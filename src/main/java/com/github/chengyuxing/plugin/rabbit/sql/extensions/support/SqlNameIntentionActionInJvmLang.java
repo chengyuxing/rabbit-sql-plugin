@@ -4,6 +4,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInJava;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
+import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -23,6 +24,8 @@ public abstract class SqlNameIntentionActionInJvmLang extends PsiElementBaseInte
     protected String intentionTarget;
 
     public abstract void invokeIfSuccess(Project project, PsiElement element, XQLConfigManager.Config config, String sqlName);
+
+    public abstract boolean isValidFileLanguage(Language language);
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
@@ -46,6 +49,9 @@ public abstract class SqlNameIntentionActionInJvmLang extends PsiElementBaseInte
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+        if (!isValidFileLanguage(element.getLanguage())) {
+            return false;
+        }
         String sqlRef = PsiUtil.getJvmLangLiteral(element);
         if (Objects.isNull(sqlRef)) {
             return false;

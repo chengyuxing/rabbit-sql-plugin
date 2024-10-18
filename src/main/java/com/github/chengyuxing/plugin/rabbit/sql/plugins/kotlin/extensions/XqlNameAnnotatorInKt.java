@@ -7,7 +7,8 @@ import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
 public class XqlNameAnnotatorInKt extends XqlNameAnnotator {
     @Override
     protected String getSqlRef(PsiElement element) {
-        if (element instanceof KtLiteralStringTemplateEntry stringTemplateEntry) {
+        if (element instanceof KtLiteralStringTemplateEntry) {
+            var stringTemplateEntry = (KtLiteralStringTemplateEntry) element;
             return stringTemplateEntry.getText();
         }
         return null;

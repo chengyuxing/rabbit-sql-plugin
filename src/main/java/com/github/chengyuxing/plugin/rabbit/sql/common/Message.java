@@ -43,7 +43,8 @@ public final class Message {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Message message)) return false;
+        if (!(o instanceof Message)) return false;
+        var message = (Message) o;
 
         if (!getText().equals(message.getText())) return false;
         return getType() == message.getType();

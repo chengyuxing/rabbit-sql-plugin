@@ -28,8 +28,8 @@ public class SwingUtil {
             return null;
         }
         var node = (XqlTreeNode) selected.getLastPathComponent();
-        if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
-            return nodeSource;
+        if (node.getUserObject() instanceof XqlTreeNodeData) {
+            return (XqlTreeNodeData) node.getUserObject();
         }
         return null;
     }

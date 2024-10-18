@@ -8,7 +8,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -24,9 +23,9 @@ public class ExecuteSqlAction extends AnAction {
         super(() -> {
             var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
             if (Objects.nonNull(nodeSource)) {
-                if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
+                if (nodeSource.getType() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
                     @SuppressWarnings("unchecked")
-                    var data = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
+                    var data = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.getSource();
                     var name = data.getItem2();
                     return "Execute " + SqlUtil.quote(name);
                 }
@@ -43,9 +42,9 @@ public class ExecuteSqlAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
+        if (Objects.nonNull(nodeSource) && nodeSource.getType() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
             @SuppressWarnings("unchecked")
-            var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
+            var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.getSource();
             var alias = sqlMeta.getItem1();
             var name = sqlMeta.getItem2();
             var config = sqlMeta.getItem4();
@@ -60,13 +59,8 @@ public class ExecuteSqlAction extends AnAction {
     public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setEnabled(false);
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
+        if (Objects.nonNull(nodeSource) && nodeSource.getType() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
             e.getPresentation().setEnabled(true);
         }
-    }
-
-    @Override
-    public @NotNull ActionUpdateThread getActionUpdateThread() {
-        return ActionUpdateThread.EDT;
     }
 }

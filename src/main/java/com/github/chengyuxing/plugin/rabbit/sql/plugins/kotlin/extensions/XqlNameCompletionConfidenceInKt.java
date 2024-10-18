@@ -8,7 +8,8 @@ import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
 public class XqlNameCompletionConfidenceInKt extends XqlNameCompletionConfidence {
     @Override
     protected String handlerSqlRef(PsiElement sourceElement) {
-        if (sourceElement instanceof LeafPsiElement && sourceElement.getParent() instanceof KtLiteralStringTemplateEntry entry) {
+        if (sourceElement instanceof LeafPsiElement && sourceElement.getParent() instanceof KtLiteralStringTemplateEntry) {
+            var entry = (KtLiteralStringTemplateEntry) sourceElement.getParent();
             return entry.getText();
         }
         return null;

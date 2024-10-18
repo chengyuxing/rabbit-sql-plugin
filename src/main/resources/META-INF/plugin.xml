@@ -525,28 +525,24 @@
 
         <!--Java:Copy sql definition-->
         <intentionAction id="CopySqlDefinitionInJava">
-            <language>JAVA</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinitionInJava</className>
         </intentionAction>
 
         <!--Java:Copy sql parameters-->
         <intentionAction id="CopySqlParamsInJava">
-            <language>JAVA</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlParamsInJava</className>
         </intentionAction>
 
         <!--Java:Execute Dynamic sql-->
         <intentionAction id="TestDynamicSqlInJava">
-            <language>JAVA</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInJava</className>
         </intentionAction>
 
         <!--Java:Create/Append-->
         <intentionAction id="CreateOrAppendXql">
-            <language>JAVA</language>
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.NewXqlIfNotExists</className>
         </intentionAction>
@@ -573,8 +569,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <defaultLiveTemplates file="xql-live-templates.xml"/>
-        <liveTemplateContext contextId="SQL"
-                             implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlContext"/>
+        <liveTemplateContext implementation="com.github.chengyuxing.plugin.rabbit.sql.XqlContext"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -594,7 +589,7 @@
                     id="com.github.chengyuxing.plugin.rabbit.sql.actions.StatisticsAction"
                     text="Statistics"
                     description="Statistics of XQL File Manager configs."
-                    icon="AllIcons.Actions.DependencyAnalyzer"
+                    icon="AllIcons.Actions.PreviewDetails"
             />
             <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.ReloadConfigAction"
                     class="com.github.chengyuxing.plugin.rabbit.sql.actions.ReloadConfigAction"
