@@ -70,6 +70,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.15</h3>
+            <ul>
+                <li>Interface Mapper Generator layout optimized.</li>
+                <li>File icons optimized.</li>
+            </ul>
             <h3>2.4.14</h3>
             <ul>
                 <li>Add support for compatible with <b>IDEA IC</b>.</li>
