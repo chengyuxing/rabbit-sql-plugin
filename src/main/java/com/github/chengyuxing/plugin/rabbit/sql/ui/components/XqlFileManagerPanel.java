@@ -337,8 +337,12 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         new CopySqlAction(tree, CopySqlAction.CopyType.YML_ARRAY_PATH_FROM_CLASSPATH),
                 };
             }
-        });
-        copyGroup.getTemplatePresentation().setText("Copy Path/Reference...");
+        }) {
+            @Override
+            public void update(@NotNull AnActionEvent e) {
+                e.getPresentation().setText("Copy Path/Reference...");
+            }
+        };
 
         return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
             @Override
@@ -393,8 +397,12 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         new CopySqlAction(tree, CopySqlAction.CopyType.SQL_DEFINITION)
                 };
             }
-        });
-        copyGroup.getTemplatePresentation().setText("Copy Name/Definition...");
+        }) {
+            @Override
+            public void update(@NotNull AnActionEvent e) {
+                e.getPresentation().setText("Copy Name/Definition...");
+            }
+        };
 
         return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
             @Override

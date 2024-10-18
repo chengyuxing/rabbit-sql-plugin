@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.4.15-IJ2021.1"
+version = "2.4.15-IJ2021.3"
 
 repositories {
     mavenLocal()
@@ -23,7 +23,7 @@ dependencies {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2021.1.1")
+    version.set("2021.3")
     type.set("IU") // Target IDE Platform
 
     plugins.set(listOf("com.intellij.database",
@@ -41,8 +41,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("211")
-        untilBuild.set("243.*")
+        sinceBuild.set("213")
+        untilBuild.set("213.*")
     }
 
     signPlugin {

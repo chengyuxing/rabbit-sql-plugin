@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.plugins.database;
 
 import com.intellij.database.console.JdbcConsole;
 import com.intellij.database.console.session.DatabaseSessionManager;
+import com.intellij.database.dataSource.DatabaseConnectionPoint;
 import com.intellij.database.dataSource.LocalDataSourceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
@@ -151,7 +152,7 @@ public final class DatasourceManager {
                                 session.setTitle("Rabbit-SQL-Plugin");
                                 return c;
                             }).orElseGet(() -> {
-                                var session = DatabaseSessionManager.getSession(project, ds, "Rabbit-SQL-Plugin");
+                                var session = DatabaseSessionManager.getSession(project, (DatabaseConnectionPoint) ds.getConnectionConfig(), "Rabbit-SQL-Plugin");
                                 session.setAutoCommit(false);
                                 return JdbcConsole.newConsole(project)
                                         .fromDataSource(ds)
