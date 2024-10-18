@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.4.15-IJ2021.1"
+version = "2.4.15-IJ2020.3"
 
 repositories {
     mavenLocal()
@@ -41,7 +41,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("211")
+        sinceBuild.set("203")
         untilBuild.set("212.*")
     }
 
