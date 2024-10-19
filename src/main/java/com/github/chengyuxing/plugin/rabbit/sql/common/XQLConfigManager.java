@@ -34,7 +34,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-public class XQLConfigManager {
+public final class XQLConfigManager {
     private static final Logger log = Logger.getInstance(XQLConfigManager.class);
 
     private static volatile XQLConfigManager instance;
