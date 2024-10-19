@@ -3,6 +3,8 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.script.expression.Comparators;
 import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceManager;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.database.DatabaseId;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.database.DatasourceManager;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
@@ -30,25 +32,25 @@ import java.util.*;
 import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 
 public class DynamicSqlCalcDialog extends DialogWrapper {
+    private final Project project;
     private final String sqlName;
     private final String sql;
-    private final Map<String, Object> paramsHistory;
     private final XQLFileManager xqlFileManager;
-    private final DatasourceManager.Resource datasourceResource;
     private final XQLConfigManager.Config config;
+    private final Map<String, Object> paramsHistory;
     private final ParametersForm parametersForm;
-    private final ComboBox<DatasourceManager.DatabaseId> datasourceList;
+    private final ComboBox<DatabaseId> datasourceList;
     private final boolean isDatabasePluginEnabled;
 
     public DynamicSqlCalcDialog(String sqlName, XQLConfigManager.Config config, Project project) {
         super(true);
+        this.project = project;
         this.isDatabasePluginEnabled = FeatureChecker.isPluginEnabled(FeatureChecker.DATABASE_PLUGIN_ID);
         this.sqlName = sqlName;
         this.config = config;
-        this.datasourceResource = DatasourceManager.getInstance().getResource(project);
         this.xqlFileManager = this.config.getXqlFileManager();
         this.sql = this.xqlFileManager.get(sqlName);
-        this.paramsHistory = datasourceResource.getParamsHistory();
+        this.paramsHistory = ResourceManager.getInstance().getResource(project).getDynamicSqlParamHistory();
         var paramsMapping = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.getParamsMappingInfo(this.config.getSqlGenerator(), sql);
         this.parametersForm = new ParametersForm(paramsMapping, paramsHistory);
         this.parametersForm.setClickEmptyTableTextLink(this::doHelpAction);
@@ -70,9 +72,9 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         panel.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 0));
         datasourceList.setSwingPopup(false);
         if (!isDatabasePluginEnabled) {
-            datasourceList.addItem(DatasourceManager.DatabaseId.empty("<Configured database>"));
+            datasourceList.addItem(DatabaseId.empty("<Configured database>"));
             datasourceList.setEnabled(false);
-        } else if (datasourceResource != null) {
+        } else {
             loadDatasourceList();
         }
         panel.add(datasourceList);
@@ -81,14 +83,15 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     }
 
     private void loadDatasourceList() {
-        var dsInfo = datasourceResource.getConfiguredDatabases();
+        var resource = DatasourceManager.getInstance().getResource(project);
+        var databases = resource.getConfiguredDatabases();
         datasourceList.removeAllItems();
-        datasourceList.addItem(DatasourceManager.DatabaseId.empty("<Configured database>"));
-        datasourceList.setRenderer(new IconListCellRenderer(dsInfo));
-        dsInfo.forEach((k, v) -> datasourceList.addItem(k));
-        var selected = datasourceResource.getSelected();
+        datasourceList.addItem(DatabaseId.empty("<Configured database>"));
+        datasourceList.setRenderer(new IconListCellRenderer(databases));
+        databases.forEach((k, v) -> datasourceList.addItem(k));
+        var selected = resource.getSelected();
         if (selected != null) {
-            if (dsInfo.containsKey(selected)) {
+            if (databases.containsKey(selected)) {
                 datasourceList.setSelectedItem(selected);
             }
         }
@@ -147,16 +150,17 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                 rawSql = SqlUtil.repairSyntaxError(rawSql);
                 // execute sql
                 var idx = datasourceList.getSelectedIndex();
-                if (datasourceResource != null && isDatabasePluginEnabled) {
+                if (isDatabasePluginEnabled) {
+                    var resource = DatasourceManager.getInstance().getResource(project);
                     if (idx > 0) {
                         var db = datasourceList.getItemAt(idx);
-                        var executed = DatabaseUtil.executeSQL(rawSql, datasourceResource, db);
+                        var executed = DatabaseUtil.executeSQL(rawSql, resource, db);
                         if (executed) {
                             dispose();
                             return;
                         }
                     }
-                    datasourceResource.setSelected(null);
+                    resource.setSelected(null);
                 }
                 parametersForm.setSqlHtml(HtmlUtil.highlightSql(rawSql));
                 autoHeight(rawSql);
@@ -212,7 +216,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             });
         } else {
             btn.setEnabled(false);
-            btn.setToolTipText("Database Tool and SQL plugin is not enabled. Execute SQL features are disabled.");
+            btn.setToolTipText("Database Tool and SQL plugin is not enabled.");
         }
         return btn;
     }

@@ -53,35 +53,14 @@ public final class DatasourceManager {
         return cache.get(project);
     }
 
-    public record DatabaseId(String name, String id) {
-        public static DatabaseId of(String name, String id) {
-            return new DatabaseId(name, id);
-        }
-
-        public static DatabaseId empty(String placeholder) {
-            return of(placeholder, "");
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
-
     public static class Resource implements AutoCloseable {
         private final Project project;
         private final Map<DatabaseId, JdbcConsole> consoles;
-        private final Map<String, Object> paramsHistory;
         private DatabaseId selected;
 
         public Resource(Project project) {
             this.project = project;
             this.consoles = new HashMap<>();
-            this.paramsHistory = new HashMap<>();
-        }
-
-        public Map<String, Object> getParamsHistory() {
-            return paramsHistory;
         }
 
         public void setSelected(DatabaseId selected) {
@@ -150,7 +129,6 @@ public final class DatasourceManager {
         @Override
         public void close() {
             consoles.forEach((i, c) -> c.dispose());
-            paramsHistory.clear();
         }
     }
 }

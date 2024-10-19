@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class FeatureChecker {
     public static final String YML_PLUGIN_ID = "org.jetbrains.plugins.yaml";
-    public static final String DATABASE_PLUGIN_ID = "com.intellij.modules.database";
+    public static final String DATABASE_PLUGIN_ID = "com.intellij.database";
     public static final String KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin";
 
     public static boolean isPluginEnabled(String pluginId) {
