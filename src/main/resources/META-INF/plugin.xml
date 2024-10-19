@@ -72,8 +72,9 @@
         <![CDATA[
             <h3>2.4.15</h3>
             <ul>
-                <li>Interface Mapper Generator layout optimized.</li>
+                <li><b>Interface Mapper Generator</b> layout optimized.</li>
                 <li>File icons optimized.</li>
+                <li>Fixed <b>Interface Mapper Generator</b> error caused by table dragging columns.</li>
             </ul>
             <h3>2.4.14</h3>
             <ul>
