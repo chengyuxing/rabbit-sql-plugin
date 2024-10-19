@@ -1,15 +1,13 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.database;
 
 import com.intellij.database.datagrid.DataRequest;
-import com.intellij.database.run.ConsoleDataRequest;
-import com.intellij.database.util.DbImplUtil;
 import com.intellij.database.view.ui.DataSourceManagerDialog;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DatabaseUtil {
-    public static boolean executeSQL(String sql, DatasourceManager.Resource resource, DatasourceManager.DatabaseId databaseId) {
+    public static boolean executeSQL(String sql, DatasourceManager.Resource resource, DatabaseId databaseId) {
         var console = resource.getConsole(databaseId);
         if (console != null) {
             resource.setSelected(databaseId);

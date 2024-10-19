@@ -52,67 +52,14 @@ public final class DatasourceManager {
         return cache.get(project);
     }
 
-    public static class DatabaseId {
-        private final String name;
-        private final String id;
-
-        public DatabaseId(String name, String id) {
-            this.name = name;
-            this.id = id;
-        }
-
-        public static DatabaseId of(String name, String id) {
-            return new DatabaseId(name, id);
-        }
-
-        public static DatabaseId empty(String placeholder) {
-            return of(placeholder, "");
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-
-        @Override
-        public final boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof DatabaseId)) return false;
-
-            DatabaseId that = (DatabaseId) o;
-            return Objects.equals(getName(), that.getName()) && Objects.equals(getId(), that.getId());
-        }
-
-        @Override
-        public int hashCode() {
-            int result = Objects.hashCode(getName());
-            result = 31 * result + Objects.hashCode(getId());
-            return result;
-        }
-    }
-
     public static class Resource implements AutoCloseable {
         private final Project project;
         private final Map<DatabaseId, JdbcConsole> consoles;
-        private final Map<String, Object> paramsHistory;
         private DatabaseId selected;
 
         public Resource(Project project) {
             this.project = project;
             this.consoles = new HashMap<>();
-            this.paramsHistory = new HashMap<>();
-        }
-
-        public Map<String, Object> getParamsHistory() {
-            return paramsHistory;
         }
 
         public void setSelected(DatabaseId selected) {
@@ -181,7 +128,6 @@ public final class DatasourceManager {
         @Override
         public void close() {
             consoles.forEach((i, c) -> c.dispose());
-            paramsHistory.clear();
         }
     }
 }
