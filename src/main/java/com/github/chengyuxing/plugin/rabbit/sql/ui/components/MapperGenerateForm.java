@@ -198,7 +198,7 @@ public class MapperGenerateForm extends JPanel {
         table = new JBTable() {
             @Override
             public Class<?> getColumnClass(int column) {
-                if (column == 6) {
+                if (column == table.convertColumnIndexToView(6)) {
                     return Boolean.class;
                 }
                 return super.getColumnClass(column);
@@ -383,13 +383,10 @@ public class MapperGenerateForm extends JPanel {
         model.setDataVector(tbody, thead);
         table.getColumnModel().getColumn(0).setCellRenderer(new ColorfulCellRenderer(HtmlUtil.Color.HIGHLIGHT.getCode()));
         table.getColumnModel().getColumn(1).setCellRenderer(new ColorfulCellRenderer(HtmlUtil.Color.FUNCTION.getCode()));
-
         table.getColumnModel().getColumn(2).setCellEditor(buildSelector(false, SQL_TYPES));
         table.getColumnModel().getColumn(2).setCellRenderer(new SqlTypePlaceHolder());
-
         table.getColumnModel().getColumn(3).setCellEditor(buildSelector(true, PARAM_TYPES));
         table.getColumnModel().getColumn(5).setCellEditor(buildSelector(true, GENERIC_TYPES));
-
         table.getColumnModel().getColumn(6).setCellRenderer(new CheckboxCellRenderer());
         table.getColumnModel().getColumn(6).setMaxWidth(60);
 
@@ -399,7 +396,7 @@ public class MapperGenerateForm extends JPanel {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     var x = table.rowAtPoint(e.getPoint());
                     var y = table.columnAtPoint(e.getPoint());
-                    if (x >= 0 && y == 4) {
+                    if (x >= 0 && y == table.convertColumnIndexToView(4)) {
                         var method = table.getValueAt(x, 1).toString();
                         var values = table.getValueAt(x, y).toString();
                         ApplicationManager.getApplication().invokeLater(() -> {
@@ -414,7 +411,7 @@ public class MapperGenerateForm extends JPanel {
             public void mousePressed(MouseEvent e) {
                 var x = table.rowAtPoint(e.getPoint());
                 var y = table.columnAtPoint(e.getPoint());
-                if (x >= 0 && y == 6) {
+                if (x >= 0 && y == table.convertColumnIndexToView(6)) {
                     var currentValue = (Boolean) table.getValueAt(x, y);
                     table.setValueAt(!currentValue, x, y);
                 }
