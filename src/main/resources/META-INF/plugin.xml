@@ -75,6 +75,7 @@
                 <li><b>Interface Mapper Generator</b> layout optimized.</li>
                 <li>File icons optimized.</li>
                 <li>Fixed <b>Interface Mapper Generator</b> error caused by table dragging columns.</li>
+                <li>Fixed <b>Execute Dynamic sql</b> error when <b>Database plugin</b> not enabled.</li>
             </ul>
             <h3>2.4.14</h3>
             <ul>
@@ -505,7 +506,7 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.java</depends>
     <depends optional="true" config-file="plugin.kotlin.xml">org.jetbrains.kotlin</depends>
-    <depends optional="true" config-file="plugin.database.xml">com.intellij.modules.database</depends>
+    <depends optional="true" config-file="plugin.database.xml">com.intellij.database</depends>
     <depends optional="true" config-file="plugin.yaml.xml">org.jetbrains.plugins.yaml</depends>
     <depends optional="true" config-file="plugin.spring.xml">com.intellij.spring</depends>
 
