@@ -76,6 +76,7 @@
                 <li>File icons optimized.</li>
                 <li>Fixed <b>Interface Mapper Generator</b> error caused by table dragging columns.</li>
                 <li>Fixed <b>Execute Dynamic sql</b> error when <b>Database plugin</b> not enabled.</li>
+                <li>Fixed Smart create/append xql action bug.</li>
             </ul>
             <h3>2.4.14</h3>
             <ul>
