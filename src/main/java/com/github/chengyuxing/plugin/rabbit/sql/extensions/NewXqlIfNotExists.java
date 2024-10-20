@@ -46,13 +46,19 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
             }
             var config = xqlConfigManager.getActiveConfig(element);
             var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(project, element);
-            var sqlRefParts = StringUtil.extraSqlReference(sqlName);
+            if (Objects.isNull(xqlFileManager)) {
+                return;
+            }
+            var sqlRefParts = StringUtil.extraSqlReference(sqlName.substring(1));
             var alias = sqlRefParts.getItem1();
             var name = sqlRefParts.getItem2();
             var resource = xqlFileManager.getResource(alias);
 
             // do create xql file
             if (Objects.isNull(resource)) {
+                if (Objects.isNull(config)) {
+                    return;
+                }
                 var configVf = VirtualFileManager.getInstance().findFileByNioPath(config.getConfigPath());
                 var doc = ProjectFileUtil.getDocument(project, configVf);
                 if (Objects.isNull(doc)) {
