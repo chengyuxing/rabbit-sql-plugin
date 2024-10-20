@@ -8,9 +8,12 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
+import com.github.chengyuxing.sql.annotation.CountQuery;
+import com.github.chengyuxing.sql.annotation.XQL;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.tree.TreePath;
@@ -34,32 +37,56 @@ public class SelectOpenedFile extends AnAction {
             return;
         }
 
-        String jvmLangLiteral = PsiUtil.getJvmLangLiteral(element);
-
-        String sqlRef;
+        String sqlRef = null;
         if (element instanceof PsiComment) {
             var commentText = element.getText();
             var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
             var m = pattern.matcher(commentText);
             if (m.matches()) {
                 sqlRef = m.group("name");
-            } else {
-                sqlRef = null;
             }
-        } else if (Objects.nonNull(jvmLangLiteral) && jvmLangLiteral.matches(SQL_NAME_PATTERN)) {
-            sqlRef = jvmLangLiteral;
         } else {
-            sqlRef = null;
+            if (PsiUtil.isParentAXQLMapperInterface(element)) {
+                var mapperAlias = PsiUtil.getXQLMapperAlias(element);
+                if (PsiUtil.isXQLMapperMethodIdentifier(element)) {
+                    var sqlNameMv = PsiUtil.getMethodAnnoValue((PsiIdentifier) element, XQL.class.getName(), "value");
+                    String sqlName;
+                    if (Objects.nonNull(sqlNameMv)) {
+                        sqlName = PsiUtil.getAnnoTextValue(sqlNameMv).trim();
+                        if (sqlName.isEmpty()) {
+                            sqlName = element.getText();
+                        }
+                    } else {
+                        sqlName = element.getText();
+                    }
+                    sqlRef = "&" + mapperAlias + "." + sqlName;
+                } else {
+                    var annoXqlValue = PsiUtil.getIfElementIsAnnotationAttr(element, XQL.class.getName(), "value");
+                    if (Objects.isNull(annoXqlValue)) {
+                        annoXqlValue = PsiUtil.getIfElementIsAnnotationAttr(element, CountQuery.class.getName(), "value");
+                    }
+                    if (Objects.nonNull(annoXqlValue)) {
+                        var sqlName = PsiUtil.getAnnoTextValue(annoXqlValue).trim();
+                        if (!sqlName.isEmpty()) {
+                            sqlRef = "&" + mapperAlias + "." + sqlName;
+                        }
+                    }
+                }
+            } else {
+                String jvmLangLiteral = PsiUtil.getJvmLangLiteral(element);
+                if (Objects.nonNull(jvmLangLiteral) && jvmLangLiteral.matches(SQL_NAME_PATTERN)) {
+                    sqlRef = jvmLangLiteral;
+                }
+            }
         }
-
+        final var finalSqlRef = sqlRef;
         XqlFileManagerToolWindow.getXqlFileManagerPanel(project, panel -> {
             var tree = panel.getTree();
             var root = tree.getModel().getRoot();
 
             XqlTreeNode node = null;
-
-            if (Objects.nonNull(sqlRef) && sqlRef.startsWith("&")) {
-                var sqlRefParts = StringUtil.extraSqlReference(sqlRef.substring(1));
+            if (Objects.nonNull(finalSqlRef) && finalSqlRef.startsWith("&")) {
+                var sqlRefParts = StringUtil.extraSqlReference(finalSqlRef.substring(1));
                 var alias = sqlRefParts.getItem1();
                 var name = sqlRefParts.getItem2();
                 node = SwingUtil.findNode((XqlTreeNode) root, treeNode -> {
@@ -103,7 +130,7 @@ public class SelectOpenedFile extends AnAction {
                                     var childNode = (XqlTreeNode) treeNode.getChildAt(i);
                                     if (childNode.getUserObject() instanceof XqlTreeNodeData) {
                                         var childNodeData = (XqlTreeNodeData) childNode.getUserObject();
-                                        var matchSqlName = childNodeData.getTitle().equals(sqlRef);
+                                        var matchSqlName = childNodeData.getTitle().equals(finalSqlRef);
                                         if (matchSqlName) {
                                             sqlCommentNode.set(childNode);
                                             return true;
