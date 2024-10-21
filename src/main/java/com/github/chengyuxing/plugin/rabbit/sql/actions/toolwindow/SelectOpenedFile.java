@@ -8,6 +8,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.annotation.CountQuery;
 import com.github.chengyuxing.sql.annotation.XQL;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
@@ -60,7 +61,7 @@ public class SelectOpenedFile extends AnAction {
                     } else {
                         sqlName = element.getText();
                     }
-                    sqlRef = "&" + mapperAlias + "." + sqlName;
+                    sqlRef = "&" + XQLFileManager.encodeSqlReference(mapperAlias, sqlName);
                 } else {
                     var annoXqlValue = PsiUtil.getIfElementIsAnnotationAttr(element, XQL.class.getName(), "value");
                     if (Objects.isNull(annoXqlValue)) {
@@ -69,7 +70,7 @@ public class SelectOpenedFile extends AnAction {
                     if (Objects.nonNull(annoXqlValue)) {
                         var sqlName = PsiUtil.getAnnoTextValue(annoXqlValue).trim();
                         if (!sqlName.isEmpty()) {
-                            sqlRef = "&" + mapperAlias + "." + sqlName;
+                            sqlRef = "&" + XQLFileManager.encodeSqlReference(mapperAlias, sqlName);
                         }
                     }
                 }

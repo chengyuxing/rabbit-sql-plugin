@@ -50,7 +50,7 @@ public class ExecuteSqlAction extends AnAction {
             var name = sqlMeta.getItem2();
             var config = sqlMeta.getItem4();
             ApplicationManager.getApplication().invokeLater(() -> {
-                var dialog = new DynamicSqlCalcDialog(alias + "." + name, config, project);
+                var dialog = new DynamicSqlCalcDialog(XQLFileManager.encodeSqlReference(alias, name), config, project);
                 dialog.showAndGet();
             });
         }

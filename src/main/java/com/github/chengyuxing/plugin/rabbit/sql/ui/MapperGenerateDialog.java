@@ -351,13 +351,13 @@ public class MapperGenerateDialog extends DialogWrapper {
                 XQLJavaType.PagedResource.getValue() + " ",
                 XQLJavaType.IPageable.getValue())) {
             var cqName = sqlName + "Count";
-            if (!xqlFileManager.contains(alias + "." + cqName)) {
+            if (!xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
                 cqName = sqlName + "count";
             }
-            if (!xqlFileManager.contains(alias + "." + cqName)) {
+            if (!xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
                 cqName = sqlName + "-count";
             }
-            if (xqlFileManager.contains(alias + "." + cqName)) {
+            if (xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
                 method.setCountQuery(cqName);
             }
         }

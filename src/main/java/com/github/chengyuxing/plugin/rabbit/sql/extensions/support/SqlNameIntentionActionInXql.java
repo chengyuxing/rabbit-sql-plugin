@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.extensions.support;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
@@ -48,7 +49,7 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
                 var xqlFileManager = config.getXqlFileManager();
                 for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
                     if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
-                        var sqlPath = file.getKey() + "." + m.group("name");
+                        var sqlPath = XQLFileManager.encodeSqlReference(file.getKey(),m.group("name"));
                         invokeIfSuccess(project, element, config, sqlPath);
                         return;
                     }
@@ -83,7 +84,7 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
                 for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
                     if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
                         var sqlName = m.group("name");
-                        var sqlPath = file.getKey() + "." + sqlName;
+                        var sqlPath = XQLFileManager.encodeSqlReference(file.getKey(),m.group("name"));
                         if (xqlFileManager.contains(sqlPath)) {
                             intentionTarget = sqlName;
                             return true;

@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.annotation.CountQuery;
 import com.github.chengyuxing.sql.annotation.XQL;
 import com.intellij.openapi.util.TextRange;
@@ -55,7 +56,7 @@ public class XqlNameReferenceContributor extends PsiReferenceContributor {
                 return PsiReference.EMPTY_ARRAY;
             }
             var property = new TextRange(1, sqlName.length() + 1);
-            return new PsiReference[]{new SqlNameReference(element, property, alias + "." + sqlName)};
+            return new PsiReference[]{new SqlNameReference(element, property, XQLFileManager.encodeSqlReference(alias, sqlName))};
         }
         return PsiReference.EMPTY_ARRAY;
     }

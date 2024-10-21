@@ -4,7 +4,6 @@ import com.github.chengyuxing.common.script.Token;
 import com.github.chengyuxing.common.script.TokenType;
 import com.github.chengyuxing.common.script.lexer.FlowControlLexer;
 import com.github.chengyuxing.common.tuple.Pair;
-import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
@@ -29,10 +28,7 @@ public class StringUtil {
      * @return [alias, sqlName]
      */
     public static Pair<String, String> extraSqlReference(String sqlName) {
-        int dotIdx = sqlName.lastIndexOf(".");
-        var alias = sqlName.substring(0, dotIdx).trim();
-        var name = sqlName.substring(dotIdx + 1).trim();
-        return Tuples.of(alias, name);
+        return XQLFileManager.decodeSqlReference(sqlName);
     }
 
     public static void copySqlParams(XQLConfigManager.Config config, String sqlName) {

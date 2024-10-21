@@ -6,6 +6,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -57,7 +58,7 @@ public class NewSQLDialog extends DialogWrapper {
         var data = newSQLForm.getData();
         var name = data.getItem1();
         var desc = data.getItem2();
-        var sqlReference = alias + "." + name;
+        var sqlReference = XQLFileManager.encodeSqlReference(alias, name);
         var xqlFileManager = config.getXqlFileManager();
         if (Objects.nonNull(xqlFileManager)) {
             if (xqlFileManager.contains(sqlReference)) {

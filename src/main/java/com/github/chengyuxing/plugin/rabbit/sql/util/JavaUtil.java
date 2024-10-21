@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.annotation.CountQuery;
 import com.github.chengyuxing.sql.annotation.XQL;
 import com.intellij.openapi.module.Module;
@@ -46,7 +47,7 @@ public class JavaUtil {
                                     if (Objects.nonNull(annoAttr)) {
                                         var cQAttrValue = PsiUtil.getAnnoTextValue(annoAttr);
                                         if (!Objects.equals("", cQAttrValue)) {
-                                            if (Objects.equals(sqlRef, "&" + psiAlias + "." + cQAttrValue)) {
+                                            if (Objects.equals(sqlRef, "&" + XQLFileManager.encodeSqlReference(psiAlias, cQAttrValue))) {
                                                 psiElements.add(annoAttr);
                                             }
                                         }
@@ -57,21 +58,21 @@ public class JavaUtil {
                                         // @XQL(type = Type.insert)
                                         // int addGuest(DataRow dataRow);
                                         if (Objects.equals("", attrValue)) {
-                                            if (Objects.equals(sqlRef, "&" + psiAlias + "." + psiMethod.getName())) {
+                                            if (Objects.equals(sqlRef, "&" + XQLFileManager.encodeSqlReference(psiAlias, psiMethod.getName()))) {
                                                 psiElements.add(psiMethod);
                                             }
 
                                             // @XQL("queryGuests")
                                             // Stream<Guest> queryGuests(Map<String, Object> args);
                                         } else {
-                                            if (Objects.equals(sqlRef, "&" + psiAlias + "." + attrValue)) {
+                                            if (Objects.equals(sqlRef, "&" + XQLFileManager.encodeSqlReference(psiAlias, attrValue))) {
                                                 psiElements.add(psiMethodAnnoAttr);
                                             }
                                         }
 
                                         // List<DataRow> queryGuests(Map<String, Object> args);
                                     } else {
-                                        if (Objects.equals(sqlRef, "&" + psiAlias + "." + psiMethod.getName())) {
+                                        if (Objects.equals(sqlRef, "&" + XQLFileManager.encodeSqlReference(psiAlias, psiMethod.getName()))) {
                                             psiElements.add(psiMethod);
                                         }
                                     }

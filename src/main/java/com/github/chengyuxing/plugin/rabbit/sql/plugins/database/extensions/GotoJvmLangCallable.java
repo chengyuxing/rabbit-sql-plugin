@@ -6,6 +6,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.KotlinUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.JavaUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
@@ -59,7 +60,7 @@ public class GotoJvmLangCallable extends RelatedItemLineMarkerProvider {
 
                 for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
                     if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
-                        var sqlPath = file.getKey() + "." + sqlName;
+                        var sqlPath = XQLFileManager.encodeSqlReference(file.getKey(), sqlName);
                         if (xqlFileManager.contains(sqlPath)) {
                             final var sqlRef = "&" + sqlPath;
                             try {
