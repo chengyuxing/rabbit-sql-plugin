@@ -9,5 +9,5 @@
  @@@
 #end
  Typing "xql" keyword to get suggestions,
- e.g: "xql:new" will create a sql fragment.
+ e.g. "xql:new" will create a sql fragment.
 */
