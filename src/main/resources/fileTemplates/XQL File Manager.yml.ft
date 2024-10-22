@@ -1,8 +1,8 @@
-# Created by IntelliJ IDEA Rabbit-SQL plugin.
+# Created by IntelliJ IDEA Rabbit SQL plugin.
 # User: $USER
 # Date: $DATE
 # Time: $TIME
-# https://github.com/chengyuxing/rabbit-sql/blob/master/XQL_FILE_MANAGER.md
+# https://github.com/chengyuxing/rabbit-sql/tree/master#xqlfilemanager-1
 
 files:
 #  foo: !path [ main, a.xql ]

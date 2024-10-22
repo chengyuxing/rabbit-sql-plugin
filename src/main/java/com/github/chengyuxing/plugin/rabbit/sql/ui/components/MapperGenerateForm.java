@@ -6,7 +6,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.CheckboxCellRenderer
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLJavaType;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLMapperConfig;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.ReturnTypesDialog;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.ColorfulCellRenderer;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.XQLMethodCellRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.SqlTypePlaceHolder;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -381,8 +381,8 @@ public class MapperGenerateForm extends JPanel {
                     };
                 }).toArray(i -> new Object[i][6]);
         model.setDataVector(tbody, thead);
-        table.getColumnModel().getColumn(0).setCellRenderer(new ColorfulCellRenderer(HtmlUtil.Color.HIGHLIGHT.getCode()));
-        table.getColumnModel().getColumn(1).setCellRenderer(new ColorfulCellRenderer(HtmlUtil.Color.FUNCTION.getCode()));
+        table.getColumnModel().getColumn(0).setCellRenderer(new XQLMethodCellRenderer(xqlFileManager.getResource(alias), HtmlUtil.Color.HIGHLIGHT.getCode()));
+        table.getColumnModel().getColumn(1).setCellRenderer(new XQLMethodCellRenderer(xqlFileManager.getResource(alias), HtmlUtil.Color.FUNCTION.getCode()));
         table.getColumnModel().getColumn(2).setCellEditor(buildSelector(false, SQL_TYPES));
         table.getColumnModel().getColumn(2).setCellRenderer(new SqlTypePlaceHolder());
         table.getColumnModel().getColumn(3).setCellEditor(buildSelector(true, PARAM_TYPES));
