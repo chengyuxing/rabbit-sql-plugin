@@ -27,9 +27,9 @@ import $entityImport;
 #end
 #end
 
-// Rabbit-SQL plugin - Your imports  //CODE-BEGIN:imports
+// Rabbit SQL plugin - Your imports  //CODE-BEGIN:imports
 $userImports
-// Rabbit-SQL plugin - End of your imports  //CODE-END:imports
+// Rabbit SQL plugin - End of your imports  //CODE-END:imports
 
 #if($description != "")
 /**
@@ -41,9 +41,9 @@ $userImports
 #end
 @XQLMapper("$mapperAlias")
 public interface ${mapperInterfaceName} {
-    // Rabbit-SQL plugin - Your methods  //CODE-BEGIN:methods
+    // Rabbit SQL plugin - Your methods  //CODE-BEGIN:methods
 $userMethods
-    // Rabbit-SQL plugin - End of your methods  //CODE-END:methods
+    // Rabbit SQL plugin - End of your methods  //CODE-END:methods
 
 #foreach($method in $methods)
 #if($method.enable)
