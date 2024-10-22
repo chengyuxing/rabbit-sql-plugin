@@ -325,7 +325,7 @@ public class MapperGenerateDialog extends DialogWrapper {
         var yaml = new Yaml();
         try {
             var result = yaml.dumpAsMap(config);
-            result = "# Rabbit-SQL-Plugin - XQL mapper generate configuration - DO NOT MODIFY\n\n" + result;
+            result = "# Rabbit SQL plugin - XQL mapper generate configuration - DO NOT MODIFY\n\n" + result;
             Files.writeString(configPath, result, StandardCharsets.UTF_8);
         } catch (IOException e) {
             log.warn(e);
