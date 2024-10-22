@@ -21,13 +21,13 @@
     <p>Easily to use <a href="https://github.com/chengyuxing/rabbit-sql">rabbit-sql</a> and <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQL</a> file.</p>
     <h2>Features</h2>
     <ul>
-        <li>Support the identification of xql(<code>.xql</code>) file type.</li>
-        <li>Support dynamic sql expression script <b>live templates</b>(e.g: <code>xql:if</code>).</li>
-        <li>Support intention action <kbd>Execute Dynamic sql</kbd> and <kbd>Copy sql definition</kbd> by sql name(e.g: <code>&my.users</code>).</li>
-        <li>Support quick look sql definition by sql name(e.g: <code>&my.users</code>).</li>
-        <li>Support <n>generate mapper interface</n> by registered xql file.</li>
-        <li>Support java and xql file references to navigate each other.</li>
-        <li>Support sql name suggestions auto complete in java string literal where start with <code>"&"</code>.</li>
+        <li>The identification of xql(<code>.xql</code>) file type.</li>
+        <li>Dynamic sql expression script <b>live templates</b>(e.g: <code>xql:if</code>).</li>
+        <li>Intention action <kbd>Execute Dynamic sql</kbd> and <kbd>Copy sql definition</kbd> by sql name(e.g: <code>&my.users</code>).</li>
+        <li>Quick look sql definition by sql name(e.g: <code>&my.users</code>).</li>
+        <li><n>Generate mapper interface</n> by registered xql file.</li>
+        <li>Java and xql file references to navigate each other.</li>
+        <li>Sql name suggestions auto complete in java string literal where start with <code>"&"</code>.</li>
         <li>Toolwindow:
             <ul>
                 <li>Structured tree view.</li>
@@ -46,7 +46,7 @@
     <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.11.6+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 2.11.8+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -54,7 +54,7 @@
     </ol>
     <h3>Other</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 7.12.6+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 7.12.7+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
