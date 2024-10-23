@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
+import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.annotation.CountQuery;
 import com.github.chengyuxing.sql.annotation.XQL;
@@ -8,7 +9,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiJavaTokenImpl;
 import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -27,8 +27,8 @@ public class JavaUtil {
         return null;
     }
 
-    public static List<PsiElement> collectSqlRefElements(Project project, Module module, String sqlRef) {
-        return FilenameIndex.getAllFilesByExt(project, "java", GlobalSearchScope.moduleScope(module))
+    public static List<PsiElement> collectSqlRefElements(Project project, Module module, String... sqlRefs) {
+        return FilenameIndex.getAllFilesByExt(project, "java", module.getModuleProductionSourceScope())
                 .stream()
                 .filter(vf -> vf != null && vf.isValid())
                 .map(vf -> PsiManager.getInstance(project).findFile(vf))
@@ -43,54 +43,57 @@ public class JavaUtil {
                             var psiMethods = psiClass.getMethods();
                             for (var psiMethod : psiMethods) {
                                 if (PsiUtil.isXQLMapperMethod(psiMethod)) {
-                                    var annoAttr = PsiUtil.getMethodAnnoValue(psiMethod, CountQuery.class.getName(), "value");
-                                    if (Objects.nonNull(annoAttr)) {
-                                        var cQAttrValue = PsiUtil.getAnnoTextValue(annoAttr);
-                                        if (!Objects.equals("", cQAttrValue)) {
-                                            if (Objects.equals(sqlRef, "&" + XQLFileManager.encodeSqlReference(psiAlias, cQAttrValue))) {
-                                                psiElements.add(annoAttr);
+                                    for (var sqlRef : sqlRefs) {
+                                        var annoAttr = PsiUtil.getMethodAnnoValue(psiMethod, CountQuery.class.getName(), "value");
+                                        if (Objects.nonNull(annoAttr)) {
+                                            var cQAttrValue = PsiUtil.getAnnoTextValue(annoAttr);
+                                            if (!Objects.equals("", cQAttrValue)) {
+                                                if (Objects.equals(sqlRef, "&" + XQLFileManager.encodeSqlReference(psiAlias, cQAttrValue))) {
+                                                    psiElements.add(annoAttr);
+                                                }
                                             }
                                         }
-                                    }
-                                    var psiMethodAnnoAttr = PsiUtil.getMethodAnnoValue(psiMethod, XQL.class.getName(), "value");
-                                    if (Objects.nonNull(psiMethodAnnoAttr)) {
-                                        var attrValue = PsiUtil.getAnnoTextValue(psiMethodAnnoAttr);
-                                        // @XQL(type = Type.insert)
-                                        // int addGuest(DataRow dataRow);
-                                        if (Objects.equals("", attrValue)) {
+                                        var psiMethodAnnoAttr = PsiUtil.getMethodAnnoValue(psiMethod, XQL.class.getName(), "value");
+                                        if (Objects.nonNull(psiMethodAnnoAttr)) {
+                                            var attrValue = PsiUtil.getAnnoTextValue(psiMethodAnnoAttr);
+                                            // @XQL(type = Type.insert)
+                                            // int addGuest(DataRow dataRow);
+                                            if (Objects.equals("", attrValue)) {
+                                                if (Objects.equals(sqlRef, "&" + XQLFileManager.encodeSqlReference(psiAlias, psiMethod.getName()))) {
+                                                    psiElements.add(psiMethod);
+                                                }
+
+                                                // @XQL("queryGuests")
+                                                // Stream<Guest> queryGuests(Map<String, Object> args);
+                                            } else {
+                                                if (Objects.equals(sqlRef, "&" + XQLFileManager.encodeSqlReference(psiAlias, attrValue))) {
+                                                    psiElements.add(psiMethodAnnoAttr);
+                                                }
+                                            }
+
+                                            // List<DataRow> queryGuests(Map<String, Object> args);
+                                        } else {
                                             if (Objects.equals(sqlRef, "&" + XQLFileManager.encodeSqlReference(psiAlias, psiMethod.getName()))) {
                                                 psiElements.add(psiMethod);
                                             }
-
-                                            // @XQL("queryGuests")
-                                            // Stream<Guest> queryGuests(Map<String, Object> args);
-                                        } else {
-                                            if (Objects.equals(sqlRef, "&" + XQLFileManager.encodeSqlReference(psiAlias, attrValue))) {
-                                                psiElements.add(psiMethodAnnoAttr);
-                                            }
-                                        }
-
-                                        // List<DataRow> queryGuests(Map<String, Object> args);
-                                    } else {
-                                        if (Objects.equals(sqlRef, "&" + XQLFileManager.encodeSqlReference(psiAlias, psiMethod.getName()))) {
-                                            psiElements.add(psiMethod);
                                         }
                                     }
                                 }
                             }
+                        } else {
+                            psi.accept(new JavaRecursiveElementWalkingVisitor() {
+                                @Override
+                                public void visitLiteralExpression(@NotNull PsiLiteralExpression expression) {
+                                    String v = expression.getValue() instanceof String ? (String) expression.getValue() : null;
+                                    if (Objects.nonNull(v) && StringUtil.equalsAny(v, sqlRefs)) {
+                                        psiElements.add(expression);
+                                    }
+                                    // unnecessary to do that anymore.
+                                    // super.visitElement(expression);
+                                }
+                            });
                         }
                     }
-                    psi.accept(new JavaRecursiveElementWalkingVisitor() {
-                        @Override
-                        public void visitLiteralExpression(@NotNull PsiLiteralExpression expression) {
-                            String v = expression.getValue() instanceof String ? (String) expression.getValue() : null;
-                            if (v != null && v.equals(sqlRef)) {
-                                psiElements.add(expression);
-                            }
-                            // unnecessary to do that anymore.
-                            // super.visitElement(expression);
-                        }
-                    });
                     return psiElements;
                 }).flatMap(Collection::stream)
                 .toList();
