@@ -308,6 +308,7 @@ public final class XQLConfigManager {
             ProgressManager.getInstance().run(new Task.Backgroundable(project, "Loading XQL files.", true) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
+                    ProgressManager.checkCanceled();
                     indicator.setIndeterminate(true);
                     var messages = initXqlFileManager();
                     if (silent) {

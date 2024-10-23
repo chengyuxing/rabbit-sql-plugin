@@ -35,7 +35,10 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
         if (Objects.isNull(sqlRef)) {
             return null;
         }
-        if (!sqlRef.matches(SQL_NAME_PATTERN)) {
+        if (PsiUtil.isParentAXQLMapperInterface(originalElement)) {
+            if (sqlRef.matches(SQL_NAME_PATTERN)) {
+                return null;
+            }
             sqlRef = getSqlRefOnMapperMethod(originalElement);
             if (Objects.isNull(sqlRef)) {
                 return null;
