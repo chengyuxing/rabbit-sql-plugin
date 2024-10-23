@@ -74,6 +74,7 @@
             <ul>
                 <li>Support <code>rabbit-sql 7.12.7+</code> and <code>rabbit-sql-spring-boot-starter 2.11.8+</code></li>
                 <li><b>Generate Interface Mapper</b> Add show sql description tooltip.</li>
+                <li><b>Execute Dynamic SQL</b> supports actions for prepare sql preview.</li>
                 <li>Some optimized.</li>
             </ul>
             <h3>2.4.15</h3>

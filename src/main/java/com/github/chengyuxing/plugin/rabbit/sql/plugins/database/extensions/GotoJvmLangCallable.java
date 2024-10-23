@@ -6,6 +6,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.KotlinUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.JavaUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
@@ -53,60 +54,56 @@ public class GotoJvmLangCallable extends RelatedItemLineMarkerProvider {
                 var project = xqlPsiElement.getProject();
                 var module = ModuleUtil.findModuleForPsiElement(xqlPsiElement);
                 if (module == null) return;
-
                 var xqlFileManager = XQLConfigManager.getInstance().getActiveXqlFileManager(project, xqlPsiElement);
                 if (Objects.isNull(xqlFileManager)) return;
+                try {
+                    var sqlRefs = xqlFileManager.getFiles()
+                            .entrySet()
+                            .stream()
+                            .filter(file -> file.getValue().equals(xqlVf.toNioPath().toUri().toString()))
+                            .map(file -> XQLFileManager.encodeSqlReference(file.getKey(), sqlName))
+                            .filter(xqlFileManager::contains)
+                            .map(sqlPath -> "&" + sqlPath)
+                            .toArray(String[]::new);
+                    var foundedJava = JavaUtil.collectSqlRefElements(project, module, sqlRefs);
+                    var founded = new ArrayList<>(foundedJava);
 
-                for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
-                    if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
-                        var sqlPath = file.getKey() + "." + sqlName;
-                        if (xqlFileManager.contains(sqlPath)) {
-                            final var sqlRef = "&" + sqlPath;
-                            try {
-                                ProgressManager.checkCanceled();
-
-                                var foundedJava = JavaUtil.collectSqlRefElements(project, module, sqlRef);
-                                var founded = new ArrayList<>(foundedJava);
-                                if (FeatureChecker.isPluginEnabled(FeatureChecker.KOTLIN_PLUGIN_ID)) {
-                                    var foundedKt = KotlinUtil.collectSqlRefElements(project, module, sqlRef);
-                                    founded.addAll(foundedKt);
-                                }
-
-                                if (!founded.isEmpty()) {
-                                    var markInfo = NavigationGutterIconBuilder.create(AllIcons.Actions.DiagramDiff)
-                                            .setTargets(founded)
-                                            .setCellRenderer(new DefaultPsiElementCellRenderer() {
-                                                @Override
-                                                protected Icon getIcon(PsiElement element) {
-                                                    return AllIcons.Nodes.Class;
-                                                }
-
-                                                @Override
-                                                public String getContainerText(PsiElement element, String name) {
-                                                    var className = PsiUtil.getClassName(element);
-                                                    if (className != null) {
-                                                        var method = PsiUtil.findMethod(element);
-                                                        if (!method.isEmpty()) {
-                                                            method = "#" + method;
-                                                        }
-                                                        return className + method;
-                                                    }
-                                                    return super.getContainerText(element, name);
-                                                }
-                                            })
-                                            .setPopupTitle("Choose reference of sql name \"" + sqlName + "\" (" + founded.size() + " founded)")
-                                            .setTooltipText("Where I am (" + founded.size() + " locations)!")
-                                            .createLineMarkerInfo(xqlPsiElement);
-                                    result.add(markInfo);
-                                }
-                            } catch (Exception e) {
-                                if (e instanceof ControlFlowException) {
-                                    throw e;
-                                }
-                                log.warn(e);
-                            }
-                        }
+                    if (FeatureChecker.isPluginEnabled(FeatureChecker.KOTLIN_PLUGIN_ID)) {
+                        var foundedKt = KotlinUtil.collectSqlRefElements(project, module, sqlRefs);
+                        founded.addAll(foundedKt);
                     }
+
+                    if (!founded.isEmpty()) {
+                        var markInfo = NavigationGutterIconBuilder.create(AllIcons.Actions.DiagramDiff)
+                                .setTargets(founded)
+                                .setCellRenderer(new DefaultPsiElementCellRenderer() {
+                                    @Override
+                                    protected Icon getIcon(PsiElement element) {
+                                        return AllIcons.Nodes.Class;
+                                    }
+
+                                    @Override
+                                    public String getContainerText(PsiElement element, String name) {
+                                        var className = PsiUtil.getClassName(element);
+                                        if (className != null) {
+                                            var method = PsiUtil.findMethod(element);
+                                            if (!method.isEmpty()) {
+                                                method = "#" + method;
+                                            }
+                                            return className + method;
+                                        }
+                                        return super.getContainerText(element, name);
+                                    }
+                                }).setPopupTitle("Choose reference of sql name \"" + sqlName + "\" (" + founded.size() + " founded)")
+                                .setTooltipText("Where I am (" + founded.size() + " locations)!")
+                                .createLineMarkerInfo(xqlPsiElement);
+                        result.add(markInfo);
+                    }
+                } catch (Exception e) {
+                    if (e instanceof ControlFlowException) {
+                        throw e;
+                    }
+                    log.warn(e);
                 }
             }
         }

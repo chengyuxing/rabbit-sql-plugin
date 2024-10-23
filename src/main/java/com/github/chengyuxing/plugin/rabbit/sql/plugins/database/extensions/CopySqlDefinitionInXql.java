@@ -5,11 +5,9 @@ import com.github.chengyuxing.plugin.rabbit.sql.extensions.support.SqlNameIntent
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
 import com.intellij.icons.AllIcons;
-import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
-import com.intellij.sql.dialects.generic.GenericDialect;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

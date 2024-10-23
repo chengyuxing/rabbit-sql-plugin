@@ -1,12 +1,12 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin;
 
+import com.github.chengyuxing.common.utils.StringUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.structuralsearch.visitor.KotlinRecursiveElementWalkingVisitor;
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
@@ -36,8 +36,8 @@ public class KotlinUtil {
         return null;
     }
 
-    public static List<PsiElement> collectSqlRefElements(Project project, Module module, String sqlRef) {
-        return FilenameIndex.getAllFilesByExt(project, "kt", GlobalSearchScope.moduleScope(module))
+    public static List<PsiElement> collectSqlRefElements(Project project, Module module, String... sqlRefs) {
+        return FilenameIndex.getAllFilesByExt(project, "kt", module.getModuleRuntimeScope(false))
                 .stream()
                 .filter(vf -> vf != null && vf.isValid())
                 .map(vf -> PsiManager.getInstance(project).findFile(vf))
@@ -48,7 +48,7 @@ public class KotlinUtil {
                         @Override
                         public void visitLiteralStringTemplateEntry(@NotNull KtLiteralStringTemplateEntry entry) {
                             var v = entry.getText();
-                            if (Objects.nonNull(v) && v.equals(sqlRef)) {
+                            if (Objects.nonNull(v) && StringUtil.equalsAny(v, sqlRefs)) {
                                 psiElements.add(entry);
                             }
                         }
