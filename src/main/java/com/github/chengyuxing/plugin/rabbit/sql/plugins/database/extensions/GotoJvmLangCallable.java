@@ -15,7 +15,6 @@ import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 
