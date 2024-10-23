@@ -14,7 +14,6 @@ import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
@@ -34,9 +33,11 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement sourceElement, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
-        var sqlRef = handlerSqlRef(sourceElement);
-        if (Objects.nonNull(sqlRef)) {
-            addLineMarker(sqlRef.getItem1(), sqlRef.getItem2(), result);
+        if (!PsiUtil.isParentAXQLMapperInterface(sourceElement)) {
+            var sqlRef = handlerSqlRef(sourceElement);
+            if (Objects.nonNull(sqlRef)) {
+                addLineMarker(sqlRef.getItem1(), sqlRef.getItem2(), result);
+            }
         }
         var sqlMapperRef = handlerMapperMethodSqlRef(sourceElement);
         if (Objects.nonNull(sqlMapperRef)) {
@@ -70,7 +71,6 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
                         Project project = sourceElement.getProject();
                         var xqlFile = PsiManager.getInstance(project).findFile(vf);
                         if (xqlFile == null) return;
-                        ProgressManager.checkCanceled();
                         xqlFile.acceptChildren(new PsiRecursiveElementVisitor() {
                             @Override
                             public void visitElement(@NotNull PsiElement element) {

@@ -89,7 +89,7 @@ public class ProjectFileUtil {
     }
 
     public static void createXqlConfigByTemplate(Project project, Path absFilename, Runnable then) {
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Create XQL file manager.", false) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Creating XQL file manager.", false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 indicator.setIndeterminate(true);
