@@ -183,7 +183,7 @@ public class ParametersForm extends JPanel {
         //======== this ========
         setBorder(BorderFactory.createEmptyBorder());
         setMinimumSize(new Dimension(58, 22));
-        setPreferredSize(new Dimension(470, 115));
+        setPreferredSize(new Dimension(520, 135));
         setLayout(new MigLayout(
                 "insets 0,hidemode 3",
                 // columns
