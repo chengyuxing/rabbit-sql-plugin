@@ -1,6 +1,5 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.yml;
 
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
@@ -22,7 +21,6 @@ public class YmlUtil {
         if (Objects.isNull(ymlPsi)) {
             return Map.of();
         }
-        ProgressManager.checkCanceled();
         ymlPsi.acceptChildren(new YamlRecursivePsiElementVisitor() {
             @Override
             public void visitAnchor(@NotNull YAMLAnchor anchor) {

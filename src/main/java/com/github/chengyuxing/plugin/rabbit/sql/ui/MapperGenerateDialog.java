@@ -160,7 +160,7 @@ public class MapperGenerateDialog extends DialogWrapper {
 
         var data = myForm.getData();
 
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Generate interface mapper.", false) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Generating interface mapper.", false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 indicator.setIndeterminate(true);

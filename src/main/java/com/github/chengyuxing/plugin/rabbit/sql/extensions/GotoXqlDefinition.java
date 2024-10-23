@@ -14,7 +14,6 @@ import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
@@ -34,15 +33,16 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement sourceElement, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
-        var sqlRef = handlerSqlRef(sourceElement);
-        if (Objects.nonNull(sqlRef)) {
-            addLineMarker(sqlRef.getItem1(), sqlRef.getItem2(), result);
+        if (!PsiUtil.isParentAXQLMapperInterface(sourceElement)) {
+            var sqlRef = handlerSqlRef(sourceElement);
+            if (Objects.nonNull(sqlRef)) {
+                addLineMarker(sqlRef.getItem1(), sqlRef.getItem2(), result);
+            }
         }
         var sqlMapperRef = handlerMapperMethodSqlRef(sourceElement);
         if (Objects.nonNull(sqlMapperRef)) {
             addLineMarker(sqlMapperRef.getItem1(), sqlMapperRef.getItem2(), result);
         }
-
         var sqlCqRef = handlerMapperCountQuerySqlRef(sourceElement);
         if (Objects.nonNull(sqlCqRef)) {
             addLineMarker(sqlCqRef.getItem1(), sqlCqRef.getItem2(), result);
@@ -70,12 +70,10 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
                         Project project = sourceElement.getProject();
                         var xqlFile = PsiManager.getInstance(project).findFile(vf);
                         if (xqlFile == null) return;
-                        ProgressManager.checkCanceled();
                         xqlFile.acceptChildren(new PsiRecursiveElementVisitor() {
                             @Override
                             public void visitElement(@NotNull PsiElement element) {
-                                if (element instanceof PsiComment) {
-                                    var comment = (PsiComment) element;
+                                if (element instanceof PsiComment comment) {
                                     if (comment.getText().matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/")) {
                                         var markInfo = NavigationGutterIconBuilder.create(XqlIcons.XQL_FILE)
                                                 .setTarget(comment)
@@ -148,10 +146,9 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
     }
 
     protected Pair<String, PsiElement> handlerSqlRef(PsiElement sourceElement) {
-        if (!(sourceElement instanceof PsiJavaTokenImpl) || !(sourceElement.getParent() instanceof PsiLiteralExpression)) {
+        if (!(sourceElement instanceof PsiJavaTokenImpl) || !(sourceElement.getParent() instanceof PsiLiteralExpression literalExpression)) {
             return null;
         }
-        var literalExpression = (PsiLiteralExpression) sourceElement.getParent();
         return literalExpression.getValue() instanceof String ? Pair.of((String) literalExpression.getValue(), sourceElement) : null;
     }
 }

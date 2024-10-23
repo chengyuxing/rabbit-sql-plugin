@@ -10,7 +10,6 @@ import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -31,12 +30,10 @@ public class PsiUtil {
 
     public static void navigate2xqlFile(PsiElement psi, String sqlFragmentName) {
         if (Objects.nonNull(psi)) {
-            ProgressManager.checkCanceled();
             psi.acceptChildren(new PsiRecursiveElementVisitor() {
                 @Override
                 public void visitElement(@NotNull PsiElement element) {
-                    if (element instanceof PsiComment) {
-                        var comment = (PsiComment) element;
+                    if (element instanceof PsiComment comment) {
                         if (comment.getText().matches("/\\*\\s*\\[\\s*" + sqlFragmentName + "\\s*]\\s*\\*/")) {
                             var nav = comment.getNavigationElement();
                             NavigationUtil.activateFileWithPsiElement(nav);
@@ -145,7 +142,7 @@ public class PsiUtil {
     }
 
     public static boolean isParentAXQLMapperInterface(PsiElement chileElement) {
-        var psiClass = PsiTreeUtil.getParentOfType(chileElement, PsiClass.class);
+        var psiClass = com.intellij.psi.util.PsiUtil.getTopLevelClass(chileElement);
         if (Objects.isNull(psiClass)) {
             return false;
         }
@@ -171,7 +168,7 @@ public class PsiUtil {
     }
 
     public static String getXQLMapperAlias(PsiElement childElement) {
-        var psiClass = PsiTreeUtil.getParentOfType(childElement, PsiClass.class);
+        var psiClass = com.intellij.psi.util.PsiUtil.getTopLevelClass(childElement);
         if (Objects.isNull(psiClass)) {
             return null;
         }

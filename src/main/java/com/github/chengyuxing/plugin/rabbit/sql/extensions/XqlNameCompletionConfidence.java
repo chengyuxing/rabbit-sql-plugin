@@ -42,10 +42,9 @@ public class XqlNameCompletionConfidence extends CompletionConfidence {
     }
 
     protected String handlerSqlRef(PsiElement sourceElement) {
-        if (!(sourceElement instanceof PsiJavaTokenImpl) || !(sourceElement.getParent() instanceof PsiLiteralExpression)) {
+        if (!(sourceElement instanceof PsiJavaTokenImpl) || !(sourceElement.getParent() instanceof PsiLiteralExpression literalExpression)) {
             return null;
         }
-        var literalExpression = (PsiLiteralExpression) sourceElement.getParent();
         return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
     }
 }

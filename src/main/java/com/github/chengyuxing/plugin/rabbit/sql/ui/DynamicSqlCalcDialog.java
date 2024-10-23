@@ -11,23 +11,29 @@ import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.database.DatabaseUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ParametersForm;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.IconListCellRenderer;
+import com.github.chengyuxing.plugin.rabbit.sql.util.AnActionWrapper;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.JSON;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.FixedSizeButton;
+import com.intellij.openapi.ui.OptionAction;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
+import java.util.function.BiConsumer;
 
 import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 
@@ -59,6 +65,122 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         setOKButtonText("Execute");
         setCancelButtonText("Close");
         init();
+    }
+
+    @Override
+    protected Action @NotNull [] createActions() {
+        var group = new ActionGroup() {
+            @Override
+            public AnAction @NotNull [] getChildren(@Nullable AnActionEvent anActionEvent) {
+                return new AnAction[]{
+                        getPreviewAction(),
+                        new Separator(),
+                        getPrepareNamedParametersSQLAction(),
+                        getPreparePositionalParametersAction(),
+                };
+            }
+        };
+        return new Action[]{
+                new OptionAction() {
+                    @Override
+                    public Action @NotNull [] getOptions() {
+                        return new Action[]{new AnActionWrapper(group)};
+                    }
+
+                    @Override
+                    public Object getValue(String key) {
+                        return getOKAction().getValue(key);
+                    }
+
+                    @Override
+                    public void putValue(String key, Object value) {
+                        getOKAction().putValue(key, value);
+                    }
+
+                    @Override
+                    public void setEnabled(boolean b) {
+                        setOKActionEnabled(b);
+                    }
+
+                    @Override
+                    public boolean isEnabled() {
+                        return getOKAction().isEnabled();
+                    }
+
+                    @Override
+                    public void addPropertyChangeListener(PropertyChangeListener listener) {
+                        getOKAction().addPropertyChangeListener(listener);
+                    }
+
+                    @Override
+                    public void removePropertyChangeListener(PropertyChangeListener listener) {
+                        getOKAction().removePropertyChangeListener(listener);
+                    }
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        getOKAction().actionPerformed(e);
+                    }
+                },
+                getCancelAction(),
+                getHelpAction()
+        };
+    }
+
+    private @NotNull AnAction getPreviewAction() {
+        return new AnAction("Execute Test Preview", "Displays sql parsed for testing only.", AllIcons.Diff.MagicResolve) {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
+                parseDynamicSQL((sql, args) -> {
+                    var rawSql = config.getSqlGenerator().generateSql(sql, args);
+                    rawSql = SqlUtil.repairSyntaxError(rawSql);
+                    parametersForm.setSqlHtml(HtmlUtil.highlightSql(rawSql));
+                    autoHeight(rawSql);
+                });
+            }
+
+            @Override
+            public @NotNull ActionUpdateThread getActionUpdateThread() {
+                return ActionUpdateThread.EDT;
+            }
+        };
+    }
+
+    private @NotNull AnAction getPreparePositionalParametersAction() {
+        return new AnAction("Prepare Positional Parameters SQL", "Displays the actual prepared sql parsed for running in database.", AllIcons.Actions.Compile) {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
+                parseDynamicSQL((sql, args) -> {
+                    var preparedSQL = config.getSqlGenerator().generatePreparedSql(sql, args).getResultSql();
+                    preparedSQL = SqlUtil.repairSyntaxError(preparedSQL);
+                    parametersForm.setSqlHtml(HtmlUtil.highlightSql(preparedSQL));
+                    autoHeight(preparedSQL);
+                });
+            }
+
+            @Override
+            public @NotNull ActionUpdateThread getActionUpdateThread() {
+                return ActionUpdateThread.EDT;
+            }
+        };
+    }
+
+    private @NotNull AnAction getPrepareNamedParametersSQLAction() {
+        return new AnAction("Prepare Named Parameters SQL", "Displays the actual sql parsed for running in production.", AllIcons.Actions.Compile) {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
+                parseDynamicSQL((sql, args) -> {
+                    sql = SqlUtil.repairSyntaxError(sql);
+                    parametersForm.setSqlHtml(HtmlUtil.highlightSql(sql));
+                    autoHeight(sql);
+                });
+            }
+
+            @Override
+            public @NotNull ActionUpdateThread getActionUpdateThread() {
+                return ActionUpdateThread.EDT;
+            }
+        };
     }
 
     @Override
@@ -134,6 +256,29 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
 
     @Override
     protected void doOKAction() {
+        parseDynamicSQL((sql, args) -> {
+            var rawSql = config.getSqlGenerator().generateSql(sql, args);
+            rawSql = SqlUtil.repairSyntaxError(rawSql);
+            // execute sql
+            var idx = datasourceList.getSelectedIndex();
+            if (isDatabasePluginEnabled) {
+                var resource = DatasourceManager.getInstance().getResource(project);
+                if (idx > 0) {
+                    var db = datasourceList.getItemAt(idx);
+                    var executed = DatabaseUtil.executeSQL(rawSql, resource, db);
+                    if (executed) {
+                        dispose();
+                        return;
+                    }
+                }
+                resource.setSelected(null);
+            }
+            parametersForm.setSqlHtml(HtmlUtil.highlightSql(rawSql));
+            autoHeight(rawSql);
+        });
+    }
+
+    private void parseDynamicSQL(BiConsumer<String, Map<String, Object>> then) {
         var data = parametersForm.getData();
         if (data.getItem2().isEmpty()) {
             try {
@@ -145,27 +290,9 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                 var forVars = result.getItem2();
                 // generate raw sql.
                 args.put(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY, forVars);
-                var rawSql = config.getSqlGenerator()
-                        .generateSql(finalSql, args);
-                rawSql = SqlUtil.repairSyntaxError(rawSql);
-                // execute sql
-                var idx = datasourceList.getSelectedIndex();
-                if (isDatabasePluginEnabled) {
-                    var resource = DatasourceManager.getInstance().getResource(project);
-                    if (idx > 0) {
-                        var db = datasourceList.getItemAt(idx);
-                        var executed = DatabaseUtil.executeSQL(rawSql, resource, db);
-                        if (executed) {
-                            dispose();
-                            return;
-                        }
-                    }
-                    resource.setSelected(null);
-                }
-                parametersForm.setSqlHtml(HtmlUtil.highlightSql(rawSql));
-                autoHeight(rawSql);
-            } catch (Exception e) {
-                var errors = ExceptionUtil.getCauseMessages(e);
+                then.accept(finalSql, args);
+            } catch (Exception ex) {
+                var errors = ExceptionUtil.getCauseMessages(ex);
                 var msg = String.join(NEW_LINE, errors);
                 parametersForm.setSqlHtml(HtmlUtil.pre(msg, HtmlUtil.Color.DANGER));
                 autoHeight(msg);

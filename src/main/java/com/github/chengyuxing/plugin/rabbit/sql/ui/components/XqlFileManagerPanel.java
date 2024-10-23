@@ -343,7 +343,6 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                 e.getPresentation().setText("Copy Path/Reference...");
             }
         };
-
         return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
             @Override
             public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
@@ -403,7 +402,6 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                 e.getPresentation().setText("Copy Name/Definition...");
             }
         };
-
         return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
             @Override
             public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {

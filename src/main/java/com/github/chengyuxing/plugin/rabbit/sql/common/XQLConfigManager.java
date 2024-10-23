@@ -308,6 +308,7 @@ public final class XQLConfigManager {
             ProgressManager.getInstance().run(new Task.Backgroundable(project, "Loading XQL files.", true) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
+                    ProgressManager.checkCanceled();
                     indicator.setIndeterminate(true);
                     var messages = initXqlFileManager();
                     if (silent) {
@@ -423,8 +424,8 @@ public final class XQLConfigManager {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof Config)) return false;
-            var config = (Config) o;
+            if (!(o instanceof Config config)) return false;
+
             return Objects.equals(getProject(), config.getProject()) && getModulePath().equals(config.getModulePath()) && Objects.equals(getConfigPath(), config.getConfigPath());
         }
 

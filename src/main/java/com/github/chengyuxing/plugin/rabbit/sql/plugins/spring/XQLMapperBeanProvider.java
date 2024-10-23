@@ -23,7 +23,7 @@ public class XQLMapperBeanProvider extends SpringImplicitBeansProviderBase {
 
     @Override
     protected Collection<CommonSpringBean> getImplicitBeans(@NotNull Module module) {
-        var moduleJavas = FilenameIndex.getAllFilesByExt(module.getProject(), "java", module.getModuleRuntimeScope(false));
+        var moduleJavas = FilenameIndex.getAllFilesByExt(module.getProject(), "java", module.getModuleProductionSourceScope());
         var mapperScanClassOptional = moduleJavas.stream()
                 .map(vf -> PsiManager.getInstance(module.getProject()).findFile(vf))
                 .filter(Objects::nonNull)
@@ -47,8 +47,7 @@ public class XQLMapperBeanProvider extends SpringImplicitBeansProviderBase {
         var anno = mapperScanClass.getAnnotation(MAPPER_SCAN_FQN);
         if (Objects.nonNull(anno)) {
             var packagesPsi = anno.findAttributeValue("basePackages");
-            if (packagesPsi instanceof PsiLiteralExpression) {
-                var psiLiteralExpression = (PsiLiteralExpression) packagesPsi;
+            if (packagesPsi instanceof PsiLiteralExpression psiLiteralExpression) {
                 var singlePackage = psiLiteralExpression.getValue();
                 if (Objects.nonNull(singlePackage)) {
                     basePackages = new String[]{singlePackage + "."};
