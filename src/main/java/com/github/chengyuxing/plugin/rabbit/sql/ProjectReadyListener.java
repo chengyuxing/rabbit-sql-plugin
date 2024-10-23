@@ -28,7 +28,7 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
     @Override
     public void exitDumbMode() {
         var modules = ModuleManager.getInstance(project).getModules();
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Searching configs...", true) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Searching xql configs...", true) {
             @Override
             public void run(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setIndeterminate(true);
