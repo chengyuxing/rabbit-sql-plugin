@@ -36,29 +36,29 @@ public class CopySqlAction extends AnAction {
                     var name = sqlMeta.getItem2();
                     switch (copyType) {
                         case SQL_NAME -> {
-                            return "SQL Name " + SqlUtil.quote(name);
+                            return "SQL Name " + SqlUtil.safeQuote(name);
                         }
                         case SQL_PATH -> {
-                            return "SQL Path From " + SqlUtil.quote(name);
+                            return "SQL Path From " + SqlUtil.safeQuote(name);
                         }
                         case SQL_DEFINITION -> {
-                            return "SQL Definition From " + SqlUtil.quote(name);
+                            return "SQL Definition From " + SqlUtil.safeQuote(name);
                         }
                     }
                 } else if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
                     @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
                     switch (copyType) {
                         case ALIAS -> {
-                            return "Alias " + SqlUtil.quote(sqlMeta.getItem1());
+                            return "Alias " + SqlUtil.safeQuote(sqlMeta.getItem1());
                         }
                         case ABSOLUTE_PATH -> {
-                            return "Absolute Path From " + SqlUtil.quote(sqlMeta.getItem1());
+                            return "Absolute Path From " + SqlUtil.safeQuote(sqlMeta.getItem1());
                         }
                         case PATH_FROM_CLASSPATH -> {
-                            return "Classpath Path From " + SqlUtil.quote(sqlMeta.getItem1());
+                            return "Classpath Path From " + SqlUtil.safeQuote(sqlMeta.getItem1());
                         }
                         case YML_ARRAY_PATH_FROM_CLASSPATH -> {
-                            return "Classpath YAML Array Path From " + SqlUtil.quote(sqlMeta.getItem1());
+                            return "Classpath YAML Array Path From " + SqlUtil.safeQuote(sqlMeta.getItem1());
                         }
                     }
                 }

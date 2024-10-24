@@ -231,14 +231,14 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         var cache = new HashMap<String, Object>();
         data.forEach((k, v) -> {
             if (v == Comparators.ValueType.BLANK) {
-                cache.put(k, "");
+                cache.put(k, null);
             } else if (v instanceof Collection || v instanceof Map) {
                 try {
                     cache.put(k, JSON.std.asString(v));
                 } catch (IOException ignore) {
                 }
             } else {
-                cache.put(k, v.toString());
+                cache.put(k, v);
             }
         });
         paramsHistory.putAll(cache);

@@ -28,7 +28,7 @@ public class ExecuteSqlAction extends AnAction {
                     @SuppressWarnings("unchecked")
                     var data = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
                     var name = data.getItem2();
-                    return "Execute " + SqlUtil.quote(name);
+                    return "Execute " + SqlUtil.safeQuote(name);
                 }
             }
             return "Execute";

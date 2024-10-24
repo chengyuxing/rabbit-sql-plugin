@@ -101,7 +101,7 @@ public class ParametersForm extends JPanel {
                         errors.add("Parse number '" + k + "' error.");
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
-                } else if (StringUtil.equalsAnyIgnoreCase(sv, "blank", "null", "true", "false")) {
+                } else if (StringUtil.equalsAnyIgnoreCase(sv, "", "blank", "null", "true", "false")) {
                     v = Comparators.valueOf(v);
                 }
             }
