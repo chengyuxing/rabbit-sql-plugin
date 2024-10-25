@@ -1,6 +1,9 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
+import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.FixedSizeButton;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
@@ -17,14 +20,14 @@ import java.util.function.Consumer;
 
 public class DynamicSqlParamValueHistoryDialog extends DialogWrapper {
     private final Consumer<String> consumer;
-    private final JBList<String> list;
-    private final Runnable clearButtonCallback;
+    private JBList<String> list;
+    private final List<String> histories;
 
-    protected DynamicSqlParamValueHistoryDialog(List<String> histories, Consumer<String> consumer, Runnable clearButtonCallback) {
+    public DynamicSqlParamValueHistoryDialog(List<String> histories, Consumer<String> consumer) {
         super(true);
-        this.list = new JBList<>(histories);
         this.consumer = consumer;
-        this.clearButtonCallback = clearButtonCallback;
+        this.histories = histories;
+        setTitle("History");
         setOKButtonText("Insert");
         setCancelButtonText("Cancel");
         setSize(350, Math.min(Math.max(histories.size() * 30 + 50, 230), 470));
@@ -33,6 +36,9 @@ public class DynamicSqlParamValueHistoryDialog extends DialogWrapper {
 
     @Override
     protected @Nullable JComponent createCenterPanel() {
+        list = new JBList<>(histories);
+        list.setFont(Global.getEditorFont(list.getFont().getSize() + 1));
+        list.setEmptyText("No history.");
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.addMouseListener(new MouseAdapter() {
             @Override
@@ -54,11 +60,12 @@ public class DynamicSqlParamValueHistoryDialog extends DialogWrapper {
     protected @Nullable JPanel createSouthAdditionalPanel() {
         var panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        var clearBtn = new JButton("Clear");
-        clearBtn.setToolTipText("Clear history.");
+        var clearBtn = new FixedSizeButton();
+        clearBtn.setIcon(AllIcons.Actions.GC);
+        clearBtn.setToolTipText("Clear All.");
         clearBtn.addActionListener(e -> {
-            list.clearSelection();
-            clearButtonCallback.run();
+            list.setModel(new DefaultListModel<>());
+            histories.clear();
         });
         panel.add(clearBtn);
         return panel;

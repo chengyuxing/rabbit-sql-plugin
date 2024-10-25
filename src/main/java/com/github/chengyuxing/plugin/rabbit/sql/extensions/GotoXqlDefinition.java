@@ -43,7 +43,6 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
         if (Objects.nonNull(sqlMapperRef)) {
             addLineMarker(sqlMapperRef.getItem1(), sqlMapperRef.getItem2(), result);
         }
-
         var sqlCqRef = handlerMapperCountQuerySqlRef(sourceElement);
         if (Objects.nonNull(sqlCqRef)) {
             addLineMarker(sqlCqRef.getItem1(), sqlCqRef.getItem2(), result);
