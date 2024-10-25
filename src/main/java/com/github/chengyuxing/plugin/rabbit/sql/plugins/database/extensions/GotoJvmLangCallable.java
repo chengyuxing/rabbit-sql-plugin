@@ -53,6 +53,7 @@ public class GotoJvmLangCallable extends RelatedItemLineMarkerProvider {
                 var project = xqlPsiElement.getProject();
                 var module = ModuleUtil.findModuleForPsiElement(xqlPsiElement);
                 if (module == null) return;
+
                 var xqlFileManager = XQLConfigManager.getInstance().getActiveXqlFileManager(project, xqlPsiElement);
                 if (Objects.isNull(xqlFileManager)) return;
                 try {
