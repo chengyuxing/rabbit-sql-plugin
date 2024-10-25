@@ -9,17 +9,20 @@ import com.github.chengyuxing.common.script.expression.Comparators;
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlParamValueHistoryDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.FieldInfoRender;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TableCellPlaceholderRender;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.JSON;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.fields.ExpandableTextField;
+import com.intellij.ui.components.fields.ExtendableTextComponent;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.UIUtil;
 import net.miginfocom.swing.MigLayout;
@@ -39,12 +42,14 @@ import java.util.*;
 public class ParametersForm extends JPanel {
     private final Map<String, Set<String>> paramsMapping;
     private final Map<String, Object> paramsHistory;
+    private final List<String> paramsList;
     private Runnable clickEmptyTableTextLink = () -> {
     };
 
-    public ParametersForm(Map<String, Set<String>> paramsMapping, Map<String, Object> paramsHistory) {
+    public ParametersForm(Map<String, Set<String>> paramsMapping, Map<String, Object> paramsHistory, List<String> paramsList) {
         this.paramsMapping = paramsMapping;
         this.paramsHistory = paramsHistory;
+        this.paramsList = paramsList;
         initComponents();
         initCustomComponents();
         initComponentConfigs();
@@ -107,7 +112,7 @@ public class ParametersForm extends JPanel {
                         errors.add("Parse number '" + k + "' error.");
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
-                } else if (StringUtil.equalsAnyIgnoreCase(sv, "blank", "null", "true", "false")) {
+                } else if (StringUtil.equalsAnyIgnoreCase(sv, "", "blank", "null", "true", "false")) {
                     v = Comparators.valueOf(v);
                 }
             }
@@ -169,7 +174,14 @@ public class ParametersForm extends JPanel {
         cbx.setEditor(new BasicComboBoxEditor() {
             @Override
             protected JTextField createEditorComponent() {
-                return new ExpandableTextField();
+                var etf = new ExpandableTextField();
+                etf.addExtension(ExtendableTextComponent.Extension.create(AllIcons.Actions.ListFiles, "Parameters history", () -> {
+                    var historyDialog = new DynamicSqlParamValueHistoryDialog(
+                            paramsList,
+                            etf::setText);
+                    historyDialog.showAndGet();
+                }));
+                return etf;
             }
         });
         return new DefaultCellEditor(cbx);

@@ -1,6 +1,5 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.chengyuxing.common.script.expression.Comparators;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceManager;
@@ -32,7 +31,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
@@ -44,6 +45,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     private final XQLFileManager xqlFileManager;
     private final XQLConfigManager.Config config;
     private final Map<String, Object> paramsHistory;
+    private final List<String> paramsList;
     private final ParametersForm parametersForm;
     private final ComboBox<DatabaseId> datasourceList;
     private final boolean isDatabasePluginEnabled;
@@ -57,8 +59,9 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         this.xqlFileManager = this.config.getXqlFileManager();
         this.sql = this.xqlFileManager.get(sqlName);
         this.paramsHistory = ResourceManager.getInstance().getResource(project).getDynamicSqlParamHistory();
+        this.paramsList = ResourceManager.getInstance().getResource(project).getHistoryList();
         var paramsMapping = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.getParamsMappingInfo(this.config.getSqlGenerator(), sql);
-        this.parametersForm = new ParametersForm(paramsMapping, paramsHistory);
+        this.parametersForm = new ParametersForm(paramsMapping, paramsHistory, paramsList);
         this.parametersForm.setClickEmptyTableTextLink(this::doHelpAction);
         this.datasourceList = new ComboBox<>();
         setTitle("Parameters");
@@ -219,6 +222,22 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         }
     }
 
+    private void addToParamList(Object v) {
+        String item = null;
+        if (v instanceof Collection || v instanceof Map) {
+            try {
+                item = JSON.std.writeValueAsString(v);
+            } catch (IOException ignore) {
+            }
+        } else if (Objects.nonNull(v) && !(v instanceof Comparators.ValueType)) {
+            item = v.toString();
+        }
+        if (Objects.nonNull(item)) {
+            paramsList.remove(item);
+            paramsList.add(0, item);
+        }
+    }
+
     @Override
     protected void doHelpAction() {
         parametersForm.setSqlHtml(HtmlUtil.highlightSql(sql));
@@ -228,20 +247,19 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     @Override
     public void disposeIfNeeded() {
         var data = parametersForm.getData().getItem1();
-        var cache = new HashMap<String, Object>();
         data.forEach((k, v) -> {
             if (v == Comparators.ValueType.BLANK) {
-                cache.put(k, "");
+                paramsHistory.put(k, null);
             } else if (v instanceof Collection || v instanceof Map) {
                 try {
-                    cache.put(k, JSON.std.writeValueAsString(v));
-                } catch (JsonProcessingException ignore) {
+                    var json = JSON.std.writeValueAsString(v);
+                    paramsHistory.put(k, json);
+                } catch (IOException ignore) {
                 }
             } else {
-                cache.put(k, v.toString());
+                paramsHistory.put(k, v);
             }
         });
-        paramsHistory.putAll(cache);
     }
 
     @Override
@@ -291,6 +309,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                 // generate raw sql.
                 args.put(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY, forVars);
                 then.accept(finalSql, args);
+                data.getItem1().forEach((k, v) -> addToParamList(v));
             } catch (Exception ex) {
                 var errors = ExceptionUtil.getCauseMessages(ex);
                 var msg = String.join(NEW_LINE, errors);

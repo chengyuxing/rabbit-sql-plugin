@@ -2,7 +2,9 @@ package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.intellij.openapi.project.Project;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -45,14 +47,20 @@ public final class ResourceManager {
     public static final class Resource implements AutoCloseable {
         private final Project project;
         private final Map<String, Object> dynamicSqlParamHistory;
+        private final List<String> historyList;
 
         public Resource(Project project) {
             this.project = project;
             this.dynamicSqlParamHistory = new HashMap<>();
+            this.historyList = new ArrayList<>();
         }
 
         public Map<String, Object> getDynamicSqlParamHistory() {
             return dynamicSqlParamHistory;
+        }
+
+        public List<String> getHistoryList() {
+            return historyList;
         }
 
         public Project getProject() {
