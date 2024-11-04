@@ -15,7 +15,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.AnActionWrapper;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
-import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
@@ -136,7 +135,6 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
                 parseDynamicSQL((sql, args) -> {
                     var rawSql = config.getSqlGenerator().generateSql(sql, args);
-                    rawSql = SqlUtil.repairSyntaxError(rawSql);
                     parametersForm.setSqlHtml(HtmlUtil.highlightSql(rawSql));
                     autoHeight(rawSql);
                 });
@@ -155,7 +153,6 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
                 parseDynamicSQL((sql, args) -> {
                     var preparedSQL = config.getSqlGenerator().generatePreparedSql(sql, args).getResultSql();
-                    preparedSQL = SqlUtil.repairSyntaxError(preparedSQL);
                     parametersForm.setSqlHtml(HtmlUtil.highlightSql(preparedSQL));
                     autoHeight(preparedSQL);
                 });
@@ -173,7 +170,6 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             @Override
             public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
                 parseDynamicSQL((sql, args) -> {
-                    sql = SqlUtil.repairSyntaxError(sql);
                     parametersForm.setSqlHtml(HtmlUtil.highlightSql(sql));
                     autoHeight(sql);
                 });
@@ -276,7 +272,6 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     protected void doOKAction() {
         parseDynamicSQL((sql, args) -> {
             var rawSql = config.getSqlGenerator().generateSql(sql, args);
-            rawSql = SqlUtil.repairSyntaxError(rawSql);
             // execute sql
             var idx = datasourceList.getSelectedIndex();
             if (isDatabasePluginEnabled) {
