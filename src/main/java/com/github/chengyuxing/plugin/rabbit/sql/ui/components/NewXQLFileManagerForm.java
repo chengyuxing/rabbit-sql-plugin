@@ -13,7 +13,6 @@ import javax.swing.event.DocumentListener;
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
-import com.intellij.ui.JBColor;
 import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
 
