@@ -226,9 +226,7 @@ public class PsiUtil {
     }
 
     public static boolean isXQLMapperMethod(PsiMethod psiMethod) {
-        return !psiMethod.hasAnnotation(Insert.class.getName()) &&
-                !psiMethod.hasAnnotation(Update.class.getName()) &&
-                !psiMethod.hasAnnotation(Delete.class.getName()) &&
+        return !psiMethod.hasAnnotation(Function.class.getName()) &&
                 !psiMethod.hasAnnotation(Procedure.class.getName());
     }
 

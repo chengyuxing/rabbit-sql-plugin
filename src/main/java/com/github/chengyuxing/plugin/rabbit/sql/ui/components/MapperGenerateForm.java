@@ -11,7 +11,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.SqlTypePlaceHolder;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLInvocationHandler;
-import com.github.chengyuxing.sql.annotation.Type;
+import com.github.chengyuxing.sql.annotation.SqlStatementType;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -75,14 +75,14 @@ public class MapperGenerateForm extends JPanel {
             XQLJavaType.Integer.getValue(),
             XQLJavaType.Long.getValue(),
             XQLJavaType.Double.getValue());
-    public static final List<String> SQL_TYPES = List.of(Type.query.name(),
-            Type.insert.name(),
-            Type.update.name(),
-            Type.delete.name(),
-            Type.procedure.name(),
-            Type.function.name(),
-            Type.ddl.name(),
-            Type.plsql.name());
+    public static final List<String> SQL_TYPES = List.of(SqlStatementType.query.name(),
+            SqlStatementType.insert.name(),
+            SqlStatementType.update.name(),
+            SqlStatementType.delete.name(),
+            SqlStatementType.procedure.name(),
+            SqlStatementType.function.name(),
+            SqlStatementType.ddl.name(),
+            SqlStatementType.plsql.name());
     public static final List<String> GENERIC_TYPES = List.of(XQLJavaType.Map.toString(), XQLJavaType.DataRow.toString());
     public static final List<String> PARAM_TYPES = List.of(XQLJavaType.Map.getValue(), XQLJavaType.MultiArgs.toString());
 
@@ -325,22 +325,22 @@ public class MapperGenerateForm extends JPanel {
                 .filter(key -> !key.startsWith("${"))
                 .map(sqlName -> {
                     var methodName = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.camelizeAndClean(sqlName);
-                    var sqlType = Type.query.name();
+                    var sqlType = SqlStatementType.query.name();
                     var returnType = XQLJavaType.List.toString();
                     if (methodName.matches(XQLInvocationHandler.INSERT_PATTERN)) {
-                        sqlType = Type.insert.name();
+                        sqlType = SqlStatementType.insert.name();
                         returnType = XQLJavaType.Integer.getValue();
                     } else if (methodName.matches(XQLInvocationHandler.UPDATE_PATTERN)) {
-                        sqlType = Type.update.name();
+                        sqlType = SqlStatementType.update.name();
                         returnType = XQLJavaType.Integer.getValue();
                     } else if (methodName.matches(XQLInvocationHandler.DELETE_PATTERN)) {
-                        sqlType = Type.delete.name();
+                        sqlType = SqlStatementType.delete.name();
                         returnType = XQLJavaType.Integer.getValue();
                     } else if (methodName.matches(XQLInvocationHandler.CALL_PATTERN)) {
-                        sqlType = Type.procedure.name();
+                        sqlType = SqlStatementType.procedure.name();
                         returnType = XQLJavaType.GenericT.getValue();
                     } else if (methodName.matches(XQLInvocationHandler.QUERY_PATTERN)) {
-                        sqlType = Type.query.name();
+                        sqlType = SqlStatementType.query.name();
                         if (StringUtil.startsWiths(methodName, "get", "query", "search", "select", "list")) {
                             returnType = XQLJavaType.List.toString();
                         } else {
