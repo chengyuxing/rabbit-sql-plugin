@@ -21,11 +21,13 @@ public class XQLMethodCellRenderer extends DefaultTableCellRenderer {
         var code = Integer.parseInt(hexColor.substring(1), 16);
         @SuppressWarnings("UseJBColor") var color = new Color(code);
         setForeground(new JBColor(color.darker(), color));
-        var description = resource.getEntry().get(value.toString()).getDescription();
-        if (column == table.convertColumnIndexToView(0) && !description.isEmpty()) {
-            setToolTipText(description);
-        } else {
-            setToolTipText(null);
+        if (column == table.convertColumnIndexToView(0)) {
+            var description = resource.getEntry().get(value.toString()).getDescription();
+            if (!description.isEmpty()) {
+                setToolTipText(description);
+            } else {
+                setToolTipText(null);
+            }
         }
         return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     }
