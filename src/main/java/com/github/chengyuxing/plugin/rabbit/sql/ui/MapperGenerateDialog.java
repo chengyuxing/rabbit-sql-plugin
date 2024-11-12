@@ -206,7 +206,7 @@ public class MapperGenerateDialog extends DialogWrapper {
 
                         var sql = resource.getEntry().get(sqlName);
                         var sqlDefinition = sql.getContent();
-                        var params = StringUtil.getParamsMappingInfo(sqlGenerator, sqlDefinition, true)
+                        var params = StringUtil.getParamsMappingInfo(sqlGenerator, sqlDefinition, false)
                                 .keySet();
 
                         var paramUserEntity = getUserEntity(paramType);
