@@ -5,6 +5,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.MapperGenerateDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.notification.NotificationType;
@@ -37,7 +38,7 @@ public class GenerateXqlMapperAction extends AnAction {
             var alias = data.getItem1();
             var filename = data.getItem3();
             var config = data.getItem4();
-            if (!filename.startsWith("file:")) {
+            if (!ProjectFileUtil.isLocalFileUri(filename)) {
                 NotificationUtil.showMessage(project, "remote file not support yet", NotificationType.WARNING);
                 return;
             }
