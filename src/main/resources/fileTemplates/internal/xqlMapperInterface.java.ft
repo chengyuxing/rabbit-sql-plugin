@@ -67,11 +67,11 @@ $userMethods
      * @return ${method.returnType.replace("<","[").replace(">","]")}
      */
 #if($method.annotationValue && $method.sqlType != "")
-    @XQL(value = "$method.annotationValue", type = Type.$method.sqlType)
+    @XQL(value = "$method.annotationValue", type = SqlStatementType.$method.sqlType)
 #elseif($method.annotationValue)
     @XQL("$method.annotationValue")
 #elseif($method.sqlType != "")
-    @XQL(type = Type.$method.sqlType)
+    @XQL(type = SqlStatementType.$method.sqlType)
 #end
 #if($method.countQuery)
     @CountQuery("$method.countQuery")
@@ -83,8 +83,7 @@ $userMethods
     $method.returnType ${method.name}(
 #foreach($param in $method.parameters)
             @Arg("$param") #if($isMethodProc)Param#{else}Object#end $param#if(!$foreach.last),
-#end
-#end
+#end#end
 
     );
 #else
