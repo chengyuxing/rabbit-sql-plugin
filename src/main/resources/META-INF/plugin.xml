@@ -46,7 +46,7 @@
     <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 3.1.0+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 3.1.1+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -54,7 +54,7 @@
     </ol>
     <h3>Other</h3>
     <ol>
-        <li>Add dependency <strong>rabbit-sql 8.1.0+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 8.1.1+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -70,6 +70,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.19</h3>
+            <ul>
+                <li>Compatible with <code>rabbit-sql 8.1.1+</code> and <code>rabbit-sql-spring-boot-starter 3.1.1+</code></li>
+                <li>Fixed Generate mapper interface error.</li>
+            </ul>
             <h3>2.4.18</h3>
             <ul>
                <li>Support <code>rabbit-sql 8.1.0+</code> and <code>rabbit-sql-spring-boot-starter 3.1.0+</code></li>
