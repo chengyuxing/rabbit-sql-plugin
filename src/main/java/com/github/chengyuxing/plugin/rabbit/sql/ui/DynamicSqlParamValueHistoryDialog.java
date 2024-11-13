@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.FixedSizeButton;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
+import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -59,7 +60,7 @@ public class DynamicSqlParamValueHistoryDialog extends DialogWrapper {
     @Override
     protected @Nullable JPanel createSouthAdditionalPanel() {
         var panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         var clearBtn = new FixedSizeButton();
         clearBtn.setIcon(AllIcons.Actions.GC);
         clearBtn.setToolTipText("Clear All.");
