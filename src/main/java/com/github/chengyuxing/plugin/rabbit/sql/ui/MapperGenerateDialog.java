@@ -11,6 +11,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.components.MapperGenerateForm
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ReturnTypesForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.Args;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -65,7 +66,18 @@ public class MapperGenerateDialog extends DialogWrapper {
         {
             // load mapper config
             var resource = xqlFileManager.getResource(alias);
-            configPath = Path.of(URI.create(resource.getFilename() + ".rbm"));
+            var filename = resource.getFilename();
+            if (ProjectFileUtil.isLocalFileUri(filename)) {
+                configPath = Path.of(URI.create(resource.getFilename() + ".rbm"));
+            } else {
+                // http://localhost:8080/share/cyx.xql?token=abcdef
+                var remotePath = filename;
+                int qIdx = filename.indexOf('?');
+                if (qIdx > 0) {
+                    remotePath = filename.substring(0, qIdx).replaceAll("[\\\\/:*?\"<>|&$]+", "_");
+                }
+                configPath = config.getResourcesRoot().resolve(remotePath + ".rbm");
+            }
             var mapperConfig = XQLMapperConfig.load(configPath);
 
             this.myForm = new MapperGenerateForm(project, this.alias, this.xqlFileManager, mapperConfig, getDisposable());
