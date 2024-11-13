@@ -59,7 +59,7 @@ public class DynamicSqlParamValueHistoryDialog extends DialogWrapper {
     @Override
     protected @Nullable JPanel createSouthAdditionalPanel() {
         var panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         var clearBtn = new FixedSizeButton();
         clearBtn.setIcon(AllIcons.Actions.GC);
         clearBtn.setToolTipText("Clear All.");
