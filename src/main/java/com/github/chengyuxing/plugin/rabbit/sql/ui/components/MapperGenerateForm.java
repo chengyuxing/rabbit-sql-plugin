@@ -295,17 +295,43 @@ public class MapperGenerateForm extends JPanel {
         }, new RowSpec[]{
                 new RowSpec(Sizes.DLUY4),
                 FormFactory.DEFAULT_ROWSPEC,
+                new RowSpec(Sizes.DLUY3),
+                FormFactory.DEFAULT_ROWSPEC,
+                new RowSpec(Sizes.DLUY4),
+                FormFactory.DEFAULT_ROWSPEC,
+                FormFactory.DEFAULT_ROWSPEC,
+                new RowSpec(Sizes.DLUY3),
+                FormFactory.DEFAULT_ROWSPEC,
+                FormFactory.DEFAULT_ROWSPEC,
+                FormFactory.DEFAULT_ROWSPEC,
                 FormFactory.DEFAULT_ROWSPEC,
         }));
         CellConstraints cc = new CellConstraints();
 
-        var label1 = new JBLabel("Custom java bean for 'Param Type' and '<T>' must be fully qualified class name.");
-        label1.setForeground(InlineHelpText.COLOR);
-        var label2 = new JBLabel("Example: org.example.User");
+        var label1 = new JBLabel("1. Custom java bean for 'Param Type' and '<T>' must be fully qualified class name.");
+        var label2 = new JBLabel("    Example: org.example.User");
         label2.setForeground(InlineHelpText.COLOR);
 
+        var label3 = new JBLabel("2. If method 'Return Types' is 'PagedResource<T>' and has another method that ends with ");
+        var label4 = new JBLabel("    'count', 'Count' or '-count', it will be treated as count query.");
+
+        var label5 = new JBLabel("    /*[queryUsers]*/");
+        label5.setForeground(InlineHelpText.COLOR);
+        var label6 = new JBLabel("    select * from user where id = :id;");
+        label6.setForeground(InlineHelpText.COLOR);
+        var label7 = new JBLabel("    /*[queryUsersCount]*/");
+        label7.setForeground(InlineHelpText.COLOR);
+        var label8 = new JBLabel("    select count(*) from user where id = :id;");
+        label8.setForeground(InlineHelpText.COLOR);
+
         panel.add(label1, cc.xy(1, 2));
-        panel.add(label2, cc.xy(1, 3));
+        panel.add(label2, cc.xy(1, 4));
+        panel.add(label3, cc.xy(1, 6));
+        panel.add(label4, cc.xy(1, 7));
+        panel.add(label5, cc.xy(1, 9));
+        panel.add(label6, cc.xy(1, 10));
+        panel.add(label7, cc.xy(1, 11));
+        panel.add(label8, cc.xy(1, 12));
 
         return panel;
     }
