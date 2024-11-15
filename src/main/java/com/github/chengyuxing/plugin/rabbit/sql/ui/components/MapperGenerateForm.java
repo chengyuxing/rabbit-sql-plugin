@@ -82,7 +82,8 @@ public class MapperGenerateForm extends JPanel {
             SqlStatementType.procedure.name(),
             SqlStatementType.function.name(),
             SqlStatementType.ddl.name(),
-            SqlStatementType.plsql.name());
+            SqlStatementType.plsql.name(),
+            SqlStatementType.unset.name());
     public static final List<String> GENERIC_TYPES = List.of(XQLJavaType.Map.toString(), XQLJavaType.DataRow.toString());
     public static final List<String> PARAM_TYPES = List.of(XQLJavaType.Map.getValue(), XQLJavaType.MultiArgs.toString());
 
