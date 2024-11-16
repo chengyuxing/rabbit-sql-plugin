@@ -81,7 +81,7 @@ public class NewSQLDialog extends DialogWrapper {
             dispose();
             ApplicationManager.getApplication().runWriteAction(() ->
                     WriteCommandAction.runWriteCommandAction(project, "Modify '" + sqlFileVf.getName() + "'", null, () -> {
-                        var sqlFragment = "\n\n/*[" + name + "]*/";
+                        var sqlFragment = "\n/*[" + name + "]*/";
                         if (!desc.trim().isEmpty()) {
                             sqlFragment += "\n/*#" + desc + "#*/";
                         }
