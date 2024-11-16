@@ -4,13 +4,11 @@ import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.common.tuple.Quintuple;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.icons.AllIcons;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -102,19 +100,39 @@ public class CopySqlAction extends AnAction {
                 case ABSOLUTE_PATH -> clipboard.setContents(new StringSelection(sqlMeta.getItem3()), null);
                 case PATH_FROM_CLASSPATH -> {
                     if (ProjectFileUtil.isURI(sqlMeta.getItem2())) {
-                        NotificationUtil.showMessage(project, "only support classpath file", NotificationType.WARNING);
                         return;
                     }
                     clipboard.setContents(new StringSelection(sqlMeta.getItem2()), null);
                 }
                 case YML_ARRAY_PATH_FROM_CLASSPATH -> {
                     if (ProjectFileUtil.isURI(sqlMeta.getItem2())) {
-                        NotificationUtil.showMessage(project, "only support classpath file", NotificationType.WARNING);
                         return;
                     }
                     var classpathPath = sqlMeta.getItem2().split("/");
                     var arrayPath = "[ " + String.join(", ", classpathPath) + " ]";
                     clipboard.setContents(new StringSelection(arrayPath), null);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+        var project = e.getProject();
+        if (Objects.isNull(project)) {
+            return;
+        }
+        var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
+        if (Objects.isNull(nodeSource)) {
+            return;
+        }
+        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
+            @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
+            switch (copyType) {
+                case PATH_FROM_CLASSPATH, YML_ARRAY_PATH_FROM_CLASSPATH -> {
+                    if (ProjectFileUtil.isURI(sqlMeta.getItem2())) {
+                        e.getPresentation().setEnabled(false);
+                    }
                 }
             }
         }
