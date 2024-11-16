@@ -4,6 +4,7 @@ import com.github.chengyuxing.common.script.lexer.FlowControlLexer;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.sql.utils.SqlHighlighter;
+import org.intellij.lang.annotations.Language;
 
 public class HtmlUtil {
     public static final String IDENTIFIER = "ij-rabbit-sql-hls";
@@ -77,8 +78,8 @@ public class HtmlUtil {
                 .replace("<", "&lt;");
     }
 
-    public static String toHtml(String content) {
-        return "<html><body>" + content + "</body></html>";
+    public static @Language("HTML") String toHtml(@Language("HTML") String content) {
+        return "<html lang=\"en\"><body>" + content + "</body></html>";
     }
 
     public enum Color {

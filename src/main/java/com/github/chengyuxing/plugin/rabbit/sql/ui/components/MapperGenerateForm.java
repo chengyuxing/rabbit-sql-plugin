@@ -22,6 +22,7 @@ import com.intellij.ui.components.*;
 import com.intellij.ui.table.JBTable;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
+import com.intellij.util.ui.UIUtil;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import net.miginfocom.swing.MigLayout;
@@ -291,6 +292,7 @@ public class MapperGenerateForm extends JPanel {
 
     private JPanel createAboutPanel() {
         var panel = new JPanel();
+        UIUtil.addInsets(panel, 2, 10, 2, 10);
         panel.setLayout(new FormLayout(new ColumnSpec[]{
                 new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(10), FormSpec.DEFAULT_GROW)
         }, new RowSpec[]{
