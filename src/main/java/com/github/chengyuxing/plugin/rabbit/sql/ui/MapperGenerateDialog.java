@@ -271,7 +271,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                                     importsBlockFlag++;
                                     String importContent;
                                     while ((importContent = reader.readLine()) != null) {
-                                        if (importContent.contains(" //CODE-END:imports")) {
+                                        if (importContent.contains("//CODE-END:imports")) {
                                             importsBlockFlag++;
                                             break;
                                         }
