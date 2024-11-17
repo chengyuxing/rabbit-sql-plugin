@@ -316,7 +316,7 @@ public class MapperGenerateForm extends JPanel {
         label2.setForeground(InlineHelpText.COLOR);
 
         var label3 = new JBLabel("2. If method 'Return Types' is 'PagedResource<T>' and has another method that ends with ");
-        var label4 = new JBLabel("    'count', 'Count' or '-count', it will be treated as count query.");
+        var label4 = new JBLabel("    'count', 'Count', '-count' or '_count', it will be treated as count query.");
 
         var label5 = new JBLabel("    /*[queryUsers]*/");
         label5.setForeground(InlineHelpText.COLOR);

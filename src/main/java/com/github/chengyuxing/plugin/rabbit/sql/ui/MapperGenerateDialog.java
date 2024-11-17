@@ -369,6 +369,9 @@ public class MapperGenerateDialog extends DialogWrapper {
             if (!xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
                 cqName = sqlName + "-count";
             }
+            if (!xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
+                cqName = sqlName + "_count";
+            }
             if (xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
                 method.setCountQuery(cqName);
             }
