@@ -2,6 +2,8 @@ package com.github.chengyuxing.plugin.rabbit.sql.plugins.spring;
 
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.sql.annotation.XQLMapper;
+import com.intellij.openapi.diagnostic.ControlFlowException;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiLiteralExpression;
@@ -19,74 +21,83 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class XQLMapperBeanProvider extends SpringImplicitBeansProviderBase {
+    private static final Logger log = Logger.getInstance(XQLMapperBeanProvider.class);
     private static final String MAPPER_SCAN_FQN = "com.github.chengyuxing.sql.spring.autoconfigure.mapping.XQLMapperScan";
 
     @Override
     protected Collection<CommonSpringBean> getImplicitBeans(@NotNull Module module) {
-        var moduleJavas = FilenameIndex.getAllFilesByExt(module.getProject(), "java", module.getModuleProductionSourceScope());
-        var mapperScanClassOptional = moduleJavas.stream()
-                .map(vf -> PsiManager.getInstance(module.getProject()).findFile(vf))
-                .filter(Objects::nonNull)
-                .map(psiFile -> {
-                    var originalFile = psiFile.getOriginalElement();
-                    var psiClass = PsiTreeUtil.getChildOfType(originalFile, PsiClass.class);
-                    if (Objects.nonNull(psiClass) && psiClass.hasAnnotation(MAPPER_SCAN_FQN)) {
-                        return psiClass;
-                    }
-                    return null;
-                }).filter(Objects::nonNull)
-                .findFirst();
-
-        if (mapperScanClassOptional.isEmpty()) {
-            return List.of();
-        }
-
-        var mapperScanClass = mapperScanClassOptional.get();
-
-        String[] basePackages = new String[0];
-        var anno = mapperScanClass.getAnnotation(MAPPER_SCAN_FQN);
-        if (Objects.nonNull(anno)) {
-            var packagesPsi = anno.findAttributeValue("basePackages");
-            if (packagesPsi instanceof PsiLiteralExpression psiLiteralExpression) {
-                var singlePackage = psiLiteralExpression.getValue();
-                if (Objects.nonNull(singlePackage)) {
-                    basePackages = new String[]{singlePackage + "."};
-                }
-            } else {
-                basePackages = PsiTreeUtil.findChildrenOfType(packagesPsi, PsiLiteralExpression.class)
-                        .stream()
-                        .map(PsiLiteralExpression::getValue)
-                        .filter(Objects::nonNull)
-                        .map(p -> p.toString().trim() + ".")
-                        .toArray(String[]::new);
-            }
-        }
-
-        if (mapperScanClass.hasAnnotation("org.springframework.boot.autoconfigure.SpringBootApplication") ||
-                mapperScanClass.hasAnnotation("org.springframework.context.annotation.Configuration") ||
-                mapperScanClass.hasAnnotation("org.springframework.boot.autoconfigure.EnableAutoConfiguration") ||
-                mapperScanClass.hasAnnotation("org.springframework.stereotype.Component")) {
-            final var myBasePackages = basePackages;
-            return moduleJavas.stream()
+        try {
+            var moduleJavas = FilenameIndex.getAllFilesByExt(module.getProject(), "java", module.getModuleProductionSourceScope());
+            var mapperScanClassOptional = moduleJavas.stream()
                     .map(vf -> PsiManager.getInstance(module.getProject()).findFile(vf))
                     .filter(Objects::nonNull)
                     .map(psiFile -> {
                         var originalFile = psiFile.getOriginalElement();
                         var psiClass = PsiTreeUtil.getChildOfType(originalFile, PsiClass.class);
-                        if (Objects.nonNull(psiClass) && psiClass.hasAnnotation(XQLMapper.class.getName())) {
+                        if (Objects.nonNull(psiClass) && psiClass.hasAnnotation(MAPPER_SCAN_FQN)) {
                             return psiClass;
                         }
                         return null;
                     }).filter(Objects::nonNull)
-                    .filter(psiClass -> psiClass.getName() != null && psiClass.getQualifiedName() != null)
-                    .filter(psiClass -> isBeanInBasePackage(myBasePackages, psiClass))
-                    .map(psiClass -> {
-                        var beanName = psiClass.getName();
-                        beanName = beanName.substring(0, 1).toLowerCase() + beanName.substring(1);
-                        return new SpringImplicitBean(getProviderName(), psiClass, beanName);
-                    }).collect(Collectors.toList());
+                    .findFirst();
+
+            if (mapperScanClassOptional.isEmpty()) {
+                return List.of();
+            }
+
+            var mapperScanClass = mapperScanClassOptional.get();
+
+            String[] basePackages = new String[0];
+            var anno = mapperScanClass.getAnnotation(MAPPER_SCAN_FQN);
+            if (Objects.nonNull(anno)) {
+                var packagesPsi = anno.findAttributeValue("basePackages");
+                if (packagesPsi instanceof PsiLiteralExpression psiLiteralExpression) {
+                    var singlePackage = psiLiteralExpression.getValue();
+                    if (Objects.nonNull(singlePackage)) {
+                        basePackages = new String[]{singlePackage + "."};
+                    }
+                } else {
+                    basePackages = PsiTreeUtil.findChildrenOfType(packagesPsi, PsiLiteralExpression.class)
+                            .stream()
+                            .map(PsiLiteralExpression::getValue)
+                            .filter(Objects::nonNull)
+                            .map(p -> p.toString().trim() + ".")
+                            .toArray(String[]::new);
+                }
+            }
+
+            if (mapperScanClass.hasAnnotation("org.springframework.boot.autoconfigure.SpringBootApplication") ||
+                    mapperScanClass.hasAnnotation("org.springframework.context.annotation.Configuration") ||
+                    mapperScanClass.hasAnnotation("org.springframework.boot.autoconfigure.EnableAutoConfiguration") ||
+                    mapperScanClass.hasAnnotation("org.springframework.stereotype.Component")) {
+                final var myBasePackages = basePackages;
+                return moduleJavas.stream()
+                        .map(vf -> PsiManager.getInstance(module.getProject()).findFile(vf))
+                        .filter(Objects::nonNull)
+                        .map(psiFile -> {
+                            var originalFile = psiFile.getOriginalElement();
+                            var psiClass = PsiTreeUtil.getChildOfType(originalFile, PsiClass.class);
+                            if (Objects.nonNull(psiClass) && psiClass.hasAnnotation(XQLMapper.class.getName())) {
+                                return psiClass;
+                            }
+                            return null;
+                        }).filter(Objects::nonNull)
+                        .filter(psiClass -> psiClass.getName() != null && psiClass.getQualifiedName() != null)
+                        .filter(psiClass -> isBeanInBasePackage(myBasePackages, psiClass))
+                        .map(psiClass -> {
+                            var beanName = psiClass.getName();
+                            beanName = beanName.substring(0, 1).toLowerCase() + beanName.substring(1);
+                            return new SpringImplicitBean(getProviderName(), psiClass, beanName);
+                        }).collect(Collectors.toList());
+            }
+            return List.of();
+        } catch (Exception e) {
+            if (e instanceof ControlFlowException) {
+                throw e;
+            }
+            log.warn(e);
+            return List.of();
         }
-        return List.of();
     }
 
     @Override
