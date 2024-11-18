@@ -6,6 +6,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.plugins.yml.YmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.util.*;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.codeInspection.util.IntentionName;
@@ -124,7 +125,12 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
             String sqlName = sqlRef.substring(1);
             var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(project, element);
             if (Objects.nonNull(xqlFileManager)) {
-                return !xqlFileManager.contains(sqlName);
+                var alias = XQLFileManager.decodeSqlReference(sqlName).getItem1();
+                var resource = xqlFileManager.getResource(alias);
+                if (ProjectFileUtil.isLocalFileUri(resource.getFilename())) {
+                    return !xqlFileManager.contains(sqlName);
+                }
+                return false;
             }
         }
         return false;

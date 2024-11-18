@@ -157,7 +157,7 @@ public class StringUtil {
         var plainSql = sqlTokens.stream()
                 .map(Token::getValue)
                 .collect(Collectors.joining(NEW_LINE));
-        sqlGenerator.generatePreparedSql(plainSql, Map.of()).getArgNameIndexMapping()
+        sqlGenerator.generatePreparedSql(plainSql, Map.of()).argNameIndexMapping()
                 .keySet()
                 .forEach(k -> {
                     var kp = getKeyAndProp(k);
