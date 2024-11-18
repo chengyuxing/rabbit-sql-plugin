@@ -152,7 +152,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             @Override
             public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
                 parseDynamicSQL((sql, args) -> {
-                    var preparedSQL = config.getSqlGenerator().generatePreparedSql(sql, args).resultSql();
+                    var preparedSQL = config.getSqlGenerator().generatePreparedSql(sql, args).getResultSql();
                     parametersForm.setSqlHtml(HtmlUtil.highlightSql(preparedSQL));
                     autoHeight(preparedSQL);
                 });
