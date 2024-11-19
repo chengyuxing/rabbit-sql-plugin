@@ -3,10 +3,9 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.NewSQLForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
-import com.intellij.notification.NotificationType;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -57,7 +56,7 @@ public class NewSQLDialog extends DialogWrapper {
         var data = newSQLForm.getData();
         var name = data.getItem1();
         var desc = data.getItem2();
-        var sqlReference = alias + "." + name;
+        var sqlReference = XQLFileManager.encodeSqlReference(alias, name);
         var xqlFileManager = config.getXqlFileManager();
         if (Objects.nonNull(xqlFileManager)) {
             if (xqlFileManager.contains(sqlReference)) {
@@ -65,10 +64,6 @@ public class NewSQLDialog extends DialogWrapper {
                 return;
             }
             var sqlFile = xqlFileManager.getResource(alias).getFilename();
-            if (!ProjectFileUtil.isLocalFileUri(sqlFile)) {
-                NotificationUtil.showMessage(project, "only support local file", NotificationType.WARNING);
-                return;
-            }
             var sqlFileVf = VirtualFileManager.getInstance().findFileByNioPath(Path.of(URI.create(sqlFile)));
             if (Objects.isNull(sqlFileVf)) {
                 return;
@@ -80,7 +75,7 @@ public class NewSQLDialog extends DialogWrapper {
             dispose();
             ApplicationManager.getApplication().runWriteAction(() ->
                     WriteCommandAction.runWriteCommandAction(project, "Modify '" + sqlFileVf.getName() + "'", null, () -> {
-                        var sqlFragment = "\n\n/*[" + name + "]*/";
+                        var sqlFragment = "\n/*[" + name + "]*/";
                         if (!desc.trim().isEmpty()) {
                             sqlFragment += "\n/*#" + desc + "#*/";
                         }

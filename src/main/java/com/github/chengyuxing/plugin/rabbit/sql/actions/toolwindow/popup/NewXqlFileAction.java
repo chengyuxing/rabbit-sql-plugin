@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.tree.TreePath;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,24 +53,49 @@ public class NewXqlFileAction extends AnAction {
             if (Objects.isNull(selected)) {
                 return;
             }
-            var folderClasspath = Stream.of(selected.getPath())
-                    .filter(p -> p instanceof XqlTreeNode)
-                    .map(p -> ((XqlTreeNode) p).getUserObject())
-                    .filter(n -> n instanceof XqlTreeNodeData)
-                    .map(n -> (XqlTreeNodeData) n)
-                    .filter(n -> n.getType() == XqlTreeNodeData.Type.XQL_FILE_FOLDER)
-                    .map(XqlTreeNodeData::getTitle)
-                    .collect(Collectors.toList());
+            var folderClasspath = getFolderClasspath(selected);
+            if (folderClasspath.isEmpty()) {
+                return;
+            }
+            openNewXqlDialog(project, config, folderClasspath);
+        }
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+        var project = e.getProject();
+        if (Objects.isNull(project)) {
+            return;
+        }
+        var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
+        if (Objects.isNull(nodeSource)) {
+            return;
+        }
+        if (nodeSource.getType() == XqlTreeNodeData.Type.XQL_FILE_FOLDER) {
+            var selected = tree.getSelectionPath();
+            if (Objects.isNull(selected)) {
+                return;
+            }
+            var folderClasspath = getFolderClasspath(selected);
             if (folderClasspath.isEmpty()) {
                 return;
             }
             var first = folderClasspath.get(0);
             if (ProjectFileUtil.isURI(first)) {
-                NotificationUtil.showMessage(project, "only support classpath folder", NotificationType.WARNING);
-                return;
+                e.getPresentation().setEnabled(false);
             }
-            openNewXqlDialog(project, config, folderClasspath);
         }
+    }
+
+    private static List<String> getFolderClasspath(TreePath selected) {
+        return Stream.of(selected.getPath())
+                .filter(p -> p instanceof XqlTreeNode)
+                .map(p -> ((XqlTreeNode) p).getUserObject())
+                .filter(n -> n instanceof XqlTreeNodeData)
+                .map(n -> (XqlTreeNodeData) n)
+                .filter(n -> n.getType() == XqlTreeNodeData.Type.XQL_FILE_FOLDER)
+                .map(XqlTreeNodeData::getTitle)
+                .collect(Collectors.toList());
     }
 
     private static void openNewXqlDialog(Project project, XQLConfigManager.Config config, List<String> pathPrefix) {
