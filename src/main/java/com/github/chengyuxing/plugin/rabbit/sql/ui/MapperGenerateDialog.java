@@ -271,7 +271,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                                     importsBlockFlag++;
                                     String importContent;
                                     while ((importContent = reader.readLine()) != null) {
-                                        if (importContent.contains(" //CODE-END:imports")) {
+                                        if (importContent.contains("//CODE-END:imports")) {
                                             importsBlockFlag++;
                                             break;
                                         }
@@ -363,13 +363,16 @@ public class MapperGenerateDialog extends DialogWrapper {
                 XQLJavaType.PagedResource.getValue() + " ",
                 XQLJavaType.IPageable.getValue())) {
             var cqName = sqlName + "Count";
-            if (!xqlFileManager.contains(alias + "." + cqName)) {
+            if (!xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
                 cqName = sqlName + "count";
             }
-            if (!xqlFileManager.contains(alias + "." + cqName)) {
+            if (!xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
                 cqName = sqlName + "-count";
             }
-            if (xqlFileManager.contains(alias + "." + cqName)) {
+            if (!xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
+                cqName = sqlName + "_count";
+            }
+            if (xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
                 method.setCountQuery(cqName);
             }
         }
