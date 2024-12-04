@@ -1,0 +1,42 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <annotator language="JAVA"
+                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.XqlNameAnnotator"/>
+
+        <!--Java:Copy sql definition-->
+        <intentionAction id="CopySqlDefinitionInJava">
+            <category>Rabbit-SQL</category>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.CopySqlDefinitionInJava</className>
+        </intentionAction>
+
+        <!--Java:Copy sql parameters-->
+        <intentionAction id="CopySqlParamsInJava">
+            <category>Rabbit-SQL</category>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.CopySqlParamsInJava</className>
+        </intentionAction>
+
+        <!--Java:Execute Dynamic sql-->
+        <intentionAction id="TestDynamicSqlInJava">
+            <category>Rabbit-SQL</category>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.OpenParamsDialogInJava</className>
+        </intentionAction>
+
+        <!--Java:Create/Append-->
+        <intentionAction id="CreateOrAppendXql">
+            <category>Rabbit-SQL</category>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.NewXqlIfNotExists</className>
+        </intentionAction>
+
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.GotoXqlDefinition"/>
+
+        <psi.referenceContributor language="JAVA"
+                                  implementation="com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.XqlNameReferenceContributor"/>
+
+        <completion.confidence language="JAVA" order="before javaSkipAutopopupInStrings"
+                               implementationClass="com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.XqlNameCompletionConfidence"/>
+
+        <lang.documentationProvider language="JAVA" id="XqlQuickDoc"
+                                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.XqlQuickDoc"/>
+    </extensions>
+</idea-plugin>

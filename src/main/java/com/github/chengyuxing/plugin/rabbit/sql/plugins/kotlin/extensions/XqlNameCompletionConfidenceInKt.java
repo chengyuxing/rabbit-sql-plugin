@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions;
 
-import com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameCompletionConfidence;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.XqlNameCompletionConfidence;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;

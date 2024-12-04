@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions;
 
-import com.github.chengyuxing.plugin.rabbit.sql.extensions.NewXqlIfNotExists;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.NewXqlIfNotExists;
 import com.intellij.lang.Language;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 
