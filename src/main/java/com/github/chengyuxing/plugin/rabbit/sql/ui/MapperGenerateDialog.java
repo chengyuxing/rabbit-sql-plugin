@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
+import com.github.chengyuxing.common.DataRow;
 import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.plugin.rabbit.sql.Helper;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
@@ -13,7 +14,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
-import com.github.chengyuxing.sql.Args;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -304,7 +304,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                         Files.createDirectories(abs);
                     }
 
-                    var args = Args.ofEntity(templateData);
+                    var args = DataRow.ofEntity(templateData);
                     var result = template.getText(args);
                     Files.writeString(absFilename, result, StandardCharsets.UTF_8);
                     generateMapperConfig(newMapperConfig);
