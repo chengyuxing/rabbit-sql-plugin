@@ -43,17 +43,18 @@
         </li>
     </ul>
     <h2>Getting Started</h2>
-    <p>Create a new maven project.</p>
     <h3>Springboot</h3>
     <ol>
+        <li>Create a new maven project;</li>
         <li>Add dependency <strong>rabbit-sql-spring-boot-starter 4.0.1+(jdk17+) or 3.1.4+(jdk8)</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
         <li>Register xql files on property: <code>files</code>;</li>
     </ol>
-    <h3>Other</h3>
+    <h3>Other Java Project</h3>
     <ol>
+        <li>Create a new maven project.</li>
         <li>Add dependency <strong>rabbit-sql 9.0.2+(jdk17+) or 8.1.4+(jdk8)</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
@@ -61,6 +62,14 @@
         <li>Register xql files on property: <code>files</code>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#bakidao">BakiDao#setXqlFileManager</a>;</li>
+    </ol>
+    <h3>Other IDE</h3>
+    <ol>
+        <li>Create root dirs <b>src/main/resources</b> ;</li>
+        <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
+        ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
+        </li>
+        <li>Register xql files on property: <code>files</code>;</li>
     </ol>
     <p>Get <a href="https://github.com/chengyuxing/rabbit-sql/blob/master/BEST_PRACTICE.md">Best Practice</a> document
     or a <a href="https://github.com/chengyuxing/rabbit-sql-quickstart">Demo</a> to quick start.</p>
@@ -70,6 +79,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.22</h3>
+            <ul>
+                <li>Supports most jetbrains IDEs e.g. IDEA, Webstorm, DataGrip, ...</li>
+                <li>Update icons.</li>
+            </ul>
             <h3>2.4.21</h3>
             <ul>
                 <li>Support <code>rabbit-sql 9.0.2+(jdk17+)/8.1.4+(jdk8)</code> and <code>rabbit-sql-spring-boot-starter 4.0.1+(jdk17+)/3.1.4+(jdk8)</code></li>
@@ -543,10 +557,9 @@
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.java</depends>
+    <depends optional="true" config-file="plugin.java.xml">com.intellij.java</depends>
     <depends optional="true" config-file="plugin.kotlin.xml">org.jetbrains.kotlin</depends>
     <depends optional="true" config-file="plugin.database.xml">com.intellij.database</depends>
-    <depends optional="true" config-file="plugin.yaml.xml">org.jetbrains.plugins.yaml</depends>
     <depends optional="true" config-file="plugin.spring.xml">com.intellij.spring</depends>
 
     <projectListeners>
@@ -561,49 +574,6 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <annotator language="JAVA"
-                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameAnnotator"/>
-
-        <!--Java:Copy sql definition-->
-        <intentionAction id="CopySqlDefinitionInJava">
-            <language>JAVA</language>
-            <category>Rabbit-SQL</category>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlDefinitionInJava</className>
-        </intentionAction>
-
-        <!--Java:Copy sql parameters-->
-        <intentionAction id="CopySqlParamsInJava">
-            <language>JAVA</language>
-            <category>Rabbit-SQL</category>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.CopySqlParamsInJava</className>
-        </intentionAction>
-
-        <!--Java:Execute Dynamic sql-->
-        <intentionAction id="TestDynamicSqlInJava">
-            <language>JAVA</language>
-            <category>Rabbit-SQL</category>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInJava</className>
-        </intentionAction>
-
-        <!--Java:Create/Append-->
-        <intentionAction id="CreateOrAppendXql">
-            <language>JAVA</language>
-            <category>Rabbit-SQL</category>
-            <className>com.github.chengyuxing.plugin.rabbit.sql.extensions.NewXqlIfNotExists</className>
-        </intentionAction>
-
-        <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.GotoXqlDefinition"/>
-
-        <psi.referenceContributor language="JAVA"
-                                  implementation="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameReferenceContributor"/>
-
-        <completion.confidence language="JAVA" order="before javaSkipAutopopupInStrings"
-                               implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameCompletionConfidence"/>
-
-        <lang.documentationProvider language="JAVA" id="XqlQuickDoc"
-                                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlQuickDoc"/>
-
         <iconProvider implementation="com.github.chengyuxing.plugin.rabbit.sql.extensions.MyIconProvider"/>
 
         <toolWindow factoryClass="com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow"

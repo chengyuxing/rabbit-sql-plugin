@@ -1,6 +1,7 @@
-package com.github.chengyuxing.plugin.rabbit.sql.util;
+package com.github.chengyuxing.plugin.rabbit.sql.plugins.java;
 
 import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.annotation.CountQuery;
 import com.github.chengyuxing.sql.annotation.XQL;

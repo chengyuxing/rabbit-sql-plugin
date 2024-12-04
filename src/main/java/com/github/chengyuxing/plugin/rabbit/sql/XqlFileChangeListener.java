@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import org.jetbrains.annotations.NotNull;
@@ -34,17 +35,20 @@ public class XqlFileChangeListener implements BulkFileListener {
             var vf = event.getFile();
             if (vf != null) {
                 if (ProjectFileUtil.isXqlFileManagerConfig(vf.getName())) {
+                    VirtualFile projectVf;
                     var module = ModuleUtil.findModuleForFile(vf, project);
                     if (Objects.nonNull(module)) {
-                        var moduleVf = ProjectUtil.guessModuleDir(module);
-                        if (Objects.nonNull(moduleVf) && moduleVf.exists()) {
-                            if (ProjectFileUtil.isResourceXqlFileManagerConfig(moduleVf, vf)) {
-                                var config = xqlConfigManager.newConfig(project, moduleVf);
-                                config.setConfigVfs(vf);
-                                if (config.isValid()) {
-                                    config.fire();
-                                    xqlConfigManager.add(project, moduleVf.toNioPath(), config);
-                                }
+                        projectVf = ProjectUtil.guessModuleDir(module);
+                    } else {
+                        projectVf = ProjectUtil.guessProjectDir(project);
+                    }
+                    if (Objects.nonNull(projectVf) && projectVf.exists()) {
+                        if (ProjectFileUtil.isResourceXqlFileManagerConfig(projectVf, vf)) {
+                            var config = xqlConfigManager.newConfig(project, projectVf);
+                            config.setConfigVfs(vf);
+                            if (config.isValid()) {
+                                config.fire();
+                                xqlConfigManager.add(project, projectVf.toNioPath(), config);
                             }
                         }
                     }
@@ -58,11 +62,14 @@ public class XqlFileChangeListener implements BulkFileListener {
                         validXqlVf = ProjectFileUtil.getValidVirtualFile(vf);
                     }
                     if (Objects.isNull(validXqlVf)) continue;
-                    var moduleVf = ProjectFileUtil.findModule(project, validXqlVf);
-                    if (Objects.nonNull(moduleVf) && moduleVf.exists()) {
-                        var configs = xqlConfigManager.getConfigs(project, moduleVf.toNioPath());
+                    var projectVf = ProjectFileUtil.findModule(project, validXqlVf);
+                    if (Objects.isNull(projectVf)) {
+                        projectVf = ProjectUtil.guessProjectDir(project);
+                    }
+                    if (Objects.nonNull(projectVf) && projectVf.exists()) {
+                        var configs = xqlConfigManager.getConfigs(project, projectVf.toNioPath());
                         if (Objects.nonNull(configs)) {
-                            log.debug("find module: " + moduleVf + " configs.");
+                            log.debug("find project: " + projectVf + " configs.");
                             configs.forEach(config -> {
                                 if (config.isValid()) {
                                     var configured = config.getOriginalXqlFiles().contains(xqlPath);
@@ -87,14 +94,20 @@ public class XqlFileChangeListener implements BulkFileListener {
                         }
                     }
                 } else if (vf.isDirectory()) {
+                    VirtualFile projectVf = null;
                     var module = ModuleUtil.findModuleForFile(vf, project);
                     if (Objects.nonNull(module)) {
-                        var moduleVf = ProjectUtil.guessModuleDir(module);
-                        if (Objects.nonNull(moduleVf) && moduleVf.exists()) {
-                            if (ProjectFileUtil.isResourceProjectModule(moduleVf)) {
-                                var config = xqlConfigManager.newConfig(project, moduleVf);
-                                xqlConfigManager.add(project, moduleVf.toNioPath(), config);
-                            }
+                        projectVf = ProjectUtil.guessModuleDir(module);
+                    } else {
+                        var vfOfProject = ProjectUtil.guessProjectForFile(vf);
+                        if (Objects.nonNull(vfOfProject)) {
+                            projectVf = ProjectUtil.guessProjectDir(vfOfProject);
+                        }
+                    }
+                    if (Objects.nonNull(projectVf) && projectVf.exists()) {
+                        if (ProjectFileUtil.isResourceProjectModule(projectVf)) {
+                            var config = xqlConfigManager.newConfig(project, projectVf);
+                            xqlConfigManager.add(project, projectVf.toNioPath(), config);
                         }
                     }
                     xqlConfigManager.cleanup(project);

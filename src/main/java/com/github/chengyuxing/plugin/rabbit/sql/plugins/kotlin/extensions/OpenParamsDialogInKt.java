@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions;
 
-import com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInJava;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.OpenParamsDialogInJava;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import org.jetbrains.annotations.NotNull;
 

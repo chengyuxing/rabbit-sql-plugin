@@ -1,6 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -13,8 +15,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.Objects;
 
 public class ProjectReadyListener implements DumbService.DumbModeListener {
@@ -27,48 +31,55 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
 
     @Override
     public void exitDumbMode() {
-        var modules = ModuleManager.getInstance(project).getModules();
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Searching xql configs...", true) {
             @Override
             public void run(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setIndeterminate(true);
                 ApplicationManager.getApplication().runReadAction(() -> {
-                    for (Module module : modules) {
-                        ProgressManager.checkCanceled();
-                        var moduleVfs = ProjectUtil.guessModuleDir(module);
-                        if (Objects.nonNull(moduleVfs) && moduleVfs.exists()) {
-                            if (!ProjectFileUtil.isResourceProjectModule(moduleVfs)) {
-                                continue;
-                            }
-                            var moduleNioPath = moduleVfs.toNioPath();
-                            var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", module.getModuleProductionSourceScope());
-                            if (allConfigVfs.isEmpty()) {
-                                var config = xqlConfigManager.newConfig(project, moduleVfs);
-                                xqlConfigManager.add(project, moduleNioPath, config);
-                                continue;
-                            }
-                            var found = false;
-                            for (VirtualFile configVfs : allConfigVfs) {
-                                if (!ProjectFileUtil.isResourceXqlFileManagerConfig(moduleVfs, configVfs)) {
-                                    continue;
-                                }
-                                found = true;
-                                var config = xqlConfigManager.newConfig(project, moduleVfs);
-                                config.setConfigVfs(configVfs);
-                                if (!config.isValid()) {
-                                    continue;
-                                }
-                                config.silentFire();
-                                xqlConfigManager.add(project, moduleNioPath, config);
-                            }
-                            if (!found) {
-                                var config = xqlConfigManager.newConfig(project, moduleVfs);
-                                xqlConfigManager.add(project, moduleNioPath, config);
-                            }
+                    var modules = ModuleManager.getInstance(project).getModules();
+                    if (modules.length > 0) {
+                        for (Module module : modules) {
+                            ProgressManager.checkCanceled();
+                            var moduleVfs = ProjectUtil.guessModuleDir(module);
+                            var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", module.getModuleContentScope());
+                            addConfigs(moduleVfs, allConfigVfs);
                         }
+                    } else {
+                        var projectVf = ProjectUtil.guessProjectDir(project);
+                        var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", GlobalSearchScope.projectScope(project));
+                        addConfigs(projectVf, allConfigVfs);
                     }
                 });
             }
         });
+    }
+
+    private void addConfigs(VirtualFile projectVf, Collection<VirtualFile> allConfigVfs) {
+        if (Objects.isNull(projectVf) || !projectVf.exists()) {
+            return;
+        }
+        if (!ProjectFileUtil.isResourceProjectModule(projectVf)) {
+            return;
+        }
+        var projectNioPath = projectVf.toNioPath();
+        var found = false;
+        for (VirtualFile configVfs : allConfigVfs) {
+            if (!ProjectFileUtil.isResourceXqlFileManagerConfig(projectVf, configVfs)) {
+                continue;
+            }
+            found = true;
+            var config = xqlConfigManager.newConfig(project, projectVf);
+            config.setConfigVfs(configVfs);
+            if (!config.isValid()) {
+                continue;
+            }
+            config.silentFire();
+            xqlConfigManager.add(project, projectNioPath, config);
+        }
+        if (!found) {
+            var config = xqlConfigManager.newConfig(project, projectVf);
+            xqlConfigManager.add(project, projectNioPath, config);
+            ApplicationManager.getApplication().invokeLater(() -> XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates));
+        }
     }
 }
