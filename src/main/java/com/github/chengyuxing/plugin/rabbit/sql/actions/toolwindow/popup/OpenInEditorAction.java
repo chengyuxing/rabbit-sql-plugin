@@ -55,7 +55,7 @@ public class OpenInEditorAction extends AnAction {
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
         if (Objects.nonNull(nodeSource)) {
-            if (Objects.requireNonNull(nodeSource.type()) == XqlTreeNodeData.Type.XQL_FILE) {
+            if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
                 @SuppressWarnings("unchecked")
                 var sqlMeta = (Triple<String, String, String>) nodeSource.source();
                 var filepath = sqlMeta.getItem3();
