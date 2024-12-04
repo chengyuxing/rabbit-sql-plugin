@@ -16,20 +16,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class KotlinUtil {
     public static String getStringLiteral(PsiElement element) {
-        if (element instanceof KtLiteralStringTemplateEntry) {
-            var stringTemplateEntry = (KtLiteralStringTemplateEntry) element;
+        if (element instanceof KtLiteralStringTemplateEntry stringTemplateEntry) {
             return stringTemplateEntry.getText();
         }
-        if (element instanceof LeafPsiElement && element.getParent() instanceof KtLiteralStringTemplateEntry) {
-            var stringTemplateEntry = (KtLiteralStringTemplateEntry) element.getParent();
+        if (element instanceof LeafPsiElement && element.getParent() instanceof KtLiteralStringTemplateEntry stringTemplateEntry) {
             return stringTemplateEntry.getText();
         }
-        if (element instanceof KtStringTemplateExpression) {
-            var expression = (KtStringTemplateExpression) element;
+        if (element instanceof KtStringTemplateExpression expression) {
             var text = expression.getText();
             return text.substring(1, text.length() - 1);
         }
@@ -55,6 +51,6 @@ public class KotlinUtil {
                     });
                     return psiElements;
                 }).flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

@@ -1,14 +1,11 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
-import com.github.chengyuxing.plugin.rabbit.sql.plugins.yml.YmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.util.*;
 import com.intellij.icons.AllIcons;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -110,15 +107,8 @@ public class NewXqlFileAction extends AnAction {
         if (Objects.isNull(doc)) {
             return;
         }
-        Map<String, String> anchors;
-        if (FeatureChecker.isPluginEnabled(FeatureChecker.YML_PLUGIN_ID)) {
-            anchors = YmlUtil.getYmlAnchors(project, configVf);
-        } else {
-            anchors = Map.of();
-            NotificationUtil.showMessage(project, "YAML plugin is not enabled. YAML-anchor features are disabled.", NotificationType.WARNING);
-        }
         ApplicationManager.getApplication().invokeLater(() -> {
-            var d = new NewXqlDialog(project, config, doc, anchors);
+            var d = new NewXqlDialog(project, config, doc, Map.of());
             d.setPathPrefix(pathPrefix);
             d.initContent();
             d.showAndGet();

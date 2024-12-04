@@ -57,6 +57,11 @@ public class CopyXqlFile extends AnAction {
         }
     }
 
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.BGT;
+    }
+
     private static File createFileByUri(String path) throws IOException {
         if (ProjectFileUtil.isLocalFileUri(path)) {
             return Path.of(URI.create(path)).toFile();
@@ -69,10 +74,5 @@ public class CopyXqlFile extends AnAction {
             fr.transferTo(out);
         }
         return file;
-    }
-
-    @Override
-    public @NotNull ActionUpdateThread getActionUpdateThread() {
-        return ActionUpdateThread.BGT;
     }
 }

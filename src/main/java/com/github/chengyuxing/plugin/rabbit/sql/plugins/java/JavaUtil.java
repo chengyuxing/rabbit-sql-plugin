@@ -1,6 +1,7 @@
-package com.github.chengyuxing.plugin.rabbit.sql.util;
+package com.github.chengyuxing.plugin.rabbit.sql.plugins.java;
 
 import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.annotation.CountQuery;
 import com.github.chengyuxing.sql.annotation.XQL;
@@ -15,16 +16,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class JavaUtil {
     public static String getStringLiteral(PsiElement element) {
-        if (element instanceof PsiLiteralExpression) {
-            var literalExpression = (PsiLiteralExpression) element;
+        if (element instanceof PsiLiteralExpression literalExpression) {
             return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
         }
-        if (element instanceof PsiJavaTokenImpl && element.getParent() instanceof PsiLiteralExpression) {
-            var literalExpression = (PsiLiteralExpression) element.getParent();
+        if (element instanceof PsiJavaTokenImpl && element.getParent() instanceof PsiLiteralExpression literalExpression) {
             return literalExpression.getValue() instanceof String ? (String) literalExpression.getValue() : null;
         }
         return null;
@@ -99,6 +97,6 @@ public class JavaUtil {
                     }
                     return psiElements;
                 }).flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

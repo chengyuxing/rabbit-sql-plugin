@@ -3,6 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.util;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.java.JavaUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.KotlinUtil;
 import com.github.chengyuxing.sql.annotation.*;
 import com.intellij.codeInsight.navigation.NavigationUtil;
@@ -115,7 +116,10 @@ public class PsiUtil {
                 return s;
             }
         }
-        return JavaUtil.getStringLiteral(element);
+        if (FeatureChecker.isPluginEnabled(FeatureChecker.JAVA_PLUGIN_ID)) {
+            return JavaUtil.getStringLiteral(element);
+        }
+        return null;
     }
 
     public static VirtualFile getActiveFile(Project project) {

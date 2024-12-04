@@ -8,6 +8,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.annotation.CountQuery;
 import com.github.chengyuxing.sql.annotation.XQL;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
@@ -49,27 +50,29 @@ public class SelectOpenedFile extends AnAction {
         } else {
             if (PsiUtil.isParentAXQLMapperInterface(element)) {
                 var mapperAlias = PsiUtil.getXQLMapperAlias(element);
-                if (PsiUtil.isXQLMapperMethodIdentifier(element)) {
-                    var sqlNameMv = PsiUtil.getMethodAnnoValue((PsiIdentifier) element, XQL.class.getName(), "value");
-                    String sqlName;
-                    if (Objects.nonNull(sqlNameMv)) {
-                        sqlName = PsiUtil.getAnnoTextValue(sqlNameMv).trim();
-                        if (sqlName.isEmpty()) {
+                if (Objects.nonNull(mapperAlias)) {
+                    if (PsiUtil.isXQLMapperMethodIdentifier(element)) {
+                        var sqlNameMv = PsiUtil.getMethodAnnoValue((PsiIdentifier) element, XQL.class.getName(), "value");
+                        String sqlName;
+                        if (Objects.nonNull(sqlNameMv)) {
+                            sqlName = PsiUtil.getAnnoTextValue(sqlNameMv).trim();
+                            if (sqlName.isEmpty()) {
+                                sqlName = element.getText();
+                            }
+                        } else {
                             sqlName = element.getText();
                         }
+                        sqlRef = "&" + XQLFileManager.encodeSqlReference(mapperAlias, sqlName);
                     } else {
-                        sqlName = element.getText();
-                    }
-                    sqlRef = "&" + mapperAlias + "." + sqlName;
-                } else {
-                    var annoXqlValue = PsiUtil.getIfElementIsAnnotationAttr(element, XQL.class.getName(), "value");
-                    if (Objects.isNull(annoXqlValue)) {
-                        annoXqlValue = PsiUtil.getIfElementIsAnnotationAttr(element, CountQuery.class.getName(), "value");
-                    }
-                    if (Objects.nonNull(annoXqlValue)) {
-                        var sqlName = PsiUtil.getAnnoTextValue(annoXqlValue).trim();
-                        if (!sqlName.isEmpty()) {
-                            sqlRef = "&" + mapperAlias + "." + sqlName;
+                        var annoXqlValue = PsiUtil.getIfElementIsAnnotationAttr(element, XQL.class.getName(), "value");
+                        if (Objects.isNull(annoXqlValue)) {
+                            annoXqlValue = PsiUtil.getIfElementIsAnnotationAttr(element, CountQuery.class.getName(), "value");
+                        }
+                        if (Objects.nonNull(annoXqlValue)) {
+                            var sqlName = PsiUtil.getAnnoTextValue(annoXqlValue).trim();
+                            if (!sqlName.isEmpty()) {
+                                sqlRef = "&" + XQLFileManager.encodeSqlReference(mapperAlias, sqlName);
+                            }
                         }
                     }
                 }

@@ -25,6 +25,11 @@ public class ToggleViewModeAction extends AnAction {
     }
 
     @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.EDT;
+    }
+
+    @Override
     public void update(@NotNull AnActionEvent e) {
         if (Objects.isNull(e.getProject())) {
             return;
@@ -42,10 +47,5 @@ public class ToggleViewModeAction extends AnAction {
                 e.getPresentation().setText(title);
             }
         });
-    }
-
-    @Override
-    public @NotNull ActionUpdateThread getActionUpdateThread() {
-        return ActionUpdateThread.EDT;
     }
 }
