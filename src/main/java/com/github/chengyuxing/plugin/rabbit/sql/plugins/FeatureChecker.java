@@ -8,6 +8,7 @@ import java.util.Objects;
 public class FeatureChecker {
     public static final String DATABASE_PLUGIN_ID = "com.intellij.database";
     public static final String KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin";
+    public static final String JAVA_PLUGIN_ID = "com.intellij.java";
 
     public static boolean isPluginEnabled(String pluginId) {
         var id = PluginId.getId(pluginId);

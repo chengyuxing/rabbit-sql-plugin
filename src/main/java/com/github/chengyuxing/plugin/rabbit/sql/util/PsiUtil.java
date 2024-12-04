@@ -116,7 +116,10 @@ public class PsiUtil {
                 return s;
             }
         }
-        return JavaUtil.getStringLiteral(element);
+        if (FeatureChecker.isPluginEnabled(FeatureChecker.JAVA_PLUGIN_ID)) {
+            return JavaUtil.getStringLiteral(element);
+        }
+        return null;
     }
 
     public static VirtualFile getActiveFile(Project project) {
