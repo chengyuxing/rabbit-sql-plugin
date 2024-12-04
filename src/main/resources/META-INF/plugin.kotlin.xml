@@ -30,7 +30,7 @@
                                implementationClass="com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions.XqlNameCompletionConfidenceInKt"/>
 
         <lang.documentationProvider language="kotlin" id="XqlQuickDocInKt"
-                                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlQuickDoc"/>
+                                    implementationClass="com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.XqlQuickDoc"/>
 
         <psi.referenceContributor language="kotlin"
                                   implementation="com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions.XqlNameReferenceContributorInKt"/>

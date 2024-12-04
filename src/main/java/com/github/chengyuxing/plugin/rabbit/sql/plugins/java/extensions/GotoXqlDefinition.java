@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.extensions;
+package com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions;
 
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;

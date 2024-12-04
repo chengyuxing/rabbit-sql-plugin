@@ -1,7 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions.support;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.extensions.OpenParamsDialogInJava;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.OpenParamsDialogInJava;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.lang.Language;

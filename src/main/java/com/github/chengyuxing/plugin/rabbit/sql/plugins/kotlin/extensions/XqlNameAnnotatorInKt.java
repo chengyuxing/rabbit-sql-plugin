@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.extensions;
 
-import com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameAnnotator;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions.XqlNameAnnotator;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
 

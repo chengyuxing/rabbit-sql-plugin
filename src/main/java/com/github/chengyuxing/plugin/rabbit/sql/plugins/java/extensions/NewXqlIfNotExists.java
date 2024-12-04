@@ -1,8 +1,6 @@
-package com.github.chengyuxing.plugin.rabbit.sql.extensions;
+package com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions;
 
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
-import com.github.chengyuxing.plugin.rabbit.sql.plugins.yml.YmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.util.*;
@@ -13,7 +11,6 @@ import com.intellij.codeInspection.util.IntentionName;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.Language;
 import com.intellij.lang.java.JavaLanguage;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.ControlFlowException;
@@ -67,15 +64,8 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
                 if (Objects.isNull(doc)) {
                     return;
                 }
-                Map<String, String> anchors;
-                if (FeatureChecker.isPluginEnabled(FeatureChecker.YML_PLUGIN_ID)) {
-                    anchors = YmlUtil.getYmlAnchors(project, configVf);
-                } else {
-                    anchors = Map.of();
-                    NotificationUtil.showMessage(project, "YAML plugin is not enabled. YAML-anchor features are disabled.", NotificationType.WARNING);
-                }
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    var d = new NewXqlDialog(project, config, doc, anchors);
+                    var d = new NewXqlDialog(project, config, doc, Map.of());
                     d.setDefaultAlias(alias);
                     d.setEnableAutoGenAlias(false);
                     d.setTemplateContent("/*[" + name + "]*/\n\n" + xqlFileManager.getDelimiter() + "\n");

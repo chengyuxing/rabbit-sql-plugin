@@ -52,7 +52,7 @@ public class GenerateXqlMapperAction extends AnAction {
             var config = data.getItem4();
             var module = ModuleUtil.findModuleForFile(config.getConfigVfs(), project);
             if (Objects.nonNull(module)) {
-                var moduleType = ModuleType.get(module).getName();
+                var moduleType = ModuleType.get(module).getId();
                 if (Objects.equals(moduleType, "JAVA_MODULE")) {
                     e.getPresentation().setEnabled(true);
                 }
