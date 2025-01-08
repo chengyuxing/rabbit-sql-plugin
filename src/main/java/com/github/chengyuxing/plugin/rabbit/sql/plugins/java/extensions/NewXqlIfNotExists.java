@@ -66,7 +66,7 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
                     return;
                 }
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    var d = new NewXqlDialog(project, config, doc, Map.of());
+                    var d = new NewXqlDialog(project, config, doc);
                     d.setDefaultAlias(alias);
                     d.setEnableAutoGenAlias(false);
                     d.setTemplateContent("/*[" + name + "]*/\n\n" + xqlFileManager.getDelimiter() + "\n");

@@ -108,7 +108,7 @@ public class NewXqlFileAction extends AnAction {
             return;
         }
         ApplicationManager.getApplication().invokeLater(() -> {
-            var d = new NewXqlDialog(project, config, doc, Map.of());
+            var d = new NewXqlDialog(project, config, doc);
             d.setPathPrefix(pathPrefix);
             d.initContent();
             d.showAndGet();

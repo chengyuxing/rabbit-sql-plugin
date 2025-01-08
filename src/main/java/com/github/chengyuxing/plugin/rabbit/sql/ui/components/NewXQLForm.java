@@ -165,28 +165,15 @@ public class NewXQLForm extends JPanel {
     }
 
     private String joinPath(String paths) {
+        var finalPath = paths;
         if (isYmlListType(paths)) {
-            var parts = paths.substring(1, paths.length() - 1).split(",");
-            var sb = new StringJoiner("/");
-            for (int i = 0, j = parts.length; i < j; i++) {
-                var part = parts[i].trim();
-                var pt = part;
-                if (pt.startsWith("*")) {
-                    pt = anchors.get(pt.substring(1));
-                }
-                if (!part.startsWith("*") && i == j - 1) {
-                    if (!pt.endsWith(".xql")) {
-                        pt += ".xql";
-                    }
-                }
-                sb.add(pt);
-            }
-            return sb.toString();
+            var parts = paths.substring(1, paths.length() - 1).split("\\s*,\\s*");
+            finalPath = String.join("/", parts).trim();
         }
-        if (!paths.endsWith(".xql")) {
-            paths += ".xql";
+        if (!finalPath.endsWith(".xql")) {
+            finalPath += ".xql";
         }
-        return paths;
+        return finalPath;
     }
 
     public boolean isYmlListType(String s) {
@@ -195,19 +182,12 @@ public class NewXQLForm extends JPanel {
 
     private String formatYmlArray(String s) {
         var r = s.trim();
-        r = r.substring(1, r.length() - 1);
-        var sb = new StringJoiner(", ");
-        var paths = r.split(",");
-        for (int i = 0, j = paths.length; i < j; i++) {
-            var part = paths[i].trim();
-            if (!part.startsWith("*") && i == j - 1) {
-                if (!part.endsWith(".xql")) {
-                    part += ".xql";
-                }
-            }
-            sb.add(part);
+        var paths = r.substring(1, r.length() - 1).split("\\s*,\\s*");
+        var path = String.join(", ", paths).trim();
+        if (!path.endsWith(".xql")) {
+            path += ".xql";
         }
-        return "[ " + sb + " ]";
+        return "[ " + path + " ]";
     }
 
     public void setAnchors(Map<String, String> anchors) {
