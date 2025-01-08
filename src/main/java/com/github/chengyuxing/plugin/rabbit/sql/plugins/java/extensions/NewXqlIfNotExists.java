@@ -11,7 +11,6 @@ import com.intellij.codeInspection.util.IntentionName;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.Language;
 import com.intellij.lang.java.JavaLanguage;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.ControlFlowException;
@@ -29,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.Objects;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
