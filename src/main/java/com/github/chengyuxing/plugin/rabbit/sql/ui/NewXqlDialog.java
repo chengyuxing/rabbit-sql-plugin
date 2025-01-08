@@ -32,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -43,7 +42,6 @@ public class NewXqlDialog extends DialogWrapper {
     private final Project project;
     private final XQLConfigManager.Config config;
     private final Document doc;
-    private final Map<String, String> anchors;
     private String defaultAlias = "";
     private boolean enableAutoGenAlias = true;
     private String templateContent = "";
@@ -52,19 +50,17 @@ public class NewXqlDialog extends DialogWrapper {
     private NewXQLForm newXqlFileForm = null;
     private List<String> pathPrefix = List.of();
 
-    public NewXqlDialog(Project project, XQLConfigManager.Config config, Document doc, Map<String, String> anchors) {
+    public NewXqlDialog(Project project, XQLConfigManager.Config config, Document doc) {
         super(true);
         this.project = project;
         this.config = config;
         this.doc = doc;
-        this.anchors = anchors;
         setOKActionEnabled(false);
         setTitle("New XQL File");
     }
 
     public void initContent() {
         this.newXqlFileForm = new NewXQLForm(getAbResourceRoot() + "/" + String.join("/", pathPrefix));
-        this.newXqlFileForm.setAnchors(anchors);
         this.newXqlFileForm.setDefaultAlias(defaultAlias);
         this.newXqlFileForm.setAliasEditable(enableAutoGenAlias);
         this.newXqlFileForm.setInputChanged(data -> {
@@ -88,14 +84,6 @@ public class NewXqlDialog extends DialogWrapper {
                         this.newXqlFileForm.alert("Invalid path part founded.");
                         setOKActionEnabled(false);
                         return;
-                    }
-                    if (pt.startsWith("*")) {
-                        var name = pt.substring(1);
-                        if (!anchors.containsKey(name)) {
-                            this.newXqlFileForm.alert("Cannot find '" + name + "' anchor value.");
-                            setOKActionEnabled(false);
-                            return;
-                        }
                     }
                 }
             }
@@ -191,6 +179,7 @@ public class NewXqlDialog extends DialogWrapper {
 
             @Override
             public void onSuccess() {
+                dispose();
                 ApplicationManager.getApplication().invokeLater(() -> {
                     var newVf = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(file);
                     if (Objects.isNull(newVf)) {
@@ -238,7 +227,6 @@ public class NewXqlDialog extends DialogWrapper {
                 log.warn(error);
             }
         });
-        dispose();
     }
 
     public void setDefaultAlias(String defaultAlias) {

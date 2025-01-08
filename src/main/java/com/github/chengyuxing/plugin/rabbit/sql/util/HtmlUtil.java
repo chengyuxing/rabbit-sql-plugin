@@ -79,7 +79,7 @@ public class HtmlUtil {
     }
 
     public static @Language("HTML") String toHtml(@Language("HTML") String content) {
-        return "<html lang=\"en\"><body>" + content + "</body></html>";
+        return "<html><body>" + content + "</body></html>";
     }
 
     public enum Color {
