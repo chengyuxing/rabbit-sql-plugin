@@ -79,6 +79,10 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.23</h3>
+            <ul>
+                <li>Some optimized.</li>
+            </ul>
             <h3>2.4.22</h3>
             <ul>
                 <li>Supports most jetbrains IDEs e.g. IDEA, Webstorm, DataGrip, ...</li>
