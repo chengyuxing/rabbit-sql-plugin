@@ -98,7 +98,7 @@ public class GotoJvmLangCallable extends RelatedItemLineMarkerProvider {
                                 .createLineMarkerInfo(xqlPsiElement);
                         result.add(markInfo);
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     if (e instanceof ControlFlowException) {
                         throw e;
                     }
