@@ -79,6 +79,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.24</h3>
+            <ul>
+                <li>Fixed switch branch error.</li>
+                <li>Compatible with IDEA 2025.1.* .</li>
+            </ul>
             <h3>2.4.23</h3>
             <ul>
                 <li>Some optimized.</li>
