@@ -112,6 +112,9 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
             if (Objects.nonNull(xqlFileManager)) {
                 var alias = XQLFileManager.decodeSqlReference(sqlName).getItem1();
                 var resource = xqlFileManager.getResource(alias);
+                if (Objects.isNull(resource)) {
+                    return false;
+                }
                 if (ProjectFileUtil.isLocalFileUri(resource.getFilename())) {
                     return !xqlFileManager.contains(sqlName);
                 }
