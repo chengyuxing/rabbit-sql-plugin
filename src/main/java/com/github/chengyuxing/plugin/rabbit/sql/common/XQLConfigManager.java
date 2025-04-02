@@ -246,7 +246,7 @@ public final class XQLConfigManager {
                     return Set.of();
                 }
                 xqlFileManagerConfig.copyStateTo(xqlFileManager);
-                var newFiles = new LinkedHashMap<String, String>();
+                var newFiles = new XQLFileManagerConfig.FileMap();
                 for (Map.Entry<String, String> e : xqlFileManager.getFiles().entrySet()) {
                     var alias = e.getKey();
                     // e.g. xqls/home.xql
@@ -310,11 +310,13 @@ public final class XQLConfigManager {
                 public void run(@NotNull ProgressIndicator indicator) {
                     ProgressManager.checkCanceled();
                     indicator.setIndeterminate(true);
-                    var messages = initXqlFileManager();
-                    if (silent) {
-                        return;
+                    synchronized (this) {
+                        var messages = initXqlFileManager();
+                        if (silent) {
+                            return;
+                        }
+                        notificationExecutor.get().ifPresent(n -> n.show(messages));
                     }
-                    notificationExecutor.get().ifPresent(n -> n.show(messages));
                 }
 
                 @Override

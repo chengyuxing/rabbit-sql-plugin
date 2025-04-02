@@ -4,7 +4,6 @@ import com.github.chengyuxing.common.script.expression.Patterns;
 import com.github.chengyuxing.common.script.lexer.FlowControlLexer;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
-import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -29,7 +28,7 @@ public class XqlFileAnnotator implements Annotator {
             return;
         }
         // sql name highlight
-        if (value.matches(Constants.SQL_NAME_ANNOTATION_PATTERN) || value.matches(XQLFileManager.PART_PATTERN.pattern())) {
+        if (value.matches(Constants.SQL_NAME_ANNOTATION_PATTERN)) {
             holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                     .range(element.getTextRange())
                     .textAttributes(DefaultLanguageHighlighterColors.METADATA)
