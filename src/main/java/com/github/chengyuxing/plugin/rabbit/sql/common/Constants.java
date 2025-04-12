@@ -8,7 +8,7 @@ import java.nio.file.Path;
 public final class Constants {
     @Language("RegExp")
     public static final String SQL_NAME_PATTERN = "^&[\\w\\-]+\\..+";
-    public static final String SQL_NAME_ANNOTATION_PATTERN = XQLFileManager.NAME_PATTERN.pattern();
+    public static final String SQL_NAME_ANNOTATION_PATTERN = XQLFileManager.KEY_PATTERN.pattern();
     public static final String CONFIG_NAME = XQLFileManager.YML;
     public static final Path RESOURCE_ROOT = Path.of("src", "main", "resources");
     public static final Path JAVA_SOURCE_ROOT = Path.of("src", "main", "java");

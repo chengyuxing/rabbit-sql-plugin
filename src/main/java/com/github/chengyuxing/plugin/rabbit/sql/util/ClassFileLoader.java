@@ -1,7 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
 import com.github.chengyuxing.common.io.FileResource;
-import com.github.chengyuxing.common.utils.ResourceUtil;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -21,7 +20,7 @@ public class ClassFileLoader extends ClassLoader {
 
     @Override
     public Class<?> findClass(String name) {
-        var classPath = rootDir.resolve(Path.of(ResourceUtil.package2path(name) + ".class"));
+        var classPath = rootDir.resolve(Path.of(name.replace(".", "/") + ".class"));
         var file = new FileResource(classPath.toUri().toString());
         if (file.exists()) {
             byte[] bytes;
