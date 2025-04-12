@@ -46,7 +46,7 @@
     <h3>Springboot</h3>
     <ol>
         <li>Create a new maven project;</li>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 4.0.1+(jdk17+) or 3.1.4+(jdk8)</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 4.0.8+(jdk17+) or 3.2.1+(jdk8)</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -55,7 +55,7 @@
     <h3>Other Java Project</h3>
     <ol>
         <li>Create a new maven project.</li>
-        <li>Add dependency <strong>rabbit-sql 9.0.2+(jdk17+) or 8.1.4+(jdk8)</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 9.0.8+(jdk17+) or 8.1.11+(jdk8)</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -79,6 +79,17 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.25</h3>
+            <ul>
+                <li>Support <code>rabbit-sql 9.0.8+(jdk11+)/8.1.11+(jdk8)</code> and <code>rabbit-sql-spring-boot-starter 4.0.8+(jdk17+)/3.2.1+(jdk8)</code></li>
+                <li>Some bugs fixed.</li>
+                <li>Some optimized.</li>
+            </ul>
+            <h3>2.4.24</h3>
+            <ul>
+                <li>Fixed switch branch error.</li>
+                <li>Compatible with IDEA 2025.1.* .</li>
+            </ul>
             <h3>2.4.23</h3>
             <ul>
                 <li>Some optimized.</li>

@@ -7,13 +7,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class NotificationExecutor implements AutoCloseable {
     private final ScheduledExecutorService service;
     private final long delay;
     private final Consumer<Set<Message>> consumer;
-    private ScheduledFuture<?> current;
+    private final AtomicReference<ScheduledFuture<?>> currentRef = new AtomicReference<>();
     private final Set<Message> messages = new HashSet<>();
 
     public NotificationExecutor(Consumer<Set<Message>> consumer, long delay) {
@@ -33,14 +34,16 @@ public class NotificationExecutor implements AutoCloseable {
     }
 
     void trigger() {
+        var current = this.currentRef.get();
         if (current != null && (!current.isCancelled() || !current.isDone())) {
             current.cancel(false);
-            current = null;
+            currentRef.set(null);
         }
-        current = service.schedule(() -> {
+        var newCurrent = service.schedule(() -> {
             consumer.accept(messages);
             messages.clear();
         }, delay, TimeUnit.MILLISECONDS);
+        currentRef.set(newCurrent);
     }
 
     @Override

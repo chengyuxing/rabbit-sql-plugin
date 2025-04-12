@@ -4,7 +4,6 @@ import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.script.exception.ScriptSyntaxException;
 import com.github.chengyuxing.common.script.expression.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
-import com.github.chengyuxing.common.utils.ResourceUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ArrayListValueSet;
@@ -204,7 +203,7 @@ public final class XQLConfigManager {
                         for (Map.Entry<String, String> e : pipes.entrySet()) {
                             var pipeName = e.getKey();
                             var pipeClassName = e.getValue();
-                            var pipeClassPath = classesPath.resolve(ResourceUtil.package2path(pipeClassName) + ".class");
+                            var pipeClassPath = classesPath.resolve(pipeClassName.replace(".", "/") + ".class");
                             if (!Files.exists(pipeClassPath)) {
                                 notificationExecutor.get().ifPresent(n -> n.show(Message.warning(messagePrefix() + "pipe '" + pipeClassName + "' not found, maybe should re-compile project.")));
                                 continue;
@@ -246,7 +245,7 @@ public final class XQLConfigManager {
                     return Set.of();
                 }
                 xqlFileManagerConfig.copyStateTo(xqlFileManager);
-                var newFiles = new LinkedHashMap<String, String>();
+                var newFiles = new XQLFileManagerConfig.FileMap();
                 for (Map.Entry<String, String> e : xqlFileManager.getFiles().entrySet()) {
                     var alias = e.getKey();
                     // e.g. xqls/home.xql
@@ -310,11 +309,13 @@ public final class XQLConfigManager {
                 public void run(@NotNull ProgressIndicator indicator) {
                     ProgressManager.checkCanceled();
                     indicator.setIndeterminate(true);
-                    var messages = initXqlFileManager();
-                    if (silent) {
-                        return;
+                    synchronized (this) {
+                        var messages = initXqlFileManager();
+                        if (silent) {
+                            return;
+                        }
+                        notificationExecutor.get().ifPresent(n -> n.show(messages));
                     }
-                    notificationExecutor.get().ifPresent(n -> n.show(messages));
                 }
 
                 @Override
