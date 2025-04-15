@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
+import com.github.chengyuxing.common.utils.ObjectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
@@ -37,7 +38,10 @@ public class GotoJvmLangCallable extends RelatedItemLineMarkerProvider {
         var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
         var m = pattern.matcher(sqlNameTag);
         if (m.matches()) {
-            var sqlName = m.group("name");
+            var sqlName = ObjectUtil.coalesce(m.group("sqlName"), m.group("partName"));
+            if (Objects.isNull(sqlName)) {
+                return;
+            }
             var xqlFile = xqlPsiElement.getContainingFile();
             if (xqlFile != null) {
                 if (!xqlFile.isPhysical()) {
