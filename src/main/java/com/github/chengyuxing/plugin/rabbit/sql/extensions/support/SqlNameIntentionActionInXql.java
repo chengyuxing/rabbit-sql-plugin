@@ -1,7 +1,9 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions.support;
 
+import com.github.chengyuxing.common.utils.ObjectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
@@ -48,9 +50,12 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
                 var xqlFileManager = config.getXqlFileManager();
                 for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
                     if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
-                        var sqlPath = file.getKey() + "." + m.group("name");
-                        invokeIfSuccess(project, element, config, sqlPath);
-                        return;
+                        var sqlName = ObjectUtil.coalesce(m.group("sqlName"), m.group("partName"));
+                        if (Objects.nonNull(sqlName)) {
+                            var sqlPath = XQLFileManager.encodeSqlReference(file.getKey(), sqlName);
+                            invokeIfSuccess(project, element, config, sqlPath);
+                            return;
+                        }
                     }
                 }
             }
@@ -67,7 +72,7 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
         var xqlVf = PsiUtilCore.getVirtualFile(element);
-        if(Objects.isNull(xqlVf)) {
+        if (Objects.isNull(xqlVf)) {
             return false;
         }
         if (!isValidFileExtension(xqlVf.getExtension())) {
@@ -87,11 +92,13 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
             if (xqlFileManager != null) {
                 for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
                     if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
-                        var sqlName = m.group("name");
-                        var sqlPath = file.getKey() + "." + sqlName;
-                        if (xqlFileManager.contains(sqlPath)) {
-                            intentionTarget = sqlName;
-                            return true;
+                        var sqlName = ObjectUtil.coalesce(m.group("sqlName"), m.group("partName"));
+                        if (Objects.nonNull(sqlName)) {
+                            var sqlPath = XQLFileManager.encodeSqlReference(file.getKey(), sqlName);
+                            if (xqlFileManager.contains(sqlPath)) {
+                                intentionTarget = sqlName;
+                                return true;
+                            }
                         }
                     }
                 }
