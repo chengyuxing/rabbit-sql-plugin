@@ -309,13 +309,11 @@ public final class XQLConfigManager {
                 public void run(@NotNull ProgressIndicator indicator) {
                     ProgressManager.checkCanceled();
                     indicator.setIndeterminate(true);
-                    synchronized (this) {
-                        var messages = initXqlFileManager();
-                        if (silent) {
-                            return;
-                        }
-                        notificationExecutor.get().ifPresent(n -> n.show(messages));
+                    var messages = initXqlFileManager();
+                    if (silent) {
+                        return;
                     }
+                    notificationExecutor.get().ifPresent(n -> n.show(messages));
                 }
 
                 @Override
