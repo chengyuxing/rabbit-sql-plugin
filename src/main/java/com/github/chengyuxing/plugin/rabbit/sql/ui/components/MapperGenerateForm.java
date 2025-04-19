@@ -4,7 +4,7 @@ import com.github.chengyuxing.common.utils.ObjectUtil;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.CheckboxCellRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLJavaType;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLMapperConfig;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.ReturnTypesDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.XQLMethodCellRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.SqlTypePlaceHolder;
@@ -390,9 +390,18 @@ public class MapperGenerateForm extends JPanel {
                                 new HashSet<>(RETURN_TYPES).containsAll(ReturnTypesForm.splitReturnTypes(xqlMethod.getReturnType()))) {
                             returnType = xqlMethod.getReturnType();
                         }
+
+                        var paramMeta = xqlMethod.getParamMeta();
+                        if (Objects.nonNull(paramMeta)) {
+                            var className = paramMeta.getClassName();
+                            if (Objects.nonNull(className) && !className.trim().isEmpty()) {
+                                paramType = className;
+                            }
+                        }
                         if (StringUtils.isNotEmpty(xqlMethod.getParamType())) {
                             paramType = xqlMethod.getParamType();
                         }
+
                         if (StringUtils.isNotEmpty(xqlMethod.getReturnGenericType())) {
                             returnGenericType = xqlMethod.getReturnGenericType();
                         }

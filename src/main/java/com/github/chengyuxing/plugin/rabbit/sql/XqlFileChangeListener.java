@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -70,7 +71,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                         var configs = xqlConfigManager.getConfigs(project, projectVf.toNioPath());
                         if (Objects.nonNull(configs)) {
                             log.debug("find project: " + projectVf + " configs.");
-                            configs.forEach(config -> {
+                            new HashSet<>(configs).forEach(config -> {
                                 if (config.isValid()) {
                                     var configured = config.getOriginalXqlFiles().contains(xqlPath);
                                     // configured files:
@@ -82,7 +83,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                                         config.fire();
                                     } else {
                                         // filename changed which not included in config files.
-                                        config.getOriginalXqlFiles().forEach(cfgPath -> {
+                                        new HashSet<>(config.getOriginalXqlFiles()).forEach(cfgPath -> {
                                             var p = Path.of(URI.create(cfgPath));
                                             if (cfgPath.isEmpty() || !Files.exists(p)) {
                                                 config.fire();

@@ -11,7 +11,7 @@ public class XQLMapperTemplateData {
     private String description;
     private final String mapperInterfaceName;
     private List<Method> methods = new ArrayList<>();
-    private Set<String> entityImports = new LinkedHashSet<>();
+    private Set<String> classImports = new LinkedHashSet<>();
     private String userImports = "";
     private String userMethods = "";
 
@@ -94,12 +94,12 @@ public class XQLMapperTemplateData {
         this.baki = baki;
     }
 
-    public Set<String> getEntityImports() {
-        return entityImports;
+    public Set<String> getClassImports() {
+        return classImports;
     }
 
-    public void setEntityImports(Set<String> entityImports) {
-        this.entityImports = entityImports;
+    public void setClassImports(Set<String> classImports) {
+        this.classImports = classImports;
     }
 
     public static class Method {
@@ -109,7 +109,8 @@ public class XQLMapperTemplateData {
         private String annotationValue;
         private String sqlType;
         private String paramType;
-        private Set<String> parameters = new LinkedHashSet<>();
+        private String paramClassComment;
+        private Set<Parameter> parameters = new LinkedHashSet<>();
         private String countQuery;
         protected Boolean enable = true;
 
@@ -118,7 +119,7 @@ public class XQLMapperTemplateData {
             this.name = methodName;
         }
 
-        public void setParameters(Set<String> parameters) {
+        public void setParameters(Set<Parameter> parameters) {
             if (parameters != null) {
                 this.parameters = parameters;
             }
@@ -148,7 +149,7 @@ public class XQLMapperTemplateData {
             return name;
         }
 
-        public Set<String> getParameters() {
+        public Set<Parameter> getParameters() {
             return parameters;
         }
 
@@ -182,6 +183,38 @@ public class XQLMapperTemplateData {
 
         public void setEnable(Boolean enable) {
             this.enable = enable;
+        }
+
+        public String getParamClassComment() {
+            return paramClassComment;
+        }
+
+        public void setParamClassComment(String paramClassComment) {
+            this.paramClassComment = paramClassComment;
+        }
+    }
+
+    public static class Parameter {
+        private final String name;
+        private final String type;
+        private final String comment;
+
+        public Parameter(String name, String type, String comment) {
+            this.name = name;
+            this.type = type;
+            this.comment = comment;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getComment() {
+            return comment;
+        }
+
+        public String getType() {
+            return type;
         }
     }
 }

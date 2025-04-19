@@ -402,6 +402,8 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                 return new AnAction[]{
                         new ExecuteSqlAction(tree),
                         new Separator(),
+                        new GenerateEntityAction(tree),
+                        new Separator(),
                         copyGroup,
                         new GotoXqlFileAction(tree)
                 };

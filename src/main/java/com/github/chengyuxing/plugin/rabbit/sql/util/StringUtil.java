@@ -36,8 +36,6 @@ public class StringUtil {
         var namedParams = getParamsMappingInfo(config.getSqlGenerator(), sqlDefinition, true)
                 .keySet()
                 .stream()
-                .filter(name -> !name.startsWith(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY + "."))
-                .distinct()
                 .map(key -> "\"" + key + "\", " + key)
                 .collect(Collectors.toList());
 
@@ -214,5 +212,14 @@ public class StringUtil {
 
     public static String generateInterfaceMapperName(String alias) {
         return camelizeAndClean(alias.substring(0, 1).toUpperCase() + alias.substring(1)) + "Mapper";
+    }
+
+    public static Pair<String, String> getTypeAndPackagePath(String fullyClassName) {
+        var shortType = fullyClassName.substring(fullyClassName.lastIndexOf(".") + 1);
+        var packagePath = fullyClassName;
+        if (fullyClassName.contains("<") && fullyClassName.contains(">")) {
+            packagePath = fullyClassName.substring(0, fullyClassName.indexOf("<"));
+        }
+        return Pair.of(shortType, packagePath);
     }
 }
