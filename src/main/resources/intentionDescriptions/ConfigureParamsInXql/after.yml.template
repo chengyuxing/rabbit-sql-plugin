@@ -1,0 +1,16 @@
+methods:
+  queryUserById:
+    enable: true
+    paramMeta:
+      className: null
+      comment: null
+      lombok: !!set {}
+      params:
+        id:
+          comment: ''
+          required: true
+          type: Integer
+    paramType: null
+    returnGenericType: null
+    returnType: null
+    sqlType: null
