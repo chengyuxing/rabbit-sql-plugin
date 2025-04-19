@@ -19,6 +19,11 @@
             <category>Rabbit-SQL</category>
             <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions.CopySqlDefinitionInXql</className>
         </intentionAction>
+        <!--Xql:Configure sql params-->
+        <intentionAction>
+            <category>Rabbit-SQL</category>
+            <className>com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions.ConfigureParamsInXql</className>
+        </intentionAction>
 
         <codeInsight.lineMarkerProvider language="SQL"
                                         implementationClass="com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions.GotoJvmLangCallable"/>

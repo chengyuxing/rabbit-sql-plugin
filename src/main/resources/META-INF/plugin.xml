@@ -79,6 +79,13 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.27</h3>
+            <ul>
+                <li>I took a nap until after 4 p.m. today.</li>
+                <li>Supports configure sql params.</li>
+                <li>Supports generate params entity class.</li>
+                <li>Some code optimized and bugs fixed.</li>
+            </ul>
             <h3>2.4.26</h3>
             <ul>
                 <li>Fixed xql file intention action bugs.</li>
