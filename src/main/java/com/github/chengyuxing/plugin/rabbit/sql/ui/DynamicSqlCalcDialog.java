@@ -11,7 +11,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.database.DatabaseUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ParametersForm;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.IconListCellRenderer;
-import com.github.chengyuxing.plugin.rabbit.sql.util.AnActionWrapper;
+import com.github.chengyuxing.plugin.rabbit.sql.util.AnActionGroupWrapper;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -86,7 +86,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
                 new OptionAction() {
                     @Override
                     public Action @NotNull [] getOptions() {
-                        return new Action[]{new AnActionWrapper(group)};
+                        return new Action[]{new AnActionGroupWrapper(group)};
                     }
 
                     @Override

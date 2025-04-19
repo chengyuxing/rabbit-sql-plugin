@@ -21,7 +21,7 @@ public class GenerateXqlMapperAction extends AnAction {
     private final JTree tree;
 
     public GenerateXqlMapperAction(JTree tree) {
-        super("Generate Code...", "Generate mapper file of this xql file.", AllIcons.Actions.Compile);
+        super("Generate Mapper...", "Generate mapper file of this xql file.", AllIcons.Actions.Compile);
         this.tree = tree;
     }
 
