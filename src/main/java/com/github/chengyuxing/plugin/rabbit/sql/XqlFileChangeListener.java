@@ -20,12 +20,10 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class XqlFileChangeListener implements BulkFileListener {
     private static final Logger log = Logger.getInstance(XqlFileChangeListener.class);
     private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
-    private final ReentrantLock lock = new ReentrantLock();
     private final Project project;
 
     public XqlFileChangeListener(Project project) {
@@ -73,32 +71,27 @@ public class XqlFileChangeListener implements BulkFileListener {
                         var configs = xqlConfigManager.getConfigs(project, projectVf.toNioPath());
                         if (Objects.nonNull(configs)) {
                             log.debug("find project: " + projectVf + " configs.");
-                            lock.lock();
-                            try {
-                                new HashSet<>(configs).forEach(config -> {
-                                    if (config.isValid()) {
-                                        var configured = config.getOriginalXqlFiles().contains(xqlPath);
-                                        // configured files:
-                                        // content modified
-                                        // file deleted
-                                        // file created
-                                        // other file name change matched configured files
-                                        if (configured) {
-                                            config.fire();
-                                        } else {
-                                            // filename changed which not included in config files.
-                                            new HashSet<>(config.getOriginalXqlFiles()).forEach(cfgPath -> {
-                                                var p = Path.of(URI.create(cfgPath));
-                                                if (cfgPath.isEmpty() || !Files.exists(p)) {
-                                                    config.fire();
-                                                }
-                                            });
-                                        }
+                            new HashSet<>(configs).forEach(config -> {
+                                if (config.isValid()) {
+                                    var configured = config.getOriginalXqlFiles().contains(xqlPath);
+                                    // configured files:
+                                    // content modified
+                                    // file deleted
+                                    // file created
+                                    // other file name change matched configured files
+                                    if (configured) {
+                                        config.fire();
+                                    } else {
+                                        // filename changed which not included in config files.
+                                        new HashSet<>(config.getOriginalXqlFiles()).forEach(cfgPath -> {
+                                            var p = Path.of(URI.create(cfgPath));
+                                            if (cfgPath.isEmpty() || !Files.exists(p)) {
+                                                config.fire();
+                                            }
+                                        });
                                     }
-                                });
-                            } finally {
-                                lock.unlock();
-                            }
+                                }
+                            });
                         }
                     }
                 } else if (vf.isDirectory()) {
