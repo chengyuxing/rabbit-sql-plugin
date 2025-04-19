@@ -6,6 +6,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.annotation.CountQuery;
 import com.github.chengyuxing.sql.annotation.XQL;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
@@ -111,7 +112,7 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
         if (Objects.nonNull(annoAttr)) {
             var cQAttrValue = PsiUtil.getAnnoTextValue(annoAttr);
             if (!Objects.equals("", cQAttrValue)) {
-                return Pair.of("&" + psiAlias + "." + cQAttrValue, PsiTreeUtil.findChildOfType(annoAttr, PsiJavaTokenImpl.class));
+                return Pair.of("&" + XQLFileManager.encodeSqlReference(psiAlias, cQAttrValue), PsiTreeUtil.findChildOfType(annoAttr, PsiJavaTokenImpl.class));
             }
         }
         return null;
@@ -131,17 +132,17 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
             // @XQL(type = Type.insert)
             // int addGuest(DataRow dataRow);
             if (Objects.equals("", attrValue)) {
-                return Pair.of("&" + psiAlias + "." + sourceElement.getText(), sourceElement);
+                return Pair.of("&" + XQLFileManager.encodeSqlReference(psiAlias, sourceElement.getText()), sourceElement);
 
                 // @XQL("queryGuests")
                 // Stream<Guest> queryGuests(Map<String, Object> args);
             } else {
-                return Pair.of("&" + psiAlias + "." + attrValue, PsiTreeUtil.findChildOfType(psiMethodAnnoAttr, PsiJavaTokenImpl.class));
+                return Pair.of("&" + XQLFileManager.encodeSqlReference(psiAlias, attrValue), PsiTreeUtil.findChildOfType(psiMethodAnnoAttr, PsiJavaTokenImpl.class));
             }
 
             // List<DataRow> queryGuests(Map<String, Object> args);
         } else {
-            return Pair.of("&" + psiAlias + "." + sourceElement.getText(), sourceElement);
+            return Pair.of("&" + XQLFileManager.encodeSqlReference(psiAlias, sourceElement.getText()), sourceElement);
         }
     }
 

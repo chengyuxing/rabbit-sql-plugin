@@ -15,15 +15,12 @@ import com.github.chengyuxing.sql.types.Param;
 import com.github.chengyuxing.sql.spring.autoconfigure.mapping.Baki;
 #end
 
-import java.util.List;
-import java.util.Set;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
-#if($entityImports.size() > 0)
+#if($classImports.size() > 0)
 
-#foreach($entityImport in $entityImports)
-import $entityImport;
+#foreach($classImport in $classImports)
+import $classImport;
 #end
 #end
 
@@ -56,12 +53,13 @@ $userMethods
 #if($method.parameters.size() > 0)
 #if($method.paramType == "@Arg")
 #foreach($param in $method.parameters)
-     * @param $param $param
+     * @param $param.name $param.comment
 #end
 #elseif($method.paramType == "Map")
-     * @param args (#foreach($param in $method.parameters)$param#if(!$foreach.last), #end#end)
+     * @param args [#foreach($param in $method.parameters)$param.name#if($param.comment.trim() != "")($param.comment)#end#if(!$foreach.last), #end#end]
 #else
-     * @param ${method.paramType.toLowerCase()} ${method.paramType.toLowerCase()}
+     * @param ${method.paramType.toLowerCase()} #if($method.paramClassComment)$method.paramClassComment
+#end
 #end
 #end
      * @return ${method.returnType.replace("<","[").replace(">","]")}
@@ -82,7 +80,7 @@ $userMethods
 #if($method.paramType == "@Arg")
     $method.returnType ${method.name}(
 #foreach($param in $method.parameters)
-            @Arg("$param") #if($isMethodProc)Param#{else}Object#end $param#if(!$foreach.last),
+            @Arg("$param.name") #if($isMethodProc)Param#{else}$param.type#end $param.name#if(!$foreach.last),
 #end#end
 
     );

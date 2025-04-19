@@ -1,0 +1,2 @@
+/*[queryUserById]*/
+select * from user where id = :id;

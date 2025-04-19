@@ -1,0 +1,58 @@
+/*
+ * Created by IntelliJ IDEA Rabbit SQL plugin.
+ * User: $user
+ * Update: $date
+ */
+#if($packageName)
+package $packageName;
+
+#end
+#if($lombok.size() > 0)
+#foreach($anno in $lombok)
+import lombok.$anno.substring(1);
+#end
+#end
+#if($imports.size() > 0)
+
+#foreach($import in $imports)
+import $import;
+#end
+#end
+
+#if($comment && $comment.length() > 0)
+/**
+ * $comment
+ */
+#end
+#if($lombok.size() > 0)
+#foreach($anno in $lombok)
+$anno
+#end
+#end
+public class ${className} {
+#foreach($field in $fields)
+#if($field.comment.length() > 0)
+    /**
+     * ${field.comment}
+     */
+#end
+    private ${field.type} ${field.name};
+#end
+
+#foreach($field in $fields)
+#if(!$lombok.contains("@Data"))
+#if(!$lombok.contains("@Getter"))
+    public ${field.type} get${field.name.substring(0,1).toUpperCase()}${field.name.substring(1)}(){
+        return ${field.name};
+    }
+
+#end
+#if(!$lombok.contains("@Setter"))
+    public void set${field.name.substring(0,1).toUpperCase()}${field.name.substring(1)}(${field.type} ${field.name}){
+        this.${field.name} = ${field.name};
+    }
+
+#end
+#end
+#end
+}
