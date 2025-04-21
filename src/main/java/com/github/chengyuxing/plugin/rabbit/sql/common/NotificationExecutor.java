@@ -1,12 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -15,7 +11,7 @@ public class NotificationExecutor implements AutoCloseable {
     private final long delay;
     private final Consumer<Set<Message>> consumer;
     private final AtomicReference<ScheduledFuture<?>> currentRef = new AtomicReference<>();
-    private final Set<Message> messages = new HashSet<>();
+    private final Set<Message> messages = ConcurrentHashMap.newKeySet();
 
     public NotificationExecutor(Consumer<Set<Message>> consumer, long delay) {
         this.delay = delay;
