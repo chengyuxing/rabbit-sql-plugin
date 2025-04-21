@@ -52,7 +52,7 @@
         </li>
         <li>Register xql files on property: <code>files</code>;</li>
     </ol>
-    <h3>Other Java Project</h3>
+    <h3>Other Java Projects</h3>
     <ol>
         <li>Create a new maven project.</li>
         <li>Add dependency <strong>rabbit-sql 9.0.8+(jdk17+) or 8.1.11+(jdk8)</strong> to your project;</li>
@@ -63,7 +63,7 @@
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#XQLFileManager">XQLFileManager</a>;</li>
         <li>Configure <a href="https://github.com/chengyuxing/rabbit-sql#bakidao">BakiDao#setXqlFileManager</a>;</li>
     </ol>
-    <h3>Other IDE</h3>
+    <h3>Other IDEs</h3>
     <ol>
         <li>Create root dirs <b>src/main/resources</b> ;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
