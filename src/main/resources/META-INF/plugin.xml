@@ -79,6 +79,10 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.28</h3>
+            <ul>
+                <li>Fixed switch git branch occurs the concurrent error.</li>
+            </ul>
             <h3>2.4.27</h3>
             <ul>
                 <li>I took a nap until after 4 p.m. today.</li>
