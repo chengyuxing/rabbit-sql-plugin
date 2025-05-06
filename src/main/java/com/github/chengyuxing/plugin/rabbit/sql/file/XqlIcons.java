@@ -12,4 +12,5 @@ public class XqlIcons {
     public static final Icon XQL_FILE_MANAGER = IconLoader.getIcon("icons/xql-file-manager.svg", XqlIcons.class);
     public static final Icon XQL_FILE_MANAGER_SECONDARY = IconLoader.getIcon("icons/xql-file-manager-secondary.svg", XqlIcons.class);
     public static final Icon XQL_FILE_MANAGER_TOOL_WINDOW = IconLoader.getIcon("icons/xql-file-manager-toolwindow.svg", XqlIcons.class);
+    public static final Icon RABBIT_SCRIPT_FILE = IconLoader.getIcon("icons/rabbit-script-file.svg", XqlIcons.class);
 }

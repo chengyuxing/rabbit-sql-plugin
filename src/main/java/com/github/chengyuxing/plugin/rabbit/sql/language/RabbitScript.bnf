@@ -1,0 +1,51 @@
+{
+    parserClass="com.github.chengyuxing.plugin.rabbit.sql.language.RabbitScriptParser"
+    extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+    psiClassPrefix="RabbitScript"
+    psiImplClassSuffix="Impl"
+    psiPackage="com.github.chengyuxing.plugin.rabbit.sql.language.psi"
+    psiImplPackage="com.github.chengyuxing.plugin.rabbit.sql.language.psi.impl"
+
+    elementTypeHolderClass="com.github.chengyuxing.plugin.rabbit.sql.language.psi.RabbitScriptTypes"
+    elementTypeClass="com.github.chengyuxing.plugin.rabbit.sql.language.psi.RabbitScriptElementType"
+    tokenTypeClass="com.github.chengyuxing.plugin.rabbit.sql.language.psi.RabbitScriptTokenType"
+}
+
+// top rule
+file ::= statement*
+
+private statement ::= (if_stmt|choose_stmt|switch_stmt|for_stmt|PLAIN_TEXT)
+
+// ======================= if block =======================
+if_stmt ::= if_header statement* else_block? fi_tail
+if_header ::= IF expr NEWLINE
+else_block ::= ELSE NEWLINE statement* NEWLINE
+fi_tail ::= FI
+
+// ======================= choose block =======================
+choose_stmt ::= CHOOSE NEWLINE when_block+ default_block? END NEWLINE
+when_block ::= WHEN expr NEWLINE statement* BREAK NEWLINE
+default_block ::= DEFAULT NEWLINE statement* BREAK NEWLINE
+
+// ======================= switch block =======================
+switch_stmt ::= SWITCH var_pipe_expr NEWLINE case_block+ default_case_block? END NEWLINE
+case_block ::= CASE value_list NEWLINE statement* BREAK NEWLINE
+default_case_block ::= DEFAULT NEWLINE statement* BREAK NEWLINE
+
+// ======================= for block =======================
+for_stmt ::= FOR for_vars OF var_pipe_expr for_opts? NEWLINE statement* DONE NEWLINE
+for_vars ::= IDENTIFIER (',' IDENTIFIER)?
+for_opts ::= (DELIMITER STRING)? (OPEN STRING)? (CLOSE STRING)?
+
+// expression syntax
+expr ::= or_expr
+or_expr ::= and_expr (OR and_expr)*
+and_expr ::= rel_expr (AND rel_expr)*
+rel_expr ::= (NOT paren_expr) | compare_expr
+compare_expr ::= var_pipe_expr REL_OP val_pipe_opt
+val_pipe_opt ::= VALUE (PIPE IDENTIFIER)*
+var_pipe_expr ::= VARIABLE (PIPE IDENTIFIER)*
+
+paren_expr ::= '(' expr ')'
+
+value_list ::= VALUE (',' VALUE)*
