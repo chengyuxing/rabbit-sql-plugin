@@ -624,6 +624,17 @@
                            id="Rabbit-SQL Notification Group"/>
     </extensions>
 
+    <!--    <extensions defaultExtensionNs="com.intellij">-->
+    <!--        <fileType name="RabbitScript File"-->
+    <!--                  implementationClass="com.github.chengyuxing.plugin.rabbit.sql.language.RabbitScriptFileType"-->
+    <!--                  fieldName="INSTANCE" language="RabbitScript" extensions="rbs"/>-->
+    <!--    </extensions>-->
+
+    <!--    <extensions defaultExtensionNs="com.intellij">-->
+    <!--        <lang.parserDefinition language="RabbitScript"-->
+    <!--                               implementationClass="com.github.chengyuxing.plugin.rabbit.sql.language.RabbitScriptDefinition"/>-->
+    <!--    </extensions>-->
+
     <actions>
         <group id="XQL File Manager Menu"
                text="XQL File Manager"

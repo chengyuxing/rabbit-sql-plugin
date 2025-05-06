@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.4.28"
+version = "2.4.30"
 
 repositories {
     mavenLocal()
@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:8.1.11") {
+    implementation("com.github.chengyuxing:rabbit-sql:8.1.12") {
         exclude("org.slf4j", "slf4j-api")
     }
     testImplementation("junit:junit:4.13.2")
@@ -29,6 +29,8 @@ intellij {
             "com.intellij.spring",
             "org.jetbrains.kotlin"))
 }
+
+sourceSets["main"].java.srcDirs("src/main/gen")
 
 tasks {
     // Set the JVM compatibility versions
