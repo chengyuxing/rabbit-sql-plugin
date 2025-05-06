@@ -181,7 +181,7 @@ public final class XQLConfigManager {
 
             this.resourcesRoot = this.modulePath.resolve(Constants.RESOURCE_ROOT);
 
-            this.originalXqlFiles = new HashSet<>();
+            this.originalXqlFiles = ConcurrentHashMap.newKeySet();
 
             this.notificationExecutor = () -> Optional.ofNullable(notificationMap.get(project));
 
