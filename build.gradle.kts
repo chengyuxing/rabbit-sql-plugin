@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.4.30"
+version = "2.4.30-IJ2023.1"
 
 repositories {
     mavenLocal()
@@ -41,7 +41,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("231")
-        untilBuild.set("252.*")
+        untilBuild.set("251.*")
     }
 
     signPlugin {
