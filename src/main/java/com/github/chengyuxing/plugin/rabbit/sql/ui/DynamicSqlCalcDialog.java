@@ -15,6 +15,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.JSON;
 import com.github.chengyuxing.sql.XQLFileManager;
+import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
@@ -134,7 +135,8 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             @Override
             public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
                 parseDynamicSQL((sql, args) -> {
-                    var rawSql = config.getSqlGenerator().generateSql(sql, args);
+                    var fullSql = SqlUtil.formatSql(sql, args, config.getSqlGenerator().getTemplateFormatter());
+                    var rawSql = config.getSqlGenerator().generateSql(fullSql, args);
                     parametersForm.setSqlHtml(HtmlUtil.highlightSql(rawSql));
                     autoHeight(rawSql);
                 });
@@ -147,7 +149,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             @Override
             public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
                 parseDynamicSQL((sql, args) -> {
-                    var preparedSQL = config.getSqlGenerator().generatePreparedSql(sql, args).getResultSql();
+                    var preparedSQL = config.getSqlGenerator().generatePreparedSql(sql, args).getPrepareSql();
                     parametersForm.setSqlHtml(HtmlUtil.highlightSql(preparedSQL));
                     autoHeight(preparedSQL);
                 });
@@ -256,7 +258,8 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     @Override
     protected void doOKAction() {
         parseDynamicSQL((sql, args) -> {
-            var rawSql = config.getSqlGenerator().generateSql(sql, args);
+            var fullSql = SqlUtil.formatSql(sql, args, config.getSqlGenerator().getTemplateFormatter());
+            var rawSql = config.getSqlGenerator().generateSql(fullSql, args);
             // execute sql
             var idx = datasourceList.getSelectedIndex();
             if (isDatabasePluginEnabled) {
