@@ -33,6 +33,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.*;
 import com.intellij.ui.tabs.TabInfo;
@@ -46,6 +47,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StatisticsForm extends JPanel {
     private final Project project;
+    // FIXME 使用这个替代 JBEditorTabs
+//    private final TabbedPaneWrapper tabs;
     private JBEditorTabs tabPane;
     // (module, configs)
     private final Map<Path, Set<XQLConfigManager.Config>> configMap;
