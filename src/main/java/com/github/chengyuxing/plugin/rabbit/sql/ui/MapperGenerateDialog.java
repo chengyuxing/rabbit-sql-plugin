@@ -338,6 +338,15 @@ public class MapperGenerateDialog extends DialogWrapper {
 
                     mapperConfig.getMethods().put(row.get(0).toString(), mapperMethod);
                 });
+                // remove sqls if cache contains the changed sql name.
+                mapperConfig.getMethods().entrySet().removeIf(e -> {
+                    var resource = xqlFileManager.getResource(alias);
+                    if (Objects.nonNull(resource)) {
+                        return !resource.getEntry().containsKey(e.getKey());
+                    }
+                    return true;
+                });
+
                 mapperConfig.saveTo(configPath);
                 then.accept(mapperConfig);
             }
