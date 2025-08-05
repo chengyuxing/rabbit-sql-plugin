@@ -1,5 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.database;
 
+import org.jetbrains.annotations.NotNull;
+
 public record DatabaseId(String name, String id) {
 
     public static DatabaseId of(String name, String id) {
@@ -11,7 +13,7 @@ public record DatabaseId(String name, String id) {
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return name;
     }
 }

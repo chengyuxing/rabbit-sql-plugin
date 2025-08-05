@@ -79,6 +79,16 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.32</h3>
+            <ul>
+                <li>Remove support for kotlin.</li>
+                <li>Remove support for Database executing SQL DataView temporarily or do not use version 2025.2 (Due to a destructive change to the official API).</li>
+                <li>Compatible with IDEA 2025.2.</li>
+            </ul>
+            <h3>2.4.31</h3>
+            <ul>
+                <li>Fixed generate mapper bug when the sql name changed by others.</li>
+            </ul>
             <h3>2.4.30</h3>
             <ul>
                 <li>Suddenly I feel as if I have nothing.</li>
@@ -598,7 +608,6 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
     <depends optional="true" config-file="plugin.java.xml">com.intellij.java</depends>
-    <depends optional="true" config-file="plugin.kotlin.xml">org.jetbrains.kotlin</depends>
     <depends optional="true" config-file="plugin.database.xml">com.intellij.database</depends>
     <depends optional="true" config-file="plugin.spring.xml">com.intellij.spring</depends>
 

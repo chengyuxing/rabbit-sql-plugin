@@ -4,6 +4,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.sql.annotation.CountQuery;
 import com.github.chengyuxing.sql.annotation.XQL;
 import com.intellij.codeInsight.completion.CompletionConfidence;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLiteralExpression;
@@ -15,7 +16,7 @@ import java.util.Objects;
 
 public class XqlNameCompletionConfidence extends CompletionConfidence {
     @Override
-    public @NotNull ThreeState shouldSkipAutopopup(@NotNull PsiElement contextElement, @NotNull PsiFile psiFile, int offset) {
+    public @NotNull ThreeState shouldSkipAutopopup(@NotNull Editor editor, @NotNull PsiElement contextElement, @NotNull PsiFile psiFile, int offset) {
         String sqlRef = handlerSqlRef(contextElement);
         if (Objects.isNull(sqlRef)) {
             return ThreeState.UNSURE;

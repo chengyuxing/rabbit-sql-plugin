@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.4.30"
+version = "2.4.32"
 
 repositories {
     mavenLocal()
@@ -21,13 +21,16 @@ dependencies {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2023.1")
+    version.set("2025.2")
     type.set("IU") // Target IDE Platform
 
-    plugins.set(listOf("com.intellij.database",
+    plugins.set(
+        listOf(
+            "com.intellij.database",
             "com.intellij.java",
             "com.intellij.spring",
-            "org.jetbrains.kotlin"))
+        )
+    )
 }
 
 sourceSets["main"].java.srcDirs("src/main/gen")
@@ -40,8 +43,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("231")
-        untilBuild.set("251.*")
+        sinceBuild.set("252")
+        untilBuild.set("252.*")
     }
 
     signPlugin {
