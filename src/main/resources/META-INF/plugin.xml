@@ -79,7 +79,7 @@
 
     <change-notes>
         <![CDATA[
-            <h3>2.4.32</h3>
+            <h3>2.4.31.252</h3>
             <ul>
                 <li>Remove support for kotlin.</li>
                 <li>Remove support for Database executing SQL DataView temporarily or do not use version 2025.2 (Due to a destructive change to the official API).</li>
