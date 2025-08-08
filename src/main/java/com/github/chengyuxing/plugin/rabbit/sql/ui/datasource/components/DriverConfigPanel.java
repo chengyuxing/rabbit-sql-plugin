@@ -1,4 +1,4 @@
-package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.ui.components;
+package com.github.chengyuxing.plugin.rabbit.sql.ui.datasource.components;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;

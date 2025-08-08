@@ -642,6 +642,12 @@
                            id="Rabbit-SQL Notification Group"/>
     </extensions>
 
+    <!--dataView extensions-->
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow factoryClass="com.github.chengyuxing.plugin.rabbit.sql.ui.datasource.DataViewToolwindow"
+                    id="XQL Data Viewer" anchor="bottom"/>
+    </extensions>
+
     <!--    <extensions defaultExtensionNs="com.intellij">-->
     <!--        <fileType name="RabbitScript File"-->
     <!--                  implementationClass="com.github.chengyuxing.plugin.rabbit.sql.language.RabbitScriptFileType"-->

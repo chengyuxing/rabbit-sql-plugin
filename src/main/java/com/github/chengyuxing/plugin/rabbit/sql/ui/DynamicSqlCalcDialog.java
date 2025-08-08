@@ -335,7 +335,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         var btn = new FixedSizeButton();
         btn.setIcon(AllIcons.Actions.AddMulticaret);
         btn.setToolTipText("Due to a destructive change to the official API, it is temporarily unavailable.");
-        btn.setEnabled(false);
+//        btn.setEnabled(false);
         btn.addActionListener(e -> {
             if (btn.getIcon() == AllIcons.Actions.AddMulticaret) {
                 DatabaseUtil.openDatasourceDialog(config.getProject());
