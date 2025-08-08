@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.4.31.252"
+version = "2.4.32.231-252"
 
 repositories {
     mavenLocal()
@@ -24,13 +24,10 @@ intellij {
     version.set("2023.1")
     type.set("IU") // Target IDE Platform
 
-    plugins.set(
-        listOf(
-            "com.intellij.database",
+    plugins.set(listOf("com.intellij.database",
             "com.intellij.java",
-            "com.intellij.spring"
-        )
-    )
+            "com.intellij.spring",
+            "org.jetbrains.kotlin"))
 }
 
 sourceSets["main"].java.srcDirs("src/main/gen")
@@ -43,7 +40,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("252")
+        sinceBuild.set("231")
         untilBuild.set("252.*")
     }
 

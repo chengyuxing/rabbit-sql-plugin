@@ -3,6 +3,8 @@ package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 import com.github.chengyuxing.common.utils.ObjectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.KotlinUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.java.JavaUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -68,6 +70,11 @@ public class GotoJvmLangCallable extends RelatedItemLineMarkerProvider {
                             .toArray(String[]::new);
                     var foundedJava = JavaUtil.collectSqlRefElements(project, module, sqlRefs);
                     var founded = new ArrayList<>(foundedJava);
+
+                    if (FeatureChecker.isPluginEnabled(FeatureChecker.KOTLIN_PLUGIN_ID)) {
+                        var foundedKt = KotlinUtil.collectSqlRefElements(project, module, sqlRefs);
+                        founded.addAll(foundedKt);
+                    }
 
                     if (!founded.isEmpty()) {
                         var markInfo = NavigationGutterIconBuilder.create(AllIcons.Actions.DiagramDiff)

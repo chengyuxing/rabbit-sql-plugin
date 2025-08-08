@@ -4,6 +4,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.java.JavaUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.KotlinUtil;
 import com.github.chengyuxing.sql.annotation.*;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
@@ -109,6 +110,12 @@ public class PsiUtil {
     }
 
     public static String getJvmLangLiteral(PsiElement element) {
+        if (FeatureChecker.isPluginEnabled(FeatureChecker.KOTLIN_PLUGIN_ID)) {
+            var s = KotlinUtil.getStringLiteral(element);
+            if (s != null) {
+                return s;
+            }
+        }
         if (FeatureChecker.isPluginEnabled(FeatureChecker.JAVA_PLUGIN_ID)) {
             return JavaUtil.getStringLiteral(element);
         }

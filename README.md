@@ -7,7 +7,7 @@
 
 Language: English | [简体中文](README.chs.md)
 
-IDEA 2020.3.* - 2025.1.* is required.
+IDEA 2020.3.* - 2025.2.* is required.
 
 - Support the identification of xql(`.xql`) file type.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
@@ -30,7 +30,7 @@ IDEA 2020.3.* - 2025.1.* is required.
 
 ## Getting Started
 
-1. Add dependency **rabbit-sql 9.0.8+(jdk17+) or 8.1.11+(jdk8)** to your project;
+1. Add dependency **rabbit-sql 9.0.19+(jdk17+) or 8.1.21+(jdk8)** to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 4. Configure [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
@@ -38,7 +38,7 @@ IDEA 2020.3.* - 2025.1.* is required.
 
 ### Springboot support
 
-1. Add dependency **rabbit-sql-spring-boot-starter 4.0.8+(jdk17+) or 3.2.1+(jdk8)** to your project;
+1. Add dependency **rabbit-sql-spring-boot-starter 4.0.17+(jdk17+) or 3.2.11+(jdk8)** to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 
