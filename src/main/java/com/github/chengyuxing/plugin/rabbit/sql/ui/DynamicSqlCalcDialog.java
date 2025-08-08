@@ -347,10 +347,9 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             btn.setToolTipText("Configure database");
             btn.addActionListener(e -> {
                 if (btn.getIcon() == AllIcons.Actions.AddMulticaret) {
-                    DatabaseUtil.openDatasourceDialog(config.getProject());
+                    DatabaseUtil.openDatasourceDialog(config.getProject(), this::dispose);
                     btn.setIcon(AllIcons.Actions.Refresh);
                     btn.setToolTipText("Refresh database");
-                    dispose();
                     return;
                 }
                 if (btn.getIcon() == AllIcons.Actions.Refresh) {
