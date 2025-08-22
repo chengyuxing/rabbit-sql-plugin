@@ -14,7 +14,7 @@
 // top rule
 file ::= statement*
 
-private statement ::= (if_stmt|choose_stmt|switch_stmt|for_stmt|PLAIN_TEXT)
+private statement ::= (if_stmt|choose_stmt|switch_stmt|for_stmt|PLAIN_TEXT|NEWLINE)
 
 // ======================= if block =======================
 if_stmt ::= if_header statement* else_block? fi_tail

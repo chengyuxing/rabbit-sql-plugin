@@ -9,14 +9,6 @@ import static com.github.chengyuxing.plugin.rabbit.sql.language.psi.RabbitScript
 
 %%
 
-%{
-  private int nesting = 0;
-
-  public _RabbitScriptLexer() {
-    this((java.io.Reader)null);
-  }
-%}
-
 %public
 %class _RabbitScriptLexer
 %implements FlexLexer
@@ -26,6 +18,18 @@ import static com.github.chengyuxing.plugin.rabbit.sql.language.psi.RabbitScript
 
 EOL=\R
 
+IF=#if
+ELSE=#else
+FI=#fi
+CHOOSE=#choose
+WHEN=#when
+SWITCH=#switch
+CASE=#case
+DEFAULT=#default
+BREAK=#break
+END=#end
+FOR=#for
+DONE=#done
 REL_OP=(<=|>=|==|\!=|<>|>|<|\~|\!\~|\@|\!\@)
 VARIABLE=:[a-zA-Z_][a-zA-Z0-9_]*
 CONST=blank|true|false|null
@@ -41,9 +45,9 @@ PLAIN_TEXT=[^#]+
 
 %%
 
-<YYINITIAL> "#if" {yybegin(IF_EXPR_STATE);return IF;}
-<YYINITIAL> "#fi" {return FI;}
-<YYINITIAL> {NEWLINE} {return NEWLINE;}
+<YYINITIAL> {IF} {yybegin(IF_EXPR_STATE); return IF;}
+<YYINITIAL> {FI} {yybegin(YYINITIAL); return FI;}
+<YYINITIAL> {NEWLINE} {yybegin(YYINITIAL); return WHITE_SPACE;}
 <YYINITIAL> {PLAIN_TEXT} {return PLAIN_TEXT;}
 
 <IF_EXPR_STATE> {
