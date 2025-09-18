@@ -285,13 +285,6 @@ public class _RabbitScriptLexer implements FlexLexer {
   @SuppressWarnings("unused")
   private boolean zzEOFDone;
 
-  /* user code: */
-  private int nesting = 0;
-
-  public _RabbitScriptLexer() {
-    this((java.io.Reader)null);
-  }
-
 
   /**
    * Creates a new scanner
@@ -540,7 +533,7 @@ public class _RabbitScriptLexer implements FlexLexer {
           // fall through
           case 10: break;
           case 2:
-            { return NEWLINE;
+            { yybegin(YYINITIAL); return WHITE_SPACE;
             }
           // fall through
           case 11: break;
@@ -570,12 +563,12 @@ public class _RabbitScriptLexer implements FlexLexer {
           // fall through
           case 16: break;
           case 8:
-            { return FI;
+            { yybegin(YYINITIAL); return FI;
             }
           // fall through
           case 17: break;
           case 9:
-            { yybegin(IF_EXPR_STATE);return IF;
+            { yybegin(IF_EXPR_STATE); return IF;
             }
           // fall through
           case 18: break;

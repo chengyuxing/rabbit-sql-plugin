@@ -7,7 +7,7 @@
 
 语言: [English](README.md) | 简体中文
 
-IDEA 版本兼容 2020.3.* - 2025.2.* 。
+IDEA 版本兼容 2020.3.* - 2025.3.* 。
 
 - 支持识别 xql（`.xql`） 文件类型；
 - 支持动态sql表达式脚本 live templates（例如：`xql:if`）；
@@ -29,7 +29,7 @@ IDEA 版本兼容 2020.3.* - 2025.2.* 。
 
 ## 开始使用
 
-1. 项目中引入 **rabbit-sql 9.0.19+(jdk17+) or 8.1.21+(jdk8)**；
+1. 项目中引入 **rabbit-sql 10.0.0**；
 2. 在源文件根目录: `.../src/main/resources/` 下创建 `xql-file-manager.yml`；
 3. 为属性: `files` 配置你的xql文件；
 4. 配置 [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
@@ -37,7 +37,7 @@ IDEA 版本兼容 2020.3.* - 2025.2.* 。
 
 ### Springboot支持
 
-1. 项目中引入 **rabbit-sql-spring-boot-starter 4.0.17+(jdk17+) or 3.2.11+(jdk8)**；
+1. 项目中引入 **rabbit-sql-spring-boot-starter 5.0.0**；
 2. 在源文件根目录: `.../src/main/resources/` 下创建 `xql-file-manager.yml`；
 3. 为属性: `files` 配置你的xql文件；
 

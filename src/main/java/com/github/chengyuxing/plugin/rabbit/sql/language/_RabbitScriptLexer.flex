@@ -57,3 +57,7 @@ PLAIN_TEXT=[^#]+
     {WHITE_SPACE} { return WHITE_SPACE; }
     {NEWLINE} {yybegin(YYINITIAL);return NEWLINE;}
 }
+
+// 1. 逻辑似乎应该是，识别以#号开头的行，然后进入waiting表达式状态机，模仿官方文档
+// 2. 再分别判断是否是#if，#fi等关键字
+// 3. 分别在进入表达式判断状态机

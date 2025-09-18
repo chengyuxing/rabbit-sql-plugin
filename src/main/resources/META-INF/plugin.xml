@@ -46,7 +46,7 @@
     <h3>Springboot</h3>
     <ol>
         <li>Create a new maven project;</li>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 4.0.17+(jdk17+) or 3.2.11+(jdk8)</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 5.0.0</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -55,7 +55,7 @@
     <h3>Other Java Projects</h3>
     <ol>
         <li>Create a new maven project.</li>
-        <li>Add dependency <strong>rabbit-sql 9.0.19+(jdk17+) or 8.1.21+(jdk8)</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 10.0.0</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -79,6 +79,12 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.32.231-253</h3>
+            <ul>
+                <li>Compatible with IDEA 2025.3.</li>
+                <li>Support <code>rabbit-sql 10.0.0</code> and <code>rabbit-sql-spring-boot-starter 5.0.0</code></li>
+                <li>Some optimized.</li>
+            </ul>
             <h3>2.4.32</h3>
             <ul>
                 <li>Compatible with IDEA 2025.2.</li>
@@ -649,16 +655,16 @@
                            id="Rabbit-SQL Notification Group"/>
     </extensions>
 
-    <!--    <extensions defaultExtensionNs="com.intellij">-->
-    <!--        <fileType name="RabbitScript File"-->
-    <!--                  implementationClass="com.github.chengyuxing.plugin.rabbit.sql.language.RabbitScriptFileType"-->
-    <!--                  fieldName="INSTANCE" language="RabbitScript" extensions="rbs"/>-->
-    <!--    </extensions>-->
+    <!--        <extensions defaultExtensionNs="com.intellij">-->
+    <!--            <fileType name="RabbitScript File"-->
+    <!--                      implementationClass="com.github.chengyuxing.plugin.rabbit.sql.language.RabbitScriptFileType"-->
+    <!--                      fieldName="INSTANCE" language="RabbitScript" extensions="rbs"/>-->
+    <!--        </extensions>-->
 
-    <!--    <extensions defaultExtensionNs="com.intellij">-->
-    <!--        <lang.parserDefinition language="RabbitScript"-->
-    <!--                               implementationClass="com.github.chengyuxing.plugin.rabbit.sql.language.RabbitScriptDefinition"/>-->
-    <!--    </extensions>-->
+    <!--        <extensions defaultExtensionNs="com.intellij">-->
+    <!--            <lang.parserDefinition language="RabbitScript"-->
+    <!--                                   implementationClass="com.github.chengyuxing.plugin.rabbit.sql.language.RabbitScriptDefinition"/>-->
+    <!--        </extensions>-->
 
     <actions>
         <group id="XQL File Manager Menu"

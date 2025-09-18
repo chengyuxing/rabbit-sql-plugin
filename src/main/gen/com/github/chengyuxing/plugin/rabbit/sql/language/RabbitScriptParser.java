@@ -511,7 +511,7 @@ public class RabbitScriptParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // if_stmt|choose_stmt|switch_stmt|for_stmt|PLAIN_TEXT
+  // if_stmt|choose_stmt|switch_stmt|for_stmt|PLAIN_TEXT|NEWLINE
   static boolean statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "statement")) return false;
     boolean r;
@@ -520,6 +520,7 @@ public class RabbitScriptParser implements PsiParser, LightPsiParser {
     if (!r) r = switch_stmt(b, l + 1);
     if (!r) r = for_stmt(b, l + 1);
     if (!r) r = consumeToken(b, PLAIN_TEXT);
+    if (!r) r = consumeToken(b, NEWLINE);
     return r;
   }
 
