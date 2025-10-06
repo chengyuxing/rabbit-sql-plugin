@@ -1,13 +1,14 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
-import com.github.chengyuxing.common.script.expression.Patterns;
-import com.github.chengyuxing.common.script.lexer.FlowControlLexer;
+import com.github.chengyuxing.common.Patterns;
+import com.github.chengyuxing.common.script.lexer.RabbitScriptLexer;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -70,14 +71,17 @@ public class XqlFileAnnotator implements Annotator {
                 .textAttributes(DefaultLanguageHighlighterColors.METADATA)
                 .create();
         int whiteSpaceLen = whiteSpace == null ? 0 : whiteSpace.getTextLength();
-        for (String k : Constants.XQL_KEYWORDS) {
+        for (String k : Constants.XQL_DIRECTIVE_KEYWORDS) {
             highlightWord(holder, element, whiteSpaceLen, value, tag, k);
         }
-        highlightVarName(holder, element, whiteSpaceLen, value);
+        for (String k : Constants.XQL_VALUE_KEYWORDS) {
+            highlightWord(holder, element, whiteSpaceLen, value, tag, k);
+        }
+        highlightIdentifier(holder, element, whiteSpaceLen, value);
     }
 
     private static void highlightWord(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content, String xqlTag, String keyword) {
-        if (StringUtil.equalsAnyIgnoreCase(xqlTag, FlowControlLexer.KEYWORDS)) {
+        if (StringUtil.equalsAnyIgnoreCase(xqlTag, RabbitScriptLexer.DIRECTIVES)) {
             Pattern p = Pattern.compile("\\s(?<keyword>" + keyword + ")(\\s|$)");
             Matcher m = p.matcher(content);
             while (m.find()) {
@@ -93,24 +97,34 @@ public class XqlFileAnnotator implements Annotator {
         }
     }
 
-    private static void highlightVarName(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content) {
-        Pattern p = Pattern.compile("(?<var>:" + Patterns.VAR_KEY_PATTERN + ")(\\s|\\W|$)");
-        Matcher m = p.matcher(content);
-        while (m.find()) {
-            String var = m.group("var");
-            int offset = m.start("var");
+    private static void highlightIdentifier(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content) {
+        Pattern varP = Pattern.compile("(?<var>:" + Patterns.VAR_KEY_PATTERN + "|" + StringUtil.NUMBER_REGEX + "|'(''|[^'])*'|\"(\"\"|[^\"])*\")(\\s|\\W|$)");
+        Matcher varM = varP.matcher(content);
+        while (varM.find()) {
+            String var = varM.group("var");
+            int offset = varM.start("var");
             if (offset != -1) {
+                TextAttributesKey key;
+                if (var.startsWith(":")) {
+                    key = DefaultLanguageHighlighterColors.LOCAL_VARIABLE;
+                } else if (var.startsWith("'") || var.startsWith("\"")) {
+                    key = DefaultLanguageHighlighterColors.STRING;
+                } else if (StringUtil.isNumeric(var)) {
+                    key = DefaultLanguageHighlighterColors.NUMBER;
+                } else {
+                    key = DefaultLanguageHighlighterColors.LINE_COMMENT;
+                }
                 TextRange range = TextRange.from(element.getTextRange().getStartOffset() - whiteSpaceLength + offset, var.length());
                 holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                         .range(range)
-                        .textAttributes(DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
+                        .textAttributes(key)
                         .create();
             }
         }
     }
 
     private static String getTag(String prefix) {
-        for (String keyword : FlowControlLexer.KEYWORDS) {
+        for (String keyword : RabbitScriptLexer.DIRECTIVES) {
             if (StringUtil.startsWithIgnoreCase(prefix, keyword)) {
                 return keyword;
             }

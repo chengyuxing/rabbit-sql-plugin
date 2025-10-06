@@ -2,7 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.script.exception.ScriptSyntaxException;
-import com.github.chengyuxing.common.script.expression.IPipe;
+import com.github.chengyuxing.common.script.pipe.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
@@ -12,6 +12,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
+import com.github.chengyuxing.sql.exceptions.DynamicSqlParseException;
 import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
 import com.intellij.notification.NotificationType;
@@ -267,7 +268,7 @@ public final class XQLConfigManager {
                 xqlFileManager.setFiles(newFiles);
                 xqlFileManager.init();
                 successes.add(Message.info(messagePrefix() + "updated!"));
-            } catch (ScriptSyntaxException e) {
+            } catch (DynamicSqlParseException e) {
                 warnings.add(Message.warning(messagePrefix() + e.getMessage()));
                 var cause = e.getCause();
                 if (Objects.nonNull(cause)) {

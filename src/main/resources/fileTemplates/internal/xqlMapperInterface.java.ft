@@ -56,13 +56,17 @@ $userMethods
      * @param $param.name $param.comment
 #end
 #elseif($method.paramType == "Map")
-     * @param args [#foreach($param in $method.parameters)$param.name#if($param.comment.trim() != "")($param.comment)#end#if(!$foreach.last), #end#end]
+     * @param args <ul>
+#foreach($param in $method.parameters)
+     *        <li>{@code $param.name}#if($param.comment.trim() != "") ($param.comment)#end</li>
+#end
+     * </ul>
 #else
      * @param ${method.paramType.toLowerCase()} #if($method.paramClassComment)$method.paramClassComment
 #end
 #end
 #end
-     * @return ${method.returnType.replace("<","[").replace(">","]")}
+     * @return {@code ${method.returnType.replace("<","[").replace(">","]")}}
      */
 #if($method.annotationValue && $method.sqlType != "")
     @XQL(value = "$method.annotationValue", type = SqlStatementType.$method.sqlType)
