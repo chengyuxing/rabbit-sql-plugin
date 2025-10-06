@@ -29,7 +29,7 @@ IDEA 版本兼容 2020.3.* - 2025.1.* 。
 
 ## 开始使用
 
-1. 项目中引入 **rabbit-sql 9.0.8+(jdk17+) or 8.1.11+(jdk8)**；
+1. 项目中引入 **rabbit-sql 10.0.1**；
 2. 在源文件根目录: `.../src/main/resources/` 下创建 `xql-file-manager.yml`；
 3. 为属性: `files` 配置你的xql文件；
 4. 配置 [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
@@ -37,7 +37,7 @@ IDEA 版本兼容 2020.3.* - 2025.1.* 。
 
 ### Springboot支持
 
-1. 项目中引入 **rabbit-sql-spring-boot-starter 4.0.8+(jdk17+) or 3.2.1+(jdk8)**；
+1. 项目中引入 **rabbit-sql-spring-boot-starter 5.0.1**；
 2. 在源文件根目录: `.../src/main/resources/` 下创建 `xql-file-manager.yml`；
 3. 为属性: `files` 配置你的xql文件；
 

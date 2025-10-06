@@ -2,7 +2,7 @@
 # User: $USER
 # Date: $DATE
 # Time: $TIME
-# https://github.com/chengyuxing/rabbit-sql/tree/master#xqlfilemanager-1
+# https://github.com/chengyuxing/rabbit-sql/tree/master?tab=readme-ov-file#xqlfilemanager-1
 
 files:
 #  foo: !path [ main, a.xql ]

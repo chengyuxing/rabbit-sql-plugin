@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
-import com.github.chengyuxing.common.script.expression.Comparators;
+import com.github.chengyuxing.common.script.exception.CheckViolationException;
+import com.github.chengyuxing.common.script.exception.GuardViolationException;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceManager;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.database.DatabaseId;
@@ -207,12 +208,12 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
 
     private void addToParamList(Object v) {
         String item = null;
-        if (v instanceof Collection || v instanceof Map) {
+        if (v instanceof Collection || v instanceof Map || v instanceof Object[]) {
             try {
                 item = JSON.std.writeValueAsString(v);
             } catch (IOException ignore) {
             }
-        } else if (Objects.nonNull(v) && !(v instanceof Comparators.ValueType)) {
+        } else if (Objects.nonNull(v)) {
             item = v.toString();
         }
         if (Objects.nonNull(item)) {
@@ -231,9 +232,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     public void disposeIfNeeded() {
         var data = parametersForm.getData().getItem1();
         data.forEach((k, v) -> {
-            if (v == Comparators.ValueType.BLANK) {
-                paramsHistory.put(k, null);
-            } else if (v instanceof Collection || v instanceof Map) {
+            if (v instanceof Collection || v instanceof Map || v instanceof Object[]) {
                 try {
                     var json = JSON.std.writeValueAsString(v);
                     paramsHistory.put(k, json);
@@ -285,14 +284,18 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             try {
                 // named parameter sql
                 // select ... from tb where id = :id and ${temp}
-                var args = parseArgs2raw(data.getItem1());
+                var args = data.getItem1();
                 var result = xqlFileManager.get(sqlName, args);
                 var finalSql = result.getItem1();
-                var forVars = result.getItem2();
+                var vars = result.getItem2();
                 // generate raw sql.
-                args.put(XQLFileManager.DynamicSqlParser.FOR_VARS_KEY, forVars);
+                args.putAll(vars);
                 then.accept(finalSql, args);
                 data.getItem1().forEach((k, v) -> addToParamList(v));
+            } catch (CheckViolationException | GuardViolationException e) {
+                var msg = e.getClass().getSimpleName() + ": " + e.getMessage();
+                parametersForm.setSqlHtml(HtmlUtil.pre(msg, HtmlUtil.Color.DANGER));
+                autoHeight(msg);
             } catch (Exception ex) {
                 var errors = ExceptionUtil.getCauseMessages(ex);
                 var msg = String.join(NEW_LINE, errors);
@@ -305,24 +308,6 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         String msg = String.join(NEW_LINE, data.getItem2());
         parametersForm.setSqlHtml(HtmlUtil.pre(msg, HtmlUtil.Color.DANGER));
         autoHeight(msg);
-    }
-
-    private Map<String, Object> parseArgs2raw(Map<String, ?> args) {
-        var cache = new HashMap<String, Object>();
-        args.forEach((k, v) -> {
-            if (v == Comparators.ValueType.BLANK || v == Comparators.ValueType.NULL) {
-                cache.put(k, null);
-            } else if (v == Comparators.ValueType.TRUE) {
-                cache.put(k, true);
-            } else if (v == Comparators.ValueType.FALSE) {
-                cache.put(k, false);
-            } else if (v instanceof String) {
-                cache.put(k, Comparators.getString(v));
-            } else {
-                cache.put(k, v);
-            }
-        });
-        return cache;
     }
 
     private JButton createOpenDatabaseButton() {

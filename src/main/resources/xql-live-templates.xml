@@ -1,4 +1,31 @@
 <templateSet group="Rabbit SQL(.xql)">
+    <template name="xql:check" value="-- #check :$KEY$ $OPERATOR$ $VAR$ throw '$MESSAGE$'$END$" description="check true throw exception" toReformat="false" toShortenFQNames="true">
+        <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true" />
+        <variable name="OPERATOR" expression="enum(&quot;=&quot;,&quot;!=&quot;,&quot;&gt;&quot;,&quot;&lt;&quot;,&quot;&gt;=&quot;,&quot;&lt;=&quot;,&quot;&lt;&gt;&quot;,&quot;~&quot;,&quot;!~&quot;,&quot;@&quot;,&quot;!@&quot;)" defaultValue="&quot;=&quot;" alwaysStopAt="true" />
+        <variable name="VAR" expression="enum(&quot;blank&quot;,&quot;null&quot;,&quot;true&quot;,&quot;false&quot;)" defaultValue="&quot;blank&quot;" alwaysStopAt="true" />
+        <variable name="MESSAGE" expression="" defaultValue="" alwaysStopAt="true" />
+        <context>
+            <option name="SQL" value="true" />
+        </context>
+    </template>
+    <template name="xql:var" value="-- #var $NAME$ = $KEY_OR_CONSTANT$ $PIPES$" description="define a variable" toReformat="false" toShortenFQNames="true">
+        <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+        <variable name="KEY_OR_CONSTANT" expression="" defaultValue="&quot;:key or constant&quot;" alwaysStopAt="true" />
+        <variable name="PIPES" expression="" defaultValue="&quot;| pipeN&quot;" alwaysStopAt="true" />
+        <context>
+            <option name="SQL" value="true" />
+        </context>
+    </template>
+    <template name="xql:guard" value="-- #guard :$KEY$ $OPERATOR$ $VAR$&#10;    $BODY$&#10;-- #throw '$MESSAGE$'$END$" description="guard conditon throw exception" toReformat="false" toShortenFQNames="true">
+        <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true" />
+        <variable name="OPERATOR" expression="enum(&quot;!=&quot;,&quot;=&quot;,&quot;&gt;&quot;,&quot;&lt;&quot;,&quot;&gt;=&quot;,&quot;&lt;=&quot;,&quot;&lt;&gt;&quot;,&quot;~&quot;,&quot;!~&quot;,&quot;@&quot;,&quot;!@&quot;)" defaultValue="&quot;!=&quot;" alwaysStopAt="true" />
+        <variable name="VAR" expression="enum(&quot;blank&quot;,&quot;null&quot;,&quot;true&quot;,&quot;false&quot;)" defaultValue="&quot;blank&quot;" alwaysStopAt="true" />
+        <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true" />
+        <variable name="MESSAGE" expression="" defaultValue="" alwaysStopAt="true" />
+        <context>
+            <option name="SQL" value="true" />
+        </context>
+    </template>
     <template name="xql:desc" value="/*#$VAR$#*/" description="write description for sql fragment" toReformat="false" toShortenFQNames="true">
         <variable name="VAR" expression="" defaultValue="&quot;some description...&quot;" alwaysStopAt="true" />
         <context>
