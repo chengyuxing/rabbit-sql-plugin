@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
-import com.github.chengyuxing.common.script.lexer.FlowControlLexer;
+import com.github.chengyuxing.common.script.lexer.RabbitScriptLexer;
 import com.github.chengyuxing.common.utils.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.sql.utils.SqlHighlighter;
@@ -20,7 +20,7 @@ public class HtmlUtil {
             case LINE_ANNOTATION -> {
                 var nc = content;
                 var isAnno = true;
-                for (var k : FlowControlLexer.KEYWORDS) {
+                for (var k : RabbitScriptLexer.DIRECTIVES) {
                     if (StringUtil.containsIgnoreCase(nc, ">" + k + "</")) {
                         isAnno = false;
                         break;
@@ -34,7 +34,7 @@ public class HtmlUtil {
             case BLOCK_ANNOTATION -> span(removeStyles(content), Color.ANNOTATION);
             case NAMED_PARAMETER -> code(content, Color.LIGHT);
             case OTHER -> {
-                if (StringUtil.equalsAny(content, Constants.XQL_KEYWORDS)) {
+                if (StringUtil.equalsAny(content, Constants.XQL_DIRECTIVE_KEYWORDS) || StringUtil.equalsAny(content, Constants.XQL_VALUE_KEYWORDS)) {
                     yield span(content, Color.KEYWORD);
                 }
                 var maybeKeyword = content;
@@ -43,7 +43,7 @@ public class HtmlUtil {
                     maybeKeyword = content.substring(2);
                     pos = 2;
                 }
-                if (StringUtil.equalsAnyIgnoreCase(maybeKeyword, FlowControlLexer.KEYWORDS)) {
+                if (StringUtil.equalsAnyIgnoreCase(maybeKeyword, RabbitScriptLexer.DIRECTIVES)) {
                     yield content.substring(0, pos) + span(maybeKeyword, Color.HIGHLIGHT);
                 }
                 yield content;

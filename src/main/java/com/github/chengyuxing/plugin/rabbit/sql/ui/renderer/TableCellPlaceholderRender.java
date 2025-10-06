@@ -1,13 +1,15 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.renderer;
 
-import com.github.chengyuxing.common.script.expression.Comparators;
 import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.intellij.ui.JBColor;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
+
+import static com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.isQuote;
 
 public class TableCellPlaceholderRender extends DefaultTableCellRenderer {
     final private String placeholder;
@@ -34,11 +36,11 @@ public class TableCellPlaceholderRender extends DefaultTableCellRenderer {
             var valueCom = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             if (StringUtil.isNumeric(value)) {
                 valueCom.setForeground(new JBColor(new Color(0x364FED), new Color(0x56A9B6)));
-            } else if (Comparators.isQuote(value.toString())) {
+            } else if (isQuote(value.toString())) {
                 valueCom.setForeground(new JBColor(new Color(0x097C52), new Color(0x79A978)));
             } else if (isJSON(value.toString())) {
                 valueCom.setForeground(new JBColor(new Color(0x9C9715), new Color(0xBBB529)));
-            } else if (Comparators.valueOf(value) instanceof Comparators.ValueType) {
+            } else if (StringUtil.equalsAnyIgnoreCase(value.toString(), Constants.XQL_VALUE_KEYWORDS)) {
                 valueCom.setForeground(new JBColor(new Color(0x1D31BC), new Color(0xCC7832)));
             } else {
                 valueCom.setForeground(new JBColor(new Color(0x097C52), new Color(0x79A978)));

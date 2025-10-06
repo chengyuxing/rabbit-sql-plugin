@@ -79,6 +79,16 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.33.231-253</h3>
+            <ul>
+                <li>Support <code>rabbit-sql 10.0.1</code> and <code>rabbit-sql-spring-boot-starter 5.0.1</code></li>
+                <li>Dynamic SQL add support directives: <code>#check</code>, <code>#var</code>, <code>#guard...#throw</code> directives.</li>
+                <li>Dynamic SQL syntax verify add support throw the syntax error line, column position.</li>
+                <li>Dynamic SQL new builtin pipes: <code>type</code>, <code>nvl</code>, <code>split</code></li>
+                <li>Dynamic SQL pipe add support params, e.g. <code>'a,b,c' | split(',')</code></li>
+                <li>Live templates add <code>xql:check</code>, <code>xql:var</code>, <code>xql:guard</code></li>
+                <li>Some optimized.</li>
+            </ul>
             <h3>2.4.32.231-253</h3>
             <ul>
                 <li>Compatible with IDEA 2025.3.</li>

@@ -5,10 +5,9 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.fasterxml.jackson.jr.ob.JSON;
-import com.github.chengyuxing.common.MostDateTime;
-import com.github.chengyuxing.common.script.expression.Comparators;
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlParamValueHistoryDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.FieldInfoRender;
@@ -55,7 +54,7 @@ public class ParametersForm extends JPanel {
         initComponentConfigs();
     }
 
-    public Pair<Map<String, ?>, List<String>> getData() {
+    public Pair<Map<String, Object>, List<String>> getData() {
         if (paramsTable.isEditing()) {
             paramsTable.getCellEditor().stopCellEditing();
         }
@@ -68,20 +67,7 @@ public class ParametersForm extends JPanel {
             var v = row.get(1);
             if (v != null) {
                 var sv = v.toString().trim();
-                if (sv.matches(".+::[a-zA-Z]+$")) {
-                    try {
-                        var type = sv.substring(sv.lastIndexOf("::") + 2);
-                        var value = sv.substring(0, sv.lastIndexOf("::"));
-                        v = switch (type) {
-                            case "number" -> Double.parseDouble(value);
-                            case "date" -> MostDateTime.of(value).toDate();
-                            default -> value;
-                        };
-                    } catch (Exception e) {
-                        errors.add("Type parse of parameter '" + k + "' error.");
-                        errors.addAll(ExceptionUtil.getCauseMessages(e));
-                    }
-                } else if (sv.startsWith("[") && sv.endsWith("]")) {
+                if (sv.startsWith("[") && sv.endsWith("]")) {
                     try {
                         v = JSON.std.listFrom(sv);
                     } catch (Exception e) {
@@ -106,8 +92,12 @@ public class ParametersForm extends JPanel {
                         errors.add("Parse number '" + k + "' error.");
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
-                } else if (StringUtil.equalsAnyIgnoreCase(sv, "", "blank", "null", "true", "false")) {
-                    v = Comparators.valueOf(v);
+                } else if (StringUtil.equalsAnyIgnoreCase(sv, "null", "blank")) {
+                    v = null;
+                } else if (StringUtil.equalsAnyIgnoreCase(sv, "true", "false")) {
+                    v = Boolean.parseBoolean(sv);
+                } else if (com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.isQuote(sv)) {
+                    v = sv.substring(1, sv.length() - 1);
                 }
             }
             map.put(k, v);
@@ -159,10 +149,9 @@ public class ParametersForm extends JPanel {
 
     private DefaultCellEditor buildParamsEditor() {
         var cbx = new ComboBox<>();
-        cbx.addItem("blank");
-        cbx.addItem("null");
-        cbx.addItem("true");
-        cbx.addItem("false");
+        for (var v : Constants.XQL_VALUE_KEYWORDS) {
+            cbx.addItem(v);
+        }
         cbx.setEditable(true);
         cbx.setFont(Global.getEditorFont(cbx.getFont().getSize()));
         cbx.setEditor(new BasicComboBoxEditor() {

@@ -2,7 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.util;
 
 import com.github.chengyuxing.common.script.Token;
 import com.github.chengyuxing.common.script.TokenType;
-import com.github.chengyuxing.common.script.lexer.FlowControlLexer;
+import com.github.chengyuxing.common.script.lexer.RabbitScriptLexer;
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -91,7 +91,7 @@ public class StringUtil {
 
     public static Map<String, Set<String>> getParamsMappingInfo(SqlGenerator sqlGenerator, String sql, boolean excludeTemplateHolder) {
         Map<String, Set<String>> paramsMap = new LinkedHashMap<>();
-        FlowControlLexer lexer = new FlowControlLexer(sql) {
+        RabbitScriptLexer lexer = new RabbitScriptLexer(sql) {
             @Override
             protected String trimExpressionLine(String line) {
                 String lt = line.trim();
@@ -117,7 +117,10 @@ public class StringUtil {
             if (token.getType() == TokenType.IF ||
                     token.getType() == TokenType.SWITCH ||
                     token.getType() == TokenType.WHEN ||
-                    token.getType() == TokenType.FOR) {
+                    token.getType() == TokenType.FOR ||
+                    token.getType() == TokenType.CHECK ||
+                    token.getType() == TokenType.GUARD ||
+                    token.getType() == TokenType.DEFINE_VAR) {
                 List<Token> scripts = new ArrayList<>();
                 List<Token> vars = new ArrayList<>();
                 while (scriptTokens.get(i).getType() != TokenType.NEWLINE) {
@@ -221,5 +224,9 @@ public class StringUtil {
             packagePath = fullyClassName.substring(0, fullyClassName.indexOf("<"));
         }
         return Pair.of(shortType, packagePath);
+    }
+
+    public static boolean isQuote(String s) {
+        return (s.startsWith("\"") && s.endsWith("\"")) || (s.startsWith("'") && s.endsWith("'"));
     }
 }
