@@ -1,7 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.github.chengyuxing.common.io.FileResource;
-import com.github.chengyuxing.common.script.exception.ScriptSyntaxException;
 import com.github.chengyuxing.common.script.pipe.IPipe;
 import com.github.chengyuxing.common.utils.ReflectUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
