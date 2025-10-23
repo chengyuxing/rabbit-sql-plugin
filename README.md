@@ -30,7 +30,7 @@ IDEA 2020.3.* - 2025.1.* is required.
 
 ## Getting Started
 
-1. Add dependency **rabbit-sql 10.0.1** to your project;
+1. Add dependency **rabbit-sql 10.0.2** to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 4. Configure [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
@@ -38,7 +38,7 @@ IDEA 2020.3.* - 2025.1.* is required.
 
 ### Springboot support
 
-1. Add dependency **rabbit-sql-spring-boot-starter 5.0.1** to your project;
+1. Add dependency **rabbit-sql-spring-boot-starter 5.0.2** to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 
