@@ -222,16 +222,9 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     }
 
     private void addToParamList(Object v) {
-        String item = null;
-        if (v instanceof Collection || v instanceof Map || v instanceof Object[]) {
-            try {
-                item = JSON.std.writeValueAsString(v);
-            } catch (IOException ignore) {
-            }
-        } else if (Objects.nonNull(v)) {
-            item = v.toString();
-        }
-        if (Objects.nonNull(item)) {
+        Object o = formatStringValue(v);
+        if (Objects.nonNull(o)) {
+            String item = o.toString();
             paramsList.remove(item);
             paramsList.add(0, item);
         }
@@ -246,17 +239,20 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     @Override
     public void disposeIfNeeded() {
         var data = parametersForm.getData().getItem1();
-        data.forEach((k, v) -> {
-            if (v instanceof Collection || v instanceof Map || v instanceof Object[]) {
-                try {
-                    var json = JSON.std.writeValueAsString(v);
-                    paramsHistory.put(k, json);
-                } catch (IOException ignore) {
-                }
-            } else {
-                paramsHistory.put(k, v);
+        data.forEach((k, v) -> paramsHistory.put(k, formatStringValue(v)));
+    }
+
+    private Object formatStringValue(Object v) {
+        if (v instanceof Collection || v instanceof Map || v instanceof Object[]) {
+            try {
+                return JSON.std.writeValueAsString(v);
+            } catch (IOException ignore) {
             }
-        });
+        }
+        if (v instanceof String && !v.equals("")) {
+            return "'" + v + "'";
+        }
+        return v;
     }
 
     @Override
@@ -299,7 +295,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             try {
                 // named parameter sql
                 // select ... from tb where id = :id and ${temp}
-                var args = data.getItem1();
+                var args = new HashMap<>(data.getItem1());
                 var result = xqlFileManager.get(sqlName, args);
                 var finalSql = result.getItem1();
                 var vars = result.getItem2();
