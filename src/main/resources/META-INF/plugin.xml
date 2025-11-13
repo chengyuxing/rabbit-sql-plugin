@@ -81,7 +81,7 @@
         <![CDATA[
             <h3>2.4.35</h3>
                 <li>Support <code>rabbit-sql 10.0.3</code> and <code>rabbit-sql-spring-boot-starter 5.0.3</code></li>
-
+                <li>XQL File Manager parsing xql optimized.</li>
             <h3>2.4.34</h3>
             <ul>
                 <li>Support <code>rabbit-sql 10.0.2</code> and <code>rabbit-sql-spring-boot-starter 5.0.2</code></li>
