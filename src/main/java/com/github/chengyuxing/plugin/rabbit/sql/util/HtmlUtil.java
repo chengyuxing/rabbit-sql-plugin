@@ -17,7 +17,7 @@ public class HtmlUtil {
             case NUMBER -> span(content, Color.NUMBER);
             case POSTGRESQL_FUNCTION_BODY_SYMBOL, SINGLE_QUOTE_STRING -> span(content, Color.STRING);
             case ASTERISK -> span(content, Color.HIGHLIGHT);
-            case LINE_ANNOTATION -> {
+            case LINE_COMMENT -> {
                 var nc = content;
                 var isAnno = true;
                 for (var k : RabbitScriptLexer.DIRECTIVES) {
@@ -31,7 +31,7 @@ public class HtmlUtil {
                 }
                 yield span(nc, Color.ANNOTATION);
             }
-            case BLOCK_ANNOTATION -> span(removeStyles(content), Color.ANNOTATION);
+            case BLOCK_COMMENT -> span(removeStyles(content), Color.ANNOTATION);
             case NAMED_PARAMETER -> code(content, Color.LIGHT);
             case OTHER -> {
                 if (StringUtil.equalsAny(content, Constants.XQL_DIRECTIVE_KEYWORDS) || StringUtil.equalsAny(content, Constants.XQL_VALUE_KEYWORDS)) {

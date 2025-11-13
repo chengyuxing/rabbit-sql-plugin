@@ -8,7 +8,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.annotation.CountQuery;
 import com.github.chengyuxing.sql.annotation.XQL;
-import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.Nls;
@@ -52,9 +51,12 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
             if (Objects.nonNull(config) && config.getXqlFileManager().contains(sqlName)) {
                 var xqlFileManager = config.getXqlFileManager();
                 var resource = xqlFileManager.getResource(alias);
+                if (Objects.isNull(resource)) {
+                    return null;
+                }
                 var fileDescription = resource.getDescription();
                 var sql = xqlFileManager.getSqlObject(sqlName);
-                var sqlDefinition = SqlUtil.trimEnd(sql.getContent());
+                var sqlDefinition = sql.getContent();
                 var sqlContent = HtmlUtil.highlightSql(sqlDefinition);
                 var sqlDescription = sql.getDescription();
                 var xqlFile = element instanceof PsiComment ? element.getContainingFile().getName() : FileResource.getFileName(resource.getFilename(), true);

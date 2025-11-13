@@ -63,7 +63,11 @@ public class NewSQLDialog extends DialogWrapper {
                 newSQLForm.setMessage(HtmlUtil.toHtml(HtmlUtil.span("'" + name + "' already exists.", HtmlUtil.Color.WARNING)));
                 return;
             }
-            var sqlFile = xqlFileManager.getResource(alias).getFilename();
+            var resource = xqlFileManager.getResource(alias);
+            if (Objects.isNull(resource)) {
+                return;
+            }
+            var sqlFile = resource.getFilename();
             var sqlFileVf = VirtualFileManager.getInstance().findFileByNioPath(Path.of(URI.create(sqlFile)));
             if (Objects.isNull(sqlFileVf)) {
                 return;
@@ -79,7 +83,7 @@ public class NewSQLDialog extends DialogWrapper {
                         if (!desc.trim().isEmpty()) {
                             sqlFragment += "\n/*#" + desc + "#*/";
                         }
-                        sqlFragment += "\n\n" + xqlFileManager.getDelimiter() + "\n";
+                        sqlFragment += "\n\n;\n";
                         var lastIdx = doc.getTextLength();
                         doc.insertString(lastIdx, sqlFragment);
                         PsiDocumentManager.getInstance(project).commitDocument(doc);

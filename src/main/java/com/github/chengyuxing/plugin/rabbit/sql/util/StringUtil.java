@@ -74,7 +74,7 @@ public class StringUtil {
         if (lines.length > 0) {
             var cleanedSql = Stream.of(lines).filter(line -> !line.trim().startsWith("--"))
                     .collect(Collectors.joining(NEW_LINE));
-            var m = SqlUtil.FMT.getPattern().matcher(cleanedSql);
+            var m = com.github.chengyuxing.common.utils.StringUtil.FMT.getPattern().matcher(cleanedSql);
             var params = new LinkedHashSet<String>();
             while (m.find()) {
                 var key = m.group("key");
@@ -175,7 +175,7 @@ public class StringUtil {
         if (excludeTemplateHolder) {
             return paramsMap;
         }
-        var tempP = SqlUtil.FMT.getPattern();
+        var tempP = com.github.chengyuxing.common.utils.StringUtil.FMT.getPattern();
         var tempM = tempP.matcher(plainSql);
         while (tempM.find()) {
             var key = tempM.group("key");

@@ -6,7 +6,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
-import com.github.chengyuxing.sql.utils.SqlUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -28,7 +27,7 @@ public class ExecuteSqlAction extends AnAction {
                     @SuppressWarnings("unchecked")
                     var data = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
                     var name = data.getItem2();
-                    return "Execute " + SqlUtil.safeQuote(name);
+                    return "Execute '" + name + "'";
                 }
             }
             return "Execute";
