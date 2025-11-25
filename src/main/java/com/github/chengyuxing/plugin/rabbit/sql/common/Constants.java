@@ -16,7 +16,7 @@ public final class Constants {
     public static final Path CONFIG_PATH = RESOURCE_ROOT.resolve(CONFIG_NAME);
     @Language("Regexp")
     public static final String CONFIG_PATTERN = "xql-file-manager(-[a-zA-Z0-9_]+)?\\.yml";
-    public static final String[] XQL_DIRECTIVE_KEYWORDS = new String[]{"delimiter", "of", "open", "close"};
+    public static final String[] XQL_DIRECTIVE_KEYWORDS = new String[]{"delimiter", "of", "open", "close", "throw"};
     public static final String[] XQL_VALUE_KEYWORDS = new String[]{"blank", "null", "true", "false"};
     public static final String PACKAGE_PATTERN = "[a-zA-Z]\\w*(\\.[a-zA-Z]\\w*)*";
     public static final String FULLY_CLASS_PATTERN = "[a-zA-Z]\\w*(\\.[a-zA-Z]\\w*)+";
