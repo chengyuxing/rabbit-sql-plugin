@@ -7,7 +7,6 @@ import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.utils.SqlGenerator;
-import com.github.chengyuxing.sql.utils.SqlUtil;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -112,7 +111,8 @@ public class StringUtil {
             }
         }
 
-        for (int i = 0; i < scriptTokens.size(); i++) {
+        var localParams = new HashSet<String>();
+        for (int i = 0, j = scriptTokens.size(); i < j; i++) {
             var token = scriptTokens.get(i);
             if (token.getType() == TokenType.IF ||
                     token.getType() == TokenType.SWITCH ||
@@ -127,6 +127,19 @@ public class StringUtil {
                     var itemToken = scriptTokens.get(i);
                     if (itemToken.getType() == TokenType.VARIABLE_NAME) {
                         vars.add(itemToken);
+                    } else if (itemToken.getType() == TokenType.FOR) {
+                        // #for item,idx of :list
+                        if (i + 1 < j && scriptTokens.get(i + 1).getType() == TokenType.IDENTIFIER) {
+                            localParams.add(scriptTokens.get(i + 1).getValue());
+                        }
+                        if (i + 3 < j && scriptTokens.get(i + 3).getType() == TokenType.IDENTIFIER) {
+                            localParams.add(scriptTokens.get(i + 3).getValue());
+                        }
+                    } else if (itemToken.getType() == TokenType.DEFINE_VAR) {
+                        // #var id =
+                        if (i + 1 < j && scriptTokens.get(i + 1).getType() == TokenType.IDENTIFIER) {
+                            localParams.add(scriptTokens.get(i + 1).getValue());
+                        }
                     }
                     scripts.add(itemToken);
                     i++;
@@ -150,7 +163,7 @@ public class StringUtil {
                         }
                         return code(HtmlUtil.safeEscape(t.getValue()), HtmlUtil.Color.ANNOTATION);
                     }).collect(Collectors.joining(" "));
-                    paramsMap.get(name).add(ss);
+                    paramsMap.get(varKey).add(ss);
                 }
             }
         }
@@ -192,6 +205,7 @@ public class StringUtil {
             var coloredTemp = code(temp.substring(0, temp.indexOf("*")), HtmlUtil.Color.ANNOTATION) + code("_", HtmlUtil.Color.LIGHT) + code(temp.substring(temp.indexOf("*") + 1), HtmlUtil.Color.ANNOTATION);
             paramsMap.get(key).add(coloredTemp);
         }
+        paramsMap.entrySet().removeIf(entry -> localParams.contains(entry.getKey()));
         return paramsMap;
     }
 
