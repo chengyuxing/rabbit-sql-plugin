@@ -84,9 +84,11 @@ public class XqlFileChangeListener implements BulkFileListener {
                                     } else {
                                         // filename changed which not included in config files.
                                         new HashSet<>(config.getOriginalXqlFiles()).forEach(cfgPath -> {
-                                            var p = Path.of(URI.create(cfgPath));
-                                            if (cfgPath.isEmpty() || !Files.exists(p)) {
-                                                config.fire();
+                                            if (ProjectFileUtil.isLocalFileUri(cfgPath)) {
+                                                var p = Path.of(URI.create(cfgPath));
+                                                if (cfgPath.isEmpty() || !Files.exists(p)) {
+                                                    config.fire();
+                                                }
                                             }
                                         });
                                     }
