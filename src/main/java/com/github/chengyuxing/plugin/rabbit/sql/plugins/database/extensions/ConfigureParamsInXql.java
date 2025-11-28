@@ -20,7 +20,7 @@ public class ConfigureParamsInXql extends SqlNameIntentionActionInXql implements
     @Override
     public void invokeIfSuccess(Project project, PsiElement element, XQLConfigManager.Config config, String sqlName) {
         var sqlDefinition = config.getXqlFileManager().get(sqlName);
-        var fieldMapping = StringUtil.getParamsMappingInfo(config.getSqlGenerator(), sqlDefinition, false);
+        var fieldMapping = StringUtil.getParamsMappingInfo(config.getSqlGenerator(), sqlDefinition);
         if (fieldMapping.isEmpty()) {
             return;
         }

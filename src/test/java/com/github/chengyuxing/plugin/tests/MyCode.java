@@ -33,13 +33,6 @@ public class MyCode {
     }
 
     //    @Test
-    public void test2() throws IOException {
-        String sql = Files.readString(Path.of("/Users/chengyuxing/IdeaProjects/rabbit-sql-plugin/src/test/resources/data.sql"));
-        StringUtil.getTemplateParameters(sql)
-                .forEach(System.out::println);
-    }
-
-    //    @Test
     public void test3() {
         Path path = Path.of("/Users/chengyuxing/IdeaProjects/rabbit-sql-plugin/src/main/resources/plugin.xml");
         System.out.println(path.toUri());

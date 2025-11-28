@@ -14,7 +14,6 @@ import java.awt.datatransfer.StringSelection;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.code;
@@ -32,63 +31,23 @@ public class StringUtil {
 
     public static void copySqlParams(XQLConfigManager.Config config, String sqlName) {
         var sqlDefinition = config.getXqlFileManager().get(sqlName);
-        var namedParams = getParamsMappingInfo(config.getSqlGenerator(), sqlDefinition, true)
+        var params = getParamsMappingInfo(config.getSqlGenerator(), sqlDefinition)
                 .keySet()
                 .stream()
                 .map(key -> "\"" + key + "\", " + key)
                 .toList();
 
-        var templateParams = getTemplateParameters(sqlDefinition, "", "")
-                .stream()
-                .distinct()
-                .map(key -> "\"" + key + "\", " + key)
-                .toList();
-
-        if (namedParams.isEmpty() && templateParams.isEmpty()) {
+        if (params.isEmpty()) {
             return;
         }
 
-        var paramsGroup = new ArrayList<String>();
-
-        if (!templateParams.isEmpty()) {
-            paramsGroup.add("// template parameters\n" + String.join(",\n", templateParams));
-        }
-
-        if (!namedParams.isEmpty()) {
-            paramsGroup.add("// named parameters\n" + String.join(",\n", namedParams));
-        }
-
-        var result = String.join(",\n", paramsGroup);
+        var result = "// parameters\n" + String.join(",\n", params);
 
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(result), null);
     }
 
-    public static Set<String> getTemplateParameters(String str) {
-        return getTemplateParameters(str, "${", "}");
-    }
-
-    public static Set<String> getTemplateParameters(String str, String keyPrefix, String keySuffix) {
-        String[] lines = str.split(NEW_LINE);
-        if (lines.length > 0) {
-            var cleanedSql = Stream.of(lines).filter(line -> !line.trim().startsWith("--"))
-                    .collect(Collectors.joining(NEW_LINE));
-            var m = com.github.chengyuxing.common.utils.StringUtil.FMT.getPattern().matcher(cleanedSql);
-            var params = new LinkedHashSet<String>();
-            while (m.find()) {
-                var key = m.group("key");
-                params.add(keyPrefix + key + keySuffix);
-            }
-            return params;
-        }
-        return Set.of();
-    }
-
     public static Map<String, Set<String>> getParamsMappingInfo(SqlGenerator sqlGenerator, String sql) {
-        return getParamsMappingInfo(sqlGenerator, sql, false);
-    }
-
-    public static Map<String, Set<String>> getParamsMappingInfo(SqlGenerator sqlGenerator, String sql, boolean excludeTemplateHolder) {
         Map<String, Set<String>> paramsMap = new LinkedHashMap<>();
         RabbitScriptLexer lexer = new RabbitScriptLexer(sql) {
             @Override
@@ -185,9 +144,7 @@ public class StringUtil {
                     }
                     paramsMap.get(kp.getItem1()).add(holder);
                 });
-        if (excludeTemplateHolder) {
-            return paramsMap;
-        }
+
         var tempP = com.github.chengyuxing.common.utils.StringUtil.FMT.getPattern();
         var tempM = tempP.matcher(plainSql);
         while (tempM.find()) {

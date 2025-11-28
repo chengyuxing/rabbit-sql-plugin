@@ -170,7 +170,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                     var methodName = StringUtil.camelizeAndClean(sqlName);
                     var sqlType = method.getSqlType();
                     var sql = resource.getEntry().get(sqlName);
-                    var sqlParamNames = StringUtil.getParamsMappingInfo(sqlGenerator, sql.getContent(), false)
+                    var sqlParamNames = StringUtil.getParamsMappingInfo(sqlGenerator, sql.getContent())
                             .keySet();
                     var paramMeta = method.getParamMeta();
                     var sqlParamObj = paramMeta == null ? Map.<String, XQLMapperConfig.XQLParam>of() : paramMeta.getParams();
