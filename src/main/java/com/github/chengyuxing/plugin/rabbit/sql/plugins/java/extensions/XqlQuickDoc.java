@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 import static com.intellij.lang.documentation.DocumentationMarkup.*;
@@ -73,12 +72,8 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                 doc += DEFINITION_END + CONTENT_START + sqlContent + CONTENT_END +
                         SECTIONS_START;
 
-                var params = StringUtil.getParamsMappingInfo(config.getSqlGenerator(), sqlDefinition)
-                        .keySet()
-                        .stream()
-                        .map(name -> xqlFileManager.getNamedParamPrefix() + name)
-                        .collect(Collectors.joining("  "))
-                        .trim();
+                var params = String.join("  ", StringUtil.getParamsMappingInfo(config.getSqlGenerator(), sqlDefinition)
+                                .keySet()).trim();
 
                 if (!params.isEmpty()) {
                     doc += SECTION_HEADER_START + "Parameters: " + SECTION_SEPARATOR + "<p>" + params + SECTION_END;
