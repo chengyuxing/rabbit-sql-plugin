@@ -36,7 +36,7 @@ public class GenerateEntityAction extends AnAction {
             @SuppressWarnings("unchecked") var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
             var alias = sqlMeta.getItem1();
             var sqlName = sqlMeta.getItem2();
-            var sql = sqlMeta.getItem3().getContent();
+            var sql = sqlMeta.getItem3().getSource();
             var config = sqlMeta.getItem4();
             var fieldMapping = StringUtil.getParamsMappingInfo(config.getSqlGenerator(), sql);
             if (fieldMapping.isEmpty()) {
@@ -57,7 +57,7 @@ public class GenerateEntityAction extends AnAction {
         if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
             @SuppressWarnings("unchecked") var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
             var config = sqlMeta.getItem4();
-            var sql = sqlMeta.getItem3().getContent();
+            var sql = sqlMeta.getItem3().getSource();
             var paramsCount = (long) StringUtil.getParamsMappingInfo(config.getSqlGenerator(), sql).size();
             if (paramsCount > 0) {
                 e.getPresentation().setEnabled(true);

@@ -87,7 +87,7 @@ public class CopySqlAction extends AnAction {
                 case SQL_NAME -> clipboard.setContents(new StringSelection(name), null);
                 case SQL_PATH ->
                         clipboard.setContents(new StringSelection("&" + XQLFileManager.encodeSqlReference(alias, name)), null);
-                case SQL_DEFINITION -> clipboard.setContents(new StringSelection(sql.getContent()), null);
+                case SQL_DEFINITION -> clipboard.setContents(new StringSelection(sql.getSource()), null);
             }
             return;
         }

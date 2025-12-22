@@ -55,7 +55,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                 }
                 var fileDescription = resource.getDescription();
                 var sql = xqlFileManager.getSqlObject(sqlName);
-                var sqlDefinition = sql.getContent();
+                var sqlDefinition = sql.getSource();
                 var sqlContent = HtmlUtil.highlightSql(sqlDefinition);
                 var sqlDescription = sql.getDescription();
                 var xqlFile = element instanceof PsiComment ? element.getContainingFile().getName() : FileResource.getFileName(resource.getFilename(), true);

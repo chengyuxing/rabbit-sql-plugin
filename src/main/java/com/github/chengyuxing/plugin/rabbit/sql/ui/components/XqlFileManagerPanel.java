@@ -112,12 +112,12 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                             if (Objects.nonNull(point)) {
                                 @SuppressWarnings("unchecked") var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
                                 var sql = sqlMeta.getItem3();
-                                var html = HtmlUtil.highlightSql(sql.getContent());
+                                var html = HtmlUtil.highlightSql(sql.getSource());
                                 if (!sql.getDescription().isEmpty()) {
                                     var desc = HtmlUtil.pre("/*" + sql.getDescription() + "*/", HtmlUtil.Color.ANNOTATION);
                                     html = HtmlUtil.wrap("div", desc + html, HtmlUtil.Color.EMPTY);
                                 }
-                                var height = StringUtil.countOfContains(sql.getContent(), NEW_LINE) * 21 + 39;
+                                var height = StringUtil.countOfContains(sql.getSource(), NEW_LINE) * 21 + 39;
                                 popup = SwingUtil.showPreview(html, height, tree.getComponentAt(point), point);
                             }
                         }

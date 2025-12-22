@@ -105,7 +105,7 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
     @NotNull
     private static String getInfo(Triple<String, String, XQLFileManager.Sql> sqlMeta) {
         var sql = sqlMeta.getItem3();
-        var sqlContent = sql.getContent();
+        var sqlContent = sql.getSource();
         var description = sql.getDescription();
         var info = description;
         if (description.isBlank()) {
