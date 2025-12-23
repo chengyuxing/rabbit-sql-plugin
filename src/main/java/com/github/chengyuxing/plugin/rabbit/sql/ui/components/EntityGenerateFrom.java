@@ -8,14 +8,12 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
-import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.table.JBTable;
-import com.intellij.ui.tabs.TabInfo;
-import com.intellij.ui.tabs.impl.JBEditorTabs;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import net.miginfocom.swing.MigLayout;
@@ -37,7 +35,7 @@ public class EntityGenerateFrom extends JPanel {
     private final Map<String, XQLMapperConfig.XQLParam> paramMeta;
     private final Set<String> lombok;
     private final List<JBCheckBox> checkBoxes;
-    private JBEditorTabs tabs;
+    private TabbedPaneWrapper tabs;
 
     private JBTable table;
 
@@ -121,8 +119,7 @@ public class EntityGenerateFrom extends JPanel {
     }
 
     public void selectConfigTab() {
-        var tab = tabs.getTabAt(1);
-        tabs.select(tab, true);
+        tabs.setSelectedIndex(0);
         classTextField.requestFocus();
     }
 
@@ -148,22 +145,12 @@ public class EntityGenerateFrom extends JPanel {
                 // rows
                 "[grow 1,fill]"));
 
-        tabs = new JBEditorTabs(project, IdeFocusManager.getInstance(project), disposable);
+        tabs = new TabbedPaneWrapper(disposable);
 
-        var tablePanel = createTablePanel();
-        var configPanel = createConfigPanel();
+        tabs.addTab("Fields", AllIcons.Nodes.Field, createTablePanel(), "");
+        tabs.addTab("Class", AllIcons.Nodes.Class, createConfigPanel(), "");
 
-        var tableInfo = new TabInfo(tablePanel);
-        tableInfo.setIcon(AllIcons.Nodes.Field);
-        tableInfo.setText("Fields");
-        tabs.addTab(tableInfo);
-
-        var configInfoPanel = new TabInfo(configPanel);
-        configInfoPanel.setIcon(AllIcons.Nodes.Class);
-        configInfoPanel.setText("Class");
-        tabs.addTab(configInfoPanel);
-
-        add(tabs, "cell 0 0,grow");
+        add(tabs.getComponent(), "cell 0 0,grow");
     }
 
     private JPanel createTablePanel() {

@@ -31,13 +31,10 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.*;
-import com.intellij.ui.tabs.TabInfo;
-import com.intellij.ui.tabs.impl.JBEditorTabs;
 import com.jgoodies.forms.layout.*;
 import net.miginfocom.swing.*;
 import org.jetbrains.annotations.NotNull;
@@ -47,9 +44,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StatisticsForm extends JPanel {
     private final Project project;
-    // FIXME 使用这个替代 JBEditorTabs
-//    private final TabbedPaneWrapper tabs;
-    private JBEditorTabs tabPane;
+    private TabbedPaneWrapper tabPane;
     // (module, configs)
     private final Map<Path, Set<XQLConfigManager.Config>> configMap;
     // (table, configs)
@@ -74,14 +69,11 @@ public class StatisticsForm extends JPanel {
 
     @SuppressWarnings("rawtypes")
     public Triple<String, ArrayList<String>, Vector<Vector>> getDisplayData() {
-        var tabInfo = tabPane.getSelectedInfo();
-        if (Objects.isNull(tabInfo)) {
-            return null;
-        }
-        var tabIndex = tabPane.getIndexOf(tabInfo);
+        int tabIndex = tabPane.getSelectedIndex();
         if (tabIndex == -1) {
             return null;
         }
+        @SuppressWarnings("unchecked") var tabInfo = (DataPanel<Path>) tabPane.getComponentAt(tabIndex);
         int i = 0;
         for (var table : dataMap.keySet()) {
             if (tabIndex == i) {
@@ -91,7 +83,7 @@ public class StatisticsForm extends JPanel {
                 while (headerColumn.hasMoreElements()) {
                     header.add(headerColumn.nextElement().getHeaderValue().toString());
                 }
-                var module = ((Path) tabInfo.getObject()).getFileName().toString();
+                var module = tabInfo.getData().getFileName().toString();
                 return Tuples.of(module, header, model.getDataVector());
             }
             i++;
@@ -141,7 +133,7 @@ public class StatisticsForm extends JPanel {
     }
 
     private void customInitComponents() {
-        tabPane = new JBEditorTabs(project, IdeFocusManager.getInstance(project), disposable);
+        tabPane = new TabbedPaneWrapper(disposable);
         configMap.forEach((path, configs) -> {
             var validConfigs = configs.stream()
                     .filter(XQLConfigManager.Config::isValid)
@@ -149,7 +141,7 @@ public class StatisticsForm extends JPanel {
                     .toList();
             var module = path.getFileName().toString();
 
-            var panel = new JPanel();
+            var panel = new DataPanel<Path>();
             panel.setLayout(new MigLayout(
                     "insets 8 0 0 0,hidemode 3",
                     // columns
@@ -164,14 +156,10 @@ public class StatisticsForm extends JPanel {
             dataMap.put(table, validConfigs);
             tablePanel.setViewportView(table);
             panel.add(tablePanel);
-            var info = new TabInfo(panel);
-            info.setIcon(AllIcons.Nodes.Module);
-            info.setText(module + (validConfigs.isEmpty() ? " *" : ""));
-            info.setTooltipText(path.toString());
-            info.setObject(path);
-            tabPane.addTab(info);
+            panel.setData(path);
+            tabPane.addTab(module + (validConfigs.isEmpty() ? " *" : ""), AllIcons.Nodes.Module, panel, path.toString());
         });
-        add(tabPane, "cell 0 0,grow");
+        add(tabPane.getComponent(), "cell 0 0,grow");
     }
 
     private @NotNull JBTable createTable() {
@@ -189,11 +177,11 @@ public class StatisticsForm extends JPanel {
         table.getEmptyText().appendSecondaryText("Add XQLFileManager config", SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                var tabInfo = tabPane.getSelectedInfo();
+                @SuppressWarnings("unchecked") var tabInfo = (DataPanel<Path>) tabPane.getSelectedComponent();
                 if (Objects.isNull(tabInfo)) {
                     return;
                 }
-                clickEmptyTableTextLink.accept((Path) tabInfo.getObject());
+                clickEmptyTableTextLink.accept(tabInfo.getData());
             }
         });
         table.addMouseListener(new MouseListener() {

@@ -17,11 +17,9 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
-import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.components.*;
 import com.intellij.ui.table.JBTable;
-import com.intellij.ui.tabs.TabInfo;
-import com.intellij.ui.tabs.impl.JBEditorTabs;
 import com.intellij.util.ui.UIUtil;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
@@ -53,7 +51,7 @@ public class MapperGenerateForm extends JPanel {
     private JBTextField pageTextField;
     private JBTextField sizeTextField;
 
-    private JBEditorTabs tabs;
+    private TabbedPaneWrapper tabs;
 
     private final Disposable disposable;
 
@@ -107,33 +105,17 @@ public class MapperGenerateForm extends JPanel {
                 // rows
                 "[grow 1,fill]"));
 
-        tabs = new JBEditorTabs(project, IdeFocusManager.getInstance(project), disposable);
+        tabs = new TabbedPaneWrapper(disposable);
 
-        var mapperPanel = createMapperPanel();
-        var settingPanel = createSettingPanel();
-        var aboutPanel = createAboutPanel();
+        tabs.addTab(com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.generateInterfaceMapperName(alias), AllIcons.Nodes.Interface, createMapperPanel(), "");
+        tabs.addTab("Configuration", AllIcons.General.Settings, createSettingPanel(), "");
+        tabs.addTab("About", AllIcons.General.ShowInfos, createAboutPanel(), "");
 
-        var tableInfo = new TabInfo(mapperPanel);
-        tableInfo.setIcon(AllIcons.Nodes.Interface);
-        tableInfo.setText(com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.generateInterfaceMapperName(alias));
-        tabs.addTab(tableInfo);
-
-        var configInfo = new TabInfo(settingPanel);
-        configInfo.setIcon(AllIcons.General.Settings);
-        configInfo.setText("Configuration");
-        tabs.addTab(configInfo);
-
-        var aboutInfo = new TabInfo(aboutPanel);
-        aboutInfo.setIcon(AllIcons.General.ShowInfos);
-        aboutInfo.setText("About");
-        tabs.addTab(aboutInfo);
-
-        add(tabs, "cell 0 0,grow");
+        add(tabs.getComponent(), "cell 0 0,grow");
     }
 
     public void selectConfigTab() {
-        var tab = tabs.getTabAt(1);
-        tabs.select(tab, true);
+        tabs.setSelectedIndex(0);
         packageTextField.requestFocus();
     }
 
