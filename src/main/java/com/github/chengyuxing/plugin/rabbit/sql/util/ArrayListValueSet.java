@@ -7,6 +7,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Value Set, different with HashSet.<br>
+ * HashSet: ignore the same value by hashcode,<br>
+ * ValueSet: replace the same value by hashcode<br>
+ *
+ * @param <E>
+ */
 public class ArrayListValueSet<E> extends AbstractSet<E> {
     private final List<E> list = new ArrayList<>();
 
