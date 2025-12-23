@@ -18,29 +18,7 @@ public class XqlNameCompletionConfidence extends CompletionConfidence {
 
     // Compatible with 2025.2+
     public @NotNull ThreeState shouldSkipAutopopup(@NotNull Editor editor, @NotNull PsiElement contextElement, @NotNull PsiFile psiFile, int offset) {
-        String sqlRef = handlerSqlRef(contextElement);
-        if (Objects.isNull(sqlRef)) {
-            return ThreeState.UNSURE;
-        }
-
-        if (sqlRef.startsWith("&")) {
-            if (PsiUtil.isParentAXQLMapperInterface(contextElement)) {
-                return ThreeState.UNSURE;
-            }
-            return ThreeState.NO;
-        }
-
-        if (PsiUtil.isParentAXQLMapperInterface(contextElement)) {
-            if (PsiUtil.getIfElementIsAnnotationAttr(contextElement, XQL.class.getName(), "value") != null) {
-                return ThreeState.NO;
-            }
-            if (PsiUtil.getIfElementIsAnnotationAttr(contextElement, CountQuery.class.getName(), "value") != null) {
-                return ThreeState.NO;
-            }
-            return ThreeState.UNSURE;
-        }
-
-        return ThreeState.UNSURE;
+        return shouldSkipAutopopup(contextElement, psiFile, offset);
     }
 
     // Compatible with 2023.1+
