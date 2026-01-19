@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.spring;
 
-import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.sql.annotation.XQLMapper;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
@@ -109,6 +109,6 @@ public class XQLMapperBeanProvider extends SpringImplicitBeansProviderBase {
         if (basePackages.length == 0) {
             return true;
         }
-        return StringUtil.startsWiths(psiClass.getQualifiedName(), basePackages);
+        return StringUtils.startsWiths(psiClass.getQualifiedName(), basePackages);
     }
 }

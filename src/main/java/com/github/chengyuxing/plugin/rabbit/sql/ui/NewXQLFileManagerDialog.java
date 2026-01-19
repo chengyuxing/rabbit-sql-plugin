@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
 import com.github.chengyuxing.common.io.FileResource;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.Helper;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.NewXQLFileManagerForm;
@@ -26,7 +27,7 @@ public class NewXQLFileManagerDialog extends DialogWrapper {
         this.project = project;
         this.module = module;
         this.newXQLFileManagerForm = new NewXQLFileManagerForm();
-        this.newXQLFileManagerForm.setInputChanged(s -> setOKActionEnabled(!s.trim().isEmpty()));
+        this.newXQLFileManagerForm.setInputChanged(s -> setOKActionEnabled(!StringUtils.isBlank(s)));
         setOKActionEnabled(false);
         setTitle("New XQL File Manager");
         init();

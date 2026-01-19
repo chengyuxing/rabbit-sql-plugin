@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.extensions.support;
 
-import com.github.chengyuxing.common.utils.ObjectUtil;
+import com.github.chengyuxing.common.util.ValueUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -50,7 +50,7 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
                 var xqlFileManager = config.getXqlFileManager();
                 for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
                     if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
-                        var sqlName = ObjectUtil.coalesce(m.group("sqlName"), m.group("partName"));
+                        var sqlName = ValueUtils.coalesce(m.group("sqlName"), m.group("partName"));
                         if (Objects.nonNull(sqlName)) {
                             var sqlPath = XQLFileManager.encodeSqlReference(file.getKey(), sqlName);
                             invokeIfSuccess(project, element, config, sqlPath);
@@ -87,7 +87,7 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
             if (xqlFileManager != null) {
                 for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
                     if (file.getValue().equals(xqlVf.toNioPath().toUri().toString())) {
-                        var sqlName = ObjectUtil.coalesce(m.group("sqlName"), m.group("partName"));
+                        var sqlName = ValueUtils.coalesce(m.group("sqlName"), m.group("partName"));
                         if (Objects.nonNull(sqlName)) {
                             var sqlPath = XQLFileManager.encodeSqlReference(file.getKey(), sqlName);
                             if (xqlFileManager.contains(sqlPath)) {

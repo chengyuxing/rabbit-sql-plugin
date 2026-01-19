@@ -1,7 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
-import com.github.chengyuxing.common.utils.ObjectUtil;
-import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.common.util.ValueUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.CheckboxCellRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLJavaType;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
@@ -352,7 +351,7 @@ public class MapperGenerateForm extends JPanel {
                         returnType = XQLJavaType.GenericT.getValue();
                     } else if (methodName.matches(XQLInvocationHandler.QUERY_PATTERN)) {
                         sqlType = SqlStatementType.query.name();
-                        if (StringUtil.startsWiths(methodName, "get", "query", "search", "select", "list")) {
+                        if (com.github.chengyuxing.common.util.StringUtils.startsWiths(methodName, "get", "query", "search", "select", "list")) {
                             returnType = XQLJavaType.List.toString();
                         } else {
                             returnType = XQLJavaType.GenericT.getValue();
@@ -376,7 +375,7 @@ public class MapperGenerateForm extends JPanel {
                         var paramMeta = xqlMethod.getParamMeta();
                         if (Objects.nonNull(paramMeta)) {
                             var className = paramMeta.getClassName();
-                            if (Objects.nonNull(className) && !className.trim().isEmpty()) {
+                            if (!com.github.chengyuxing.common.util.StringUtils.isEmpty(className)) {
                                 paramType = className;
                             }
                         }
@@ -387,7 +386,7 @@ public class MapperGenerateForm extends JPanel {
                         if (StringUtils.isNotEmpty(xqlMethod.getReturnGenericType())) {
                             returnGenericType = xqlMethod.getReturnGenericType();
                         }
-                        enable = ObjectUtil.coalesce(xqlMethod.getEnable(), true);
+                        enable = ValueUtils.coalesce(xqlMethod.getEnable(), true);
                     }
 
                     return new Object[]{

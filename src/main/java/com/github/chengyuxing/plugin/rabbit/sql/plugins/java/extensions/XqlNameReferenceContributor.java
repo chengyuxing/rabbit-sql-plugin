@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions;
 
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.extensions.SqlNameReference;
 import com.github.chengyuxing.plugin.rabbit.sql.extensions.XqlNameReference;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
@@ -35,7 +36,7 @@ public class XqlNameReferenceContributor extends PsiReferenceContributor {
                 return PsiReference.EMPTY_ARRAY;
             }
             var sqlPath = value.substring(1);
-            if (sqlPath.trim().isEmpty()) {
+            if (StringUtils.isBlank(sqlPath)) {
                 return PsiReference.EMPTY_ARRAY;
             }
             var property = new TextRange(2, value.length() + 1);
@@ -50,7 +51,7 @@ public class XqlNameReferenceContributor extends PsiReferenceContributor {
                 return PsiReference.EMPTY_ARRAY;
             }
             var sqlName = PsiUtil.getAnnoTextValue(psiAttrValue);
-            if (sqlName.trim().isEmpty()) {
+            if (StringUtils.isEmpty(sqlName)) {
                 return PsiReference.EMPTY_ARRAY;
             }
             var alias = PsiUtil.getXQLMapperAlias(element);

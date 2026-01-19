@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.java;
 
-import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.annotation.CountQuery;
@@ -48,7 +48,7 @@ public class JavaUtil {
                                         var annoAttr = PsiUtil.getMethodAnnoValue(psiMethod, CountQuery.class.getName(), "value");
                                         if (Objects.nonNull(annoAttr)) {
                                             var cQAttrValue = PsiUtil.getAnnoTextValue(annoAttr);
-                                            if (!Objects.equals("", cQAttrValue)) {
+                                            if (!StringUtils.isEmpty(cQAttrValue)) {
                                                 if (Objects.equals(sqlRef, "&" + XQLFileManager.encodeSqlReference(psiAlias, cQAttrValue))) {
                                                     psiElements.add(annoAttr);
                                                 }
@@ -86,7 +86,7 @@ public class JavaUtil {
                                 @Override
                                 public void visitLiteralExpression(@NotNull PsiLiteralExpression expression) {
                                     String v = expression.getValue() instanceof String ? (String) expression.getValue() : null;
-                                    if (Objects.nonNull(v) && StringUtil.equalsAny(v, sqlRefs)) {
+                                    if (Objects.nonNull(v) && StringUtils.equalsAny(v, sqlRefs)) {
                                         psiElements.add(expression);
                                     }
                                     // unnecessary to do that anymore.

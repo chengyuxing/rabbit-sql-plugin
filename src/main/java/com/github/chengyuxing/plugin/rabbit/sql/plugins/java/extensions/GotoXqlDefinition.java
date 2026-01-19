@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions;
 
 import com.github.chengyuxing.common.tuple.Pair;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
@@ -111,7 +112,7 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
         var annoAttr = PsiUtil.getMethodAnnoValue((PsiIdentifier) sourceElement, CountQuery.class.getName(), "value");
         if (Objects.nonNull(annoAttr)) {
             var cQAttrValue = PsiUtil.getAnnoTextValue(annoAttr);
-            if (!Objects.equals("", cQAttrValue)) {
+            if (!StringUtils.isEmpty(cQAttrValue)) {
                 return Pair.of("&" + XQLFileManager.encodeSqlReference(psiAlias, cQAttrValue), PsiTreeUtil.findChildOfType(annoAttr, PsiJavaTokenImpl.class));
             }
         }
@@ -131,7 +132,7 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
             var attrValue = PsiUtil.getAnnoTextValue(psiMethodAnnoAttr);
             // @XQL(type = Type.insert)
             // int addGuest(DataRow dataRow);
-            if (Objects.equals("", attrValue)) {
+            if (StringUtils.isEmpty(attrValue)) {
                 return Pair.of("&" + XQLFileManager.encodeSqlReference(psiAlias, sourceElement.getText()), sourceElement);
 
                 // @XQL("queryGuests")

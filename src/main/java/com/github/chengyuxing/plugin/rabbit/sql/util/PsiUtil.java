@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -156,7 +157,7 @@ public class PsiUtil {
         return psiClass.hasAnnotation(XQLMapper.class.getName());
     }
 
-    public static String getXQLMapperAlias(PsiClass psiClass) {
+    public static @Nullable String getXQLMapperAlias(PsiClass psiClass) {
         var mapper = psiClass.getAnnotation(XQLMapper.class.getName());
         if (Objects.isNull(mapper)) {
             return null;
@@ -179,13 +180,16 @@ public class PsiUtil {
         return getXQLMapperAlias(psiClass);
     }
 
-    public static String getAnnoTextValue(PsiAnnotationMemberValue psiAnnoAttr) {
+    public static @Nullable String getAnnoTextValue(PsiAnnotationMemberValue psiAnnoAttr) {
         if (psiAnnoAttr instanceof PsiLiteralExpression literalExpression) {
             if (literalExpression.getValue() instanceof String s) {
                 return s;
             }
         }
         var psiAlias = psiAnnoAttr.getText();
+        if (psiAlias.length() <= 1) {
+            return null;
+        }
         psiAlias = psiAlias.substring(1, psiAlias.length() - 1);
         return psiAlias;
     }

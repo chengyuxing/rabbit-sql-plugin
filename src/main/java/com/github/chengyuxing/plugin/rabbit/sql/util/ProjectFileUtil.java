@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
-import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
@@ -174,10 +174,10 @@ public class ProjectFileUtil {
     }
 
     public static boolean isURI(String path) {
-        return path.matches("(?i)(file|http|https|ftp):/+.*") || StringUtil.startsWithIgnoreCase(path, "file:");
+        return path.matches("(?i)(file|http|https|ftp):/+.*") || StringUtils.startsWithIgnoreCase(path, "file:");
     }
 
     public static boolean isLocalFileUri(String path) {
-        return StringUtil.startsWithIgnoreCase(path, "file:");
+        return StringUtils.startsWithIgnoreCase(path, "file:");
     }
 }

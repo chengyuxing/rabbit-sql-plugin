@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions;
 
 import com.github.chengyuxing.common.io.FileResource;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
@@ -62,8 +63,8 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
 
                 var doc = DEFINITION_START + HtmlUtil.wrap("span", element.getText(), HtmlUtil.Color.EMPTY);
 
-                if (!sqlDescription.trim().isEmpty()) {
-                    if (!fileDescription.trim().isEmpty()) {
+                if (!StringUtils.isBlank(sqlDescription)) {
+                    if (!StringUtils.isBlank(fileDescription)) {
                         sqlDescription = fileDescription + ": " + sqlDescription;
                     }
                     doc += HtmlUtil.pre(sqlDescription, HtmlUtil.Color.LIGHT);
@@ -127,6 +128,9 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
             return null;
         }
         var psiAttrValue = PsiUtil.getAnnoTextValue(psiAttr);
+        if (psiAttrValue == null) {
+            return null;
+        }
         return "&" + XQLFileManager.encodeSqlReference(alias, psiAttrValue);
     }
 }

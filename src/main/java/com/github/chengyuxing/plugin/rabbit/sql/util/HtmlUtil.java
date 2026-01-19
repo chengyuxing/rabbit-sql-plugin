@@ -1,9 +1,9 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
 import com.github.chengyuxing.common.script.lexer.RabbitScriptLexer;
-import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
-import com.github.chengyuxing.sql.utils.SqlHighlighter;
+import com.github.chengyuxing.sql.util.SqlHighlighter;
 import org.intellij.lang.annotations.Language;
 
 public class HtmlUtil {
@@ -21,7 +21,7 @@ public class HtmlUtil {
                 var nc = content;
                 var isAnno = true;
                 for (var k : RabbitScriptLexer.DIRECTIVES) {
-                    if (StringUtil.containsIgnoreCase(nc, ">" + k + "</")) {
+                    if (StringUtils.containsIgnoreCase(nc, ">" + k + "</")) {
                         isAnno = false;
                         break;
                     }
@@ -34,7 +34,7 @@ public class HtmlUtil {
             case BLOCK_COMMENT -> span(removeStyles(content), Color.ANNOTATION);
             case NAMED_PARAMETER -> code(content, Color.LIGHT);
             case OTHER -> {
-                if (StringUtil.equalsAny(content, Constants.XQL_DIRECTIVE_KEYWORDS) || StringUtil.equalsAny(content, Constants.XQL_VALUE_KEYWORDS)) {
+                if (StringUtils.equalsAny(content, Constants.XQL_DIRECTIVE_KEYWORDS) || StringUtils.equalsAny(content, Constants.XQL_VALUE_KEYWORDS)) {
                     yield span(content, Color.KEYWORD);
                 }
                 var maybeKeyword = content;
@@ -43,7 +43,7 @@ public class HtmlUtil {
                     maybeKeyword = content.substring(2);
                     pos = 2;
                 }
-                if (StringUtil.equalsAnyIgnoreCase(maybeKeyword, RabbitScriptLexer.DIRECTIVES)) {
+                if (StringUtils.equalsAnyIgnoreCase(maybeKeyword, RabbitScriptLexer.DIRECTIVES)) {
                     yield content.substring(0, pos) + span(maybeKeyword, Color.HIGHLIGHT);
                 }
                 yield content;

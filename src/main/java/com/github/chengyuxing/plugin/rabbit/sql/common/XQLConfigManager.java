@@ -1,8 +1,9 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.github.chengyuxing.common.io.FileResource;
+import com.github.chengyuxing.common.script.exception.ScriptSyntaxException;
 import com.github.chengyuxing.common.script.pipe.IPipe;
-import com.github.chengyuxing.common.utils.ReflectUtil;
+import com.github.chengyuxing.common.util.ReflectUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ArrayListValueSet;
@@ -11,9 +12,8 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.XQLFileManagerConfig;
-import com.github.chengyuxing.sql.exceptions.DynamicSqlParseException;
-import com.github.chengyuxing.sql.exceptions.YamlDeserializeException;
-import com.github.chengyuxing.sql.utils.SqlGenerator;
+import com.github.chengyuxing.sql.exceptions.XQLParseException;
+import com.github.chengyuxing.sql.util.SqlGenerator;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -213,7 +213,7 @@ public final class XQLConfigManager {
                                 if (pipeClass == null) {
                                     continue;
                                 }
-                                pipeInstances.put(pipeName, (IPipe<?>) ReflectUtil.getInstance(pipeClass));
+                                pipeInstances.put(pipeName, (IPipe<?>) ReflectUtils.getInstance(pipeClass));
                             } catch (Throwable ex) {
                                 notificationExecutor.get().ifPresent(n -> n.show(Message.warning(messagePrefix() + "load pipe '" + pipeClassName + "' error: " + ex.getMessage())));
                             }
@@ -267,16 +267,15 @@ public final class XQLConfigManager {
                 xqlFileManager.setFiles(newFiles);
                 xqlFileManager.init();
                 successes.add(Message.info(messagePrefix() + "updated!"));
-            } catch (DynamicSqlParseException e) {
-                warnings.add(Message.warning(messagePrefix() + e.getMessage()));
-                var cause = e.getCause();
-                if (Objects.nonNull(cause)) {
+            } catch (XQLParseException e) {
+                if (e.getCause() instanceof ScriptSyntaxException cause) {
+                    warnings.add(Message.warning(messagePrefix() + e.getMessage()));
                     warnings.add(Message.warning(messagePrefix() + cause.getMessage()));
+                } else {
+                    warnings.add(Message.error(messagePrefix() + e.getMessage()));
+                    log.warn(e);
                 }
             } catch (ConcurrentModificationException e) {
-                log.warn(e);
-            } catch (YamlDeserializeException e) {
-                warnings.add(Message.error(messagePrefix() + "config content invalid: " + e.getMessage()));
                 log.warn(e);
             } catch (Exception e) {
                 warnings.add(Message.error(messagePrefix() + "error: " + e.getMessage()));
@@ -300,7 +299,7 @@ public final class XQLConfigManager {
         }
 
         private String messagePrefix() {
-            return "[" + getModuleName() + ":" + getConfigName() + "] " + " ";
+            return "[" + getModuleName() + ":" + getConfigName() + "]  ";
         }
 
         private void fire(boolean silent) {

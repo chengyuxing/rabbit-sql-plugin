@@ -2,7 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
 import com.github.chengyuxing.common.Patterns;
 import com.github.chengyuxing.common.script.lexer.RabbitScriptLexer;
-import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -81,7 +81,7 @@ public class XqlFileAnnotator implements Annotator {
     }
 
     private static void highlightWord(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content, String xqlTag, String keyword) {
-        if (StringUtil.equalsAnyIgnoreCase(xqlTag, RabbitScriptLexer.DIRECTIVES)) {
+        if (StringUtils.equalsAnyIgnoreCase(xqlTag, RabbitScriptLexer.DIRECTIVES)) {
             Pattern p = Pattern.compile("\\s(?<keyword>" + keyword + ")(\\s|$)");
             Matcher m = p.matcher(content);
             while (m.find()) {
@@ -98,7 +98,7 @@ public class XqlFileAnnotator implements Annotator {
     }
 
     private static void highlightIdentifier(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content) {
-        Pattern varP = Pattern.compile("(?<var>:" + Patterns.VAR_KEY_PATTERN + "|" + StringUtil.NUMBER_REGEX + "|'(''|[^'])*'|\"(\"\"|[^\"])*\")(\\s|\\W|$)");
+        Pattern varP = Pattern.compile("(?<var>:" + Patterns.VAR_KEY_PATTERN + "|" + StringUtils.NUMBER_REGEX + "|'(''|[^'])*'|\"(\"\"|[^\"])*\")(\\s|\\W|$)");
         Matcher varM = varP.matcher(content);
         while (varM.find()) {
             String var = varM.group("var");
@@ -109,7 +109,7 @@ public class XqlFileAnnotator implements Annotator {
                     key = DefaultLanguageHighlighterColors.LOCAL_VARIABLE;
                 } else if (var.startsWith("'") || var.startsWith("\"")) {
                     key = DefaultLanguageHighlighterColors.STRING;
-                } else if (StringUtil.isNumeric(var)) {
+                } else if (StringUtils.isNumeric(var)) {
                     key = DefaultLanguageHighlighterColors.NUMBER;
                 } else {
                     key = DefaultLanguageHighlighterColors.LINE_COMMENT;
@@ -125,7 +125,7 @@ public class XqlFileAnnotator implements Annotator {
 
     private static String getTag(String prefix) {
         for (String keyword : RabbitScriptLexer.DIRECTIVES) {
-            if (StringUtil.startsWithIgnoreCase(prefix, keyword)) {
+            if (StringUtils.startsWithIgnoreCase(prefix, keyword)) {
                 return keyword;
             }
         }

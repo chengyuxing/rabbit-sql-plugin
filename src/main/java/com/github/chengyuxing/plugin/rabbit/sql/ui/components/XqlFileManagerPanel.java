@@ -2,7 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.common.tuple.Tuples;
-import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup.*;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TreeNodeRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
@@ -33,7 +33,8 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
+import static com.github.chengyuxing.common.util.StringUtils.NEW_LINE;
+
 
 public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     private final Project project;
@@ -117,7 +118,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                                     var desc = HtmlUtil.pre("/*" + sql.getDescription() + "*/", HtmlUtil.Color.ANNOTATION);
                                     html = HtmlUtil.wrap("div", desc + html, HtmlUtil.Color.EMPTY);
                                 }
-                                var height = StringUtil.countOfContains(sql.getSource(), NEW_LINE) * 21 + 39;
+                                var height = StringUtils.countOccurrences(sql.getSource(), NEW_LINE) * 21 + 39;
                                 popup = SwingUtil.showPreview(html, height, tree.getComponentAt(point), point);
                             }
                         }

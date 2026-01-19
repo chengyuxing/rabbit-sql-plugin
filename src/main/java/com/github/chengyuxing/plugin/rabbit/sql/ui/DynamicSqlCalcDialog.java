@@ -3,7 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.script.exception.CheckViolationException;
 import com.github.chengyuxing.common.script.exception.GuardViolationException;
-import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceManager;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.database.DatabaseId;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.database.DatasourceManager;
@@ -16,7 +16,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.AnActionGroupWrapper;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ExceptionUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
-import com.github.chengyuxing.sql.utils.SqlUtil;
+import com.github.chengyuxing.sql.util.SqlUtils;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
@@ -37,7 +37,7 @@ import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
+import static com.github.chengyuxing.common.util.StringUtils.NEW_LINE;
 
 public class DynamicSqlCalcDialog extends DialogWrapper {
     private final Project project;
@@ -136,8 +136,8 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             @Override
             public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
                 parseDynamicSQL((sql, args) -> {
-                    var fullSql = SqlUtil.formatSql(sql, args);
-                    var rawSql = config.getSqlGenerator().generateSql(fullSql, args, v -> SqlUtil.toSqlLiteral(v, true));
+                    var fullSql = SqlUtils.formatSql(sql, args);
+                    var rawSql = config.getSqlGenerator().generateSql(fullSql, args, v -> SqlUtils.toSqlLiteral(v, true));
                     parametersForm.setSqlHtml(HtmlUtil.highlightSql(rawSql));
                     autoHeight(rawSql);
                 });
@@ -268,8 +268,8 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     @Override
     protected void doOKAction() {
         parseDynamicSQL((sql, args) -> {
-            var fullSql = SqlUtil.formatSql(sql, args);
-            var rawSql = config.getSqlGenerator().generateSql(fullSql, args, v -> SqlUtil.toSqlLiteral(v, true));
+            var fullSql = SqlUtils.formatSql(sql, args);
+            var rawSql = config.getSqlGenerator().generateSql(fullSql, args, v -> SqlUtils.toSqlLiteral(v, true));
             // execute sql
             var idx = datasourceList.getSelectedIndex();
             if (isDatabasePluginEnabled) {
@@ -351,7 +351,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         var basicHeight = defaultSize.height;
         var maxContentHeight = 239;
         var minContentHeight = 100;
-        var lineCount = StringUtil.countOfContains(content, NEW_LINE);
+        var lineCount = StringUtils.countOccurrences(content, NEW_LINE);
         var contentHeight = lineCount * 21 + 39;
         contentHeight = Math.max(minContentHeight, contentHeight);
         contentHeight = Math.min(contentHeight, maxContentHeight);

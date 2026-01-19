@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.NewSQLForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
@@ -80,7 +81,7 @@ public class NewSQLDialog extends DialogWrapper {
             ApplicationManager.getApplication().runWriteAction(() ->
                     WriteCommandAction.runWriteCommandAction(project, "Modify '" + sqlFileVf.getName() + "'", null, () -> {
                         var sqlFragment = "\n/*[" + name + "]*/";
-                        if (!desc.trim().isEmpty()) {
+                        if (!StringUtils.isBlank(desc)) {
                             sqlFragment += "\n/*#" + desc + "#*/";
                         }
                         sqlFragment += "\n\n;\n";

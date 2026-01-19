@@ -1,7 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.MostDateTime;
-import com.github.chengyuxing.common.utils.ObjectUtil;
+import com.github.chengyuxing.common.util.ValueUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.FieldInfoRender;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
 import com.intellij.icons.AllIcons;
@@ -228,9 +228,9 @@ public class EntityGenerateFrom extends JPanel {
                     var comment = "";
                     var required = true;
                     if (Objects.nonNull(xqlParam)) {
-                        type = ObjectUtil.coalesce(xqlParam.getType(), type);
-                        comment = ObjectUtil.coalesce(xqlParam.getComment(), comment);
-                        required = ObjectUtil.coalesce(xqlParam.getRequired(), required);
+                        type = ValueUtils.coalesce(xqlParam.getType(), type);
+                        comment = ValueUtils.coalesce(xqlParam.getComment(), comment);
+                        required = ValueUtils.coalesce(xqlParam.getRequired(), required);
                     }
                     return new Object[]{filed, type, comment, required};
                 })

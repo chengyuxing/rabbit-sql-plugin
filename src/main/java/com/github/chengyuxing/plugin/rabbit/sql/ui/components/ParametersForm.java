@@ -6,7 +6,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.tuple.Pair;
-import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlParamValueHistoryDialog;
@@ -81,7 +81,7 @@ public class ParametersForm extends JPanel {
                         errors.add("JSON object of parameter '" + k + "' serialized error.");
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
-                } else if (StringUtil.isNumeric(sv)) {
+                } else if (StringUtils.isNumeric(sv)) {
                     try {
                         if (sv.contains(".")) {
                             v = Double.parseDouble(sv);
@@ -92,9 +92,9 @@ public class ParametersForm extends JPanel {
                         errors.add("Parse number '" + k + "' error.");
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
-                } else if (StringUtil.equalsAnyIgnoreCase(sv, "null", "blank")) {
+                } else if (StringUtils.equalsAnyIgnoreCase(sv, "null", "blank")) {
                     v = null;
-                } else if (StringUtil.equalsAnyIgnoreCase(sv, "true", "false")) {
+                } else if (StringUtils.equalsAnyIgnoreCase(sv, "true", "false")) {
                     v = Boolean.parseBoolean(sv);
                 } else if (com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.isQuote(sv)) {
                     v = sv.substring(1, sv.length() - 1);

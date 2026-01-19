@@ -4,9 +4,12 @@ import com.github.chengyuxing.common.script.Token;
 import com.github.chengyuxing.common.script.TokenType;
 import com.github.chengyuxing.common.script.lexer.RabbitScriptLexer;
 import com.github.chengyuxing.common.tuple.Pair;
+import com.github.chengyuxing.common.util.NamingUtils;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.sql.XQLFileManager;
-import com.github.chengyuxing.sql.utils.SqlGenerator;
+import com.github.chengyuxing.sql.util.SqlGenerator;
+import com.github.chengyuxing.sql.util.SqlUtils;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -15,7 +18,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.github.chengyuxing.common.utils.StringUtil.NEW_LINE;
+import static com.github.chengyuxing.common.util.StringUtils.NEW_LINE;
 import static com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil.code;
 
 public class StringUtil {
@@ -51,10 +54,10 @@ public class StringUtil {
         Map<String, Set<String>> paramsMap = new LinkedHashMap<>();
         RabbitScriptLexer lexer = new RabbitScriptLexer(sql) {
             @Override
-            protected String trimExpressionLine(String line) {
-                String lt = line.trim();
-                if (lt.startsWith("--")) {
-                    return lt.substring(2);
+            protected String normalizeDirectiveLine(String line) {
+                int idx = SqlUtils.indexOfWholeLineComment(line);
+                if (idx != -1) {
+                    return line.substring(idx + 2);
                 }
                 return line;
             }
@@ -145,7 +148,7 @@ public class StringUtil {
                     paramsMap.get(kp.getItem1()).add(holder);
                 });
 
-        var tempP = com.github.chengyuxing.common.utils.StringUtil.FMT.getPattern();
+        var tempP = StringUtils.FMT.getPattern();
         var tempM = tempP.matcher(plainSql);
         while (tempM.find()) {
             var key = tempM.group("key");
@@ -179,7 +182,7 @@ public class StringUtil {
 
     public static String camelizeAndClean(String content) {
         var result = content.replace("_", "-");
-        result = com.github.chengyuxing.common.utils.StringUtil.camelize(result);
+        result = NamingUtils.kebabToCamel(result);
         result = result.replaceAll("\\W", "");
         return result;
     }

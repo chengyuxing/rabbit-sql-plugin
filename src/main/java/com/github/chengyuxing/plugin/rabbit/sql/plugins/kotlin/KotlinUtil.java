@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin;
 
-import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -44,7 +44,7 @@ public class KotlinUtil {
                         @Override
                         public void visitLiteralStringTemplateEntry(@NotNull KtLiteralStringTemplateEntry entry) {
                             var v = entry.getText();
-                            if (Objects.nonNull(v) && StringUtil.equalsAny(v, sqlRefs)) {
+                            if (Objects.nonNull(v) && StringUtils.equalsAny(v, sqlRefs)) {
                                 psiElements.add(entry);
                             }
                         }

@@ -3,7 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 import com.github.chengyuxing.common.DataRow;
 import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.tuple.Pair;
-import com.github.chengyuxing.common.utils.ObjectUtil;
+import com.github.chengyuxing.common.util.ValueUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.Helper;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
@@ -16,7 +16,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
-import com.github.chengyuxing.sql.utils.SqlGenerator;
+import com.github.chengyuxing.sql.util.SqlGenerator;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -397,7 +397,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                 newParams.add(new XQLMapperTemplateData.Parameter(
                         paramName,
                         shortType,
-                        ObjectUtil.coalesce(paramObj.getComment(), ""))
+                        ValueUtils.coalesce(paramObj.getComment(), ""))
                 );
             }
         }
@@ -410,7 +410,7 @@ public class MapperGenerateDialog extends DialogWrapper {
     }
 
     private String detectCountQuery(String sqlName, XQLMapperTemplateData.Method method) {
-        if (com.github.chengyuxing.common.utils.StringUtil.startsWiths(method.getReturnType(),
+        if (com.github.chengyuxing.common.util.StringUtils.startsWiths(method.getReturnType(),
                 XQLJavaType.PagedResource.getValue() + "<",
                 XQLJavaType.PagedResource.getValue() + " ",
                 XQLJavaType.IPageable.getValue())) {

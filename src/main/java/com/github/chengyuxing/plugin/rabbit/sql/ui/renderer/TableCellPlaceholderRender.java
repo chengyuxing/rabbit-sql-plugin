@@ -1,6 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.renderer;
 
-import com.github.chengyuxing.common.utils.StringUtil;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.intellij.ui.JBColor;
@@ -34,13 +34,13 @@ public class TableCellPlaceholderRender extends DefaultTableCellRenderer {
             return placeHolderCom;
         } else {
             var valueCom = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (StringUtil.isNumeric(value)) {
+            if (StringUtils.isNumeric(value)) {
                 valueCom.setForeground(new JBColor(new Color(0x364FED), new Color(0x56A9B6)));
             } else if (isQuote(value.toString())) {
                 valueCom.setForeground(new JBColor(new Color(0x097C52), new Color(0x79A978)));
             } else if (isJSON(value.toString())) {
                 valueCom.setForeground(new JBColor(new Color(0x9C9715), new Color(0xBBB529)));
-            } else if (StringUtil.equalsAnyIgnoreCase(value.toString(), Constants.XQL_VALUE_KEYWORDS)) {
+            } else if (StringUtils.equalsAnyIgnoreCase(value.toString(), Constants.XQL_VALUE_KEYWORDS)) {
                 valueCom.setForeground(new JBColor(new Color(0x1D31BC), new Color(0xCC7832)));
             } else {
                 valueCom.setForeground(new JBColor(new Color(0x097C52), new Color(0x79A978)));

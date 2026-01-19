@@ -1,7 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow;
 
 import com.github.chengyuxing.common.tuple.Triple;
-import com.github.chengyuxing.common.utils.ObjectUtil;
+import com.github.chengyuxing.common.util.ValueUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
@@ -49,7 +49,7 @@ public class SelectOpenedFile extends AnAction {
             var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
             var m = pattern.matcher(commentText);
             if (m.matches()) {
-                sqlRef = ObjectUtil.coalesce(m.group("sqlName"), m.group("partName"));
+                sqlRef = ValueUtils.coalesce(m.group("sqlName"), m.group("partName"));
             }
         } else {
             if (PsiUtil.isParentAXQLMapperInterface(element)) {
