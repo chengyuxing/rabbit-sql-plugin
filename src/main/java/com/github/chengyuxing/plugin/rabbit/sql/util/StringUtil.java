@@ -181,7 +181,7 @@ public class StringUtil {
     }
 
     public static String camelizeAndClean(String content) {
-        var result = content.replace("_", "-");
+        var result = content.replaceAll("_+", "-");
         result = NamingUtils.kebabToCamel(result);
         result = result.replaceAll("\\W", "");
         return result;
