@@ -3,13 +3,14 @@ package com.github.chengyuxing.plugin.tests;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.script.pipe.IPipe;
-import com.github.chengyuxing.common.utils.ReflectUtil;
+import com.github.chengyuxing.common.util.ReflectUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
+import com.github.chengyuxing.plugin.rabbit.sql.util.RabbitScriptParamParser;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SimpleJavaCompiler;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.Args;
-import com.github.chengyuxing.sql.utils.SqlGenerator;
+import com.github.chengyuxing.sql.util.SqlGenerator;
 import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
 
@@ -60,7 +61,7 @@ public class MyCode {
         var path = Path.of("/Users/chengyuxing/IdeaProjects/sbp-test1")
                 .resolve(Path.of("target", "classes"));
         Class<?> clazz = ClassFileLoader.of(ClassLoader.getSystemClassLoader(), path).findClass("org.example.pipes.Big");
-        System.out.println(ReflectUtil.getInstance(clazz));
+        System.out.println(ReflectUtils.getInstance(clazz));
     }
 
     //    @Test
@@ -118,5 +119,32 @@ public class MyCode {
         var yml = new Yaml();
         var c = yml.loadAs(new FileResource("file:///Users/chengyuxing/IdeaProjects/rabbit-sql-quick-start/src/main/resources/xqls/home.xql.mappers").getInputStream(), XQLMapperConfig.class);
         System.out.println(c);
+    }
+
+    @Test
+    public void testLex() {
+        var content = """
+                -- #check :users = blank throw 'param users must not be null!'
+                -- #var defaultAddresses = 'Japin,USB,KingDown' | split(',')
+                select * from test.guest where
+                -- #guard :id != blank
+                    id = :id
+                -- #throw 'ID is required!'
+                    or address in (
+                -- #for user of :users | split(:splitter) delimiter ','
+                        -- #for address of :user.addresses delimiter ','
+                        -- #var city = :address.city | upper
+                        :city, :another, :user.addresses.0.city
+                        -- #if :city = KUNMING
+                        ,'You choose ${city}!'
+                        -- #fi
+                        -- #done
+                -- #done
+                        ) or address = :defaultAddresses[1]
+                """;
+        RabbitScriptParamParser parser = new RabbitScriptParamParser(content, new SqlGenerator(':'));
+        parser.parse();
+        var params = parser.getParamsMap();
+        System.out.println(params);
     }
 }

@@ -34,7 +34,7 @@ public class TableCellPlaceholderRender extends DefaultTableCellRenderer {
             return placeHolderCom;
         } else {
             var valueCom = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (StringUtils.isNumeric(value)) {
+            if (StringUtils.isNumber(value)) {
                 valueCom.setForeground(new JBColor(new Color(0x364FED), new Color(0x56A9B6)));
             } else if (isQuote(value.toString())) {
                 valueCom.setForeground(new JBColor(new Color(0x097C52), new Color(0x79A978)));

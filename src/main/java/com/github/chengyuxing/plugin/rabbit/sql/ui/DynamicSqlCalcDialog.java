@@ -136,7 +136,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             @Override
             public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
                 parseDynamicSQL((sql, args) -> {
-                    var fullSql = SqlUtils.formatSql(sql, args);
+                    var fullSql = SqlUtils.formatSqlTemplate(sql, args);
                     var rawSql = config.getSqlGenerator().generateSql(fullSql, args, v -> SqlUtils.toSqlLiteral(v, true));
                     parametersForm.setSqlHtml(HtmlUtil.highlightSql(rawSql));
                     autoHeight(rawSql);
@@ -268,7 +268,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     @Override
     protected void doOKAction() {
         parseDynamicSQL((sql, args) -> {
-            var fullSql = SqlUtils.formatSql(sql, args);
+            var fullSql = SqlUtils.formatSqlTemplate(sql, args);
             var rawSql = config.getSqlGenerator().generateSql(fullSql, args, v -> SqlUtils.toSqlLiteral(v, true));
             // execute sql
             var idx = datasourceList.getSelectedIndex();

@@ -1,8 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
-import com.github.chengyuxing.common.Patterns;
 import com.github.chengyuxing.common.script.lexer.RabbitScriptLexer;
 import com.github.chengyuxing.common.util.StringUtils;
+import com.github.chengyuxing.common.util.ValueUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -98,7 +98,7 @@ public class XqlFileAnnotator implements Annotator {
     }
 
     private static void highlightIdentifier(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content) {
-        Pattern varP = Pattern.compile("(?<var>:" + Patterns.VAR_KEY_PATTERN + "|" + StringUtils.NUMBER_REGEX + "|'(''|[^'])*'|\"(\"\"|[^\"])*\")(\\s|\\W|$)");
+        Pattern varP = Pattern.compile("(?<var>:" + ValueUtils.VAR_PATH_EXPRESSION_PATTERN.pattern() + "|" + StringUtils.NUMBER_PATTERN.pattern() + "|'(''|[^'])*'|\"(\"\"|[^\"])*\")(\\s|\\W|$)");
         Matcher varM = varP.matcher(content);
         while (varM.find()) {
             String var = varM.group("var");
@@ -109,7 +109,7 @@ public class XqlFileAnnotator implements Annotator {
                     key = DefaultLanguageHighlighterColors.LOCAL_VARIABLE;
                 } else if (var.startsWith("'") || var.startsWith("\"")) {
                     key = DefaultLanguageHighlighterColors.STRING;
-                } else if (StringUtils.isNumeric(var)) {
+                } else if (StringUtils.isNumber(var)) {
                     key = DefaultLanguageHighlighterColors.NUMBER;
                 } else {
                     key = DefaultLanguageHighlighterColors.LINE_COMMENT;

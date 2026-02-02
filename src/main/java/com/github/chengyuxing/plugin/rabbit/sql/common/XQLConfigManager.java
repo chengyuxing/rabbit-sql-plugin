@@ -190,34 +190,40 @@ public final class XQLConfigManager {
                 private final Path classesPath = modulePath.resolve(Path.of("target", "classes"));
 
                 @Override
-                protected void loadPipes() {
-                    if (pipes.isEmpty()) {
-                        return;
-                    }
+                protected Map<String, IPipe<?>> buildPipeInstances() {
                     Thread currentThread = Thread.currentThread();
                     ClassLoader originalClassLoader = currentThread.getContextClassLoader();
                     ClassLoader pluginClassLoader = this.getClass().getClassLoader();
                     try {
                         currentThread.setContextClassLoader(pluginClassLoader);
                         ClassFileLoader loader = ClassFileLoader.of(pluginClassLoader, classesPath);
-                        for (Map.Entry<String, String> e : pipes.entrySet()) {
+                        Map<String, IPipe<?>> newPipeInstances = new HashMap<>();
+                        Map<String, IPipe<?>> oldPipeInstances = this.getPipeInstances();
+                        for (Map.Entry<String, String> e : getPipes().entrySet()) {
                             var pipeName = e.getKey();
                             var pipeClassName = e.getValue();
-                            var pipeClassPath = classesPath.resolve(pipeClassName.replace(".", "/") + ".class");
-                            if (!Files.exists(pipeClassPath)) {
-                                notificationExecutor.get().ifPresent(n -> n.show(Message.warning(messagePrefix() + "pipe '" + pipeClassName + "' not found, maybe should re-compile project.")));
-                                continue;
-                            }
-                            try {
-                                var pipeClass = loader.findClass(pipeClassName);
-                                if (pipeClass == null) {
+
+                            IPipe<?> old = oldPipeInstances.get(pipeName);
+                            if (old != null) {
+                                newPipeInstances.put(pipeName, old);
+                            } else {
+                                var pipeClassPath = classesPath.resolve(pipeClassName.replace(".", "/") + ".class");
+                                if (!Files.exists(pipeClassPath)) {
+                                    notificationExecutor.get().ifPresent(n -> n.show(Message.warning(messagePrefix() + "pipe '" + pipeClassName + "' not found, maybe should re-compile project.")));
                                     continue;
                                 }
-                                pipeInstances.put(pipeName, (IPipe<?>) ReflectUtils.getInstance(pipeClass));
-                            } catch (Throwable ex) {
-                                notificationExecutor.get().ifPresent(n -> n.show(Message.warning(messagePrefix() + "load pipe '" + pipeClassName + "' error: " + ex.getMessage())));
+                                try {
+                                    var pipeClass = loader.findClass(pipeClassName);
+                                    if (pipeClass == null) {
+                                        continue;
+                                    }
+                                    newPipeInstances.put(pipeName, (IPipe<?>) ReflectUtils.getInstance(pipeClass));
+                                } catch (Throwable ex) {
+                                    notificationExecutor.get().ifPresent(n -> n.show(Message.warning(messagePrefix() + "load pipe '" + pipeClassName + "' error: " + ex.getMessage())));
+                                }
                             }
                         }
+                        return newPipeInstances;
                     } finally {
                         currentThread.setContextClassLoader(originalClassLoader);
                     }
@@ -245,7 +251,7 @@ public final class XQLConfigManager {
                     return Set.of();
                 }
                 xqlFileManagerConfig.copyStateTo(xqlFileManager);
-                var newFiles = new XQLFileManagerConfig.FileMap();
+                var newFiles = new LinkedHashMap<String, String>();
                 for (Map.Entry<String, String> e : xqlFileManager.getFiles().entrySet()) {
                     var alias = e.getKey();
                     // e.g. xqls/home.xql

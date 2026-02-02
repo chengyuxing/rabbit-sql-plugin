@@ -81,7 +81,7 @@ public class ParametersForm extends JPanel {
                         errors.add("JSON object of parameter '" + k + "' serialized error.");
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
-                } else if (StringUtils.isNumeric(sv)) {
+                } else if (StringUtils.isNumber(sv)) {
                     try {
                         if (sv.contains(".")) {
                             v = Double.parseDouble(sv);
