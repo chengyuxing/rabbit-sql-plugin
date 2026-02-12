@@ -1,5 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
+import com.github.chengyuxing.common.script.ast.impl.KeyExpressionParser;
+import com.github.chengyuxing.common.script.lang.Directives;
 import com.github.chengyuxing.common.script.lexer.RabbitScriptLexer;
 import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.common.util.ValueUtils;
@@ -77,6 +79,7 @@ public class XqlFileAnnotator implements Annotator {
         for (String k : Constants.XQL_VALUE_KEYWORDS) {
             highlightWord(holder, element, whiteSpaceLen, value, tag, k);
         }
+        highlightForAsWord(holder, element, whiteSpaceLen, value, tag);
         highlightIdentifier(holder, element, whiteSpaceLen, value);
     }
 
@@ -97,8 +100,25 @@ public class XqlFileAnnotator implements Annotator {
         }
     }
 
+    private static void highlightForAsWord(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content, String xqlTag) {
+        if (StringUtils.equalsAnyIgnoreCase(xqlTag, Directives.FOR)) {
+            Pattern p = Pattern.compile("\\s*;\\s*(?<key>" + Constants.FOR_PROPERTIES_REGEXP + ")\\s+as\\s+\\w+(\\s+|$)");
+            Matcher m = p.matcher(content);
+            while (m.find()) {
+                int offset = m.start("key");
+                if (offset != -1) {
+                    TextRange range = TextRange.from(element.getTextRange().getStartOffset() - whiteSpaceLength + offset, m.group("key").length());
+                    holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                            .range(range)
+                            .textAttributes(DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
+                            .create();
+                }
+            }
+        }
+    }
+
     private static void highlightIdentifier(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content) {
-        Pattern varP = Pattern.compile("(?<var>:" + ValueUtils.VAR_PATH_EXPRESSION_PATTERN.pattern() + "|" + StringUtils.NUMBER_PATTERN.pattern() + "|'(''|[^'])*'|\"(\"\"|[^\"])*\")(\\s|\\W|$)");
+        Pattern varP = Pattern.compile("(?<var>:" + KeyExpressionParser.EXPRESSION_PATTERN.pattern() + "|" + StringUtils.NUMBER_PATTERN.pattern() + "|'(''|[^'])*'|\"(\"\"|[^\"])*\")(\\s|\\W|$)");
         Matcher varM = varP.matcher(content);
         while (varM.find()) {
             String var = varM.group("var");
