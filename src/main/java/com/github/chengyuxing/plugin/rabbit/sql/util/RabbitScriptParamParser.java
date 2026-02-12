@@ -191,6 +191,27 @@ public class RabbitScriptParamParser {
         return vars;
     }
 
+    private Set<String> parseForExpressions(StringJoiner sb) {
+        Set<String> vars = new LinkedHashSet<>();
+        while (currentToken.getType() != TokenType.NEWLINE) {
+            if (currentToken.getType() == TokenType.COLON) {
+                Pair<String, String> pair = parseExpression();
+                vars.add(pair.getItem1());
+                sb.add(pair.getItem2());
+            } else if (currentToken.getType() == TokenType.FOR_PROPERTY_AS) {
+                sb.add(currentToken.getValue()); // as
+                advance();
+                localParams.add(currentToken.getValue());
+                sb.add(currentToken.getValue());
+                advance();
+            } else {
+                appendToken(sb, currentToken);
+                advance();
+            }
+        }
+        return vars;
+    }
+
     private void parseVarStatement() {
         StringJoiner sb = new StringJoiner(" ");
         sb.add(currentToken.getValue()); // #var
@@ -223,16 +244,9 @@ public class RabbitScriptParamParser {
         localParams.add(currentToken.getValue());
         sb.add(currentToken.getValue());    // item
         advance();
-        if (currentToken.getType() == TokenType.COMMA) {
-            sb.add(currentToken.getValue());
-            advance();
-            localParams.add(currentToken.getValue());
-            sb.add(currentToken.getValue()); //idx
-            advance();
-        }
         sb.add(currentToken.getValue()); // of
         advance();
-        var vars = parseExpressions(sb);
+        var vars = parseForExpressions(sb);
         vars.forEach(var -> {
             String summary = replaceVarHolder(var, sb.toString());
             paramsMap.computeIfAbsent(var, k -> new LinkedHashSet<>()).add(summary);

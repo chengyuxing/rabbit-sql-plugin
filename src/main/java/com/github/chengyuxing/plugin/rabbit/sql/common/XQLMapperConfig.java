@@ -1,7 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
-import com.github.chengyuxing.sql.XQLFileManagerConfig;
+import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.openapi.diagnostic.Logger;
 import org.yaml.snakeyaml.Yaml;
 
@@ -43,7 +43,7 @@ public class XQLMapperConfig {
         }
     }
 
-    public static Path getDefaultPath(XQLConfigManager.Config config, XQLFileManagerConfig.Resource resource) {
+    public static Path getDefaultPath(XQLConfigManager.Config config, XQLFileManager.Resource resource) {
         var filename = resource.getFilename();
         if (ProjectFileUtil.isLocalFileUri(filename)) {
             return Path.of(URI.create(resource.getFilename() + ".rbm"));
