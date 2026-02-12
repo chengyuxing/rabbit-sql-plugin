@@ -32,23 +32,12 @@
             <option name="SQL" value="true" />
         </context>
     </template>
-    <template name="xql:for-full" value="-- #for $KEY$ $INDEX$ of :$LIST$ $PIPES$ delimiter '$SYMBOL$' open '$OPEN$' close '$CLOSE$'&#10;    $BODY$&#10;-- #done" description="for-of-done" toReformat="false" toShortenFQNames="true">
-        <variable name="KEY" expression="" defaultValue="&quot;item&quot;" alwaysStopAt="true" />
-        <variable name="INDEX" expression="" defaultValue="&quot;,idx&quot;" alwaysStopAt="true" />
-        <variable name="LIST" expression="" defaultValue="&quot;list&quot;" alwaysStopAt="true" />
-        <variable name="PIPES" expression="" defaultValue="&quot;| pipeN&quot;" alwaysStopAt="true" />
-        <variable name="SYMBOL" expression="" defaultValue="&quot;,&quot;" alwaysStopAt="true" />
-        <variable name="OPEN" expression="" defaultValue="" alwaysStopAt="true" />
-        <variable name="CLOSE" expression="" defaultValue="" alwaysStopAt="true" />
-        <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true" />
-        <context>
-            <option name="SQL" value="true" />
-        </context>
-    </template>
-    <template name="xql:for-normal" value="-- #for $KEY$ of :$LIST$ delimiter '$SYMBOL$'&#10;    $BODY$&#10;-- #done" description="for-of-done" toReformat="false" toShortenFQNames="true">
+    <template name="xql:for" value="-- #for $KEY$ of :$LIST$$PIPES$$FIRST_AS$$LAST_AS$&#10;    $BODY$&#10;-- #done" description="for-of-done" toReformat="false" toShortenFQNames="true">
         <variable name="KEY" expression="" defaultValue="&quot;item&quot;" alwaysStopAt="true" />
         <variable name="LIST" expression="" defaultValue="&quot;list&quot;" alwaysStopAt="true" />
-        <variable name="SYMBOL" expression="" defaultValue="&quot;,&quot;" alwaysStopAt="true" />
+        <variable name="PIPES" expression="" defaultValue="&quot; | pipeN&quot;" alwaysStopAt="true" />
+        <variable name="FIRST_AS" expression="" defaultValue="&quot;; first as isFirst&quot;" alwaysStopAt="true" />
+        <variable name="LAST_AS" expression="" defaultValue="&quot;; last as isLast&quot;" alwaysStopAt="true" />
         <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true" />
         <context>
             <option name="SQL" value="true" />
@@ -110,13 +99,11 @@
             <option name="SQL" value="true" />
         </context>
     </template>
-    <template name="xql:example-update" value="/*[$SQL_NAME$]*/&#10;update $TABLE$&#10;set&#10;-- #for set of :sets | kv&#10;    ${set.key} = :_for.set.value&#10;-- #done&#10;where $CND$&#10;;" description="update statement with for example" toReformat="false" toShortenFQNames="true">
+    <template name="xql:example-update" value="/*[$SQL_NAME$]*/&#10;update $TABLE$&#10;set&#10;-- #for set of :sets | kv; first as isFirst&#10;    -- #if :isFirst&#10;    ${set.key} = :_for.set.value,&#10;    -- #else&#10;    ${set.key} = :_for.set.value&#10;    -- #fi&#10;-- #done&#10;where $CND$&#10;;" description="update statement with for example" toReformat="false" toShortenFQNames="true">
         <variable name="SQL_NAME" expression="" defaultValue="" alwaysStopAt="true" />
         <variable name="TABLE" expression="" defaultValue="" alwaysStopAt="true" />
         <variable name="CND" expression="" defaultValue="&quot;id = :id&quot;" alwaysStopAt="true" />
-        <context>
-            <option name="SQL" value="true" />
-        </context>
+        <context />
     </template>
     <template name="xql:if-else" value="-- #if :$KEY$ $OPERATOR$ $VAR$&#10;    $THEN$&#10;-- #else&#10;    $ELSE$&#10;-- #fi$END$" description="if-else-fi" toReformat="false" toShortenFQNames="true">
         <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true" />
@@ -129,6 +116,13 @@
         </context>
     </template>
     <template name="xql:default" value="-- #default&#10;    $BODY$&#10;-- #break$END$" description="default block (choose/switch)" toReformat="false" toShortenFQNames="true">
+        <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true" />
+        <context>
+            <option name="SQL" value="true" />
+        </context>
+    </template>
+    <template name="xql:new-inline-template" value="-- //TEMPLATE-BEGIN:$NAME$&#10;$BODY$&#10;-- //TEMPLATE-END" description="create a new inline template" toReformat="false" toShortenFQNames="true">
+        <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
         <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true" />
         <context>
             <option name="SQL" value="true" />
