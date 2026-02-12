@@ -46,7 +46,7 @@
     <h3>Springboot</h3>
     <ol>
         <li>Create a new maven project;</li>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 5.2.3</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 5.2.4</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -55,7 +55,7 @@
     <h3>Other Java Projects</h3>
     <ol>
         <li>Create a new maven project.</li>
-        <li>Add dependency <strong>rabbit-sql 10.2.3</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 10.2.4</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -79,6 +79,16 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.41</h3>
+            <ul>
+                <li>Support <code>rabbit-sql 10.2.4</code> and <code>rabbit-sql-spring-boot-starter 5.2.4</code></li>
+                <li>New live template: <b>xql:new-inline-template</b> to create inline template (-- //TEMPLATE-BEGIN:<name> ... -- //TEMPLATE-END) segment in sql object.</li>
+                <li>Dynamic SQL new <b>#for</b> syntax: <code>item of :list [| pipe1 | pipeN | ... ] [;index as i] [;last as isLast] [;first as isFirst] ...</code></li>
+                <li>Dynamic SQL <b>#for</b> remove property: <code>delimiter, open, close</code></li>
+                <li>Dynamic SQL <b>#for</b> add context property: <code>index, first, last, odd, even</code></li>
+                <li>Dynamic SQL bool condition add support unary syntax: <code>:isHuman && !:alien</code></li>
+                <li>Dynamic SQL script engine optimized.</li>
+            </ul>
             <h3>2.4.40</h3>
             <ul>
                 <li>Compatible with IDEA 2026.1.</li>
