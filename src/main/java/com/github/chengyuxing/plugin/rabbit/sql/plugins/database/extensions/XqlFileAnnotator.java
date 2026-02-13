@@ -101,7 +101,7 @@ public class XqlFileAnnotator implements Annotator {
 
     private static void highlightForAsWord(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content, String xqlTag) {
         if (StringUtils.equalsAnyIgnoreCase(xqlTag, Directives.FOR)) {
-            Pattern p = Pattern.compile("\\s*;\\s*(?<key>" + Constants.FOR_PROPERTIES_REGEXP + ")\\s+as\\s+\\w+(\\s+|$)");
+            Pattern p = Pattern.compile("\\s*;\\s*(?<key>" + Constants.FOR_PROPERTIES_REGEXP + ")\\s+as\\s+\\w+(\\s*|$)");
             Matcher m = p.matcher(content);
             while (m.find()) {
                 int offset = m.start("key");
