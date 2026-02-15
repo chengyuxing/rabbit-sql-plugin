@@ -1,4 +1,11 @@
 <templateSet group="Rabbit SQL(.xql)">
+    <template name="xql:metadata" value="-- @$NAME$ $VALUE$" description="create a sql metadata" toReformat="false" toShortenFQNames="true">
+        <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+        <variable name="VALUE" expression="" defaultValue="" alwaysStopAt="true" />
+        <context>
+            <option name="SQL" value="true" />
+        </context>
+    </template>
     <template name="xql:check" value="-- #check :$KEY$ $OPERATOR$ $VAR$ throw '$MESSAGE$'$END$" description="check true throw exception" toReformat="false" toShortenFQNames="true">
         <variable name="KEY" expression="" defaultValue="" alwaysStopAt="true" />
         <variable name="OPERATOR" expression="enum(&quot;=&quot;,&quot;!=&quot;,&quot;&gt;&quot;,&quot;&lt;&quot;,&quot;&gt;=&quot;,&quot;&lt;=&quot;,&quot;&lt;&gt;&quot;,&quot;~&quot;,&quot;!~&quot;,&quot;@&quot;,&quot;!@&quot;)" defaultValue="&quot;=&quot;" alwaysStopAt="true" />
