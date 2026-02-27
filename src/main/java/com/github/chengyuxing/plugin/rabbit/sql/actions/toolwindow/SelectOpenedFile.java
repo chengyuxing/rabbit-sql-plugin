@@ -46,8 +46,7 @@ public class SelectOpenedFile extends AnAction {
         String sqlRef = null;
         if (element instanceof PsiComment comment) {
             var commentText = comment.getText();
-            var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
-            var m = pattern.matcher(commentText);
+            var m = Constants.SQL_NAME_ANNOTATION_PATTERN.matcher(commentText);
             if (m.matches()) {
                 sqlRef = ValueUtils.coalesce(m.group("sqlName"), m.group("partName"));
             }

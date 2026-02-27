@@ -32,8 +32,7 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
         try {
             var sqlNameTag = element.getText();
-            var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
-            var m = pattern.matcher(sqlNameTag);
+            var m = Constants.SQL_NAME_ANNOTATION_PATTERN.matcher(sqlNameTag);
             if (m.find()) {
                 var xqlFile = element.getContainingFile();
                 if (xqlFile == null || !xqlFile.isValid() || !xqlFile.isPhysical()) {
@@ -80,8 +79,7 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
         if (sqlNameTag == null) {
             return false;
         }
-        var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
-        var m = pattern.matcher(sqlNameTag);
+        var m = Constants.SQL_NAME_ANNOTATION_PATTERN.matcher(sqlNameTag);
         if (m.matches()) {
             var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(element);
             if (xqlFileManager != null) {

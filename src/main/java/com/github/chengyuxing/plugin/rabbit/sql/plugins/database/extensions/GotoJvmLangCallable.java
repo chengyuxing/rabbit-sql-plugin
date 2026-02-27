@@ -35,8 +35,7 @@ public class GotoJvmLangCallable extends RelatedItemLineMarkerProvider {
         if (sqlNameTag == null) {
             return;
         }
-        var pattern = Pattern.compile(Constants.SQL_NAME_ANNOTATION_PATTERN);
-        var m = pattern.matcher(sqlNameTag);
+        var m = Constants.SQL_NAME_ANNOTATION_PATTERN.matcher(sqlNameTag);
         if (m.matches()) {
             var sqlName = ValueUtils.coalesce(m.group("sqlName"), m.group("partName"));
             if (Objects.isNull(sqlName)) {

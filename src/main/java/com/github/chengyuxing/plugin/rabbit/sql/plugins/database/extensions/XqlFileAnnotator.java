@@ -30,7 +30,7 @@ public class XqlFileAnnotator implements Annotator {
             return;
         }
         // sql name highlight
-        if (value.matches(Constants.SQL_NAME_ANNOTATION_PATTERN)) {
+        if (Constants.SQL_NAME_ANNOTATION_PATTERN.matcher(value).matches()) {
             holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                     .range(element.getTextRange())
                     .textAttributes(DefaultLanguageHighlighterColors.METADATA)
