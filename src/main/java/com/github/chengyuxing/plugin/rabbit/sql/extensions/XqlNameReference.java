@@ -13,7 +13,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,65 +34,60 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
 
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-        var result = ResolveCache.getInstance(getElement().getProject())
-                .resolveWithCaching(this, (ResolveCache.AbstractResolver<XqlNameReference, ResolveResult[]>) (xqlNameReference, b) -> {
-                    if (config == null) {
-                        return ResolveResult.EMPTY_ARRAY;
-                    }
-                    if (key.isEmpty() || !key.contains(".")) {
-                        return ResolveResult.EMPTY_ARRAY;
-                    }
-                    var sqlRefParts = StringUtil.extraSqlReference(key);
-                    var alias = sqlRefParts.getItem1();
-                    var name = sqlRefParts.getItem2();
-                    if (alias.isEmpty() && name.isEmpty()) {
-                        return ResolveResult.EMPTY_ARRAY;
-                    }
-                    try {
-                        if (myElement.isValid()) {
-                            Project project = myElement.getProject();
+        if (config == null) {
+            return ResolveResult.EMPTY_ARRAY;
+        }
+        if (key.isEmpty() || !key.contains(".")) {
+            return ResolveResult.EMPTY_ARRAY;
+        }
+        var sqlRefParts = StringUtil.extraSqlReference(key);
+        var alias = sqlRefParts.getItem1();
+        var name = sqlRefParts.getItem2();
+        if (alias.isEmpty() && name.isEmpty()) {
+            return ResolveResult.EMPTY_ARRAY;
+        }
+        try {
+            if (myElement.isValid()) {
+                Project project = myElement.getProject();
 
-                            var allXqlFiles = config.getXqlFileManager().getFiles();
-                            if (allXqlFiles.containsKey(alias)) {
-                                var xqlFilePath = allXqlFiles.get(alias);
-                                if (!ProjectFileUtil.isLocalFileUri(xqlFilePath)) {
-                                    return ResolveResult.EMPTY_ARRAY;
-                                }
-                                var xqlPath = Path.of(URI.create(xqlFilePath));
-                                var vf = VirtualFileManager.getInstance().findFileByNioPath(xqlPath);
-                                if (vf == null) return ResolveResult.EMPTY_ARRAY;
-                                var xqlFile = PsiManager.getInstance(project).findFile(vf);
-                                if (xqlFile == null) return ResolveResult.EMPTY_ARRAY;
-                                AtomicReference<PsiElement> elem = new AtomicReference<>(null);
-                                xqlFile.acceptChildren(new PsiRecursiveElementVisitor() {
-                                    @Override
-                                    public void visitElement(@NotNull PsiElement element) {
-                                        if (element instanceof PsiComment comment) {
-                                            if (comment.getText().matches("/\\*\\s*\\[\\s*(" + name + ")\\s*]\\s*\\*/")) {
-                                                elem.set(comment);
-                                                return;
-                                            }
-                                        }
-                                        if (element instanceof GeneratedParserUtilBase.DummyBlock) {
-                                            super.visitElement(element);
-                                        }
-                                    }
-                                });
-                                if (elem.get() != null) {
-                                    return new ResolveResult[]{new PsiElementResolveResult(elem.get())};
+                var allXqlFiles = config.getXqlFileManager().getFiles();
+                if (allXqlFiles.containsKey(alias)) {
+                    var xqlFilePath = allXqlFiles.get(alias);
+                    if (!ProjectFileUtil.isLocalFileUri(xqlFilePath)) {
+                        return ResolveResult.EMPTY_ARRAY;
+                    }
+                    var xqlPath = Path.of(URI.create(xqlFilePath));
+                    var vf = VirtualFileManager.getInstance().findFileByNioPath(xqlPath);
+                    if (vf == null) return ResolveResult.EMPTY_ARRAY;
+                    var xqlFile = PsiManager.getInstance(project).findFile(vf);
+                    if (xqlFile == null) return ResolveResult.EMPTY_ARRAY;
+                    AtomicReference<PsiElement> elem = new AtomicReference<>(null);
+                    xqlFile.acceptChildren(new PsiRecursiveElementVisitor() {
+                        @Override
+                        public void visitElement(@NotNull PsiElement element) {
+                            if (element instanceof PsiComment comment) {
+                                if (comment.getText().matches("/\\*\\s*\\[\\s*(" + name + ")\\s*]\\s*\\*/")) {
+                                    elem.set(comment);
+                                    return;
                                 }
                             }
+                            if (element instanceof GeneratedParserUtilBase.DummyBlock) {
+                                super.visitElement(element);
+                            }
                         }
-                    } catch (Exception e) {
-                        if (e instanceof ControlFlowException) {
-                            throw e;
-                        }
-                        log.warn(e);
+                    });
+                    if (elem.get() != null) {
+                        return new ResolveResult[]{new PsiElementResolveResult(elem.get())};
                     }
-                    return ResolveResult.EMPTY_ARRAY;
-                }, false, false);
-        if (result == null) return ResolveResult.EMPTY_ARRAY;
-        return result;
+                }
+            }
+        } catch (Exception e) {
+            if (e instanceof ControlFlowException) {
+                throw e;
+            }
+            log.warn(e);
+        }
+        return ResolveResult.EMPTY_ARRAY;
     }
 
     @Override
