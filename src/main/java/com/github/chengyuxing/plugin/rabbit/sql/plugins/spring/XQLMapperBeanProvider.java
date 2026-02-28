@@ -5,47 +5,34 @@ import com.github.chengyuxing.sql.annotation.XQLMapper;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiLiteralExpression;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.*;
+import com.intellij.psi.search.PsiSearchHelper;
+import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.spring.model.CommonSpringBean;
 import com.intellij.spring.model.SpringImplicitBean;
 import com.intellij.spring.model.SpringImplicitBeansProviderBase;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class XQLMapperBeanProvider extends SpringImplicitBeansProviderBase {
     private static final Logger log = Logger.getInstance(XQLMapperBeanProvider.class);
     private static final String MAPPER_SCAN_FQN = "com.github.chengyuxing.sql.spring.autoconfigure.mapping.XQLMapperScan";
+    private static final String MAPPER_SCAN_ANNO_DISPLAY = "@XQLMapperScan";
+    private static final String MAPPER_ANNO_DISPLAY = "@" + XQLMapper.class.getSimpleName();
 
     @Override
     protected Collection<CommonSpringBean> getImplicitBeans(@NotNull Module module) {
         try {
-            var moduleJavas = FilenameIndex.getAllFilesByExt(module.getProject(), "java", module.getModuleProductionSourceScope());
-            var mapperScanClassOptional = moduleJavas.stream()
-                    .map(vf -> PsiManager.getInstance(module.getProject()).findFile(vf))
-                    .filter(Objects::nonNull)
-                    .map(psiFile -> {
-                        var originalFile = psiFile.getOriginalElement();
-                        var psiClass = PsiTreeUtil.getChildOfType(originalFile, PsiClass.class);
-                        if (Objects.nonNull(psiClass) && psiClass.hasAnnotation(MAPPER_SCAN_FQN)) {
-                            return psiClass;
-                        }
-                        return null;
-                    }).filter(Objects::nonNull)
-                    .findFirst();
+            PsiSearchHelper helper = PsiSearchHelper.getInstance(module.getProject());
 
-            if (mapperScanClassOptional.isEmpty()) {
+            var mapperScanClass = getMapperScanPsiClass(helper,module);
+            if (mapperScanClass == null) {
                 return List.of();
             }
-
-            var mapperScanClass = mapperScanClassOptional.get();
 
             String[] basePackages = new String[0];
             var anno = mapperScanClass.getAnnotation(MAPPER_SCAN_FQN);
@@ -71,17 +58,9 @@ public class XQLMapperBeanProvider extends SpringImplicitBeansProviderBase {
                     mapperScanClass.hasAnnotation("org.springframework.boot.autoconfigure.EnableAutoConfiguration") ||
                     mapperScanClass.hasAnnotation("org.springframework.stereotype.Component")) {
                 final var myBasePackages = basePackages;
-                return moduleJavas.stream()
-                        .map(vf -> PsiManager.getInstance(module.getProject()).findFile(vf))
-                        .filter(Objects::nonNull)
-                        .map(psiFile -> {
-                            var originalFile = psiFile.getOriginalElement();
-                            var psiClass = PsiTreeUtil.getChildOfType(originalFile, PsiClass.class);
-                            if (Objects.nonNull(psiClass) && psiClass.hasAnnotation(XQLMapper.class.getName())) {
-                                return psiClass;
-                            }
-                            return null;
-                        }).filter(Objects::nonNull)
+
+                Set<PsiClass> mapperPsiClasses = getMapperPsiClasses(helper, module);
+                return mapperPsiClasses.stream()
                         .filter(psiClass -> psiClass.getName() != null && psiClass.getQualifiedName() != null)
                         .filter(psiClass -> isBeanInBasePackage(myBasePackages, psiClass))
                         .map(psiClass -> {
@@ -103,6 +82,34 @@ public class XQLMapperBeanProvider extends SpringImplicitBeansProviderBase {
     @Override
     public @NotNull String getProviderName() {
         return "Rabbit SQL Springboot";
+    }
+
+    private static PsiClass getMapperScanPsiClass(PsiSearchHelper helper, Module module) {
+        AtomicReference<PsiClass> mapperScanPsiClass = new AtomicReference<>(null);
+        helper.processElementsWithWord((elem, offset) -> {
+            if (elem.getContainingFile() instanceof PsiJavaFile pjf) {
+                var psiClass = PsiTreeUtil.getChildOfType(pjf.getOriginalElement(), PsiClass.class);
+                if (Objects.nonNull(psiClass) && psiClass.hasAnnotation(MAPPER_SCAN_FQN)) {
+                    mapperScanPsiClass.set(psiClass);
+                }
+            }
+            return true;
+        }, module.getModuleProductionSourceScope(), MAPPER_SCAN_ANNO_DISPLAY, UsageSearchContext.IN_CODE, true);
+        return mapperScanPsiClass.get();
+    }
+
+    private static Set<PsiClass> getMapperPsiClasses(PsiSearchHelper helper, Module module) {
+        Set<PsiClass> mapperPsiClasses = new HashSet<>();
+        helper.processElementsWithWord((elem, offset) -> {
+            if (elem.getContainingFile() instanceof PsiJavaFile pjf) {
+                var psiClass = PsiTreeUtil.getChildOfType(pjf.getOriginalElement(), PsiClass.class);
+                if (Objects.nonNull(psiClass) && psiClass.hasAnnotation(XQLMapper.class.getName())) {
+                    mapperPsiClasses.add(psiClass);
+                }
+            }
+            return true;
+        }, module.getModuleProductionSourceScope(), MAPPER_ANNO_DISPLAY, UsageSearchContext.IN_CODE, true);
+        return mapperPsiClasses;
     }
 
     private static boolean isBeanInBasePackage(String[] basePackages, PsiClass psiClass) {

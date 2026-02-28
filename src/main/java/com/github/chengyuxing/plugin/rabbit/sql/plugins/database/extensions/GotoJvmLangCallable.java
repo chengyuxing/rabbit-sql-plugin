@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class GotoJvmLangCallable extends RelatedItemLineMarkerProvider {
     private final static Logger log = Logger.getInstance(GotoJvmLangCallable.class);
@@ -68,7 +67,7 @@ public class GotoJvmLangCallable extends RelatedItemLineMarkerProvider {
                             .map(sqlPath -> "&" + sqlPath)
                             .toArray(String[]::new);
                     var foundedJava = JavaUtil.collectSqlRefElements(project, module, sqlRefs);
-                    var founded = new ArrayList<>(foundedJava);
+                    var founded = new HashSet<>(foundedJava);
 
                     if (FeatureChecker.isPluginEnabled(FeatureChecker.KOTLIN_PLUGIN_ID)) {
                         var foundedKt = KotlinUtil.collectSqlRefElements(project, module, sqlRefs);
