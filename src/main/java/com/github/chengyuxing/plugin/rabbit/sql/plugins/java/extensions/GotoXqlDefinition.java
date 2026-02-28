@@ -74,7 +74,7 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
 
                         var comments = PsiTreeUtil.findChildrenOfType(xqlFile, PsiComment.class);
                         for (PsiComment comment : comments) {
-                            if (comment.getText().matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/")) {
+                            if (StringUtil.isCommentSqlName(sqlName, comment.getText())) {
                                 var markInfo = NavigationGutterIconBuilder
                                         .create(XqlIcons.XQL_FILE)
                                         .setTarget(comment)

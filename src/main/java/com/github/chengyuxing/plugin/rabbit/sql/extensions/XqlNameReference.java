@@ -63,7 +63,7 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
 
                     var comments = PsiTreeUtil.findChildrenOfType(xqlFile, PsiComment.class);
                     for (PsiComment comment : comments) {
-                        if (comment.getText().matches("/\\*\\s*\\[\\s*(" + name + ")\\s*]\\s*\\*/")) {
+                        if (StringUtil.isCommentSqlName(name, comment.getText())) {
                             return new ResolveResult[]{new PsiElementResolveResult(comment)};
                         }
                     }

@@ -7,7 +7,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.plugins.java.JavaUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.KotlinUtil;
 import com.github.chengyuxing.sql.annotation.*;
 import com.intellij.codeInsight.navigation.NavigationUtil;
-import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -32,21 +31,14 @@ public class PsiUtil {
 
     public static void navigate2xqlFile(PsiElement psi, String sqlFragmentName) {
         if (Objects.nonNull(psi)) {
-            psi.acceptChildren(new PsiRecursiveElementVisitor() {
-                @Override
-                public void visitElement(@NotNull PsiElement element) {
-                    if (element instanceof PsiComment comment) {
-                        if (comment.getText().matches("/\\*\\s*\\[\\s*" + sqlFragmentName + "\\s*]\\s*\\*/")) {
-                            var nav = comment.getNavigationElement();
-                            NavigationUtil.activateFileWithPsiElement(nav);
-                            return;
-                        }
-                    }
-                    if (element instanceof GeneratedParserUtilBase.DummyBlock) {
-                        super.visitElement(element);
-                    }
+            var comments = PsiTreeUtil.findChildrenOfType(psi, PsiComment.class);
+            for (PsiComment comment : comments) {
+                if (StringUtil.isCommentSqlName(sqlFragmentName, comment.getText())) {
+                    var nav = comment.getNavigationElement();
+                    NavigationUtil.activateFileWithPsiElement(nav);
+                    return;
                 }
-            });
+            }
         }
     }
 

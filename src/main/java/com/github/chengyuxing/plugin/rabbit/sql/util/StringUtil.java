@@ -69,4 +69,8 @@ public class StringUtil {
     public static boolean isQuote(String s) {
         return (s.startsWith("\"") && s.endsWith("\"")) || (s.startsWith("'") && s.endsWith("'"));
     }
+
+    public static boolean isCommentSqlName(String sqlName, String comment) {
+        return comment.matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/");
+    }
 }
