@@ -29,30 +29,27 @@ public class JavaUtil {
         PsiSearchHelper helper = PsiSearchHelper.getInstance(project);
         var result = new HashSet<PsiElement>();
         for (var sqlRef : sqlRefs) {
-            // @XQLMapper
+            // @XQLMapper methods
             var name = XQLFileManager.decodeSqlReference(sqlRef).getItem2();
             helper.processElementsWithWord((elem, offset) -> {
                 if (elem.getContainingFile() instanceof PsiJavaFile pjf) {
-                    var psiClasses = pjf.getClasses();
-                    if (psiClasses.length > 0) {
-                        var psiClass = psiClasses[0];
-                        var psiAlias = PsiUtil.getXQLMapperAlias(psiClass);
-                        if (Objects.nonNull(psiAlias)) {
-                            result.addAll(collectSqlRefElementInXqlMapper(pjf, sqlRef));
-                        }
-                    }
+                    result.addAll(collectSqlRefElementInXqlMapper(pjf, sqlRef));
                 }
                 return true;
             }, module.getModuleProductionSourceScope(), name, UsageSearchContext.IN_CODE, true);
+
             // java string literal
             helper.processElementsWithWord((elem, offset) -> {
+                if (elem.getContainingFile() instanceof PsiJavaFile pjf) {
+                    result.addAll(collectSqlRefElementInXqlMapper(pjf, sqlRef));
+                }
                 if (elem instanceof PsiLiteralExpression literal && literal.getValue() instanceof String value) {
                     if (Objects.equals(value, sqlRef)) {
                         result.add(literal);
                     }
                 }
                 return true;
-            }, module.getModuleProductionSourceScope(), sqlRef, UsageSearchContext.IN_STRINGS, true);
+            }, module.getModuleProductionSourceScope(), name, UsageSearchContext.IN_STRINGS, true);
         }
         return result;
     }
