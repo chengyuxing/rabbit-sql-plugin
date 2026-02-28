@@ -79,6 +79,11 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.43</h3>
+            <ul>
+                <li>Xql name reference scan optimized</li>
+                <li>Some optimized</li>
+            </ul>
             <h3>2.4.42</h3>
             <ul>
                 <li>Support <code>rabbit-sql 10.2.5</code> and <code>rabbit-sql-spring-boot-starter 5.2.5</code></li>
