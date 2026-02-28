@@ -31,7 +31,9 @@ public class SqlNameReference extends XqlNameReference {
             return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
         }
         var filename = FileResource.getFileName(resource.getFilename(), true);
-        var icon = ProjectFileUtil.isLocalFileUri(resource.getFilename()) ? XqlIcons.XQL_FILE_ITEM : XqlIcons.XQL_FILE_ITEM_REMOTE;
+        var icon = ProjectFileUtil.isLocalFileUri(resource.getFilename())
+                ? XqlIcons.XQL_FILE_ITEM
+                : XqlIcons.XQL_FILE_ITEM_REMOTE;
         return resource.getEntry()
                 .keySet()
                 .stream()

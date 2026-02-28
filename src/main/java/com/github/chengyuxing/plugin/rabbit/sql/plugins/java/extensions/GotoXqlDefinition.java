@@ -13,7 +13,6 @@ import com.github.chengyuxing.sql.annotation.XQL;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
-import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -72,24 +71,19 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
                         Project project = sourceElement.getProject();
                         var xqlFile = PsiManager.getInstance(project).findFile(vf);
                         if (xqlFile == null) return;
-                        xqlFile.acceptChildren(new PsiRecursiveElementVisitor() {
-                            @Override
-                            public void visitElement(@NotNull PsiElement element) {
-                                if (element instanceof PsiComment comment) {
-                                    if (comment.getText().matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/")) {
-                                        var markInfo = NavigationGutterIconBuilder.create(XqlIcons.XQL_FILE)
-                                                .setTarget(comment)
-                                                .setTooltipText(xqlPath.getFileName() + " -> " + sqlName)
-                                                .createLineMarkerInfo(sourceElement);
-                                        result.add(markInfo);
-                                        return;
-                                    }
-                                }
-                                if (element instanceof GeneratedParserUtilBase.DummyBlock) {
-                                    super.visitElement(element);
-                                }
+
+                        var comments = PsiTreeUtil.findChildrenOfType(xqlFile, PsiComment.class);
+                        for (PsiComment comment : comments) {
+                            if (comment.getText().matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/")) {
+                                var markInfo = NavigationGutterIconBuilder
+                                        .create(XqlIcons.XQL_FILE)
+                                        .setTarget(comment)
+                                        .setTooltipText(xqlPath.getFileName() + " -> " + sqlName)
+                                        .createLineMarkerInfo(sourceElement);
+                                result.add(markInfo);
+                                break;
                             }
-                        });
+                        }
                     }
                 } catch (Exception e) {
                     if (e instanceof ControlFlowException) {

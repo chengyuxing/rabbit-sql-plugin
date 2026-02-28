@@ -6,20 +6,19 @@ import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class XqlNameReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
     private static final Logger log = Logger.getInstance(XqlNameReference.class);
@@ -61,23 +60,12 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
                     if (vf == null) return ResolveResult.EMPTY_ARRAY;
                     var xqlFile = PsiManager.getInstance(project).findFile(vf);
                     if (xqlFile == null) return ResolveResult.EMPTY_ARRAY;
-                    AtomicReference<PsiElement> elem = new AtomicReference<>(null);
-                    xqlFile.acceptChildren(new PsiRecursiveElementVisitor() {
-                        @Override
-                        public void visitElement(@NotNull PsiElement element) {
-                            if (element instanceof PsiComment comment) {
-                                if (comment.getText().matches("/\\*\\s*\\[\\s*(" + name + ")\\s*]\\s*\\*/")) {
-                                    elem.set(comment);
-                                    return;
-                                }
-                            }
-                            if (element instanceof GeneratedParserUtilBase.DummyBlock) {
-                                super.visitElement(element);
-                            }
+
+                    var comments = PsiTreeUtil.findChildrenOfType(xqlFile, PsiComment.class);
+                    for (PsiComment comment : comments) {
+                        if (comment.getText().matches("/\\*\\s*\\[\\s*(" + name + ")\\s*]\\s*\\*/")) {
+                            return new ResolveResult[]{new PsiElementResolveResult(comment)};
                         }
-                    });
-                    if (elem.get() != null) {
-                        return new ResolveResult[]{new PsiElementResolveResult(elem.get())};
                     }
                 }
             }
