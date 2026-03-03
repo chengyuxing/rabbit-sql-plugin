@@ -49,6 +49,7 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
                         var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", GlobalSearchScope.projectScope(project));
                         addConfigs(projectVf, allConfigVfs);
                     }
+                    ApplicationManager.getApplication().invokeLater(() -> XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates));
                 });
             }
         });
@@ -79,7 +80,6 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
         if (!found) {
             var config = xqlConfigManager.newConfig(project, projectVf);
             xqlConfigManager.add(project, projectNioPath, config);
-            ApplicationManager.getApplication().invokeLater(() -> XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates));
         }
     }
 }
