@@ -106,7 +106,7 @@
             <option name="SQL" value="true" />
         </context>
     </template>
-    <template name="xql:example-update" value="/*[$SQL_NAME$]*/&#10;update $TABLE$&#10;set&#10;-- #for set of :sets | kv; first as isFirst&#10;    -- #if :isFirst&#10;    ${set.key} = :_for.set.value,&#10;    -- #else&#10;    ${set.key} = :_for.set.value&#10;    -- #fi&#10;-- #done&#10;where $CND$&#10;;" description="update statement with for example" toReformat="false" toShortenFQNames="true">
+    <template name="xql:example-update" value="/*[$SQL_NAME$]*/&#10;update $TABLE$&#10;set&#10;-- #for set of :sets | kv; first as isFirst&#10;    -- #if :isFirst&#10;    ${set.key} = :set.value,&#10;    -- #else&#10;    ${set.key} = :set.value&#10;    -- #fi&#10;-- #done&#10;where $CND$&#10;;" description="update statement with for example" toReformat="false" toShortenFQNames="true">
         <variable name="SQL_NAME" expression="" defaultValue="" alwaysStopAt="true" />
         <variable name="TABLE" expression="" defaultValue="" alwaysStopAt="true" />
         <variable name="CND" expression="" defaultValue="&quot;id = :id&quot;" alwaysStopAt="true" />
