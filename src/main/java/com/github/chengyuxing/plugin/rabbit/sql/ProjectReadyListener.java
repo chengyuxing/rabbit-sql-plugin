@@ -22,11 +22,12 @@ import java.util.Collection;
 import java.util.Objects;
 
 public class ProjectReadyListener implements DumbService.DumbModeListener {
-    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
+    private final XQLConfigManager xqlConfigManager;
     private final Project project;
 
     public ProjectReadyListener(Project project) {
         this.project = project;
+        this.xqlConfigManager = XQLConfigManager.getInstance(project);
     }
 
     @Override
@@ -69,17 +70,17 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
                 continue;
             }
             found = true;
-            var config = xqlConfigManager.newConfig(project, projectVf);
+            var config = xqlConfigManager.newConfig(projectVf);
             config.setConfigVfs(configVfs);
             if (!config.isValid()) {
                 continue;
             }
             config.silentFire();
-            xqlConfigManager.add(project, projectNioPath, config);
+            xqlConfigManager.add(projectNioPath, config);
         }
         if (!found) {
-            var config = xqlConfigManager.newConfig(project, projectVf);
-            xqlConfigManager.add(project, projectNioPath, config);
+            var config = xqlConfigManager.newConfig(projectVf);
+            xqlConfigManager.add(projectNioPath, config);
         }
     }
 }

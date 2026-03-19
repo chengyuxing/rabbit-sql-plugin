@@ -45,7 +45,7 @@ public class NotificationExecutor implements AutoCloseable {
     @Override
     public void close() {
         try {
-            service.shutdown();
+            service.shutdownNow();
             messages.clear();
         } catch (Exception ignore) {
         }

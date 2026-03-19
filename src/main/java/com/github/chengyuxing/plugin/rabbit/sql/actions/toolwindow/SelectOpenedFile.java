@@ -23,13 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.tree.TreePath;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Pattern;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME_PATTERN;
 
 public class SelectOpenedFile extends AnAction {
-    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
-
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         var project = e.getProject();
@@ -42,7 +39,6 @@ public class SelectOpenedFile extends AnAction {
         if (Objects.isNull(element)) {
             return;
         }
-
         String sqlRef = null;
         if (element instanceof PsiComment comment) {
             var commentText = comment.getText();
@@ -88,6 +84,7 @@ public class SelectOpenedFile extends AnAction {
         }
         final var finalSqlRef = sqlRef;
         XqlFileManagerToolWindow.getXqlFileManagerPanel(project, panel -> {
+            var xqlConfigManager = XQLConfigManager.getInstance(project);
             var tree = panel.getTree();
             var root = tree.getModel().getRoot();
 

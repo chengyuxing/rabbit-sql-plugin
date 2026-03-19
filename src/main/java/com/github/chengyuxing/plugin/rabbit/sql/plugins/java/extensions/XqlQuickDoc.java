@@ -21,8 +21,6 @@ import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME
 import static com.intellij.lang.documentation.DocumentationMarkup.*;
 
 public class XqlQuickDoc extends AbstractDocumentationProvider {
-    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
-
     @Override
     public @Nullable @Nls String generateHoverDoc(@NotNull PsiElement element, @Nullable PsiElement originalElement) {
         return generateDoc(element, originalElement);
@@ -47,6 +45,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
             var sqlName = sqlRef.substring(1);
             var sqlRefParts = StringUtil.extraSqlReference(sqlName);
             var alias = sqlRefParts.getItem1();
+            var xqlConfigManager = XQLConfigManager.getInstance(element.getProject());
             var config = xqlConfigManager.getActiveConfig(originalElement);
             if (Objects.nonNull(config) && config.getXqlFileManager().contains(sqlName)) {
                 var xqlFileManager = config.getXqlFileManager();
@@ -74,7 +73,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                         SECTIONS_START;
 
                 var params = String.join("  ", StringUtil.getParamsMappingInfo(config.getSqlGenerator(), sqlDefinition)
-                                .keySet()).trim();
+                        .keySet()).trim();
 
                 if (!params.isEmpty()) {
                     doc += SECTION_HEADER_START + "Parameters: " + SECTION_SEPARATOR + "<p>" + params + SECTION_END;
@@ -106,6 +105,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
         }
         if (sqlRef.matches(SQL_NAME_PATTERN)) {
             String sqlName = sqlRef.substring(1);
+            var xqlConfigManager = XQLConfigManager.getInstance(element.getProject());
             var config = xqlConfigManager.getActiveConfig(originalElement);
             if (config != null && config.getXqlFileManager().contains(sqlName)) {
                 String xqlFile = element.getContainingFile().getName();

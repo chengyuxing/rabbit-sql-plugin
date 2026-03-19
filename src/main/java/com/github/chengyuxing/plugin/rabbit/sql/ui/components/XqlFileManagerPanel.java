@@ -40,7 +40,7 @@ import static com.github.chengyuxing.common.util.StringUtils.NEW_LINE;
 public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     private final Project project;
     private final ActionManager actionManager = ActionManager.getInstance();
-    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
+    private final XQLConfigManager xqlConfigManager;
 
     private ActionPopupMenu xqlFileManagerMenu;
     private ActionPopupMenu xqlFragmentMenu;
@@ -56,6 +56,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     public XqlFileManagerPanel(boolean vertical, Project project) {
         super(vertical, true);
         this.project = project;
+        this.xqlConfigManager = XQLConfigManager.getInstance(project);
         setBorder(BorderFactory.createEmptyBorder());
         initToolbar();
         initContent();
@@ -223,7 +224,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         var root = (XqlTreeNode) model.getRoot();
         saveTreeExpandedState();
         root.removeAllChildren();
-        xqlConfigManager.getConfigMap(project)
+        xqlConfigManager.getConfigMap()
                 .forEach((module, configs) -> {
                     var mNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.MODULE, module.getFileName().toString(), module));
                     configs.forEach(config -> {

@@ -25,7 +25,7 @@ public class XqlNameAnnotator implements Annotator {
         }
         if (sqlRef.matches(SQL_NAME_PATTERN)) {
             String sqlName = sqlRef.substring(1);
-            var config = XQLConfigManager.getInstance().getActiveConfig(element);
+            var config = XQLConfigManager.getInstance(element.getProject()).getActiveConfig(element);
             if (config != null) {
                 if (config.getXqlFileManager().contains(sqlName)) {
                     holder.newSilentAnnotation(HighlightSeverity.INFORMATION)

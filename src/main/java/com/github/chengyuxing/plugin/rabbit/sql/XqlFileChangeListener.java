@@ -23,11 +23,12 @@ import java.util.Objects;
 
 public class XqlFileChangeListener implements BulkFileListener {
     private static final Logger log = Logger.getInstance(XqlFileChangeListener.class);
-    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
+    private final XQLConfigManager xqlConfigManager;
     private final Project project;
 
     public XqlFileChangeListener(Project project) {
         this.project = project;
+        this.xqlConfigManager = XQLConfigManager.getInstance(project);
     }
 
     @Override
@@ -45,15 +46,15 @@ public class XqlFileChangeListener implements BulkFileListener {
                     }
                     if (Objects.nonNull(projectVf) && projectVf.exists()) {
                         if (ProjectFileUtil.isResourceXqlFileManagerConfig(projectVf, vf)) {
-                            var config = xqlConfigManager.newConfig(project, projectVf);
+                            var config = xqlConfigManager.newConfig(projectVf);
                             config.setConfigVfs(vf);
                             if (config.isValid()) {
                                 config.fire();
-                                xqlConfigManager.add(project, projectVf.toNioPath(), config);
+                                xqlConfigManager.add(projectVf.toNioPath(), config);
                             }
                         }
                     }
-                    xqlConfigManager.cleanup(project);
+                    xqlConfigManager.cleanup();
                     ApplicationManager.getApplication().invokeLater(() -> XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates));
                 } else if (Objects.equals(vf.getExtension(), "xql")) {
                     var xqlPath = vf.toNioPath().toUri().toString();
@@ -68,7 +69,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                         projectVf = ProjectUtil.guessProjectDir(project);
                     }
                     if (Objects.nonNull(projectVf) && projectVf.exists()) {
-                        var configs = xqlConfigManager.getConfigs(project, projectVf.toNioPath());
+                        var configs = xqlConfigManager.getConfigs(projectVf.toNioPath());
                         if (Objects.nonNull(configs)) {
                             log.debug("find project: " + projectVf + " configs.");
                             new HashSet<>(configs).forEach(config -> {
@@ -109,11 +110,11 @@ public class XqlFileChangeListener implements BulkFileListener {
                     }
                     if (Objects.nonNull(projectVf) && projectVf.exists()) {
                         if (ProjectFileUtil.isResourceProjectModule(projectVf)) {
-                            var config = xqlConfigManager.newConfig(project, projectVf);
-                            xqlConfigManager.add(project, projectVf.toNioPath(), config);
+                            var config = xqlConfigManager.newConfig(projectVf);
+                            xqlConfigManager.add(projectVf.toNioPath(), config);
                         }
                     }
-                    xqlConfigManager.cleanup(project);
+                    xqlConfigManager.cleanup();
                     ApplicationManager.getApplication().invokeLater(() -> XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates));
                 }
             }

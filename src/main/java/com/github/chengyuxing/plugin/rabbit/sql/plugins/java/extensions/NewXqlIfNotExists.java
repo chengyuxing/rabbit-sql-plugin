@@ -32,7 +32,6 @@ import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME
 
 public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements Iconable {
     private static final Logger log = Logger.getInstance(NewXqlIfNotExists.class);
-    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
@@ -41,8 +40,9 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
             if (Objects.isNull(sqlName)) {
                 return;
             }
+            var xqlConfigManager = XQLConfigManager.getInstance(project);
             var config = xqlConfigManager.getActiveConfig(element);
-            var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(project, element);
+            var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(element);
             if (Objects.isNull(xqlFileManager)) {
                 return;
             }
@@ -108,7 +108,8 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
         }
         if (sqlRef.matches(SQL_NAME_PATTERN)) {
             String sqlName = sqlRef.substring(1);
-            var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(project, element);
+            var xqlConfigManager = project.getService(XQLConfigManager.class);
+            var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(element);
             if (Objects.nonNull(xqlFileManager)) {
                 var alias = XQLFileManager.decodeSqlReference(sqlName).getItem1();
                 var resource = xqlFileManager.getResource(alias);

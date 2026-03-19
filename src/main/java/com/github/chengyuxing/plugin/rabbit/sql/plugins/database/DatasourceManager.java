@@ -4,6 +4,8 @@ import com.intellij.database.console.JdbcConsole;
 import com.intellij.database.console.session.DatabaseSessionManager;
 import com.intellij.database.dataSource.DatabaseConnectionPoint;
 import com.intellij.database.dataSource.LocalDataSourceManager;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
 
@@ -12,54 +14,38 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
-public final class DatasourceManager {
-    private static volatile DatasourceManager instance;
+@Service(Service.Level.PROJECT)
+public final class DatasourceManager implements Disposable {
+    private final Project project;
     /**
      * key: project dir, value: database resource which be owned by project
      */
-    private final Map<Project, Resource> cache = new ConcurrentHashMap<>();
+    private final Resource cache;
 
-    private DatasourceManager() {
+    DatasourceManager(Project project) {
+        this.project = project;
+        this.cache = new Resource();
     }
 
-    public static DatasourceManager getInstance() {
-        if (instance == null) {
-            synchronized (DatasourceManager.class) {
-                if (instance == null) {
-                    instance = new DatasourceManager();
-                }
-            }
-        }
-        return instance;
+    public static DatasourceManager getInstance(Project project) {
+        return project.getService(DatasourceManager.class);
     }
 
-    public void clear(Project project) {
-        if (project == null) return;
-        if (cache.containsKey(project)) {
-            var resource = cache.remove(project);
-            resource.close();
-        }
+    public Resource getResource() {
+        return cache;
     }
 
-    public Resource getResource(Project project) {
-        if (project == null) {
-            return null;
-        }
-        if (!cache.containsKey(project)) {
-            cache.put(project, new Resource(project));
-        }
-        return cache.get(project);
+    @Override
+    public void dispose() {
+        cache.close();
     }
 
-    public static class Resource implements AutoCloseable {
-        private final Project project;
+    public class Resource implements AutoCloseable {
         private final Map<DatabaseId, JdbcConsole> consoles;
         private DatabaseId selected;
 
-        public Resource(Project project) {
-            this.project = project;
+        public Resource() {
             this.consoles = new HashMap<>();
         }
 

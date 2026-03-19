@@ -18,7 +18,6 @@ import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.SQL_NAME
 
 public abstract class SqlNameIntentionActionInJvmLang extends PsiElementBaseIntentionAction {
     private static final Logger log = Logger.getInstance(OpenParamsDialogInJava.class);
-    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
 
     protected String intentionTarget;
 
@@ -27,6 +26,7 @@ public abstract class SqlNameIntentionActionInJvmLang extends PsiElementBaseInte
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
         try {
+            var xqlConfigManager = XQLConfigManager.getInstance(project);
             var config = xqlConfigManager.getActiveConfig(element);
             if (Objects.isNull(config)) {
                 return;
@@ -52,7 +52,8 @@ public abstract class SqlNameIntentionActionInJvmLang extends PsiElementBaseInte
         }
         if (sqlRef.matches(SQL_NAME_PATTERN)) {
             String sqlName = sqlRef.substring(1);
-            var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(project, element);
+            var xqlConfigManager = XQLConfigManager.getInstance(project);
+            var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(element);
             if (Objects.nonNull(xqlFileManager)) {
                 var contains = xqlFileManager.contains(sqlName);
                 if (contains) {

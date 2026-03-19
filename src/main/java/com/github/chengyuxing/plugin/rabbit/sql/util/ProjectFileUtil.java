@@ -147,17 +147,17 @@ public class ProjectFileUtil {
         return ProjectUtil.guessModuleDir(module);
     }
 
-    public static VirtualFile findModule(Project project, PsiElement element) {
+    public static VirtualFile findModule(PsiElement element) {
         var file = element.getContainingFile();
         if (!file.isPhysical()) {
             file = file.getOriginalFile();
         }
         var vf = file.getVirtualFile();
-        return findModule(project, vf);
+        return findModule(element.getProject(), vf);
     }
 
-    public static Path getModulePath(Project project, PsiElement element) {
-        return Optional.ofNullable(findModule(project, element))
+    public static Path getModulePath(PsiElement element) {
+        return Optional.ofNullable(findModule(element))
                 .map(VirtualFile::toNioPath)
                 .orElse(null);
     }

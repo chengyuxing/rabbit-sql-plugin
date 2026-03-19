@@ -7,6 +7,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -20,10 +21,10 @@ import java.util.stream.Stream;
 public class StatisticsDialog extends DialogWrapper {
     private final StatisticsForm statisticsForm;
 
-    public StatisticsDialog(@Nullable Project project) {
+    public StatisticsDialog(@NotNull Project project) {
         super(true);
-        XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
-        this.statisticsForm = new StatisticsForm(project, xqlConfigManager.getConfigMap(project), getDisposable());
+        XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance(project);
+        this.statisticsForm = new StatisticsForm(project, xqlConfigManager.getConfigMap(), getDisposable());
         this.statisticsForm.setClickEmptyTableTextLink(module -> {
             dispose();
             var primaryAbsFilename = module.resolve(Constants.CONFIG_PATH);

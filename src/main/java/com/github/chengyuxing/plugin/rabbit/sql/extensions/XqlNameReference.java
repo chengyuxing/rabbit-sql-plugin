@@ -28,7 +28,7 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
     public XqlNameReference(@NotNull PsiElement element, TextRange rangeInElement, String key) {
         super(element, rangeInElement);
         this.key = key;
-        config = XQLConfigManager.getInstance().getActiveConfig(element);
+        config = XQLConfigManager.getInstance(element.getProject()).getActiveConfig(element);
     }
 
     @Override

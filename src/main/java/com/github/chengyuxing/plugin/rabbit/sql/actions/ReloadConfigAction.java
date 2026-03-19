@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class ReloadConfigAction extends AnAction {
-    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
 
     public ReloadConfigAction() {
     }
@@ -22,13 +21,14 @@ public class ReloadConfigAction extends AnAction {
         var project = e.getProject();
         if (Objects.nonNull(project)) {
             PsiUtil.saveUnsavedXqlAndConfig(project);
-            xqlConfigManager.getConfigMap(project)
+            XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance(project);
+            xqlConfigManager.getConfigMap()
                     .forEach((module, configs) -> configs.forEach(config -> {
                         if (config.isValid()) {
                             config.fire();
                         }
                     }));
-            xqlConfigManager.cleanup(project);
+            xqlConfigManager.cleanup();
             XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
         }
     }

@@ -59,8 +59,8 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         this.config = config;
         this.xqlFileManager = this.config.getXqlFileManager();
         this.sql = this.xqlFileManager.get(sqlName);
-        this.paramsHistory = ResourceManager.getInstance().getResource(project).getDynamicSqlParamHistory();
-        this.paramsList = ResourceManager.getInstance().getResource(project).getHistoryList();
+        this.paramsHistory = ResourceManager.getInstance(project).getResource().getDynamicSqlParamHistory();
+        this.paramsList = ResourceManager.getInstance(project).getResource().getHistoryList();
         var paramsMapping = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.getParamsMappingInfo(this.config.getSqlGenerator(), sql);
         this.parametersForm = new ParametersForm(paramsMapping, paramsHistory, paramsList);
         this.parametersForm.setClickEmptyTableTextLink(this::doHelpAction);
@@ -207,7 +207,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     }
 
     private void loadDatasourceList() {
-        var resource = DatasourceManager.getInstance().getResource(project);
+        var resource = DatasourceManager.getInstance(project).getResource();
         var databases = resource.getConfiguredDatabases();
         datasourceList.removeAllItems();
         datasourceList.addItem(DatabaseId.empty("<Configured database>"));
@@ -273,7 +273,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
             // execute sql
             var idx = datasourceList.getSelectedIndex();
             if (isDatabasePluginEnabled) {
-                var resource = DatasourceManager.getInstance().getResource(project);
+                var resource = DatasourceManager.getInstance(project).getResource();
                 if (idx > 0) {
                     var db = datasourceList.getItemAt(idx);
                     var executed = DatabaseUtil.executeSQL(rawSql, resource, db);

@@ -1,56 +1,34 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
+@Service(Service.Level.PROJECT)
 public final class ResourceManager {
-    private static volatile ResourceManager instance;
-    private final Map<Project, Resource> cache = new ConcurrentHashMap<>();
+    private final Resource resource;
 
-    private ResourceManager() {
+    ResourceManager() {
+        this.resource = new Resource();
     }
 
-    public static ResourceManager getInstance() {
-        if (instance == null) {
-            synchronized (ResourceManager.class) {
-                if (instance == null) {
-                    instance = new ResourceManager();
-                }
-            }
-        }
-        return instance;
+    public static ResourceManager getInstance(Project project) {
+        return project.getService(ResourceManager.class);
     }
 
-    public void clear(Project project) {
-        if (project == null) return;
-        if (cache.containsKey(project)) {
-            var resource = cache.remove(project);
-            resource.close();
-        }
+    public Resource getResource() {
+        return resource;
     }
 
-    public Resource getResource(Project project) {
-        if (project == null) {
-            return null;
-        }
-        if (!cache.containsKey(project)) {
-            cache.put(project, new Resource(project));
-        }
-        return cache.get(project);
-    }
-
-    public static final class Resource implements AutoCloseable {
-        private final Project project;
+    public static final class Resource {
         private final Map<String, Object> dynamicSqlParamHistory;
         private final List<String> historyList;
 
-        public Resource(Project project) {
-            this.project = project;
+        public Resource() {
             this.dynamicSqlParamHistory = new HashMap<>();
             this.historyList = new ArrayList<>();
         }
@@ -61,15 +39,6 @@ public final class ResourceManager {
 
         public List<String> getHistoryList() {
             return historyList;
-        }
-
-        public Project getProject() {
-            return project;
-        }
-
-        @Override
-        public void close() {
-            dynamicSqlParamHistory.clear();
         }
     }
 }

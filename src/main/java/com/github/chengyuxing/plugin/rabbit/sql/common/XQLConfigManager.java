@@ -15,7 +15,9 @@ import com.github.chengyuxing.sql.XQLFileManagerConfig;
 import com.github.chengyuxing.sql.exceptions.XQLParseException;
 import com.github.chengyuxing.sql.util.SqlGenerator;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -31,69 +33,54 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
-public final class XQLConfigManager {
+@Service(Service.Level.PROJECT)
+public final class XQLConfigManager implements Disposable {
     private static final Logger log = Logger.getInstance(XQLConfigManager.class);
 
-    private static volatile XQLConfigManager instance;
-    private final Map<Project, Map<Path, Set<Config>>> configMap = new ConcurrentHashMap<>();
-    private final Map<Project, NotificationExecutor> notificationMap = new ConcurrentHashMap<>();
+    private final Project project;
+    private final Map<Path, Set<Config>> configMap = new ConcurrentHashMap<>();
+    private final NotificationExecutor notificationExecutor;
 
-    private XQLConfigManager() {
+    public static XQLConfigManager getInstance(Project project) {
+        return project.getService(XQLConfigManager.class);
     }
 
-    public static XQLConfigManager getInstance() {
-        if (instance == null) {
-            synchronized (XQLConfigManager.class) {
-                if (instance == null) {
-                    instance = new XQLConfigManager();
-                }
-            }
-        }
-        return instance;
+    XQLConfigManager(Project project) {
+        this.project = project;
+        this.notificationExecutor = new NotificationExecutor(messages ->
+                messages.forEach(m ->
+                        NotificationUtil.showMessage(project, m.getText(), m.getType()))
+                , 1500);
     }
 
-    public void add(Project project, Path module, Config config) {
-        if (!notificationMap.containsKey(project)) {
-            var notificationExecutor = new NotificationExecutor(messages ->
-                    messages.forEach(m ->
-                            NotificationUtil.showMessage(project, m.getText(), m.getType()))
-                    , 1500);
-            notificationMap.put(project, notificationExecutor);
+    public void add(Path module, Config config) {
+        var configs = configMap.get(module);
+        if (configs == null) {
+            configs = new ArrayListValueSet<>();
+            configMap.put(module, configs);
         }
-        if (!configMap.containsKey(project)) {
-            var map = new LinkedHashMap<Path, Set<Config>>();
-            configMap.put(project, map);
-        }
-        var map = configMap.get(project);
-        if (!map.containsKey(module)) {
-            var set = new ArrayListValueSet<Config>();
-            map.put(module, set);
-        }
-        var configs = map.get(module);
         configs.add(config);
     }
 
-    public Map<Path, Set<Config>> getConfigMap(Project project) {
-        var moduleConfigs = configMap.get(project);
-        return Objects.nonNull(moduleConfigs) ? moduleConfigs : Map.of();
+    public Map<Path, Set<Config>> getConfigMap() {
+        return configMap;
     }
 
-    public Set<Config> getConfigs(Project project, Path module) {
-        var configs = getConfigMap(project).get(module);
+    public Set<Config> getConfigs(Path module) {
+        var configs = getConfigMap().get(module);
         return Objects.nonNull(configs) ? configs : Set.of();
     }
 
-    public void toggleActive(Project project, Config _config) {
-        var configs = getConfigs(project, _config.getModulePath());
+    public void toggleActive(Config _config) {
+        var configs = getConfigs(_config.getModulePath());
         for (var config : configs) {
             config.setActive(config == _config);
         }
     }
 
-    public Config getActiveConfig(Project project, Path module) {
-        var configs = getConfigs(project, module);
+    public Config getActiveConfig(Path module) {
+        var configs = getConfigs(module);
         for (var config : configs) {
             if (config.isActive()) {
                 return config;
@@ -102,64 +89,48 @@ public final class XQLConfigManager {
         return null;
     }
 
-    public Config getActiveConfig(Project project, PsiElement element) {
-        var module = ProjectFileUtil.getModulePath(project, element);
-        return getActiveConfig(project, module);
-    }
-
     public Config getActiveConfig(PsiElement element) {
-        if (Objects.nonNull(element)) {
-            return getActiveConfig(element.getProject(), element);
+        if (element == null) {
+            return null;
         }
-        return null;
+        var module = ProjectFileUtil.getModulePath(element);
+        return getActiveConfig(module);
     }
 
-    public XQLFileManager getActiveXqlFileManager(Project project, PsiElement element) {
-        var c = getActiveConfig(project, element);
+    public XQLFileManager getActiveXqlFileManager(PsiElement element) {
+        if (element == null) {
+            return null;
+        }
+        var c = getActiveConfig(element);
         if (Objects.nonNull(c)) {
             return c.getXqlFileManager();
         }
         return null;
     }
 
-    public XQLFileManager getActiveXqlFileManager(PsiElement element) {
-        if (Objects.nonNull(element)) {
-            return getActiveXqlFileManager(element.getProject(), element);
-        }
-        return null;
+    public void cleanup() {
+        var configs = configMap;
+        configs.entrySet().removeIf(entry -> {
+            var moduleVf = VirtualFileManager.getInstance().findFileByNioPath(entry.getKey());
+            if (Objects.nonNull(moduleVf)) {
+                return !ProjectFileUtil.isResourceProjectModule(moduleVf);
+            }
+            return true;
+        });
+        configs.forEach((k, v) -> v.removeIf(config -> !config.isValid()));
     }
 
-    public int size(Project project) {
-        var configs = configMap.get(project);
-        return Objects.nonNull(configs) ? configs.size() : 0;
+    public Config newConfig(VirtualFile moduleVf) {
+        return new Config(moduleVf);
     }
 
-    public void clear(Project project) {
-        var configs = configMap.remove(project);
-        if (Objects.nonNull(configs))
-            configs.forEach((k, v) -> v.clear());
-    }
-
-    public void cleanup(Project project) {
-        var configs = configMap.get(project);
-        if (Objects.nonNull(configs)) {
-            configs.entrySet().removeIf(entry -> {
-                var moduleVf = VirtualFileManager.getInstance().findFileByNioPath(entry.getKey());
-                if (Objects.nonNull(moduleVf)) {
-                    return !ProjectFileUtil.isResourceProjectModule(moduleVf);
-                }
-                return true;
-            });
-            configs.forEach((k, v) -> v.removeIf(config -> !config.isValid()));
-        }
-    }
-
-    public Config newConfig(Project project, VirtualFile moduleVf) {
-        return new Config(project, moduleVf);
+    @Override
+    public void dispose() {
+        notificationExecutor.close();
+        configMap.clear();
     }
 
     public final class Config implements AutoCloseable {
-        private final Project project;
         private final Path modulePath;
         // src/main/resources
         private final Path resourcesRoot;
@@ -167,23 +138,18 @@ public final class XQLConfigManager {
         private VirtualFile configVfs;
         private Path configPath;
 
-        private final Supplier<Optional<NotificationExecutor>> notificationExecutor;
         private final XQLFileManagerConfig xqlFileManagerConfig;
         private final XQLFileManager xqlFileManager;
         private final Set<String> originalXqlFiles;
         private SqlGenerator sqlGenerator = new SqlGenerator(':');
         private boolean active = false;
 
-        public Config(Project project, VirtualFile moduleVfs) {
-            this.project = project;
-
+        public Config(VirtualFile moduleVfs) {
             this.modulePath = moduleVfs.toNioPath();
 
             this.resourcesRoot = this.modulePath.resolve(Constants.RESOURCE_ROOT);
 
             this.originalXqlFiles = ConcurrentHashMap.newKeySet();
-
-            this.notificationExecutor = () -> Optional.ofNullable(notificationMap.get(project));
 
             this.xqlFileManagerConfig = new XQLFileManagerConfig();
             this.xqlFileManager = new XQLFileManager() {
@@ -209,7 +175,7 @@ public final class XQLConfigManager {
                             } else {
                                 var pipeClassPath = classesPath.resolve(pipeClassName.replace(".", "/") + ".class");
                                 if (!Files.exists(pipeClassPath)) {
-                                    notificationExecutor.get().ifPresent(n -> n.show(Message.warning(messagePrefix() + "pipe '" + pipeClassName + "' not found, maybe should re-compile project.")));
+                                    notificationExecutor.show(Message.warning(messagePrefix() + "pipe '" + pipeClassName + "' not found, maybe should re-compile project."));
                                     continue;
                                 }
                                 try {
@@ -219,7 +185,7 @@ public final class XQLConfigManager {
                                     }
                                     newPipeInstances.put(pipeName, (IPipe<?>) ReflectUtils.getInstance(pipeClass));
                                 } catch (Throwable ex) {
-                                    notificationExecutor.get().ifPresent(n -> n.show(Message.warning(messagePrefix() + "load pipe '" + pipeClassName + "' error: " + ex.getMessage())));
+                                    notificationExecutor.show(Message.warning(messagePrefix() + "load pipe '" + pipeClassName + "' error: " + ex.getMessage()));
                                 }
                             }
                         }
@@ -318,7 +284,7 @@ public final class XQLConfigManager {
                     if (silent) {
                         return;
                     }
-                    notificationExecutor.get().ifPresent(n -> n.show(messages));
+                    notificationExecutor.show(messages);
                 }
 
                 @Override
@@ -445,7 +411,6 @@ public final class XQLConfigManager {
         public void close() {
             xqlFileManager.close();
             originalXqlFiles.clear();
-            notificationExecutor.get().ifPresent(NotificationExecutor::close);
         }
     }
 }

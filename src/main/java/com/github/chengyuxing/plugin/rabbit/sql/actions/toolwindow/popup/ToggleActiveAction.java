@@ -17,7 +17,6 @@ import javax.swing.*;
 import java.util.Objects;
 
 public class ToggleActiveAction extends AnAction {
-    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
     private final JTree tree;
 
     public ToggleActiveAction(JTree tree) {
@@ -37,7 +36,7 @@ public class ToggleActiveAction extends AnAction {
             if (config.isActive()) {
                 return;
             }
-            xqlConfigManager.toggleActive(project, config);
+            XQLConfigManager.getInstance(project).toggleActive(config);
             ApplicationManager.getApplication().invokeLater(() -> {
                 VirtualFileManager.getInstance().syncRefresh();
                 XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);

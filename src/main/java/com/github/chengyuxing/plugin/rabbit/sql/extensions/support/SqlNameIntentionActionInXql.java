@@ -17,12 +17,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentionAction {
     private static final Logger log = Logger.getInstance(SqlNameIntentionActionInXql.class);
-
-    private final XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance();
 
     protected String intentionTarget;
 
@@ -42,6 +39,7 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
                 if (xqlVf == null) {
                     return;
                 }
+                var xqlConfigManager = XQLConfigManager.getInstance(project);
                 var config = xqlConfigManager.getActiveConfig(element);
                 if (Objects.isNull(config)) {
                     return;
@@ -81,6 +79,7 @@ public abstract class SqlNameIntentionActionInXql extends PsiElementBaseIntentio
         }
         var m = Constants.SQL_NAME_ANNOTATION_PATTERN.matcher(sqlNameTag);
         if (m.matches()) {
+            var xqlConfigManager = project.getService(XQLConfigManager.class);
             var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(element);
             if (xqlFileManager != null) {
                 for (Map.Entry<String, String> file : xqlFileManager.getFiles().entrySet()) {
