@@ -33,7 +33,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
             return null;
         }
         if (PsiUtil.isParentAXQLMapperInterface(originalElement)) {
-            if (sqlRef.matches(SQL_NAME_PATTERN)) {
+            if (SQL_NAME_PATTERN.matcher(sqlRef).matches()) {
                 return null;
             }
             sqlRef = getSqlRefOnMapperMethod(originalElement);
@@ -41,7 +41,7 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                 return null;
             }
         }
-        if (sqlRef.matches(SQL_NAME_PATTERN)) {
+        if (SQL_NAME_PATTERN.matcher(sqlRef).matches()) {
             var sqlName = sqlRef.substring(1);
             var sqlRefParts = StringUtil.extraSqlReference(sqlName);
             var alias = sqlRefParts.getItem1();
@@ -97,13 +97,13 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
         if (Objects.isNull(sqlRef)) {
             return null;
         }
-        if (!sqlRef.matches(SQL_NAME_PATTERN)) {
+        if (!SQL_NAME_PATTERN.matcher(sqlRef).matches()) {
             sqlRef = getSqlRefOnMapperMethod(originalElement);
             if (Objects.isNull(sqlRef)) {
                 return null;
             }
         }
-        if (sqlRef.matches(SQL_NAME_PATTERN)) {
+        if (SQL_NAME_PATTERN.matcher(sqlRef).matches()) {
             String sqlName = sqlRef.substring(1);
             var xqlConfigManager = XQLConfigManager.getInstance(element.getProject());
             var config = xqlConfigManager.getActiveConfig(originalElement);

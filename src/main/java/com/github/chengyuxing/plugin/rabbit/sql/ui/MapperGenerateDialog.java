@@ -123,7 +123,7 @@ public class MapperGenerateDialog extends DialogWrapper {
 
         var packageName = myForm.getPackage();
 
-        if (!packageName.matches(PACKAGE_PATTERN)) {
+        if (!PACKAGE_PATTERN.matcher(packageName).matches()) {
             myForm.selectConfigTab();
             this.message.setVisible(true);
             this.message.setText(HtmlUtil.toHtml(HtmlUtil.span("Package '" + packageName + "' is invalid.", HtmlUtil.Color.WARNING)));
@@ -455,7 +455,7 @@ public class MapperGenerateDialog extends DialogWrapper {
         if (MapperGenerateForm.PARAM_TYPES.contains(paramTypeOrGenericType)) {
             return null;
         }
-        if (paramTypeOrGenericType.matches(FULLY_CLASS_PATTERN)) {
+        if (FULLY_CLASS_PATTERN.matcher(paramTypeOrGenericType).matches()) {
             int lastDotIdx = paramTypeOrGenericType.lastIndexOf(".");
             return paramTypeOrGenericType.substring(lastDotIdx + 1);
         }

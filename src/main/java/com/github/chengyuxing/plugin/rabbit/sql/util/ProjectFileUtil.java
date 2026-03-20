@@ -70,7 +70,7 @@ public class ProjectFileUtil {
 
 
     public static boolean isXqlFileManagerConfig(String name) {
-        return name.matches(Constants.CONFIG_PATTERN);
+        return Constants.CONFIG_PATTERN.matcher(name).matches();
     }
 
     public static boolean isResourceXqlFileManagerConfig(VirtualFile moduleFv, VirtualFile configVf) {
@@ -174,7 +174,7 @@ public class ProjectFileUtil {
     }
 
     public static boolean isURI(String path) {
-        return path.matches("(?i)(file|http|https|ftp):/+.*") || StringUtils.startsWithIgnoreCase(path, "file:");
+        return Constants.URI_PATTERN.matcher(path).matches() || StringUtils.startsWithIgnoreCase(path, "file:");
     }
 
     public static boolean isLocalFileUri(String path) {

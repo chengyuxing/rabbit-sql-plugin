@@ -21,7 +21,7 @@ public class MyIconProvider extends IconProvider {
             if (name.equals(Constants.CONFIG_NAME)) {
                 return XqlIcons.XQL_FILE_MANAGER;
             }
-            if (name.matches(Constants.CONFIG_PATTERN)) {
+            if (Constants.CONFIG_PATTERN.matcher(name).matches()) {
                 return XqlIcons.XQL_FILE_MANAGER_SECONDARY;
             }
         }

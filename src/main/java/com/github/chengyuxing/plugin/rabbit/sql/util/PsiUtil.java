@@ -56,7 +56,7 @@ public class PsiUtil {
                         fileDocumentManager.saveDocument(doc);
                         continue;
                     }
-                    if (filename.matches(Constants.CONFIG_PATTERN)) {
+                    if (Constants.CONFIG_PATTERN.matcher(filename).matches()) {
                         fileDocumentManager.saveDocument(doc);
                     }
                 }

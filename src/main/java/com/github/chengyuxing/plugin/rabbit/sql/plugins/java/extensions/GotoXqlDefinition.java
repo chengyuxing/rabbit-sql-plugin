@@ -51,7 +51,7 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
     }
 
     private void addLineMarker(String sqlRef, PsiElement sourceElement, Collection<? super RelatedItemLineMarkerInfo<?>> result) {
-        if (sqlRef.matches(SQL_NAME_PATTERN)) {
+        if (SQL_NAME_PATTERN.matcher(sqlRef).matches()) {
             sqlRef = sqlRef.substring(1);
             var xqlFileManager = XQLConfigManager.getInstance(sourceElement.getProject()).getActiveXqlFileManager(sourceElement);
             if (Objects.nonNull(xqlFileManager) && xqlFileManager.contains(sqlRef)) {

@@ -1,6 +1,5 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
-import com.github.chengyuxing.common.script.ast.impl.KeyExpressionParser;
 import com.github.chengyuxing.common.script.lang.Directives;
 import com.github.chengyuxing.common.script.lexer.RabbitScriptLexer;
 import com.github.chengyuxing.common.util.StringUtils;
@@ -101,8 +100,7 @@ public class XqlFileAnnotator implements Annotator {
 
     private static void highlightForAsWord(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content, String xqlTag) {
         if (StringUtils.equalsAnyIgnoreCase(xqlTag, Directives.FOR)) {
-            Pattern p = Pattern.compile("\\s*;\\s*(?<key>" + Constants.FOR_PROPERTIES_REGEXP + ")\\s+as\\s+\\w+(\\s*|$)");
-            Matcher m = p.matcher(content);
+            Matcher m = Constants.FOR_PROPS_AS_PATTERN.matcher(content);
             while (m.find()) {
                 int offset = m.start("key");
                 if (offset != -1) {
@@ -117,8 +115,7 @@ public class XqlFileAnnotator implements Annotator {
     }
 
     private static void highlightIdentifier(AnnotationHolder holder, PsiElement element, int whiteSpaceLength, String content) {
-        Pattern varP = Pattern.compile("(?<var>:" + KeyExpressionParser.EXPRESSION_PATTERN.pattern() + "|" + StringUtils.NUMBER_PATTERN.pattern() + "|'(''|[^'])*'|\"(\"\"|[^\"])*\")(\\s|\\W|$)");
-        Matcher varM = varP.matcher(content);
+        Matcher varM = Constants.VAR_PATTERN.matcher(content);
         while (varM.find()) {
             String var = varM.group("var");
             int offset = varM.start("var");

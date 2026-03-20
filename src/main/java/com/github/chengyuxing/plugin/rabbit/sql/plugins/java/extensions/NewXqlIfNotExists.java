@@ -106,7 +106,7 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
         if (sqlRef == null) {
             return false;
         }
-        if (sqlRef.matches(SQL_NAME_PATTERN)) {
+        if (SQL_NAME_PATTERN.matcher(sqlRef).matches()) {
             String sqlName = sqlRef.substring(1);
             var xqlConfigManager = project.getService(XQLConfigManager.class);
             var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(element);

@@ -50,7 +50,7 @@ public abstract class SqlNameIntentionActionInJvmLang extends PsiElementBaseInte
         if (Objects.isNull(sqlRef)) {
             return false;
         }
-        if (sqlRef.matches(SQL_NAME_PATTERN)) {
+        if (SQL_NAME_PATTERN.matcher(sqlRef).matches()) {
             String sqlName = sqlRef.substring(1);
             var xqlConfigManager = XQLConfigManager.getInstance(project);
             var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(element);

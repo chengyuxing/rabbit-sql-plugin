@@ -23,7 +23,7 @@ public class XqlNameAnnotator implements Annotator {
         if (sqlRef == null) {
             return;
         }
-        if (sqlRef.matches(SQL_NAME_PATTERN)) {
+        if (SQL_NAME_PATTERN.matcher(sqlRef).matches()) {
             String sqlName = sqlRef.substring(1);
             var config = XQLConfigManager.getInstance(element.getProject()).getActiveConfig(element);
             if (config != null) {

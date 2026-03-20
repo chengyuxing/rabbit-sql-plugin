@@ -77,7 +77,7 @@ public class SelectOpenedFile extends AnAction {
                 }
             } else {
                 String jvmLangLiteral = PsiUtil.getJvmLangLiteral(element);
-                if (Objects.nonNull(jvmLangLiteral) && jvmLangLiteral.matches(SQL_NAME_PATTERN)) {
+                if (Objects.nonNull(jvmLangLiteral) && SQL_NAME_PATTERN.matcher(jvmLangLiteral).matches()) {
                     sqlRef = jvmLangLiteral;
                 }
             }
