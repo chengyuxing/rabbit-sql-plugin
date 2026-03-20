@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.common.tuple.Quadruple;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.EntityGenerateDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
@@ -21,7 +22,7 @@ public class GenerateEntityAction extends AnAction {
     private final JTree tree;
 
     public GenerateEntityAction(JTree tree) {
-        super("Configure Params...", "Configure params and generate entity by sql params.", AllIcons.Actions.Compile);
+        super(MessageBundle.message("action.generateEntity.text"), MessageBundle.message("action.generateEntity.description"), AllIcons.Actions.Compile);
         this.tree = tree;
     }
 

@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
@@ -20,7 +21,7 @@ public class ToggleActiveAction extends AnAction {
     private final JTree tree;
 
     public ToggleActiveAction(JTree tree) {
-        super("Toggle to Active", "Set selected as active.", AllIcons.Actions.Lightning);
+        super(MessageBundle.message("action.toggleActive.text"), MessageBundle.message("action.toggleActive.description"), AllIcons.Actions.Lightning);
         this.tree = tree;
     }
 

@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions;
 
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.util.StringUtils;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
@@ -76,10 +77,10 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
                         .keySet()).trim();
 
                 if (!params.isEmpty()) {
-                    doc += SECTION_HEADER_START + "Parameters: " + SECTION_SEPARATOR + "<p>" + params + SECTION_END;
+                    doc += SECTION_HEADER_START + MessageBundle.message("document.parameter") + " " + SECTION_SEPARATOR + "<p>" + params + SECTION_END;
                 }
 
-                doc += SECTION_HEADER_START + "Defined in: " + SECTION_SEPARATOR + "<p>" + xqlFile + SECTION_END +
+                doc += SECTION_HEADER_START + MessageBundle.message("document.defined") + " " + SECTION_SEPARATOR + "<p>" + xqlFile + SECTION_END +
                         SECTIONS_END;
 
                 return doc;

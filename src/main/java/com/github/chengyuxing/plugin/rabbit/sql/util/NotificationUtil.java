@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -12,6 +13,6 @@ public class NotificationUtil {
     }
 
     public static void showMessage(Project project, String message, NotificationType type) {
-        showMessage(project, "XQL File Manager", message, type);
+        showMessage(project, MessageBundle.message("notice.title"), message, type);
     }
 }

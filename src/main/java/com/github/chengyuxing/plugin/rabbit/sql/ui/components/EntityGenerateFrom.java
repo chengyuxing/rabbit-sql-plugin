@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.util.ValueUtils;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.FieldInfoRender;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
 import com.intellij.icons.AllIcons;
@@ -44,11 +45,7 @@ public class EntityGenerateFrom extends JPanel {
 
     private final Disposable disposable;
 
-    private static final Object[] thead = new Object[]{
-            "Field",
-            "Type",
-            "Comment",
-            "Required"};
+    private static final Object[] thead = MessageBundle.message("ui.entityGenForm.fields").split(",");
 
     private static final List<String> FIELD_TYPES = List.of(
             String.class.getSimpleName(),
@@ -147,8 +144,8 @@ public class EntityGenerateFrom extends JPanel {
 
         tabs = new TabbedPaneWrapper(disposable);
 
-        tabs.addTab("Fields", AllIcons.Nodes.Field, createTablePanel(), "");
-        tabs.addTab("Class", AllIcons.Nodes.Class, createConfigPanel(), "");
+        tabs.addTab(MessageBundle.message("ui.entityGenForm.tab0"), AllIcons.Nodes.Field, createTablePanel(), "");
+        tabs.addTab(MessageBundle.message("ui.entityGenForm.tab1"), AllIcons.Nodes.Class, createConfigPanel(), "");
 
         add(tabs.getComponent(), "cell 0 0,grow");
     }
@@ -177,7 +174,7 @@ public class EntityGenerateFrom extends JPanel {
         table.setSelectionForeground(null);
         table.setSelectionBackground(null);
         table.setFillsViewportHeight(true);
-        table.getEmptyText().setText("There are no fields in the table.");
+        table.getEmptyText().setText(MessageBundle.message("ui.entityGenForm.empty"));
         var tableScrollPane = new JBScrollPane();
         tableScrollPane.setBorder(BorderFactory.createEmptyBorder());
         tableScrollPane.setViewportView(table);
@@ -198,11 +195,11 @@ public class EntityGenerateFrom extends JPanel {
         CellConstraints cc = new CellConstraints();
 
         classTextField = new JBTextField();
-        panel.add(new JBLabel("Fully class name:"), cc.xy(1, 3));
+        panel.add(new JBLabel(MessageBundle.message("ui.entityGenForm.tab1.className")), cc.xy(1, 3));
         panel.add(classTextField, cc.xy(3, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
 
         commentTextField = new JBTextField();
-        panel.add(new JBLabel("Comment:"), cc.xy(1, 5));
+        panel.add(new JBLabel(MessageBundle.message("ui.entityGenForm.tab1.comment")), cc.xy(1, 5));
         panel.add(commentTextField, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
 
         var lombokLabel = new JBLabel("Lombok:");
@@ -228,9 +225,9 @@ public class EntityGenerateFrom extends JPanel {
                     var comment = "";
                     var required = true;
                     if (Objects.nonNull(xqlParam)) {
-                        type = ValueUtils.coalesce(xqlParam.getType(), type);
-                        comment = ValueUtils.coalesce(xqlParam.getComment(), comment);
-                        required = ValueUtils.coalesce(xqlParam.getRequired(), required);
+                        type = ValueUtils.coalesceNonNull(xqlParam.getType(), type);
+                        comment = ValueUtils.coalesceNonNull(xqlParam.getComment(), comment);
+                        required = ValueUtils.coalesceNonNull(xqlParam.getRequired(), required);
                     }
                     return new Object[]{filed, type, comment, required};
                 })

@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
@@ -38,10 +39,10 @@ public class ToggleViewModeAction extends AnAction {
             var tree = p.getTree();
             if (Objects.nonNull(tree)) {
                 var icon = AllIcons.Actions.ListFiles;
-                var title = "Toggle 'Tree View' Mode";
+                var title = MessageBundle.message("action.toggleViewMode.flatten.text");
                 if (p.isTreeViewNodes()) {
                     icon = AllIcons.Actions.ShowAsTree;
-                    title = "Toggle 'Flatten' Mode";
+                    title = MessageBundle.message("action.toggleViewMode.tree.text");
                 }
                 e.getPresentation().setIcon(icon);
                 e.getPresentation().setText(title);

@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.common.tuple.Quadruple;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewSQLDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
@@ -20,7 +21,7 @@ public class NewSQLAction extends AnAction {
     private final JTree tree;
 
     public NewSQLAction(JTree tree) {
-        super("New", "Create a new SQL fragment.", AllIcons.Actions.AddMulticaret);
+        super(MessageBundle.message("action.newSql.text"), MessageBundle.message("action.newSql.description"), AllIcons.Actions.AddMulticaret);
         this.tree = tree;
     }
 

@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.extensions.support.SqlNameIntentionActionInXql;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.EntityGenerateDialog;
@@ -30,12 +31,12 @@ public class ConfigureParamsInXql extends SqlNameIntentionActionInXql implements
 
     @Override
     public @NotNull @IntentionFamilyName String getFamilyName() {
-        return "Configure params";
+        return MessageBundle.message("intention.action.configParamsInXql.familyName");
     }
 
     @Override
     public @IntentionName @NotNull String getText() {
-        return "Configure params";
+        return MessageBundle.message("intention.action.configParamsInXql.text");
     }
 
     @Override

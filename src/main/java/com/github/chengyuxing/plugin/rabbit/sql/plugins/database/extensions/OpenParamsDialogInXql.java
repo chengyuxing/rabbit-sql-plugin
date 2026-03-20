@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.extensions.support.SqlNameIntentionActionInXql;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
@@ -23,15 +24,15 @@ public class OpenParamsDialogInXql extends SqlNameIntentionActionInXql implement
 
     @Override
     public @NotNull @IntentionFamilyName String getFamilyName() {
-        return "Execute dynamic sql In xql";
+        return MessageBundle.message("intention.action.executeSql.familyName", "xql");
     }
 
     @Override
     public @IntentionName @NotNull String getText() {
         if (Objects.nonNull(intentionTarget)) {
-            return "Execute '" + intentionTarget + "'";
+            return MessageBundle.message("intention.action.executeSql.text", intentionTarget);
         }
-        return "Execute dynamic sql";
+        return MessageBundle.message("intention.action.executeSql.text.default");
     }
 
     @Override

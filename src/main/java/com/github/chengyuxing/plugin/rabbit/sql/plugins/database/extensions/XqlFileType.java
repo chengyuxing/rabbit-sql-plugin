@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.sql.psi.SqlLanguage;
@@ -22,7 +23,7 @@ public class XqlFileType extends LanguageFileType {
 
     @Override
     public @NotNull String getDescription() {
-        return "An enhanced version of sql file for XQL File Manager.";
+        return MessageBundle.message("xql.filetype.description");
     }
 
     @Override

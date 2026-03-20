@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.extensions.support.SqlNameIntentionActionInJvmLang;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
@@ -21,12 +22,12 @@ public class CopySqlParamsInJava extends SqlNameIntentionActionInJvmLang impleme
 
     @Override
     public @NotNull @IntentionFamilyName String getFamilyName() {
-        return "Copy sql params in java";
+        return MessageBundle.message("intention.action.copySqlParam.familyName", "java");
     }
 
     @Override
     public @IntentionName @NotNull String getText() {
-        return "Copy sql parameters to key-value pairs";
+        return MessageBundle.message("intention.action.copySqlParam.text");
     }
 
     @Override

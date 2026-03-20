@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
@@ -24,7 +25,7 @@ public class NewXqlFileAction extends AnAction {
     private final JTree tree;
 
     public NewXqlFileAction(JTree tree) {
-        super("New", "Create a new XQL file.", AllIcons.Actions.AddMulticaret);
+        super(MessageBundle.message("action.newXql.text"), MessageBundle.message("action.newXql.description"), AllIcons.Actions.AddMulticaret);
         this.tree = tree;
     }
 

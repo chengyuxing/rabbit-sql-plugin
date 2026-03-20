@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.java.extensions;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
@@ -84,7 +85,7 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
                 return;
             }
             ApplicationManager.getApplication().runWriteAction(() ->
-                    WriteCommandAction.runWriteCommandAction(project, "Modify '" + sqlFileVf.getName() + "'", null, () -> {
+                    WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("intention.action.newXqlIfNotExists.command", sqlFileVf.getName()), null, () -> {
                         var lastIdx = doc.getTextLength();
                         doc.insertString(lastIdx, "\n/*[" + name + "]*/\n\n;\n");
                         PsiDocumentManager.getInstance(project).commitDocument(doc);
@@ -127,12 +128,12 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
 
     @Override
     public @NotNull @IntentionFamilyName String getFamilyName() {
-        return "Smart create/append xql...";
+        return MessageBundle.message("intention.action.newXqlIfNotExists.familyName");
     }
 
     @Override
     public @IntentionName @NotNull String getText() {
-        return "Smart create/append xql...";
+        return MessageBundle.message("intention.action.newXqlIfNotExists.text");
     }
 
     @Override

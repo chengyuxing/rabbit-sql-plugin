@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
 import com.github.chengyuxing.common.util.ValueUtils;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
@@ -96,8 +97,8 @@ public class GotoJvmLangCallable extends RelatedItemLineMarkerProvider {
                                         }
                                         return super.getContainerText(element, name);
                                     }
-                                }).setPopupTitle("Choose reference of sql name \"" + sqlName + "\" (" + founded.size() + " founded)")
-                                .setTooltipText("Where I am (" + founded.size() + " locations)!")
+                                }).setPopupTitle(MessageBundle.message("marker.gotoJvmLangCallable.popup", sqlName, founded.size()))
+                                .setTooltipText(MessageBundle.message("marker.gotoJvmLangCallable.tooltip", founded.size()))
                                 .createLineMarkerInfo(xqlPsiElement);
                         result.add(markInfo);
                     }

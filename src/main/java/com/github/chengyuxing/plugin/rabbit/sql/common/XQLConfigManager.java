@@ -4,6 +4,7 @@ import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.script.exception.ScriptSyntaxException;
 import com.github.chengyuxing.common.script.pipe.IPipe;
 import com.github.chengyuxing.common.util.ReflectUtils;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ArrayListValueSet;
@@ -175,7 +176,7 @@ public final class XQLConfigManager implements Disposable {
                             } else {
                                 var pipeClassPath = classesPath.resolve(pipeClassName.replace(".", "/") + ".class");
                                 if (!Files.exists(pipeClassPath)) {
-                                    notificationExecutor.show(Message.warning(messagePrefix() + "pipe '" + pipeClassName + "' not found, maybe should re-compile project."));
+                                    notificationExecutor.show(Message.warning(MessageBundle.message("xql.config.manager.loadPipe.notExists", messagePrefix(), pipeClassPath)));
                                     continue;
                                 }
                                 try {
@@ -185,7 +186,7 @@ public final class XQLConfigManager implements Disposable {
                                     }
                                     newPipeInstances.put(pipeName, (IPipe<?>) ReflectUtils.getInstance(pipeClass));
                                 } catch (Throwable ex) {
-                                    notificationExecutor.show(Message.warning(messagePrefix() + "load pipe '" + pipeClassName + "' error: " + ex.getMessage()));
+                                    notificationExecutor.show(Message.warning(MessageBundle.message("xql.config.manager.loadPipe.error", messagePrefix(), pipeClassName, ex.getMessage())));
                                 }
                             }
                         }
@@ -224,21 +225,21 @@ public final class XQLConfigManager implements Disposable {
                     var filename = e.getValue().trim();
                     if (filename.isEmpty()) {
                         originalXqlFiles.add("");
-                        warnings.add(Message.warning(messagePrefix() + "'" + alias + "' associated invalid location."));
+                        warnings.add(Message.warning(MessageBundle.message("xql.config.manager.loadXql.empty", messagePrefix(), alias)));
                         continue;
                     }
                     String uri = getUri(filename);
                     // whatever valid or not, save original xql-file-manager.yml files.
                     originalXqlFiles.add(uri);
                     if (ProjectFileUtil.isLocalFileUri(uri) && !Files.exists(Path.of(URI.create(uri)))) {
-                        warnings.add(Message.warning(messagePrefix() + filename + " not exists."));
+                        warnings.add(Message.warning(MessageBundle.message("xql.config.manager.loadXql.notExists", messagePrefix(), filename)));
                         continue;
                     }
                     newFiles.put(alias, uri);
                 }
                 xqlFileManager.setFiles(newFiles);
                 xqlFileManager.init();
-                successes.add(Message.info(messagePrefix() + "updated!"));
+                successes.add(Message.info(MessageBundle.message("xql.config.manager.loadXql.success", messagePrefix())));
             } catch (XQLParseException e) {
                 if (e.getCause() instanceof ScriptSyntaxException cause) {
                     warnings.add(Message.warning(messagePrefix() + e.getMessage()));
@@ -250,7 +251,7 @@ public final class XQLConfigManager implements Disposable {
             } catch (ConcurrentModificationException e) {
                 log.warn(e);
             } catch (Exception e) {
-                warnings.add(Message.error(messagePrefix() + "error: " + e.getMessage()));
+                warnings.add(Message.error(MessageBundle.message("xql.config.manager.loadXql.error", messagePrefix(), e.getMessage())));
                 log.warn(e);
             }
             if (warnings.isEmpty()) {
@@ -275,7 +276,7 @@ public final class XQLConfigManager implements Disposable {
         }
 
         private void fire(boolean silent) {
-            ProgressManager.getInstance().run(new Task.Backgroundable(project, "Loading XQL files.", true) {
+            ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("xql.config.manager.loadXql.progress"), true) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ProgressManager.checkCanceled();

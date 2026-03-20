@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.extensions.support.SqlNameIntentionActionInXql;
 import com.intellij.codeInspection.util.IntentionFamilyName;
@@ -26,12 +27,12 @@ public class CopySqlDefinitionInXql extends SqlNameIntentionActionInXql implemen
 
     @Override
     public @NotNull @IntentionFamilyName String getFamilyName() {
-        return "Copy sql definition in xql";
+        return MessageBundle.message("intention.action.copySql.familyName", "xql");
     }
 
     @Override
     public @IntentionName @NotNull String getText() {
-        return "Copy sql definition";
+        return MessageBundle.message("intention.action.copySql.text");
     }
 
     @Override

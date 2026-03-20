@@ -11,6 +11,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import com.github.chengyuxing.common.tuple.Pair;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.intellij.ui.components.fields.ExpandableTextField;
 import com.jgoodies.forms.factories.*;
@@ -83,12 +84,12 @@ public class NewSQLForm extends JPanel {
             RowSpec.decodeSpecs("default, 4dlu, min, 3dlu, default")));
 
         //---- abc ----
-        abc.setText("Name:");
+        abc.setText(MessageBundle.message("ui.newSqlForm.name"));
         add(abc, cc.xy(1, 1));
         add(name, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 
         //---- def ----
-        def.setText("Description:");
+        def.setText(MessageBundle.message("ui.newSqlForm.description"));
         add(def, cc.xy(1, 3));
         add(description, cc.xy(3, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
 
@@ -98,7 +99,7 @@ public class NewSQLForm extends JPanel {
 
             //---- message ----
             message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
-            message.setText("Append a sql fragment to the end.");
+            message.setText(MessageBundle.message("ui.newSqlForm.message"));
             message.setForeground(InlineHelpText.COLOR);
             panel1.add(message);
         }

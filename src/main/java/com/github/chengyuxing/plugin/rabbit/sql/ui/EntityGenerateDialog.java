@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
 import com.github.chengyuxing.common.DataRow;
 import com.github.chengyuxing.common.MostDateTime;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.EntityGenerateFrom;
@@ -49,7 +50,7 @@ public class EntityGenerateDialog extends DialogWrapper {
     private final Path configPath;
     private final XQLMapperConfig xqlMapperConfig;
 
-    public EntityGenerateDialog(@Nullable Project project, String alias, String sqlName, XQLConfigManager.Config config, Map<String, Set<String>> fieldMapping) {
+    public EntityGenerateDialog(@NotNull Project project, String alias, String sqlName, XQLConfigManager.Config config, Map<String, Set<String>> fieldMapping) {
         super(project, true);
         this.project = project;
         this.sqlName = sqlName;
@@ -81,10 +82,10 @@ public class EntityGenerateDialog extends DialogWrapper {
             this.myForm.setComment(comment);
         }
 
-        setTitle("[" + sqlName + "] Params Configuration");
-        setOKButtonText("Generate");
-        setOKButtonTooltip("Generate params entity class");
-        setCancelButtonText("Close");
+        setTitle(MessageBundle.message("ui.dialog.entityGen.title", sqlName));
+        setOKButtonText(MessageBundle.message("ui.dialog.entityGen.ok"));
+        setOKButtonTooltip(MessageBundle.message("ui.dialog.entityGen.ok.tooltip"));
+        setCancelButtonText(MessageBundle.message("ui.dialog.entityGen.cancel"));
         init();
     }
 
@@ -116,16 +117,10 @@ public class EntityGenerateDialog extends DialogWrapper {
 
     @Override
     protected void doOKAction() {
-        if (Objects.isNull(project)) {
-            this.message.setVisible(true);
-            this.message.setText(HtmlUtil.toHtml(HtmlUtil.span("Cannot find current project.", HtmlUtil.Color.WARNING)));
-            return;
-        }
-
         if (!FULLY_CLASS_PATTERN.matcher(myForm.getFullyClassName()).matches()) {
             myForm.selectConfigTab();
             message.setVisible(true);
-            message.setText(HtmlUtil.toHtml(HtmlUtil.span("Class name '" + myForm.getFullyClassName() + "' is invalid.", HtmlUtil.Color.WARNING)));
+            message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.entityGen.error.classname", myForm.getFullyClassName()), HtmlUtil.Color.WARNING)));
             return;
         }
 
@@ -184,7 +179,7 @@ public class EntityGenerateDialog extends DialogWrapper {
     }
 
     private void doSaveConfiguration(String className, Consumer<XQLMapperConfig.XQLParamMeta> then, Runnable onSuccess) {
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Generating params entity.", false) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("ui.dialog.entityGen.ok.progress"), false) {
             @Override
             public void run(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setIndeterminate(true);
@@ -242,14 +237,14 @@ public class EntityGenerateDialog extends DialogWrapper {
     }
 
     private @NotNull AbstractAction getSaveAction() {
-        return new BtnAction("Save", "Save these fields configuration.", AllIcons.Actions.MenuSaveall) {
+        return new BtnAction(MessageBundle.message("ui.dialog.entityGen.save.title"), MessageBundle.message("ui.dialog.entityGen.save.tooltip"), AllIcons.Actions.MenuSaveall) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 doSaveConfiguration(null, paramMeta -> {
                 }, () -> {
                     message.setVisible(true);
-                    message.setText(HtmlUtil.toHtml(HtmlUtil.span("Saved successfully!", HtmlUtil.Color.STRING)));
+                    message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.entityGen.save.success"), HtmlUtil.Color.STRING)));
                 });
             }
         };

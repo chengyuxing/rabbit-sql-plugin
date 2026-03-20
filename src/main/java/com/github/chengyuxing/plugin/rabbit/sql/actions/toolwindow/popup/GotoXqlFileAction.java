@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.common.tuple.Quadruple;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
@@ -19,7 +20,7 @@ public class GotoXqlFileAction extends AnAction {
     private final JTree tree;
 
     public GotoXqlFileAction(JTree tree) {
-        super("Go To Definition");
+        super(MessageBundle.message("action.gotoXqlFile.text"));
         this.tree = tree;
     }
 

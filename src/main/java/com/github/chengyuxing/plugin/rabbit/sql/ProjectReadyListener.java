@@ -32,7 +32,7 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
 
     @Override
     public void exitDumbMode() {
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Searching xql configs...", true) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("project.ready.progress"), true) {
             @Override
             public void run(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setIndeterminate(true);

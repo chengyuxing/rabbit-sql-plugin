@@ -4,6 +4,7 @@ import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.script.exception.CheckViolationException;
 import com.github.chengyuxing.common.script.exception.GuardViolationException;
 import com.github.chengyuxing.common.util.StringUtils;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.ResourceManager;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.database.DatabaseId;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.database.DatasourceManager;
@@ -65,9 +66,9 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         this.parametersForm = new ParametersForm(paramsMapping, paramsHistory, paramsList);
         this.parametersForm.setClickEmptyTableTextLink(this::doHelpAction);
         this.datasourceList = new ComboBox<>();
-        setTitle("Parameters");
-        setOKButtonText("Execute");
-        setCancelButtonText("Close");
+        setTitle(MessageBundle.message("ui.dialog.execute.title"));
+        setOKButtonText(MessageBundle.message("ui.dialog.execute.ok"));
+        setCancelButtonText(MessageBundle.message("ui.dialog.execute.cancel"));
         init();
     }
 
@@ -132,7 +133,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     }
 
     private @NotNull AnAction getPreviewAction() {
-        return new AnAction("Execute Test Preview", "Displays sql parsed for testing only.", AllIcons.Diff.MagicResolve) {
+        return new AnAction(MessageBundle.message("ui.dialog.execute.action.preview.text"), MessageBundle.message("ui.dialog.execute.action.preview.description"), AllIcons.Diff.MagicResolve) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
                 parseDynamicSQL((sql, args) -> {
@@ -151,7 +152,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     }
 
     private @NotNull AnAction getPreparePositionalParametersAction() {
-        return new AnAction("Prepare Positional Parameters SQL", "Displays the actual prepared sql parsed for running in database.", AllIcons.Actions.Compile) {
+        return new AnAction(MessageBundle.message("ui.dialog.execute.action.prepare.pos.text"), MessageBundle.message("ui.dialog.execute.action.prepare.pos.description"), AllIcons.Actions.Compile) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
                 parseDynamicSQL((sql, args) -> {
@@ -169,7 +170,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
     }
 
     private @NotNull AnAction getPrepareNamedParametersSQLAction() {
-        return new AnAction("Prepare Named Parameters SQL", "Displays the actual sql parsed for running in production.", AllIcons.Actions.Compile) {
+        return new AnAction(MessageBundle.message("ui.dialog.execute.action.prepare.named.text"), MessageBundle.message("ui.dialog.execute.action.prepare.named.description"), AllIcons.Actions.Compile) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
                 parseDynamicSQL((sql, args) -> {
@@ -196,7 +197,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         panel.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 0));
         datasourceList.setSwingPopup(false);
         if (!isDatabasePluginEnabled) {
-            datasourceList.addItem(DatabaseId.empty("<Configured database>"));
+            datasourceList.addItem(DatabaseId.empty(MessageBundle.message("ui.dialog.execute.datasource.placeholder")));
             datasourceList.setEnabled(false);
         } else {
             loadDatasourceList();
@@ -210,7 +211,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         var resource = DatasourceManager.getInstance(project).getResource();
         var databases = resource.getConfiguredDatabases();
         datasourceList.removeAllItems();
-        datasourceList.addItem(DatabaseId.empty("<Configured database>"));
+        datasourceList.addItem(DatabaseId.empty(MessageBundle.message("ui.dialog.execute.datasource.placeholder")));
         datasourceList.setRenderer(new IconListCellRenderer(databases));
         databases.forEach((k, v) -> datasourceList.addItem(k));
         var selected = resource.getSelected();
@@ -257,12 +258,12 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
 
     @Override
     protected @NonNls @Nullable String getHelpId() {
-        return "help";
+        return MessageBundle.message("ui.dialog.execute.help");
     }
 
     @Override
     protected void setHelpTooltip(@NotNull JButton helpButton) {
-        helpButton.setToolTipText("Show raw sql");
+        helpButton.setToolTipText(MessageBundle.message("ui.dialog.execute.help.tooltip"));
     }
 
     @Override
@@ -325,23 +326,23 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         var btn = new FixedSizeButton();
         btn.setIcon(AllIcons.Actions.AddMulticaret);
         if (isDatabasePluginEnabled) {
-            btn.setToolTipText("Configure database");
+            btn.setToolTipText(MessageBundle.message("ui.dialog.execute.datasource.action.configure"));
             btn.addActionListener(e -> {
                 if (btn.getIcon() == AllIcons.Actions.AddMulticaret) {
                     DatabaseUtil.openDatasourceDialog(config.getProject(), this::dispose);
                     btn.setIcon(AllIcons.Actions.Refresh);
-                    btn.setToolTipText("Refresh database");
+                    btn.setToolTipText(MessageBundle.message("ui.dialog.execute.datasource.action.refresh"));
                     return;
                 }
                 if (btn.getIcon() == AllIcons.Actions.Refresh) {
                     btn.setIcon(AllIcons.Actions.AddMulticaret);
-                    btn.setToolTipText("Configure database");
+                    btn.setToolTipText(MessageBundle.message("ui.dialog.execute.datasource.action.configure"));
                     loadDatasourceList();
                 }
             });
         } else {
             btn.setEnabled(false);
-            btn.setToolTipText("Database Tool and SQL plugin is not enabled.");
+            btn.setToolTipText(MessageBundle.message("ui.dialog.execute.datasource.action.disabled"));
         }
         return btn;
     }

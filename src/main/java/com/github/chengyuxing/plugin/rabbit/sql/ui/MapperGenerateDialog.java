@@ -5,6 +5,7 @@ import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.util.ValueUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.Helper;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLJavaType;
@@ -57,7 +58,7 @@ public class MapperGenerateDialog extends DialogWrapper {
     private final Path configPath;
     private final XQLMapperConfig mapperConfig;
 
-    public MapperGenerateDialog(@Nullable Project project, String alias, XQLConfigManager.Config config) {
+    public MapperGenerateDialog(@NotNull Project project, String alias, XQLConfigManager.Config config) {
         super(project, true);
         this.project = project;
         this.alias = alias;
@@ -76,9 +77,9 @@ public class MapperGenerateDialog extends DialogWrapper {
             myForm.setSizeKey(mapperConfig.getSizeKey());
         }
 
-        setTitle("[ " + alias + " ] XQL Mapper Interface Generator");
-        setOKButtonText("Generate");
-        setCancelButtonText("Close");
+        setTitle(MessageBundle.message("ui.dialog.mapperGen.title", alias));
+        setOKButtonText(MessageBundle.message("ui.dialog.mapperGen.ok"));
+        setCancelButtonText(MessageBundle.message("ui.dialog.mapperGen.cancel"));
         init();
     }
 
@@ -116,23 +117,18 @@ public class MapperGenerateDialog extends DialogWrapper {
 
     @Override
     protected void doOKAction() {
-        if (Objects.isNull(project)) {
-            this.message.setText(HtmlUtil.toHtml(HtmlUtil.span("Cannot find current project.", HtmlUtil.Color.WARNING)));
-            return;
-        }
-
         var packageName = myForm.getPackage();
 
         if (!PACKAGE_PATTERN.matcher(packageName).matches()) {
             myForm.selectConfigTab();
             this.message.setVisible(true);
-            this.message.setText(HtmlUtil.toHtml(HtmlUtil.span("Package '" + packageName + "' is invalid.", HtmlUtil.Color.WARNING)));
+            this.message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.mapperGen.error.package", packageName), HtmlUtil.Color.WARNING)));
             return;
         }
         if (myForm.getPageKey().isEmpty() || myForm.getSizeKey().isEmpty()) {
             myForm.selectConfigTab();
             this.message.setVisible(true);
-            this.message.setText(HtmlUtil.toHtml(HtmlUtil.span("Page or Size key is invalid.", HtmlUtil.Color.WARNING)));
+            this.message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.mapperGen.error.pageSize"), HtmlUtil.Color.WARNING)));
             return;
         }
 
@@ -302,7 +298,7 @@ public class MapperGenerateDialog extends DialogWrapper {
     }
 
     private void doSaveConfiguration(Consumer<XQLMapperConfig> then, Runnable onSuccess) {
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Generating interface mapper.", false) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("ui.dialog.mapperGen.ok.progress"), false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 indicator.setIndeterminate(true);

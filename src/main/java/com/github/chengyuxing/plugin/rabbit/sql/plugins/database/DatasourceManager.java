@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.database;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.intellij.database.console.JdbcConsole;
 import com.intellij.database.console.session.DatabaseSessionManager;
 import com.intellij.database.dataSource.DatabaseConnectionPoint;
@@ -82,7 +83,7 @@ public final class DatasourceManager implements Disposable {
                             .map(c -> {
                                 var session = c.getSession();
                                 session.setAutoCommit(false);
-                                session.setTitle("Rabbit-SQL-Plugin");
+                                session.setTitle(MessageBundle.message("jdbc.session.title"));
                                 return c;
                             }).orElseGet(() -> {
                                 var session = DatabaseSessionManager.getSession(project, (DatabaseConnectionPoint) cfg, "Rabbit-SQL-Plugin");

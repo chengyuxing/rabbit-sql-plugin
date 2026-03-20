@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.tuple.Triple;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.util.FileTransferable;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
@@ -27,7 +28,7 @@ public class CopyXqlFile extends AnAction {
     private final JTree tree;
 
     public CopyXqlFile(JTree tree) {
-        super("Copy", "Copy XQL file to system clipboard.", AllIcons.Actions.Copy);
+        super(MessageBundle.message("action.copyXql.text"), MessageBundle.message("action.copyXql.description"), AllIcons.Actions.Copy);
         this.tree = tree;
     }
 

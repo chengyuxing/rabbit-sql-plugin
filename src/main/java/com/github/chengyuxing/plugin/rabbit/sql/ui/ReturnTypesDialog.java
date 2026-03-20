@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ReturnTypesForm;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -16,7 +17,7 @@ public class ReturnTypesDialog extends DialogWrapper {
         super(project, true);
         this.returnTypesForm = new ReturnTypesForm(selected, checked -> setOKActionEnabled(checked != 0));
         this.doOkAction = doOkAction;
-        setTitle("[ " + method + " ] return types");
+        setTitle(MessageBundle.message("ui.dialog.returnType.title", method));
         init();
     }
 

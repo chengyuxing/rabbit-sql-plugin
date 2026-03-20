@@ -11,6 +11,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import com.github.chengyuxing.common.io.FileResource;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.jgoodies.forms.factories.*;
@@ -87,7 +88,7 @@ public class NewXQLFileManagerForm extends JPanel {
             RowSpec.decodeSpecs("default, default")));
 
         //---- title ----
-        title.setText("Name:");
+        title.setText(MessageBundle.message("ui.newXqlFileManagerForm.name"));
         add(title, cc.xy(1, 1));
         add(secondaryFileName, cc.xy(3, 1));
 

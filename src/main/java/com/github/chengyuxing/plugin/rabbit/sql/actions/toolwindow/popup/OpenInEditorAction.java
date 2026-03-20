@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.common.tuple.Triple;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
@@ -22,7 +23,7 @@ public class OpenInEditorAction extends AnAction {
     private final JTree tree;
 
     public OpenInEditorAction(JTree tree) {
-        super("Open In Editor");
+        super(MessageBundle.message("action.openInEditor.text"));
         this.tree = tree;
     }
 

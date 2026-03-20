@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
@@ -17,7 +18,7 @@ public class ReloadSelectedAction extends AnAction {
     private final JTree tree;
 
     public ReloadSelectedAction(JTree tree) {
-        super("Reload Current Config", "Reload current config.", AllIcons.Actions.ForceRefresh);
+        super(MessageBundle.message("action.reloadSelected.text"), MessageBundle.message("action.reloadSelected.description"), AllIcons.Actions.ForceRefresh);
         this.tree = tree;
     }
 

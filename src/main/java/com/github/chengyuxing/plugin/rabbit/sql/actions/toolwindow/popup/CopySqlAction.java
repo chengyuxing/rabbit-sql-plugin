@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.common.tuple.Quintuple;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
@@ -33,35 +34,35 @@ public class CopySqlAction extends AnAction {
                     var name = sqlMeta.getItem2();
                     switch (copyType) {
                         case SQL_NAME -> {
-                            return "SQL Name '" + name + "'";
+                            return MessageBundle.message("action.copySql.type.xql.name", name);
                         }
                         case SQL_PATH -> {
-                            return "SQL Path From '" + name+"'";
+                            return MessageBundle.message("action.copySql.type.xql.path", name);
                         }
                         case SQL_DEFINITION -> {
-                            return "SQL Definition From '" + name+"'";
+                            return MessageBundle.message("action.copySql.type.xql.def", name);
                         }
                     }
                 } else if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
                     @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
                     switch (copyType) {
                         case ALIAS -> {
-                            return "Alias '" + sqlMeta.getItem1()+"'";
+                            return MessageBundle.message("action.copySql.type.file.alias", sqlMeta.getItem1());
                         }
                         case ABSOLUTE_PATH -> {
-                            return "Absolute Path From '" + sqlMeta.getItem1()+"'";
+                            return MessageBundle.message("action.copySql.type.file.abPath", sqlMeta.getItem1());
                         }
                         case PATH_FROM_CLASSPATH -> {
-                            return "Classpath Path From '" + sqlMeta.getItem1()+"'";
+                            return MessageBundle.message("action.copySql.type.file.classpath", sqlMeta.getItem1());
                         }
                         case YML_ARRAY_PATH_FROM_CLASSPATH -> {
-                            return "Classpath YAML Array Path From '" + sqlMeta.getItem1()+"'";
+                            return MessageBundle.message("action.copySql.type.file.classArrayPath", sqlMeta.getItem1());
                         }
                     }
                 }
             }
-            return "Copy";
-        }, () -> "Copy selection.", AllIcons.Actions.Copy);
+            return MessageBundle.message("action.copySql.text.default");
+        }, () -> MessageBundle.message("action.copySql.description.default"), AllIcons.Actions.Copy);
         this.tree = tree;
         this.copyType = copyType;
     }

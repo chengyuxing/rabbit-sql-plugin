@@ -7,6 +7,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.common.tuple.Tuples;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.intellij.ui.JBColor;
@@ -249,7 +250,7 @@ public class NewXQLForm extends JPanel {
             }));
 
         //---- label1 ----
-        label1.setText("File name:");
+        label1.setText(MessageBundle.message("ui.newXqlForm.name"));
         add(label1, cc.xy(1, 1));
         add(filename, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 
@@ -264,7 +265,7 @@ public class NewXQLForm extends JPanel {
                 RowSpec.decodeSpecs("fill:default:grow(0.01)")));
 
             //---- filenameTooltip ----
-            filenameTooltip.setText("Divided by '/' or array e.g. [a, b, c]");
+            filenameTooltip.setText(MessageBundle.message("ui.newXqlForm.name.tooltip"));
             filenameTooltip.setVerticalAlignment(SwingConstants.TOP);
             filenameTooltip.setFont(filenameTooltip.getFont().deriveFont(filenameTooltip.getFont().getSize() - 1f));
             filenameTooltip.setForeground(InlineHelpText.COLOR);
@@ -281,12 +282,12 @@ public class NewXQLForm extends JPanel {
         add(panel2, new CellConstraints(3, 3, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, JBUI.insets(0, 4)));
 
         //---- label2 ----
-        label2.setText("Alias:");
+        label2.setText(MessageBundle.message("ui.newXqlForm.alias"));
         add(label2, cc.xy(1, 5));
         add(alias, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
 
         //---- label3 ----
-        label3.setText("Description:");
+        label3.setText(MessageBundle.message("ui.newXqlForm.description"));
         add(label3, cc.xy(1, 7));
         add(description, cc.xy(3, 7));
 

@@ -1,8 +1,10 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.types;
 
+import org.jetbrains.annotations.NotNull;
+
 public record XqlTreeNodeData(Type type, String title, Object source) {
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return title;
     }
 

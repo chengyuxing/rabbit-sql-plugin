@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.common.tuple.Quadruple;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.MapperGenerateDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
@@ -21,7 +22,7 @@ public class GenerateXqlMapperAction extends AnAction {
     private final JTree tree;
 
     public GenerateXqlMapperAction(JTree tree) {
-        super("Generate Mapper...", "Generate mapper file of this xql file.", AllIcons.Actions.Compile);
+        super(MessageBundle.message("action.generateXqlMapper.text"), MessageBundle.message("action.generateXqlMapper.description"), AllIcons.Actions.Compile);
         this.tree = tree;
     }
 

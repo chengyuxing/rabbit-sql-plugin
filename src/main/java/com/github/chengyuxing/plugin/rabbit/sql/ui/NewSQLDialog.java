@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
 import com.github.chengyuxing.common.util.StringUtils;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.NewSQLForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
@@ -39,11 +40,11 @@ public class NewSQLDialog extends DialogWrapper {
                 this.newSQLForm.setMessage("");
             } else {
                 setOKActionEnabled(false);
-                this.newSQLForm.setMessage(HtmlUtil.toHtml(HtmlUtil.span("'" + name + "' is invalid.", HtmlUtil.Color.WARNING)));
+                this.newSQLForm.setMessage(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.newSql.error.name", name), HtmlUtil.Color.WARNING)));
             }
         });
         setOKActionEnabled(false);
-        setTitle("New SQL");
+        setTitle(MessageBundle.message("ui.dialog.newSql.title"));
         init();
     }
 
@@ -61,7 +62,7 @@ public class NewSQLDialog extends DialogWrapper {
         var xqlFileManager = config.getXqlFileManager();
         if (Objects.nonNull(xqlFileManager)) {
             if (xqlFileManager.contains(sqlReference)) {
-                newSQLForm.setMessage(HtmlUtil.toHtml(HtmlUtil.span("'" + name + "' already exists.", HtmlUtil.Color.WARNING)));
+                newSQLForm.setMessage(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.newSql.error.exists", name), HtmlUtil.Color.WARNING)));
                 return;
             }
             var resource = xqlFileManager.getResource(alias);
@@ -79,7 +80,7 @@ public class NewSQLDialog extends DialogWrapper {
             }
             dispose();
             ApplicationManager.getApplication().runWriteAction(() ->
-                    WriteCommandAction.runWriteCommandAction(project, "Modify '" + sqlFileVf.getName() + "'", null, () -> {
+                    WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("ui.dialog.newSql.command", sqlFileVf.getName()), null, () -> {
                         var sqlFragment = "\n/*[" + name + "]*/";
                         if (!StringUtils.isBlank(desc)) {
                             sqlFragment += "\n/*#" + desc + "#*/";

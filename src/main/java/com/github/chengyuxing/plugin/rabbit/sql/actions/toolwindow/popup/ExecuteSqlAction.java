@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.common.tuple.Quadruple;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
@@ -27,11 +28,11 @@ public class ExecuteSqlAction extends AnAction {
                     @SuppressWarnings("unchecked")
                     var data = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
                     var name = data.getItem2();
-                    return "Execute '" + name + "'";
+                    return MessageBundle.message("action.executeSql.text", name);
                 }
             }
-            return "Execute";
-        }, () -> "Execute dynamic sql.", AllIcons.Actions.Execute);
+            return MessageBundle.message("action.executeSql.text.default");
+        }, () -> MessageBundle.message("action.executeSql.description.default"), AllIcons.Actions.Execute);
         this.tree = tree;
     }
 

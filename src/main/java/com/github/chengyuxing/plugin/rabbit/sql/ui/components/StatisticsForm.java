@@ -22,6 +22,7 @@ import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.common.tuple.Tuples;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.LinkCellRender;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.DataCell;
@@ -50,8 +51,8 @@ public class StatisticsForm extends JPanel {
     // (table, configs)
     private final Map<JBTable, List<XQLConfigManager.Config>> dataMap = new LinkedHashMap<>();
 
-    private static final Object[] summaryTableHeader = new Object[]{"Config", "Total XQL Files", "Total SQLs", "Total Lines", "Total Size"};
-    private static final Object[] detailsTableHeader = new Object[]{"File Name", "Alias", "SQLs", "Lines", "Size", "Last Modified"};
+    private static final Object[] summaryTableHeader = MessageBundle.message("ui.statisticsForm.summary.fields").split(",");
+    private static final Object[] detailsTableHeader = MessageBundle.message("ui.statisticsForm.details.fields").split(",");
 
     private Consumer<Path> clickEmptyTableTextLink = (module) -> {
     };
@@ -173,8 +174,8 @@ public class StatisticsForm extends JPanel {
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.setIntercellSpacing(new Dimension(0, 0));
         table.setDefaultRenderer(Object.class, new LinkCellRender());
-        table.getEmptyText().setText("No XQLFileManager configs added.");
-        table.getEmptyText().appendSecondaryText("Add XQLFileManager config", SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES, new AbstractAction() {
+        table.getEmptyText().setText(MessageBundle.message("ui.statisticsForm.empty"));
+        table.getEmptyText().appendSecondaryText(MessageBundle.message("ui.statisticsForm.empty.action"), SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 @SuppressWarnings("unchecked") var tabInfo = (DataPanel<Path>) tabPane.getSelectedComponent();

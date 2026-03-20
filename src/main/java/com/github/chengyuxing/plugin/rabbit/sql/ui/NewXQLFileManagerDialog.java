@@ -3,6 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.Helper;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.NewXQLFileManagerForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
@@ -29,7 +30,7 @@ public class NewXQLFileManagerDialog extends DialogWrapper {
         this.newXQLFileManagerForm = new NewXQLFileManagerForm();
         this.newXQLFileManagerForm.setInputChanged(s -> setOKActionEnabled(!StringUtils.isBlank(s)));
         setOKActionEnabled(false);
-        setTitle("New XQL File Manager");
+        setTitle(MessageBundle.message("ui.dialog.newXqlFileManager.title"));
         init();
     }
 
@@ -50,7 +51,7 @@ public class NewXQLFileManagerDialog extends DialogWrapper {
         var secondaryFilename = configName + "-" + name + ".yml";
         var secondaryAbsFilename = module.resolve(Constants.RESOURCE_ROOT).resolve(secondaryFilename);
         if (Files.exists(secondaryAbsFilename)) {
-            newXQLFileManagerForm.setMessage(HtmlUtil.toHtml(HtmlUtil.span("'" + secondaryFilename + "' already exists.", HtmlUtil.Color.WARNING)));
+            newXQLFileManagerForm.setMessage(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.newXqlFileManager.ok.error", secondaryFilename), HtmlUtil.Color.WARNING)));
             return;
         }
         ProjectFileUtil.createXqlConfigByTemplate(project, secondaryAbsFilename, () ->

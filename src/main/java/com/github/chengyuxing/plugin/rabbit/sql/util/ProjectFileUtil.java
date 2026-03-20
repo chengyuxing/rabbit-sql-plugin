@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
 import com.github.chengyuxing.common.util.StringUtils;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
@@ -90,7 +91,7 @@ public class ProjectFileUtil {
     }
 
     public static void createXqlConfigByTemplate(Project project, Path absFilename, Runnable then) {
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Creating XQL file manager.", false) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("ui.dialog.newXqlFileManager.ok.progress"), false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 indicator.setIndeterminate(true);

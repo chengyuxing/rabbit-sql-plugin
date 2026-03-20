@@ -3,6 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.common.util.StringUtils;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup.*;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TreeNodeRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
@@ -149,7 +150,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                                 if (ProjectFileUtil.isLocalFileUri(sqlPath)) {
                                     PsiUtil.navigate2xqlFile(sqlMeta.getItem1(), sqlMeta.getItem2(), sqlMeta.getItem4());
                                 } else {
-                                    NotificationUtil.showMessage(project, "only support local file", NotificationType.WARNING);
+                                    NotificationUtil.showMessage(project, MessageBundle.message("ui.xqlFileManagerPanel.xql.parse.warning"), NotificationType.WARNING);
                                 }
                             }
                         }
@@ -312,7 +313,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         }) {
             @Override
             public void update(@NotNull AnActionEvent e) {
-                e.getPresentation().setText("Copy Path/Reference...");
+                e.getPresentation().setText(MessageBundle.message("ui.xqlFileManagerPanel.copyGroup.xql"));
             }
         };
         return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
@@ -371,7 +372,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         }) {
             @Override
             public void update(@NotNull AnActionEvent e) {
-                e.getPresentation().setText("Copy Name/Definition...");
+                e.getPresentation().setText(MessageBundle.message("ui.xqlFileManagerPanel.copyGroup.sql"));
             }
         };
         return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
@@ -393,7 +394,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         var rootNode = new XqlTreeNode(project.getName());
         var model = new DefaultTreeModel(rootNode);
         var tree = new Tree(model);
-        tree.getEmptyText().setText("Cannot find src/main/resources folder.");
+        tree.getEmptyText().setText(MessageBundle.message("ui.xqlFileManagerPanel.empty"));
         tree.expandPath(new TreePath(rootNode));
         tree.setRootVisible(false);
         tree.setCellRenderer(new TreeNodeRenderer(() -> treeViewNodes));

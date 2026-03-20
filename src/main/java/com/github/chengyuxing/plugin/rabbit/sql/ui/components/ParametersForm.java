@@ -7,6 +7,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.util.StringUtils;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlParamValueHistoryDialog;
@@ -71,14 +72,14 @@ public class ParametersForm extends JPanel {
                     try {
                         v = JSON.std.listFrom(sv);
                     } catch (Exception e) {
-                        errors.add("JSON array of parameter '" + k + "' serialized error.");
+                        errors.add(MessageBundle.message("ui.paramForm.error.jsonArray", k));
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
                 } else if (sv.startsWith("{") && sv.endsWith("}")) {
                     try {
                         v = JSON.std.mapFrom(sv);
                     } catch (Exception e) {
-                        errors.add("JSON object of parameter '" + k + "' serialized error.");
+                        errors.add(MessageBundle.message("ui.paramForm.error.jsonObj", k));
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
                 } else if (StringUtils.isNumber(sv)) {
@@ -89,7 +90,7 @@ public class ParametersForm extends JPanel {
                             v = Long.parseLong(sv);
                         }
                     } catch (Exception e) {
-                        errors.add("Parse number '" + k + "' error.");
+                        errors.add(MessageBundle.message("ui.paramForm.error.number", k));
                         errors.addAll(ExceptionUtil.getCauseMessages(e));
                     }
                 } else if (StringUtils.equalsAnyIgnoreCase(sv, "null", "blank")) {
@@ -132,8 +133,8 @@ public class ParametersForm extends JPanel {
                 return column == 1;
             }
         };
-        paramsTable.getEmptyText().setText("No parameters need to be entered.");
-        paramsTable.getEmptyText().appendSecondaryText("Show raw sql", SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES, new AbstractAction() {
+        paramsTable.getEmptyText().setText(MessageBundle.message("ui.paramForm.empty"));
+        paramsTable.getEmptyText().appendSecondaryText(MessageBundle.message("ui.paramForm.empty.action"), SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clickEmptyTableTextLink.run();
@@ -158,7 +159,7 @@ public class ParametersForm extends JPanel {
             @Override
             protected JTextField createEditorComponent() {
                 var etf = new ExpandableTextField();
-                etf.addExtension(ExtendableTextComponent.Extension.create(AllIcons.Actions.ListFiles, "Parameters history", () -> {
+                etf.addExtension(ExtendableTextComponent.Extension.create(AllIcons.Actions.ListFiles, MessageBundle.message("ui.paramForm.paramHistory.btn.tooltip"), () -> {
                     var historyDialog = new DynamicSqlParamValueHistoryDialog(
                             paramsList,
                             etf::setText);

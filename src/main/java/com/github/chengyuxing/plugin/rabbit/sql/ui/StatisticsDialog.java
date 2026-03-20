@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.StatisticsForm;
@@ -32,9 +33,9 @@ public class StatisticsDialog extends DialogWrapper {
                     ApplicationManager.getApplication().runWriteAction(() ->
                             ProjectFileUtil.openFile(project, primaryAbsFilename, true)));
         });
-        setTitle("Statistics");
-        setOKButtonText("Copy and Close");
-        setCancelButtonText("Close");
+        setTitle(MessageBundle.message("ui.dialog.statistics.title"));
+        setOKButtonText(MessageBundle.message("ui.dialog.statistics.ok"));
+        setCancelButtonText(MessageBundle.message("ui.dialog.statistics.cancel"));
         setSize(650, 320);
         init();
     }

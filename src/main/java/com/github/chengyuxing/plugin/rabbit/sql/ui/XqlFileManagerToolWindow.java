@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
 import com.github.chengyuxing.plugin.rabbit.sql.Helper;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -28,7 +29,7 @@ public class XqlFileManagerToolWindow implements ToolWindowFactory, DumbAware {
 
     @Override
     public void init(@NotNull ToolWindow toolWindow) {
-        toolWindow.setTitle("XQL File Manager");
+        toolWindow.setTitle(MessageBundle.message("ui.toolWindow.title"));
         toolWindow.setHelpId(Helper.XQL_FILE_MANAGER);
         toolWindow.setIcon(XqlIcons.XQL_FILE_MANAGER_TOOL_WINDOW);
         toolWindow.setTitleActions(List.of(
@@ -37,7 +38,7 @@ public class XqlFileManagerToolWindow implements ToolWindowFactory, DumbAware {
     }
 
     public static void getXqlFileManagerPanel(Project project, Consumer<XqlFileManagerPanel> consumer) {
-        var tlm = ToolWindowManager.getInstance(project).getToolWindow("XQL File Manager");
+        var tlm = ToolWindowManager.getInstance(project).getToolWindow(MessageBundle.message("ui.toolWindow.title"));
         if (Objects.isNull(tlm)) {
             return;
         }

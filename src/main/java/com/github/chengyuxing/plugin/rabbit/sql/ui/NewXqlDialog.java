@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.NewXQLForm;
@@ -56,7 +57,7 @@ public class NewXqlDialog extends DialogWrapper {
         this.config = config;
         this.doc = doc;
         setOKActionEnabled(false);
-        setTitle("New XQL File");
+        setTitle(MessageBundle.message("ui.dialog.newXql.title"));
     }
 
     public void initContent() {
@@ -72,7 +73,7 @@ public class NewXqlDialog extends DialogWrapper {
                 return;
             }
             if (!abPath.endsWith(".xql")) {
-                this.newXqlFileForm.alert("File Extension is required.");
+                this.newXqlFileForm.alert(MessageBundle.message("ui.dialog.newXql.error.ext"));
                 setOKActionEnabled(false);
                 return;
             }
@@ -81,14 +82,14 @@ public class NewXqlDialog extends DialogWrapper {
                 for (var part : parts) {
                     var pt = part.trim();
                     if (pt.isEmpty() || INVALID_CHAR.matcher(pt).find()) {
-                        this.newXqlFileForm.alert("Invalid path part founded.");
+                        this.newXqlFileForm.alert(MessageBundle.message("ui.dialog.newXql.error.path"));
                         setOKActionEnabled(false);
                         return;
                     }
                 }
             }
             if (INVALID_CHAR.matcher(alias).find() || INVALID_CHAR.matcher(abPath).find()) {
-                this.newXqlFileForm.alert("Invalid character founded.");
+                this.newXqlFileForm.alert(MessageBundle.message("ui.dialog.newXql.error.char"));
                 setOKActionEnabled(false);
                 return;
             }
@@ -148,16 +149,16 @@ public class NewXqlDialog extends DialogWrapper {
         var description = data.getItem4();
         var file = config.getResourcesRoot().resolve(abPath);
 
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Create xql file.", false) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("ui.dialog.newXql.ok.progress"), false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 try {
                     if (config.getXqlFileManagerConfig().getFiles().containsKey(alias)) {
-                        newXqlFileForm.alert("Alias '" + alias + "' already configured.");
+                        newXqlFileForm.alert(MessageBundle.message("ui.dialog.newXql.ok.error.alias", alias));
                         return;
                     }
                     if (Files.exists(file)) {
-                        newXqlFileForm.alert("File '" + abPath + "' already exists.");
+                        newXqlFileForm.alert(MessageBundle.message("ui.dialog.newXql.ok.error.path", abPath));
                         return;
                     }
                     var xqlFt = FileTemplateManager.getInstance(project).getTemplate("XQL File.xql");
@@ -193,7 +194,7 @@ public class NewXqlDialog extends DialogWrapper {
                     whenComplete.accept(psi);
 
                     ApplicationManager.getApplication().runWriteAction(() ->
-                            WriteCommandAction.runWriteCommandAction(project, "Modify '" + config.getConfigName() + "'", null, () -> {
+                            WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("ui.dialog.newXql.command", config.getConfigName()), null, () -> {
                                 int filesNodeIndex = -1;
                                 for (int i = 0; i < doc.getLineCount(); i++) {
                                     var line = doc.getText(new TextRange(doc.getLineStartOffset(i), doc.getLineEndOffset(i)));

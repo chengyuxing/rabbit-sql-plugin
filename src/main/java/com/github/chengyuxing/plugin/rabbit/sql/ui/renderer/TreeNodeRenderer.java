@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui.renderer;
 
 import com.github.chengyuxing.common.tuple.Quintuple;
 import com.github.chengyuxing.common.tuple.Triple;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
@@ -40,12 +41,12 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                         append(nodeSource.toString());
                         if (config.isPrimary()) {
                             setIcon(XqlIcons.XQL_FILE_MANAGER);
-                            append(" [primary]", SimpleTextAttributes.GRAY_ATTRIBUTES);
+                            append(" " + MessageBundle.message("ui.xqlConfig.status.primary"), SimpleTextAttributes.GRAY_ATTRIBUTES);
                         } else {
                             setIcon(XqlIcons.XQL_FILE_MANAGER_SECONDARY);
                         }
                         if (config.isActive()) {
-                            append(" (active)", SimpleTextAttributes.GRAY_ATTRIBUTES);
+                            append(" " + MessageBundle.message("ui.xqlConfig.status.active"), SimpleTextAttributes.GRAY_ATTRIBUTES);
                         }
                     }
                     case XQL_FILE -> {

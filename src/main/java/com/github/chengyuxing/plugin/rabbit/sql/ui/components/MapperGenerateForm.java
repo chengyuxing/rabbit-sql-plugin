@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.util.ValueUtils;
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.CheckboxCellRenderer;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLJavaType;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
@@ -54,14 +55,7 @@ public class MapperGenerateForm extends JPanel {
 
     private final Disposable disposable;
 
-    private static final Object[] thead = new Object[]{
-            "SQL",
-            "Method",
-            "SQL Type",
-            "Param Type",
-            "Return Types",
-            "<T>",
-            "Enable"};
+    private static final Object[] thead = MessageBundle.message("ui.mapperGenForm.fields").split(",");
     public static final List<String> RETURN_TYPES = List.of(
             XQLJavaType.List.toString(),
             XQLJavaType.Set.toString(),
@@ -107,8 +101,8 @@ public class MapperGenerateForm extends JPanel {
         tabs = new TabbedPaneWrapper(disposable);
 
         tabs.addTab(com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.generateInterfaceMapperName(alias), AllIcons.Nodes.Interface, createMapperPanel(), "");
-        tabs.addTab("Configuration", AllIcons.General.Settings, createSettingPanel(), "");
-        tabs.addTab("About", AllIcons.General.ShowInfos, createAboutPanel(), "");
+        tabs.addTab(MessageBundle.message("ui.mapperGenForm.tab1"), AllIcons.General.Settings, createSettingPanel(), "");
+        tabs.addTab(MessageBundle.message("ui.mapperGenForm.tab2"), AllIcons.General.ShowInfos, createAboutPanel(), "");
 
         add(tabs.getComponent(), "cell 0 0,grow");
     }
@@ -193,7 +187,7 @@ public class MapperGenerateForm extends JPanel {
         table.setSelectionForeground(null);
         table.setSelectionBackground(null);
         table.setFillsViewportHeight(true);
-        table.getEmptyText().setText("No SQLs in " + alias + ".");
+        table.getEmptyText().setText(MessageBundle.message("ui.mapperGenForm.tab0.empty", alias));
         var tableScrollPane = new JBScrollPane();
         tableScrollPane.setBorder(BorderFactory.createEmptyBorder());
         tableScrollPane.setViewportView(table);
@@ -246,28 +240,28 @@ public class MapperGenerateForm extends JPanel {
             }
         });
 
-        JBLabel packageLabel = new JBLabel("Package:");
+        JBLabel packageLabel = new JBLabel(MessageBundle.message("ui.mapperGenForm.tab1.package"));
         packageTextField = new JBTextField();
-        JBLabel pageLabel = new JBLabel("Page key:");
+        JBLabel pageLabel = new JBLabel(MessageBundle.message("ui.mapperGenForm.tab1.page"));
         pageTextField = new JBTextField("page");
-        JBLabel sizeLabel = new JBLabel("Size key:");
+        JBLabel sizeLabel = new JBLabel(MessageBundle.message("ui.mapperGenForm.tab1.size"));
         sizeTextField = new JBTextField("size");
 
         panel.add(bakiCheckBox, cc.xy(1, 2));
         panel.add(bakiTextField, cc.xy(3, 2));
-        panel.add(new InlineHelpText("Specify the name if there are multiple baki in the spring context."), cc.xyw(3, 4, 6, CellConstraints.LEFT, CellConstraints.CENTER));
+        panel.add(new InlineHelpText(MessageBundle.message("ui.mapperGenForm.tab1.baki.description")), cc.xyw(3, 4, 6, CellConstraints.LEFT, CellConstraints.CENTER));
 
         panel.add(packageLabel, cc.xy(1, 6));
         panel.add(packageTextField, cc.xyw(3, 6, 5));
-        panel.add(new InlineHelpText("Where the mapper interface generated."), cc.xyw(3, 8, 6, CellConstraints.LEFT, CellConstraints.CENTER));
+        panel.add(new InlineHelpText(MessageBundle.message("ui.mapperGenForm.tab1.package.description")), cc.xyw(3, 8, 6, CellConstraints.LEFT, CellConstraints.CENTER));
 
         panel.add(pageLabel, cc.xy(1, 10));
         panel.add(pageTextField, cc.xy(3, 10));
         panel.add(sizeLabel, cc.xy(5, 10));
         panel.add(sizeTextField, cc.xy(7, 10));
-        panel.add(new InlineHelpText("The default page arg name of the PagedResource&lt;T&gt; return type,"), cc.xyw(3, 12, 6, CellConstraints.LEFT, CellConstraints.CENTER));
-        panel.add(new InlineHelpText("it must be consistent with BakiDao's properties: <code>pageKey</code> and"), cc.xyw(3, 13, 6, CellConstraints.LEFT, CellConstraints.CENTER));
-        panel.add(new InlineHelpText("<code>sizeKey</code> when the <b>Param Type</b> is <code>@Arg</code>."), cc.xyw(3, 14, 6, CellConstraints.LEFT, CellConstraints.CENTER));
+        panel.add(new InlineHelpText(MessageBundle.message("ui.mapperGenForm.tab1.pageSize.description.line1")), cc.xyw(3, 12, 6, CellConstraints.LEFT, CellConstraints.CENTER));
+        panel.add(new InlineHelpText(MessageBundle.message("ui.mapperGenForm.tab1.pageSize.description.line2")), cc.xyw(3, 13, 6, CellConstraints.LEFT, CellConstraints.CENTER));
+        panel.add(new InlineHelpText(MessageBundle.message("ui.mapperGenForm.tab1.pageSize.description.line3")), cc.xyw(3, 14, 6, CellConstraints.LEFT, CellConstraints.CENTER));
         return panel;
     }
 
@@ -292,12 +286,12 @@ public class MapperGenerateForm extends JPanel {
         }));
         CellConstraints cc = new CellConstraints();
 
-        var label1 = new JBLabel("1. Custom java bean for 'Param Type' and '<T>' must be fully qualified class name.");
-        var label2 = new JBLabel("    Example: org.example.User");
+        var label1 = new JBLabel(MessageBundle.message("ui.mapperGenForm.tab2.description.line1"));
+        var label2 = new JBLabel(MessageBundle.message("ui.mapperGenForm.tab2.description.line2"));
         label2.setForeground(InlineHelpText.COLOR);
 
-        var label3 = new JBLabel("2. If method 'Return Types' is 'PagedResource<T>' and has another method that ends with ");
-        var label4 = new JBLabel("    'count', 'Count', '-count' or '_count', it will be treated as count query.");
+        var label3 = new JBLabel(MessageBundle.message("ui.mapperGenForm.tab2.description.line3"));
+        var label4 = new JBLabel(MessageBundle.message("ui.mapperGenForm.tab2.description.line4"));
 
         var label5 = new JBLabel("    /*[queryUsers]*/");
         label5.setForeground(InlineHelpText.COLOR);

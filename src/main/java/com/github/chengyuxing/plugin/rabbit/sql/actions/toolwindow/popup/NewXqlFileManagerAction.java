@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXQLFileManagerDialog;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
@@ -21,7 +22,7 @@ public class NewXqlFileManagerAction extends AnAction {
     private final JTree tree;
 
     public NewXqlFileManagerAction(JTree tree) {
-        super("New", "Create a new XQL file manager config.", AllIcons.Actions.AddMulticaret);
+        super(MessageBundle.message("action.newXqlFileManager.text"), MessageBundle.message("action.newXqlFileManager.description"), AllIcons.Actions.AddMulticaret);
         this.tree = tree;
     }
 
