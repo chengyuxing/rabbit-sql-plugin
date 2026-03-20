@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project;
 
 public class NotificationUtil {
     public static void showMessage(Project project, String title, String message, NotificationType type) {
-        var notice = new Notification("Rabbit-SQL Notification Group", title, message, type);
+        var notice = new Notification(MessageBundle.message("notification.group.rabbit-sql.notification.group"), title, message, type);
         Notifications.Bus.notify(notice, project);
     }
 
