@@ -79,6 +79,13 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.44</h3>
+            <ul>
+                <li>Xql tree view loading optimized</li>
+                <li>Update live template <code>xql:example-update</code></li>
+                <li>Fix the possible interference issue of parsing XQL trees among multiple projects</li>
+                <li>Some optimized</li>
+            </ul>
             <h3>2.4.43</h3>
             <ul>
                 <li>Xql name reference scan optimized</li>
@@ -696,13 +703,13 @@
     <depends optional="true" config-file="plugin.database.xml">com.intellij.database</depends>
     <depends optional="true" config-file="plugin.spring.xml">com.intellij.spring</depends>
 
+    <resource-bundle>messages.MessageBundle</resource-bundle>
+
     <projectListeners>
         <listener class="com.github.chengyuxing.plugin.rabbit.sql.ProjectReadyListener"
                   topic="com.intellij.openapi.project.DumbService$DumbModeListener"/>
         <listener class="com.github.chengyuxing.plugin.rabbit.sql.XqlFileChangeListener"
                   topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
-        <listener class="com.github.chengyuxing.plugin.rabbit.sql.XqlConfigLifecycleListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </projectListeners>
 
     <!-- Extension points defined by the plugin.
@@ -724,7 +731,8 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup toolWindowId="Rabbit-SQL Notification" displayType="BALLOON"
-                           id="Rabbit-SQL Notification Group"/>
+                           id="Rabbit-SQL Notification Group" bundle="messages.MessageBundle"
+                           key="notification.group.rabbit-sql.notification.group"/>
     </extensions>
 
     <!--    <extensions defaultExtensionNs="com.intellij">-->
@@ -739,23 +747,17 @@
     <!--    </extensions>-->
 
     <actions>
-        <group id="XQL File Manager Menu"
-               text="XQL File Manager"
-               description="XQL file manager actions."
+        <group id="xqlfilemanager.menu"
                searchable="true"
                popup="true"
                icon="com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons.XQL_FILE_MANAGER">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <action class="com.github.chengyuxing.plugin.rabbit.sql.actions.StatisticsAction"
                     id="com.github.chengyuxing.plugin.rabbit.sql.actions.StatisticsAction"
-                    text="Statistics"
-                    description="Statistics of XQL File Manager configs."
                     icon="AllIcons.Actions.DependencyAnalyzer"
             />
             <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.ReloadConfigAction"
                     class="com.github.chengyuxing.plugin.rabbit.sql.actions.ReloadConfigAction"
-                    text="Reload All"
-                    description="Commit all files and reload XQL File Manager."
                     icon="AllIcons.Actions.ForceRefresh">
             </action>
         </group>
@@ -765,26 +767,19 @@
 
         <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.RefreshContentAction"
                 class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.RefreshContentAction"
-                text="Refresh"
-                description="Refresh XQL file manager tool window content."
                 icon="AllIcons.Actions.Refresh">
         </action>
         <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ExpandAllAction"
                 class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ExpandAllAction"
-                text="Expand All"
                 icon="AllIcons.Actions.Expandall"/>
         <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.CollapseAllAction"
                 class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.CollapseAllAction"
-                text="Collapse All"
                 icon="AllIcons.Actions.Collapseall"/>
         <action class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ToggleViewModeAction"
                 id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.ToggleViewModeAction"
-                text="Show XQL Files As Tree"
                 icon="AllIcons.Actions.ListFiles"/>
         <action id="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.SelectOpenedFile"
                 class="com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.SelectOpenedFile"
-                text="Select Opened File"
-                description="Select opened file."
                 icon="AllIcons.General.Locate"/>
     </actions>
 </idea-plugin>
