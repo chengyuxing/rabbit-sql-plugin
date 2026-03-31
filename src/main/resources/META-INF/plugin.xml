@@ -81,13 +81,13 @@
         <![CDATA[
             <h3>2.4.45</h3>
             <ul>
-                <li>Fix some bugs.</li>
+                <li>Fixed some bugs.</li>
             </ul>
             <h3>2.4.44</h3>
             <ul>
                 <li>Xql tree view loading optimized</li>
                 <li>Update live template <code>xql:example-update</code></li>
-                <li>Fix the possible interference issue of parsing XQL trees among multiple projects</li>
+                <li>Fixed the possible interference issue of parsing XQL trees among multiple projects</li>
                 <li>Some optimized</li>
             </ul>
             <h3>2.4.43</h3>
