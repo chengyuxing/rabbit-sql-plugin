@@ -19,7 +19,6 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.ui.TreeUIHelper;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
-import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +49,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     private ActionPopupMenu moduleMenu;
 
     private Tree tree;
-    private List<TreePath> treeExpandedState = new ArrayList<>();
+    private final Map<TreePath, Boolean> treeExpandedState = new HashMap<>();
     private boolean treeViewNodes = false;
 
 
@@ -206,14 +205,29 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     }
 
     void saveTreeExpandedState() {
-        if (Objects.nonNull(tree)) {
-            treeExpandedState = TreeUtil.collectExpandedPaths(tree);
+        if (Objects.isNull(tree)) {
+            return;
+        }
+        treeExpandedState.clear();
+        var expandedPaths = tree.getExpandedDescendants(new TreePath(tree.getModel().getRoot()));
+        while (Objects.nonNull(expandedPaths) && expandedPaths.hasMoreElements()) {
+            var path = expandedPaths.nextElement();
+            treeExpandedState.put(path, Boolean.TRUE);
         }
     }
 
     void restoreTreeExpandedState() {
-        if (Objects.nonNull(tree)) {
-            TreeUtil.restoreExpandedPaths(tree, treeExpandedState);
+        if (Objects.isNull(tree)) {
+            return;
+        }
+        for (var e : treeExpandedState.entrySet()) {
+            var path = e.getKey();
+            var expand = e.getValue();
+            if (expand) {
+                tree.expandPath(path);
+            } else {
+                tree.collapsePath(path);
+            }
         }
     }
 
