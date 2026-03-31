@@ -24,6 +24,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -157,7 +158,7 @@ public class ProjectFileUtil {
         return findModule(element.getProject(), vf);
     }
 
-    public static Path getModulePath(PsiElement element) {
+    public static @Nullable Path getModulePath(PsiElement element) {
         return Optional.ofNullable(findModule(element))
                 .map(VirtualFile::toNioPath)
                 .orElse(null);

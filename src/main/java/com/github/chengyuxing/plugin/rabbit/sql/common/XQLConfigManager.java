@@ -68,7 +68,7 @@ public final class XQLConfigManager implements Disposable {
         return configMap;
     }
 
-    public Set<Config> getConfigs(Path module) {
+    public Set<Config> getConfigs(@NotNull Path module) {
         var configs = getConfigMap().get(module);
         return Objects.nonNull(configs) ? configs : Set.of();
     }
@@ -80,7 +80,7 @@ public final class XQLConfigManager implements Disposable {
         }
     }
 
-    public Config getActiveConfig(Path module) {
+    public Config getActiveConfig(@NotNull Path module) {
         var configs = getConfigs(module);
         for (var config : configs) {
             if (config.isActive()) {
@@ -95,6 +95,9 @@ public final class XQLConfigManager implements Disposable {
             return null;
         }
         var module = ProjectFileUtil.getModulePath(element);
+        if (module == null) {
+            return null;
+        }
         return getActiveConfig(module);
     }
 
