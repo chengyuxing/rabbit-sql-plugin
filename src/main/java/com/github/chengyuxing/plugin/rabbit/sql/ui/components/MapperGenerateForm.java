@@ -20,7 +20,6 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.components.*;
 import com.intellij.ui.table.JBTable;
-import com.intellij.util.ui.UIUtil;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import net.miginfocom.swing.MigLayout;
@@ -32,10 +31,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.Vector;
 
 public class MapperGenerateForm extends JPanel {
     private final Project project;
@@ -267,49 +264,58 @@ public class MapperGenerateForm extends JPanel {
 
     private JPanel createAboutPanel() {
         var panel = new JPanel();
-        UIUtil.addInsets(panel, 2, 10, 2, 10);
-        panel.setLayout(new FormLayout(new ColumnSpec[]{
-                new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(10), FormSpec.DEFAULT_GROW)
-        }, new RowSpec[]{
-                new RowSpec(Sizes.DLUY4),
-                FormFactory.DEFAULT_ROWSPEC,
-                new RowSpec(Sizes.DLUY3),
-                FormFactory.DEFAULT_ROWSPEC,
-                new RowSpec(Sizes.DLUY4),
-                FormFactory.DEFAULT_ROWSPEC,
-                FormFactory.DEFAULT_ROWSPEC,
-                new RowSpec(Sizes.DLUY3),
-                FormFactory.DEFAULT_ROWSPEC,
-                FormFactory.DEFAULT_ROWSPEC,
-                FormFactory.DEFAULT_ROWSPEC,
-                FormFactory.DEFAULT_ROWSPEC,
-        }));
-        CellConstraints cc = new CellConstraints();
+        panel.setBorder(BorderFactory.createEmptyBorder());
+        panel.setLayout(new MigLayout(
+                "insets 8 0 0 0,hidemode 3",
+                // columns
+                "[grow 1,fill]",
+                // rows
+                "[grow 1,fill]"));
 
-        var label1 = new JBLabel(MessageBundle.message("ui.mapperGenForm.tab2.description.line1"));
-        var label2 = new JBLabel(MessageBundle.message("ui.mapperGenForm.tab2.description.line2"));
-        label2.setForeground(InlineHelpText.COLOR);
+        var contentPane = new JEditorPane();
+        contentPane.setContentType("text/html");
+        // language=html
+        var html = """
+                <html lang="en">
+                <header>
+                <style>
+                body{
+                font-family: sans-serif;
+                }
+                h1{
+                text-align: center;
+                }
+                p{
+                margin-bottom: 4px;
+                margin-top: 4px;
+                }
+                </style>
+                </header>
+                <body>
+                <h1>Usage Instructions</h1>
+                <h2>Mapper Editor</h2>
+                <p>1. Custom java bean for <kbd>[Param Type]</kbd> and <kbd>[&lt;T&gt;]</kbd> must be fully qualified class name.</p>
+                <p>Example: <code>org.example.User</code></p>
+                <br>
+                <p>2. If method <kbd>[Return Types]</kbd> is <kbd>[PagedResource&lt;T&gt;]</kbd> and has another method that ends with <code>'count'</code>, <code>'Count'</code>, <code>'-count'</code> or <code>'_count'</code>, it will be treated as count query.</p>
+                ${exampleSql}
+                <p>3. Do not delete the <code>*.rbm</code> file, it's the configuration of mapper interface.</p>
+                </body>
+                </html>
+                """;
+        var exampleSql = HtmlUtil.highlightSql("""
+                /*[queryUsers]*/
+                select * from user where id = :id;
+                /*[queryUsersCount]*/
+                select count(*) from user where id = :id;
+                """);
+        contentPane.setText(com.github.chengyuxing.common.util.StringUtils.FMT.format(html, Map.of("exampleSql", exampleSql)));
 
-        var label3 = new JBLabel(MessageBundle.message("ui.mapperGenForm.tab2.description.line3"));
-        var label4 = new JBLabel(MessageBundle.message("ui.mapperGenForm.tab2.description.line4"));
+        var contentScrollPane = new JBScrollPane();
+        contentScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        contentScrollPane.setViewportView(contentPane);
 
-        var label5 = new JBLabel("    /*[queryUsers]*/");
-        label5.setForeground(InlineHelpText.COLOR);
-        var label6 = new JBLabel("    select * from user where id = :id;");
-        label6.setForeground(InlineHelpText.COLOR);
-        var label7 = new JBLabel("    /*[queryUsersCount]*/");
-        label7.setForeground(InlineHelpText.COLOR);
-        var label8 = new JBLabel("    select count(*) from user where id = :id;");
-        label8.setForeground(InlineHelpText.COLOR);
-
-        panel.add(label1, cc.xy(1, 2));
-        panel.add(label2, cc.xy(1, 4));
-        panel.add(label3, cc.xy(1, 6));
-        panel.add(label4, cc.xy(1, 7));
-        panel.add(label5, cc.xy(1, 9));
-        panel.add(label6, cc.xy(1, 10));
-        panel.add(label7, cc.xy(1, 11));
-        panel.add(label8, cc.xy(1, 12));
+        panel.add(contentScrollPane);
 
         return panel;
     }
