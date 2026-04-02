@@ -277,6 +277,7 @@ public class MapperGenerateForm extends JPanel {
                 <style>
                 body{
                 font-family: sans-serif;
+                word-break:break-all;
                 }
                 h1{
                 text-align: center;

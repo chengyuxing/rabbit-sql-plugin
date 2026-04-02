@@ -25,7 +25,7 @@ public class InlineHelpText extends JPanel {
     private void init() {
         setLayout(new FlowLayout(FlowLayout.LEFT, hgap, 0));
         var label = new JLabel(text);
-        label.setText("<html><body style='width:" + width + "px'>" + text + "</body></html>");
+        label.setText("<html><body style='width:" + width + "px';word-break:break-all;>" + text + "</body></html>");
         label.setFont(getFont().deriveFont(getFont().getSize() - 1f));
         label.setForeground(COLOR);
         label.setVerticalAlignment(SwingConstants.TOP);
