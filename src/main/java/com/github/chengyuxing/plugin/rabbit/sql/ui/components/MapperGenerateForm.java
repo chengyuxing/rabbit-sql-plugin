@@ -221,9 +221,7 @@ public class MapperGenerateForm extends JPanel {
 
                 FormFactory.DEFAULT_ROWSPEC,
                 new RowSpec(Sizes.DLUY1),
-                FormFactory.MIN_ROWSPEC,
-                FormFactory.MIN_ROWSPEC,
-                FormFactory.MIN_ROWSPEC,
+                FormFactory.MIN_ROWSPEC
         }));
         CellConstraints cc = new CellConstraints();
 
@@ -256,9 +254,7 @@ public class MapperGenerateForm extends JPanel {
         panel.add(pageTextField, cc.xy(3, 10));
         panel.add(sizeLabel, cc.xy(5, 10));
         panel.add(sizeTextField, cc.xy(7, 10));
-        panel.add(new InlineHelpText(MessageBundle.message("ui.mapperGenForm.tab1.pageSize.description.line1")), cc.xyw(3, 12, 6, CellConstraints.LEFT, CellConstraints.CENTER));
-        panel.add(new InlineHelpText(MessageBundle.message("ui.mapperGenForm.tab1.pageSize.description.line2")), cc.xyw(3, 13, 6, CellConstraints.LEFT, CellConstraints.CENTER));
-        panel.add(new InlineHelpText(MessageBundle.message("ui.mapperGenForm.tab1.pageSize.description.line3")), cc.xyw(3, 14, 6, CellConstraints.LEFT, CellConstraints.CENTER));
+        panel.add(new InlineHelpText(MessageBundle.message("ui.mapperGenForm.tab1.pageSize.description")), cc.xyw(3, 12, 6, CellConstraints.LEFT, CellConstraints.CENTER));
         return panel;
     }
 
@@ -292,14 +288,7 @@ public class MapperGenerateForm extends JPanel {
                 </style>
                 </header>
                 <body>
-                <h1>Usage Instructions</h1>
-                <h2>Mapper Editor</h2>
-                <p>1. Custom java bean for <kbd>[Param Type]</kbd> and <kbd>[&lt;T&gt;]</kbd> must be fully qualified class name.</p>
-                <p>Example: <code>org.example.User</code></p>
-                <br>
-                <p>2. If method <kbd>[Return Types]</kbd> is <kbd>[PagedResource&lt;T&gt;]</kbd> and has another method that ends with <code>'count'</code>, <code>'Count'</code>, <code>'-count'</code> or <code>'_count'</code>, it will be treated as count query.</p>
-                ${exampleSql}
-                <p>3. Do not delete the <code>*.rbm</code> file, it's the configuration of mapper interface.</p>
+                ${about}
                 </body>
                 </html>
                 """;
@@ -309,7 +298,10 @@ public class MapperGenerateForm extends JPanel {
                 /*[queryUsersCount]*/
                 select count(*) from user where id = :id;
                 """);
-        contentPane.setText(com.github.chengyuxing.common.util.StringUtils.FMT.format(html, Map.of("exampleSql", exampleSql)));
+        var content = com.github.chengyuxing.common.util.StringUtils.FMT.format(html,
+                Map.of("about", MessageBundle.message("ui.mapperGenForm.tab2.about"),
+                        "exampleSql", exampleSql));
+        contentPane.setText(content);
 
         var contentScrollPane = new JBScrollPane();
         contentScrollPane.setBorder(BorderFactory.createEmptyBorder());
