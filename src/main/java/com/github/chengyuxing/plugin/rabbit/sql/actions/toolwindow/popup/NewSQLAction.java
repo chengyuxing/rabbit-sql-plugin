@@ -55,6 +55,11 @@ public class NewSQLAction extends AnAction {
             var filename = data.getItem3();
             if (!ProjectFileUtil.isLocalFileUri(filename)) {
                 e.getPresentation().setEnabled(false);
+                return;
+            }
+            // is error file, do not allow 'new' action
+            if (data.getItem4().getXqlFileManager().getErrorAlias().contains(data.getItem1())) {
+                e.getPresentation().setEnabled(false);
             }
         }
     }

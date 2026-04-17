@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.4.45.231-261"
+version = "2.4.46.231-261"
 
 repositories {
     mavenLocal()

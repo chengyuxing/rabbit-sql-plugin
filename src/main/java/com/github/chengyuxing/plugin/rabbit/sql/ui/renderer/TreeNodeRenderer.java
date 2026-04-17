@@ -58,7 +58,15 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                             setIcon(XqlIcons.XQL_FILE_REMOTE);
                         }
                         String secondaryText;
-                        append(sqlMeta.getItem1() + " ");
+
+                        boolean isFileHasError = sqlMeta.getItem4().getXqlFileManager().getErrorAlias().contains(sqlMeta.getItem1());
+                        if (isFileHasError) {
+                            // highlight error file node
+                            append(sqlMeta.getItem1() + " ", SimpleTextAttributes.ERROR_ATTRIBUTES);
+                        } else {
+                            append(sqlMeta.getItem1() + " ");
+                        }
+
                         if (Objects.nonNull(sqlMeta.getItem5()) && !Objects.equals(sqlMeta.getItem5().trim(), "")) {
                             secondaryText = "(" + sqlMeta.getItem5() + ")";
                             setToolTipText(sqlMeta.getItem2());
