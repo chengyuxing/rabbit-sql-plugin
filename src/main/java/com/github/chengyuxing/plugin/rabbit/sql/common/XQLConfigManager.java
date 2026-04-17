@@ -137,6 +137,110 @@ public final class XQLConfigManager implements Disposable {
         configMap.clear();
     }
 
+    public abstract class PluginXQLFileManager extends XQLFileManager {
+        private final Path classesPath;
+
+        private volatile Set<String> errorAlias = new HashSet<>();
+
+        public PluginXQLFileManager(Path modulePath) {
+            this.classesPath = modulePath.resolve(Path.of("target", "classes"));
+        }
+
+        protected abstract String messagePrefix();
+
+        public Set<String> getErrorAlias() {
+            return errorAlias;
+        }
+
+        @Override
+        protected Map<String, Resource> buildResources() {
+            Set<Message> messages = new LinkedHashSet<>();
+            Map<String, Resource> newResources = new LinkedHashMap<>();
+            Map<String, Resource> oldResources = this.getResources();
+            Set<String> errors = new LinkedHashSet<>();
+            for (Map.Entry<String, String> e : getFiles().entrySet()) {
+                String alias = e.getKey();
+                String filename = e.getValue();
+
+                FileResource fr = createFileResource(filename);
+                if (!fr.exists()) {
+                    messages.add(Message.warning(messagePrefix() + MessageBundle.message("xql.config.manager.loadResource.notExists", filename, alias)));
+                }
+                String ext = fr.getFilenameExtension();
+                if (ext != null && (ext.equals("sql") || ext.equals("xql"))) {
+                    try {
+                        Resource old = oldResources.get(alias);
+                        if (old != null
+                                && old.getFilename().equals(filename)
+                                && old.getLastModified() == fr.getLastModified()) {
+                            newResources.put(alias, old);
+                        } else {
+                            newResources.put(alias, parseXql(alias, filename, fr));
+                        }
+                    } catch (XQLParseException ex) {
+                        errors.add(alias);
+                        newResources.put(alias, new Resource(filename));
+                        if (ex.getCause() instanceof ScriptSyntaxException cause) {
+                            messages.add(Message.warning(messagePrefix() + ex.getMessage()));
+                            messages.add(Message.warning(messagePrefix() + cause.getMessage()));
+                        } else {
+                            messages.add(Message.error(messagePrefix() + ex.getMessage()));
+                            log.warn(ex);
+                        }
+                    } catch (Exception ex) {
+                        errors.add(alias);
+                        newResources.put(alias, new Resource(filename));
+                        messages.add(Message.error(messagePrefix() + ex.getMessage()));
+                        log.warn(ex);
+                    }
+                }
+            }
+            notificationExecutor.show(messages);
+            this.errorAlias = errors;
+            return newResources;
+        }
+
+        @Override
+        protected Map<String, IPipe<?>> buildPipeInstances() {
+            Thread currentThread = Thread.currentThread();
+            ClassLoader originalClassLoader = currentThread.getContextClassLoader();
+            ClassLoader pluginClassLoader = this.getClass().getClassLoader();
+            try {
+                currentThread.setContextClassLoader(pluginClassLoader);
+                ClassFileLoader loader = ClassFileLoader.of(pluginClassLoader, classesPath);
+                Map<String, IPipe<?>> newPipeInstances = new HashMap<>();
+                Map<String, IPipe<?>> oldPipeInstances = this.getPipeInstances();
+                for (Map.Entry<String, String> e : getPipes().entrySet()) {
+                    var pipeName = e.getKey();
+                    var pipeClassName = e.getValue();
+
+                    IPipe<?> old = oldPipeInstances.get(pipeName);
+                    if (old != null) {
+                        newPipeInstances.put(pipeName, old);
+                    } else {
+                        var pipeClassPath = classesPath.resolve(pipeClassName.replace(".", "/") + ".class");
+                        if (!Files.exists(pipeClassPath)) {
+                            notificationExecutor.show(Message.warning(MessageBundle.message("xql.config.manager.loadPipe.notExists", messagePrefix(), pipeClassPath)));
+                            continue;
+                        }
+                        try {
+                            var pipeClass = loader.findClass(pipeClassName);
+                            if (pipeClass == null) {
+                                continue;
+                            }
+                            newPipeInstances.put(pipeName, (IPipe<?>) ReflectUtils.getInstance(pipeClass));
+                        } catch (Throwable ex) {
+                            notificationExecutor.show(Message.warning(MessageBundle.message("xql.config.manager.loadPipe.error", messagePrefix(), pipeClassName, ex.getMessage())));
+                        }
+                    }
+                }
+                return newPipeInstances;
+            } finally {
+                currentThread.setContextClassLoader(originalClassLoader);
+            }
+        }
+    }
+
     public final class Config implements AutoCloseable {
         private final Path modulePath;
         // src/main/resources
@@ -146,7 +250,7 @@ public final class XQLConfigManager implements Disposable {
         private Path configPath;
 
         private final XQLFileManagerConfig xqlFileManagerConfig;
-        private final XQLFileManager xqlFileManager;
+        private final PluginXQLFileManager xqlFileManager;
         private final Set<String> originalXqlFiles;
         private SqlGenerator sqlGenerator = new SqlGenerator(':');
         private boolean active = false;
@@ -159,47 +263,10 @@ public final class XQLConfigManager implements Disposable {
             this.originalXqlFiles = ConcurrentHashMap.newKeySet();
 
             this.xqlFileManagerConfig = new XQLFileManagerConfig();
-            this.xqlFileManager = new XQLFileManager() {
-                private final Path classesPath = modulePath.resolve(Path.of("target", "classes"));
-
+            this.xqlFileManager = new PluginXQLFileManager(modulePath) {
                 @Override
-                protected Map<String, IPipe<?>> buildPipeInstances() {
-                    Thread currentThread = Thread.currentThread();
-                    ClassLoader originalClassLoader = currentThread.getContextClassLoader();
-                    ClassLoader pluginClassLoader = this.getClass().getClassLoader();
-                    try {
-                        currentThread.setContextClassLoader(pluginClassLoader);
-                        ClassFileLoader loader = ClassFileLoader.of(pluginClassLoader, classesPath);
-                        Map<String, IPipe<?>> newPipeInstances = new HashMap<>();
-                        Map<String, IPipe<?>> oldPipeInstances = this.getPipeInstances();
-                        for (Map.Entry<String, String> e : getPipes().entrySet()) {
-                            var pipeName = e.getKey();
-                            var pipeClassName = e.getValue();
-
-                            IPipe<?> old = oldPipeInstances.get(pipeName);
-                            if (old != null) {
-                                newPipeInstances.put(pipeName, old);
-                            } else {
-                                var pipeClassPath = classesPath.resolve(pipeClassName.replace(".", "/") + ".class");
-                                if (!Files.exists(pipeClassPath)) {
-                                    notificationExecutor.show(Message.warning(MessageBundle.message("xql.config.manager.loadPipe.notExists", messagePrefix(), pipeClassPath)));
-                                    continue;
-                                }
-                                try {
-                                    var pipeClass = loader.findClass(pipeClassName);
-                                    if (pipeClass == null) {
-                                        continue;
-                                    }
-                                    newPipeInstances.put(pipeName, (IPipe<?>) ReflectUtils.getInstance(pipeClass));
-                                } catch (Throwable ex) {
-                                    notificationExecutor.show(Message.warning(MessageBundle.message("xql.config.manager.loadPipe.error", messagePrefix(), pipeClassName, ex.getMessage())));
-                                }
-                            }
-                        }
-                        return newPipeInstances;
-                    } finally {
-                        currentThread.setContextClassLoader(originalClassLoader);
-                    }
+                protected String messagePrefix() {
+                    return Config.this.messagePrefix();
                 }
             };
         }
@@ -216,8 +283,8 @@ public final class XQLConfigManager implements Disposable {
             if (!isValid()) {
                 return Set.of();
             }
-            Set<Message> successes = new HashSet<>();
-            Set<Message> warnings = new HashSet<>();
+            Set<Message> successes = new LinkedHashSet<>();
+            Set<Message> warnings = new LinkedHashSet<>();
             try {
                 xqlFileManagerConfig.loadYaml(new FileResource(configPath.toUri().toString()));
                 if (xqlFileManagerConfig.getFiles().isEmpty()) {
@@ -246,14 +313,6 @@ public final class XQLConfigManager implements Disposable {
                 xqlFileManager.setFiles(newFiles);
                 xqlFileManager.init();
                 successes.add(Message.info(MessageBundle.message("xql.config.manager.loadXql.success", messagePrefix())));
-            } catch (XQLParseException e) {
-                if (e.getCause() instanceof ScriptSyntaxException cause) {
-                    warnings.add(Message.warning(messagePrefix() + e.getMessage()));
-                    warnings.add(Message.warning(messagePrefix() + cause.getMessage()));
-                } else {
-                    warnings.add(Message.error(messagePrefix() + e.getMessage()));
-                    log.warn(e);
-                }
             } catch (ConcurrentModificationException e) {
                 log.warn(e);
             } catch (Exception e) {
@@ -278,7 +337,11 @@ public final class XQLConfigManager implements Disposable {
         }
 
         private String messagePrefix() {
-            return "[" + getModuleName() + ":" + getConfigName() + "]  ";
+            var configName = getConfigName();
+            if (!configName.isEmpty()) {
+                configName = ":" + configName;
+            }
+            return "[" + getModuleName() + configName + "]  ";
         }
 
         private void fire(boolean silent) {
@@ -325,7 +388,7 @@ public final class XQLConfigManager implements Disposable {
             return xqlFileManagerConfig;
         }
 
-        public XQLFileManager getXqlFileManager() {
+        public PluginXQLFileManager getXqlFileManager() {
             return xqlFileManager;
         }
 
@@ -346,6 +409,9 @@ public final class XQLConfigManager implements Disposable {
         }
 
         public String getConfigName() {
+            if (configVfs == null) {
+                return "";
+            }
             return configVfs.getName();
         }
 
