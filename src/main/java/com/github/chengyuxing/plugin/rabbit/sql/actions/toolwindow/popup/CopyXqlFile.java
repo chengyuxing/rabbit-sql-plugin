@@ -14,6 +14,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -48,7 +49,7 @@ public class CopyXqlFile extends AnAction {
             var filepath = sqlMeta.getItem3();
             ApplicationManager.getApplication().executeOnPooledThread(() -> {
                 try {
-                    var file = createFileByUri(filepath);
+                    var file = createFileByUri(project, filepath);
                     var clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     clipboard.setContents(new FileTransferable(List.of(file)), null);
                 } catch (IOException ex) {
@@ -63,7 +64,7 @@ public class CopyXqlFile extends AnAction {
         return ActionUpdateThread.BGT;
     }
 
-    private static File createFileByUri(String path) throws IOException {
+    private static File createFileByUri(Project project, String path) throws IOException {
         if (ProjectFileUtil.isLocalFileUri(path)) {
             return Path.of(URI.create(path)).toFile();
         }
@@ -73,6 +74,8 @@ public class CopyXqlFile extends AnAction {
         try (var out = new FileOutputStream(file)) {
             var fr = new FileResource(path);
             fr.transferTo(out);
+        } catch (Exception e) {
+            NotificationUtil.showMessage(project, e.getMessage(), NotificationType.ERROR);
         }
         return file;
     }
