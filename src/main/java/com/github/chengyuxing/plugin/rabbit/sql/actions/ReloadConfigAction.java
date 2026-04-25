@@ -29,6 +29,7 @@ public class ReloadConfigAction extends AnAction {
                         }
                     }));
             xqlConfigManager.cleanup();
+            PsiUtil.reHighlightActiveEditor(project);
             XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
         }
     }

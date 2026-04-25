@@ -33,6 +33,7 @@ public class ReloadSelectedAction extends AnAction {
             var config = (XQLConfigManager.Config) nodeSource.source();
             PsiUtil.saveUnsavedXqlAndConfig(project);
             config.fire();
+            PsiUtil.reHighlightActiveEditor(project);
         }
     }
 

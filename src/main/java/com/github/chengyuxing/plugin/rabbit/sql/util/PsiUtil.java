@@ -6,6 +6,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.java.JavaUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.KotlinUtil;
 import com.github.chengyuxing.sql.annotation.*;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -60,6 +61,16 @@ public class PsiUtil {
                         fileDocumentManager.saveDocument(doc);
                     }
                 }
+            }
+        }
+    }
+
+    public static void reHighlightActiveEditor(Project project) {
+        var editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+        if (editor != null) {
+            var psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+            if (psiFile != null) {
+                DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
             }
         }
     }
