@@ -330,19 +330,19 @@ public class MapperGenerateForm extends JPanel {
                     var methodName = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.camelizeAndClean(sqlName);
                     var sqlType = SqlStatementType.query.name();
                     var returnType = XQLJavaType.List.toString();
-                    if (methodName.matches(XQLInvocationHandler.INSERT_PATTERN)) {
+                    if (XQLInvocationHandler.INSERT_PATTERN.matcher(methodName).matches()) {
                         sqlType = SqlStatementType.insert.name();
                         returnType = XQLJavaType.Integer.getValue();
-                    } else if (methodName.matches(XQLInvocationHandler.UPDATE_PATTERN)) {
+                    } else if (XQLInvocationHandler.UPDATE_PATTERN.matcher(methodName).matches()) {
                         sqlType = SqlStatementType.update.name();
                         returnType = XQLJavaType.Integer.getValue();
-                    } else if (methodName.matches(XQLInvocationHandler.DELETE_PATTERN)) {
+                    } else if (XQLInvocationHandler.DELETE_PATTERN.matcher(methodName).matches()) {
                         sqlType = SqlStatementType.delete.name();
                         returnType = XQLJavaType.Integer.getValue();
-                    } else if (methodName.matches(XQLInvocationHandler.CALL_PATTERN)) {
+                    } else if (XQLInvocationHandler.CALL_PATTERN.matcher(methodName).matches()) {
                         sqlType = SqlStatementType.procedure.name();
                         returnType = XQLJavaType.GenericT.getValue();
-                    } else if (methodName.matches(XQLInvocationHandler.QUERY_PATTERN)) {
+                    } else if (XQLInvocationHandler.QUERY_PATTERN.matcher(methodName).matches()) {
                         sqlType = SqlStatementType.query.name();
                         if (com.github.chengyuxing.common.util.StringUtils.startsWiths(methodName, "get", "query", "search", "select", "list")) {
                             returnType = XQLJavaType.List.toString();
@@ -379,7 +379,7 @@ public class MapperGenerateForm extends JPanel {
                         if (StringUtils.isNotEmpty(xqlMethod.getReturnGenericType())) {
                             returnGenericType = xqlMethod.getReturnGenericType();
                         }
-                        enable = ValueUtils.coalesce(xqlMethod.getEnable(), true);
+                        enable = ValueUtils.coalesceNonNull(xqlMethod.getEnable(), true);
                     }
 
                     return new Object[]{

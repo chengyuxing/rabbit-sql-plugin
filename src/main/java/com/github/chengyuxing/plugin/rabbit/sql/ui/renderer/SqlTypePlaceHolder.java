@@ -28,15 +28,15 @@ public class SqlTypePlaceHolder extends DefaultTableCellRenderer {
 
     private static @NotNull String getSqlType(String methodName) {
         var sqlType = "";
-        if (methodName.matches(XQLInvocationHandler.INSERT_PATTERN)) {
+        if (XQLInvocationHandler.INSERT_PATTERN.matcher(methodName).matches()) {
             sqlType = "insert";
-        } else if (methodName.matches(XQLInvocationHandler.UPDATE_PATTERN)) {
+        } else if (XQLInvocationHandler.UPDATE_PATTERN.matcher(methodName).matches()) {
             sqlType = "update";
-        } else if (methodName.matches(XQLInvocationHandler.DELETE_PATTERN)) {
+        } else if (XQLInvocationHandler.DELETE_PATTERN.matcher(methodName).matches()) {
             sqlType = "delete";
-        } else if (methodName.matches(XQLInvocationHandler.CALL_PATTERN)) {
+        } else if (XQLInvocationHandler.CALL_PATTERN.matcher(methodName).matches()) {
             sqlType = "procedure";
-        } else if (methodName.matches(XQLInvocationHandler.QUERY_PATTERN)) {
+        } else if (XQLInvocationHandler.QUERY_PATTERN.matcher(methodName).matches()) {
             sqlType = "query";
         }
         return sqlType;
