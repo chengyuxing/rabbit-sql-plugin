@@ -70,6 +70,13 @@ public class ProjectFileUtil {
         NavigationUtil.activateFileWithPsiElement(psi);
     }
 
+    public static @Nullable Path getProjectPath(Project project) {
+        var vf = ProjectUtil.guessProjectDir(project);
+        if (vf == null) {
+            return null;
+        }
+        return vf.toNioPath();
+    }
 
     public static boolean isXqlFileManagerConfig(String name) {
         return Constants.CONFIG_PATTERN.matcher(name).matches();

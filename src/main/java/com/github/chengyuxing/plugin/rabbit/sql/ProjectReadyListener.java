@@ -56,31 +56,38 @@ public class ProjectReadyListener implements DumbService.DumbModeListener {
         });
     }
 
-    private void addConfigs(VirtualFile projectVf, Collection<VirtualFile> allConfigVfs) {
-        if (Objects.isNull(projectVf) || !projectVf.exists()) {
+    private void addConfigs(VirtualFile projectOrModuleVf, Collection<VirtualFile> allConfigVfs) {
+        if (Objects.isNull(projectOrModuleVf) || !projectOrModuleVf.exists()) {
             return;
         }
-        if (!ProjectFileUtil.isResourceProjectModule(projectVf)) {
+        if (!ProjectFileUtil.isResourceProjectModule(projectOrModuleVf)) {
             return;
         }
-        var projectNioPath = projectVf.toNioPath();
+        var projectOrModulePath = projectOrModuleVf.toNioPath();
+
+        var projectPath = ProjectFileUtil.getProjectPath(project);
+
+        if (projectPath == null || !projectOrModulePath.startsWith(projectPath)) {
+            return;
+        }
+
         var found = false;
         for (VirtualFile configVfs : allConfigVfs) {
-            if (!ProjectFileUtil.isResourceXqlFileManagerConfig(projectVf, configVfs)) {
+            if (!ProjectFileUtil.isResourceXqlFileManagerConfig(projectOrModuleVf, configVfs)) {
                 continue;
             }
             found = true;
-            var config = xqlConfigManager.newConfig(projectVf);
+            var config = xqlConfigManager.newConfig(projectOrModuleVf);
             config.setConfigVfs(configVfs);
             if (!config.isValid()) {
                 continue;
             }
             config.silentFire();
-            xqlConfigManager.add(projectNioPath, config);
+            xqlConfigManager.add(projectOrModulePath, config);
         }
         if (!found) {
-            var config = xqlConfigManager.newConfig(projectVf);
-            xqlConfigManager.add(projectNioPath, config);
+            var config = xqlConfigManager.newConfig(projectOrModuleVf);
+            xqlConfigManager.add(projectOrModulePath, config);
         }
     }
 }

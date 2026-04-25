@@ -117,7 +117,12 @@ public final class XQLConfigManager implements Disposable {
 
     public void cleanup() {
         var configs = configMap;
+        var projectPath = ProjectFileUtil.getProjectPath(project);
         configs.entrySet().removeIf(entry -> {
+            // remove other modules which not belongs the current project, god know why.
+            if (projectPath == null || !entry.getKey().startsWith(projectPath)) {
+                return true;
+            }
             var moduleVf = VirtualFileManager.getInstance().findFileByNioPath(entry.getKey());
             if (Objects.nonNull(moduleVf)) {
                 return !ProjectFileUtil.isResourceProjectModule(moduleVf);
