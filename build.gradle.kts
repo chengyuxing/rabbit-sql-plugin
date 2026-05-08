@@ -4,14 +4,14 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.4.46.231-261"
+version = "2.4.47.231-262"
 
 repositories {
     mavenLocal()
     mavenCentral()
 }
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:10.2.5") {
+    implementation("com.github.chengyuxing:rabbit-sql:10.3.0") {
         exclude("org.slf4j", "slf4j-api")
     }
     testImplementation("junit:junit:4.13.2")
@@ -40,7 +40,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("231")
-        untilBuild.set("261.*")
+        untilBuild.set("262.*")
     }
 
     signPlugin {
