@@ -83,7 +83,7 @@
             <ul>
                 <li>Support <code>rabbit-sql 10.3.0</code> and <code>rabbit-sql-spring-boot-starter 5.3.0</code></li>
                 <li>Toggle XQL config active status optimized</li>
-                <li>Fixed Copy XQL action error when the file is form remote</li>
+                <li>Fixed Copy XQL action error when the file is from remote</li>
                 <li>Fixed XQL tree view display bug</li>
                 <li>Some optimized</li>
             </ul>
