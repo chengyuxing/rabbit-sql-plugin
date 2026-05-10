@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
 import com.github.chengyuxing.common.tuple.Quadruple;
+import com.github.chengyuxing.common.tuple.Quintuple;
 import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
@@ -110,9 +111,12 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                     }
                     var node = (XqlTreeNode) selection.getLastPathComponent();
                     if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
-                        if (Objects.requireNonNull(nodeSource.type()) == XqlTreeNodeData.Type.XQL_FRAGMENT) {
-                            var point = pointRef.get();
-                            if (Objects.nonNull(point)) {
+                        var point = pointRef.get();
+                        if (point == null) {
+                            return;
+                        }
+                        switch (nodeSource.type()) {
+                            case XQL_FRAGMENT -> {
                                 @SuppressWarnings("unchecked") var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
                                 var sql = sqlMeta.getItem3();
                                 var html = HtmlUtil.highlightSql(sql.getSource());
@@ -122,6 +126,18 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                                 }
                                 var height = StringUtils.countOccurrences(sql.getSource(), NEW_LINE) * 21 + 39;
                                 popup = SwingUtil.showPreview(html, height, tree.getComponentAt(point), point);
+                            }
+                            case XQL_FILE -> {
+                                @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
+                                var config = sqlMeta.getItem4().getXqlFileManager();
+                                var alias = sqlMeta.getItem1();
+                                var errors = config.getErrorAlias();
+                                var error = errors.get(alias);
+                                if (error != null) {
+                                    var html = HtmlUtil.wrap("pre", error, HtmlUtil.Color.ERROR);
+                                    var height = StringUtils.countOccurrences(html, NEW_LINE) * 21 + 39;
+                                    popup = SwingUtil.showPreview(html, height, tree.getComponentAt(point), point);
+                                }
                             }
                         }
                     }

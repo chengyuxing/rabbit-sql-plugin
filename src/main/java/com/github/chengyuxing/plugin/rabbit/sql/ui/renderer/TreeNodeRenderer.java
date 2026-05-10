@@ -59,7 +59,7 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                         }
                         String secondaryText;
 
-                        boolean isFileHasError = sqlMeta.getItem4().getXqlFileManager().getErrorAlias().contains(sqlMeta.getItem1());
+                        boolean isFileHasError = sqlMeta.getItem4().getXqlFileManager().getErrorAlias().containsKey(sqlMeta.getItem1());
                         if (isFileHasError) {
                             // highlight error file node
                             append(sqlMeta.getItem1() + " ", SimpleTextAttributes.ERROR_ATTRIBUTES);

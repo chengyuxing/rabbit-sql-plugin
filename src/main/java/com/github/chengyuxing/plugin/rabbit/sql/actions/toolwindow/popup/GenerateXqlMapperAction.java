@@ -55,7 +55,7 @@ public class GenerateXqlMapperAction extends AnAction {
             var module = ModuleUtil.findModuleForFile(config.getConfigVfs(), project);
             if (Objects.nonNull(module)) {
                 // is error file, do not allow 'generate mapper' action
-                if (data.getItem4().getXqlFileManager().getErrorAlias().contains(data.getItem1())) {
+                if (data.getItem4().getXqlFileManager().getErrorAlias().containsKey(data.getItem1())) {
                     e.getPresentation().setEnabled(false);
                     return;
                 }

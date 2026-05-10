@@ -145,7 +145,7 @@ public final class XQLConfigManager implements Disposable {
     public abstract class PluginXQLFileManager extends XQLFileManager {
         private final Path classesPath;
 
-        private volatile Set<String> errorAlias = new HashSet<>();
+        private volatile Map<String, String> errorAlias = new LinkedHashMap<>();
 
         public PluginXQLFileManager(Path modulePath) {
             this.classesPath = modulePath.resolve(Path.of("target", "classes"));
@@ -153,7 +153,7 @@ public final class XQLConfigManager implements Disposable {
 
         protected abstract String messagePrefix();
 
-        public Set<String> getErrorAlias() {
+        public Map<String, String> getErrorAlias() {
             return errorAlias;
         }
 
@@ -162,7 +162,7 @@ public final class XQLConfigManager implements Disposable {
             Set<Message> messages = new LinkedHashSet<>();
             Map<String, Resource> newResources = new LinkedHashMap<>();
             Map<String, Resource> oldResources = this.getResources();
-            Set<String> errors = new LinkedHashSet<>();
+            Map<String, String> errors = new LinkedHashMap<>();
             for (Map.Entry<String, String> e : getFiles().entrySet()) {
                 String alias = e.getKey();
                 String filename = e.getValue();
@@ -184,19 +184,23 @@ public final class XQLConfigManager implements Disposable {
                             newResources.put(alias, parseXql(alias, filename, fr));
                         }
                     } catch (XQLParseException ex) {
-                        errors.add(alias);
-                        newResources.put(alias, new Resource(filename));
+                        StringJoiner sb = new StringJoiner("\n");
                         if (ex.getCause() instanceof ScriptSyntaxException cause) {
                             messages.add(Message.warning(messagePrefix() + ex.getMessage()));
                             messages.add(Message.warning(messagePrefix() + cause.getMessage()));
+                            sb.add(ex.getMessage());
+                            sb.add(cause.getMessage());
                         } else {
                             messages.add(Message.error(messagePrefix() + ex.getMessage()));
+                            sb.add(ex.getMessage());
                             log.warn(ex);
                         }
-                    } catch (Exception ex) {
-                        errors.add(alias);
                         newResources.put(alias, new Resource(filename));
+                        errors.put(alias, sb.toString());
+                    } catch (Exception ex) {
                         messages.add(Message.error(messagePrefix() + ex.getMessage()));
+                        newResources.put(alias, new Resource(filename));
+                        errors.put(alias, ex.getMessage());
                         log.warn(ex);
                     }
                 }
@@ -244,6 +248,12 @@ public final class XQLConfigManager implements Disposable {
             } finally {
                 currentThread.setContextClassLoader(originalClassLoader);
             }
+        }
+
+        @Override
+        public void close() {
+            super.close();
+            errorAlias = new LinkedHashMap<>();
         }
     }
 

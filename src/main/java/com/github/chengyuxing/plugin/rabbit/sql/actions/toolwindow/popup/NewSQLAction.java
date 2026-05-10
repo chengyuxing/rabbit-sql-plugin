@@ -58,7 +58,7 @@ public class NewSQLAction extends AnAction {
                 return;
             }
             // is error file, do not allow 'new' action
-            if (data.getItem4().getXqlFileManager().getErrorAlias().contains(data.getItem1())) {
+            if (data.getItem4().getXqlFileManager().getErrorAlias().containsKey(data.getItem1())) {
                 e.getPresentation().setEnabled(false);
             }
         }
