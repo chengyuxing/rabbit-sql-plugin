@@ -83,7 +83,7 @@
             <ul>
                 <li>Support <code>rabbit-sql 10.3.1</code> and <code>rabbit-sql-spring-boot-starter 5.3.1</code></li>
                 <li>Compatible with IDEA 2026.2</li>
-                <li>Error XQL file node support press key SPACE to show the error message</li>
+                <li>XQL tree view error XQL file node support press key SPACE to show the error message</li>
                 <li>Some optimized</li>
             </ul>
             <h3>2.4.47</h3>
