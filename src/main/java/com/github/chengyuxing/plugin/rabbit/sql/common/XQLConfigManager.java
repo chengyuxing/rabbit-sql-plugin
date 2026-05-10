@@ -170,6 +170,7 @@ public final class XQLConfigManager implements Disposable {
                 FileResource fr = createFileResource(filename);
                 if (!fr.exists()) {
                     messages.add(Message.warning(messagePrefix() + MessageBundle.message("xql.config.manager.loadResource.notExists", filename, alias)));
+                    continue;
                 }
                 String ext = fr.getFilenameExtension();
                 if (ext != null && (ext.equals("sql") || ext.equals("xql"))) {
