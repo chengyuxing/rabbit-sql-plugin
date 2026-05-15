@@ -1,9 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins;
 
-import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
-
-import java.util.Objects;
 
 public class FeatureChecker {
     public static final String DATABASE_PLUGIN_ID = "com.intellij.database";
@@ -12,7 +10,7 @@ public class FeatureChecker {
 
     public static boolean isPluginEnabled(String pluginId) {
         var id = PluginId.getId(pluginId);
-        var plugin = PluginManagerCore.getPlugin(id);
-        return Objects.nonNull(plugin) && plugin.isEnabled();
+        var plugin = PluginManager.getInstance().findEnabledPlugin(id);
+        return plugin != null;
     }
 }
