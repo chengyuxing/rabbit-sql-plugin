@@ -4,6 +4,7 @@ import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
 
 public class FeatureChecker {
+    //public static final String YML_PLUGIN_ID = "org.jetbrains.plugins.yaml";
     public static final String DATABASE_PLUGIN_ID = "com.intellij.database";
     public static final String KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin";
     public static final String JAVA_PLUGIN_ID = "com.intellij.java";
