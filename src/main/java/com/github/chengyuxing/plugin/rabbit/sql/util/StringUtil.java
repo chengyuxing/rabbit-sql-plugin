@@ -92,7 +92,11 @@ public class StringUtil {
             if (ts.contains(".")) {
                 return Double.parseDouble(ts);
             } else {
-                return Long.parseLong(ts);
+                long l = Long.parseLong(ts);
+                if (l <= Integer.MAX_VALUE && l >= Integer.MIN_VALUE) {
+                    return (int) l;
+                }
+                return l;
             }
         }
         if (StringUtils.equalsAnyIgnoreCase(ts, "null", "blank")) {
