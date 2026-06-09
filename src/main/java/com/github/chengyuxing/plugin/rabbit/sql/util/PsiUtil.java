@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
@@ -69,7 +70,7 @@ public class PsiUtil {
         var editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
         if (editor != null) {
             var psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-            if (psiFile != null) {
+            if (psiFile != null && StringUtils.endsWiths(psiFile.getName(), ".java", ".kt")) {
                 DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
             }
         }
