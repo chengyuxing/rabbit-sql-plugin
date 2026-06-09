@@ -1,7 +1,9 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
+import com.fasterxml.jackson.jr.ob.JSON;
 import com.github.chengyuxing.common.tuple.Pair;
 import com.github.chengyuxing.common.util.NamingUtils;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.util.SqlGenerator;
@@ -9,6 +11,7 @@ import com.github.chengyuxing.sql.util.SqlGenerator;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.io.IOException;
 import java.util.*;
 
 public class StringUtil {
@@ -72,5 +75,35 @@ public class StringUtil {
 
     public static boolean isCommentSqlName(String sqlName, String comment) {
         return comment.matches("/\\*\\s*\\[\\s*" + sqlName + "\\s*]\\s*\\*/");
+    }
+
+    public static Object parseValueFromLiteral(Object literal) throws IOException {
+        if (literal == null) {
+            return "";
+        }
+        String ts = literal.toString().trim();
+        if (ts.startsWith("[") && ts.endsWith("]")) {
+            return JSON.std.listFrom(ts);
+        }
+        if (ts.startsWith("{") && ts.endsWith("}")) {
+            return JSON.std.mapFrom(ts);
+        }
+        if (StringUtils.isNumber(ts)) {
+            if (ts.contains(".")) {
+                return Double.parseDouble(ts);
+            } else {
+                return Long.parseLong(ts);
+            }
+        }
+        if (StringUtils.equalsAnyIgnoreCase(ts, "null", "blank")) {
+            return null;
+        }
+        if (StringUtils.equalsAnyIgnoreCase(ts, "true", "false")) {
+            return Boolean.parseBoolean(ts);
+        }
+        if (com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.isQuote(ts)) {
+            return ts.substring(1, ts.length() - 1);
+        }
+        return literal;
     }
 }

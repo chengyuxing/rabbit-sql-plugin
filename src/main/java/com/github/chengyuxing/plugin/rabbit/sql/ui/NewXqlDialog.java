@@ -198,7 +198,7 @@ public class NewXqlDialog extends DialogWrapper {
                                 int filesNodeIndex = -1;
                                 for (int i = 0; i < doc.getLineCount(); i++) {
                                     var line = doc.getText(new TextRange(doc.getLineStartOffset(i), doc.getLineEndOffset(i)));
-                                    if (line.trim().equals("files:")) {
+                                    if (line.equals("files:")) {
                                         filesNodeIndex = doc.getLineEndOffset(i);
                                         break;
                                     }

@@ -33,8 +33,11 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.List;
 import java.util.*;
+
+import static com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.parseValueFromLiteral;
 
 /**
  * @author chengyuxing
@@ -65,43 +68,13 @@ public class ParametersForm extends JPanel {
         var errors = new ArrayList<String>();
         data.forEach(row -> {
             var k = row.get(0).toString();
-            var v = row.get(1);
-            if (v != null) {
-                var sv = v.toString().trim();
-                if (sv.startsWith("[") && sv.endsWith("]")) {
-                    try {
-                        v = JSON.std.listFrom(sv);
-                    } catch (Exception e) {
-                        errors.add(MessageBundle.message("ui.paramForm.error.jsonArray", k));
-                        errors.addAll(ExceptionUtil.getCauseMessages(e));
-                    }
-                } else if (sv.startsWith("{") && sv.endsWith("}")) {
-                    try {
-                        v = JSON.std.mapFrom(sv);
-                    } catch (Exception e) {
-                        errors.add(MessageBundle.message("ui.paramForm.error.jsonObj", k));
-                        errors.addAll(ExceptionUtil.getCauseMessages(e));
-                    }
-                } else if (StringUtils.isNumber(sv)) {
-                    try {
-                        if (sv.contains(".")) {
-                            v = Double.parseDouble(sv);
-                        } else {
-                            v = Long.parseLong(sv);
-                        }
-                    } catch (Exception e) {
-                        errors.add(MessageBundle.message("ui.paramForm.error.number", k));
-                        errors.addAll(ExceptionUtil.getCauseMessages(e));
-                    }
-                } else if (StringUtils.equalsAnyIgnoreCase(sv, "null", "blank")) {
-                    v = null;
-                } else if (StringUtils.equalsAnyIgnoreCase(sv, "true", "false")) {
-                    v = Boolean.parseBoolean(sv);
-                } else if (com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.isQuote(sv)) {
-                    v = sv.substring(1, sv.length() - 1);
-                }
+            try {
+                var v = parseValueFromLiteral(row.get(1));
+                map.put(k, v);
+            } catch (Exception e) {
+                errors.add(MessageBundle.message("ui.paramForm.error.parseLiteralValue", k));
+                errors.addAll(ExceptionUtil.getCauseMessages(e));
             }
-            map.put(k, v);
         });
         return Pair.of(map, errors);
     }
