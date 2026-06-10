@@ -33,6 +33,9 @@ $userImports
 * $description
 */
 #end
+// Rabbit SQL plugin - Your annotations  //CODE-BEGIN:annotations
+$userAnnotations
+// Rabbit SQL plugin - End of your annotations  //CODE-END:annotations
 #if($baki)
 @Baki("$baki")
 #end

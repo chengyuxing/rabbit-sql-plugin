@@ -234,14 +234,16 @@ public class MapperGenerateDialog extends DialogWrapper {
 
                 var userImports = new StringJoiner("\n");
                 var userMethods = new StringJoiner("\n");
+                var userAnnotations = new StringJoiner("\n");
 
                 if (Files.exists(absFilename)) {
                     var importsBlockFlag = 0;
                     var methodsBlockFlag = 0;
+                    var annotationsBlockFlag = 0;
                     try (var reader = Files.newBufferedReader(absFilename)) {
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            if (importsBlockFlag == 2 && methodsBlockFlag == 2) {
+                            if (importsBlockFlag == 2 && methodsBlockFlag == 2 && annotationsBlockFlag == 2) {
                                 break;
                             }
                             if (line.contains("//CODE-BEGIN:imports")) {
@@ -253,6 +255,17 @@ public class MapperGenerateDialog extends DialogWrapper {
                                         break;
                                     }
                                     userImports.add(importContent);
+                                }
+                            }
+                            if (line.contains("//CODE-BEGIN:annotations")) {
+                                annotationsBlockFlag++;
+                                String annoContent;
+                                while ((annoContent = reader.readLine()) != null) {
+                                    if (annoContent.contains("//CODE-END:annotations")) {
+                                        annotationsBlockFlag++;
+                                        break;
+                                    }
+                                    userAnnotations.add(annoContent);
                                 }
                             }
                             if (line.contains("//CODE-BEGIN:methods")) {
@@ -275,6 +288,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                 var templateData = new XQLMapperTemplateData(config.getPackageName(), alias);
                 templateData.setUserImports(userImports.toString().trim());
                 templateData.setUserMethods(userMethods.toString().trim());
+                templateData.setUserAnnotations(userAnnotations.toString().trim());
                 templateData.setUser(System.getProperty("user.name"));
                 templateData.setDate(MostDateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
                 templateData.setBaki(config.getBaki());

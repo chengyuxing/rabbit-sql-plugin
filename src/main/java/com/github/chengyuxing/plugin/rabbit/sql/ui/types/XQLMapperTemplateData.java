@@ -14,6 +14,7 @@ public class XQLMapperTemplateData {
     private Set<String> classImports = new LinkedHashSet<>();
     private String userImports = "";
     private String userMethods = "";
+    private String userAnnotations = "";
 
     private String user;
     private String date;
@@ -84,6 +85,14 @@ public class XQLMapperTemplateData {
 
     public void setUserMethods(String userMethods) {
         this.userMethods = userMethods;
+    }
+
+    public String getUserAnnotations() {
+        return userAnnotations;
+    }
+
+    public void setUserAnnotations(String userAnnotations) {
+        this.userAnnotations = userAnnotations;
     }
 
     public String getBaki() {
