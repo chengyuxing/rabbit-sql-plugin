@@ -24,6 +24,8 @@ import $classImport;
 #end
 #end
 
+import static com.github.chengyuxing.sql.annotation.SqlStatementType.*;
+
 // Rabbit SQL plugin - Your imports  //CODE-BEGIN:imports
 $userImports
 // Rabbit SQL plugin - End of your imports  //CODE-END:imports
@@ -72,11 +74,11 @@ $userMethods
      * @return {@code ${method.returnType.replace("<","[").replace(">","]")}}
      */
 #if($method.annotationValue && $method.sqlType != "")
-    @XQL(value = "$method.annotationValue", type = SqlStatementType.$method.sqlType)
+    @XQL(value = "$method.annotationValue", type = $method.sqlType)
 #elseif($method.annotationValue)
     @XQL("$method.annotationValue")
 #elseif($method.sqlType != "")
-    @XQL(type = SqlStatementType.$method.sqlType)
+    @XQL(type = $method.sqlType)
 #end
 #if($method.countQuery)
     @CountQuery("$method.countQuery")
