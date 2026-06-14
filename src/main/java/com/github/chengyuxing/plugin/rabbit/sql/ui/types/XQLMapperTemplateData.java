@@ -121,6 +121,7 @@ public class XQLMapperTemplateData {
         private String paramClassComment;
         private Set<Parameter> parameters = new LinkedHashSet<>();
         private String countQuery;
+        private String pageConfig;
         protected Boolean enable = true;
 
         public Method(String returnType, String methodName) {
@@ -200,6 +201,14 @@ public class XQLMapperTemplateData {
 
         public void setParamClassComment(String paramClassComment) {
             this.paramClassComment = paramClassComment;
+        }
+
+        public String getPageConfig() {
+            return pageConfig;
+        }
+
+        public void setPageConfig(String pageConfig) {
+            this.pageConfig = pageConfig;
         }
     }
 

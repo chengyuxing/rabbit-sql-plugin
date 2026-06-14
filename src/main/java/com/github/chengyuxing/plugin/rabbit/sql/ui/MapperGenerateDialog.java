@@ -3,6 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 import com.github.chengyuxing.common.DataRow;
 import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.tuple.Pair;
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.common.util.ValueUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.Helper;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
@@ -12,7 +13,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLJavaType;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLMapperTemplateData;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.MapperGenerateForm;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.components.ReturnTypesForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
@@ -136,10 +136,11 @@ public class MapperGenerateDialog extends DialogWrapper {
             try {
                 var resource = this.xqlFileManager.getResource(alias);
 
-                var classImports = new LinkedHashSet<>(Set.of(
+                var classImports = new LinkedHashSet<>(List.of(
                         List.class.getName(),
                         Map.class.getName(),
-                        Set.class.getName()
+                        Set.class.getName(),
+                        ""
                 ));
                 var methods = new ArrayList<XQLMapperTemplateData.Method>();
 
@@ -177,7 +178,12 @@ public class MapperGenerateDialog extends DialogWrapper {
                         returnGenericType = genericUserEntity;
                     }
 
-                    var returnTypeList = ReturnTypesForm.splitReturnTypes(returnTypes);
+                    var pageHelperClass = returnTypes.getPageConfig().getPageHelperClass();
+                    if (!pageHelperClass.isEmpty()) {
+                        classImports.add(pageHelperClass);
+                    }
+
+                    var returnTypeList = returnTypes.getItems();
                     if (returnTypeList.isEmpty()) {
                         returnTypeList = List.of(XQLJavaType.List.toString());
                     }
@@ -188,6 +194,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                         methodData.setDescription(sql.getDescription());
                         methodData.setSqlType(sqlType);
                         methodData.setCountQuery(detectCountQuery(sqlName, methodData));
+                        methodData.setPageConfig(getPageConfig(returnTypes.getPageConfig(), methodData));
                         if (!sqlName.equals(methodName)) {
                             methodData.setAnnotationValue(sqlName);
                         }
@@ -212,6 +219,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                             methodData.setDescription(sql.getDescription());
                             methodData.setSqlType(sqlType);
                             methodData.setCountQuery(detectCountQuery(sqlName, methodData));
+                            methodData.setPageConfig(getPageConfig(returnTypes.getPageConfig(), methodData));
 
                             methodData.setAnnotationValue(sqlName);
                             if (Objects.nonNull(paramMeta)) {
@@ -335,7 +343,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                     mapperMethod.setEnable((Boolean) row.get(6));
                     mapperMethod.setSqlType(row.get(2).toString());
                     mapperMethod.setParamType(row.get(3).toString().trim());
-                    mapperMethod.setReturnType(row.get(4).toString().trim());
+                    mapperMethod.setReturnType((XQLMapperConfig.ReturnType) row.get(4));
                     mapperMethod.setReturnGenericType(row.get(5).toString().trim());
 
                     var exists = mapperConfig.getMethods().get(row.get(0).toString());
@@ -419,11 +427,21 @@ public class MapperGenerateDialog extends DialogWrapper {
         return Pair.of(newParams, imports);
     }
 
-    private String detectCountQuery(String sqlName, XQLMapperTemplateData.Method method) {
-        if (com.github.chengyuxing.common.util.StringUtils.startsWiths(method.getReturnType(),
-                XQLJavaType.PagedResource.getValue() + "<",
+    private boolean isPageReturnType(XQLMapperTemplateData.Method method) {
+        return StringUtils.startsWiths(method.getReturnType(), XQLJavaType.PagedResource.getValue() + "<",
                 XQLJavaType.PagedResource.getValue() + " ",
-                XQLJavaType.IPageable.getValue())) {
+                XQLJavaType.IPageable.getValue() + " ");
+    }
+
+    private String getPageConfig(XQLMapperConfig.PageableConfigProps pageableConfig, XQLMapperTemplateData.Method method) {
+        if (isPageReturnType(method) && !pageableConfig.isEmpty()) {
+            return pageableConfig.formatToTemplate();
+        }
+        return null;
+    }
+
+    private String detectCountQuery(String sqlName, XQLMapperTemplateData.Method method) {
+        if (isPageReturnType(method)) {
             var cqName = sqlName + "Count";
             if (!xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
                 cqName = sqlName + "count";

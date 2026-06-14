@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
+import com.github.chengyuxing.sql.annotation.PageableConfig;
 import com.intellij.openapi.diagnostic.Logger;
 import org.yaml.snakeyaml.Yaml;
 
@@ -100,18 +101,18 @@ public class XQLMapperConfig {
     }
 
     public static class XQLMethod {
-        private String returnType;
+        private ReturnType returnType;
         private String returnGenericType;
         private String sqlType;
         private String paramType;
         private XQLParamMeta paramMeta;
         private Boolean enable = true;
 
-        public String getReturnType() {
+        public ReturnType getReturnType() {
             return returnType;
         }
 
-        public void setReturnType(String returnType) {
+        public void setReturnType(ReturnType returnType) {
             this.returnType = returnType;
         }
 
@@ -153,6 +154,47 @@ public class XQLMapperConfig {
 
         public void setParamMeta(XQLParamMeta paramMeta) {
             this.paramMeta = paramMeta;
+        }
+    }
+
+    public static class ReturnType {
+        private List<String> items = new ArrayList<>();
+        private PageableConfigProps pageConfig = new PageableConfigProps();
+
+        public ReturnType() {
+        }
+
+        public ReturnType(String returnTypeString) {
+            this.items = List.of(returnTypeString.split("\\s*&\\s*"));
+        }
+
+        public List<String> getItems() {
+            return items;
+        }
+
+        public void setItems(List<String> items) {
+            if (items != null) {
+                this.items = items;
+            }
+        }
+
+        public void itemsOf(String... items) {
+            this.items = List.of(items);
+        }
+
+        public PageableConfigProps getPageConfig() {
+            return pageConfig;
+        }
+
+        public void setPageConfig(PageableConfigProps pageConfig) {
+            if (pageConfig != null) {
+                this.pageConfig = pageConfig;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return String.join(" & ", items);
         }
     }
 
@@ -226,6 +268,62 @@ public class XQLMapperConfig {
 
         public void setRequired(Boolean required) {
             this.required = required;
+        }
+    }
+
+    public static class PageableConfigProps {
+        private String startNumKey = "";
+        private String endNumKey = "";
+        private String pageHelperClass = "";
+
+        public String getStartNumKey() {
+            return startNumKey;
+        }
+
+        public void setStartNumKey(String startNumKey) {
+            this.startNumKey = startNumKey.trim();
+        }
+
+        public String getEndNumKey() {
+            return endNumKey;
+        }
+
+        public void setEndNumKey(String endNumKey) {
+            this.endNumKey = endNumKey.trim();
+        }
+
+        public String getPageHelperClass() {
+            return pageHelperClass;
+        }
+
+        public void setPageHelperClass(String pageHelperClass) {
+            this.pageHelperClass = pageHelperClass.trim();
+        }
+
+        private String getClassName() {
+            int dotIdx = pageHelperClass.lastIndexOf(".");
+            if (dotIdx != -1) {
+                return pageHelperClass.substring(dotIdx + 1);
+            }
+            return pageHelperClass;
+        }
+
+        public boolean isEmpty() {
+            return startNumKey.isEmpty() && endNumKey.isEmpty() && pageHelperClass.isEmpty();
+        }
+
+        public String formatToTemplate() {
+            String ends = "";
+            String pageHelper = getClassName();
+            if (!pageHelper.isEmpty()) {
+                ends = ", pageHelper = " + pageHelper + ".class";
+            }
+            return String.format("@%s(disableDefaultPageSql = {\"%s\", \"%s\"}%s)",
+                    PageableConfig.class.getSimpleName(),
+                    startNumKey,
+                    endNumKey,
+                    ends
+            );
         }
     }
 }

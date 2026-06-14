@@ -299,9 +299,20 @@ public class MapperGenerateForm extends JPanel {
                 /*[queryUsersCount]*/
                 select count(*) from user where id = :id;
                 """);
+        var subquery = HtmlUtil.highlightSql("""
+                /*[queryUsersCustomPage]*/
+                with cte as (select * from user limit :length offset :index)
+                select * from cte;
+                """);
+        var method = HtmlUtil.pre("""
+                @PageableConfig(disableDefaultPageSql = {"length", "index"}, pageHelper = org.example.MyPagehelper.class)
+                PagedResource&lt;DataRow&gt; queryUsersCustomPage(Map&lt;String, Object&gt;);
+                """, HtmlUtil.Color.EMPTY);
         var content = com.github.chengyuxing.common.util.StringUtils.FMT.format(html,
                 Map.of("about", MessageBundle.message("ui.mapperGenForm.tab2.about"),
-                        "exampleSql", exampleSql));
+                        "exampleSql", exampleSql,
+                        "subquery", subquery,
+                        "method", method));
         contentPane.setText(content);
 
         var contentScrollPane = new JBScrollPane();
@@ -329,25 +340,26 @@ public class MapperGenerateForm extends JPanel {
                 .map(sqlName -> {
                     var methodName = com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil.camelizeAndClean(sqlName);
                     var sqlType = SqlStatementType.query.name();
-                    var returnType = XQLJavaType.List.toString();
+                    var returnType = new XQLMapperConfig.ReturnType();
+                    returnType.itemsOf(XQLJavaType.List.toString());
                     if (XQLInvocationHandler.INSERT_PATTERN.matcher(methodName).matches()) {
                         sqlType = SqlStatementType.insert.name();
-                        returnType = XQLJavaType.Integer.getValue();
+                        returnType.itemsOf(XQLJavaType.Integer.getValue());
                     } else if (XQLInvocationHandler.UPDATE_PATTERN.matcher(methodName).matches()) {
                         sqlType = SqlStatementType.update.name();
-                        returnType = XQLJavaType.Integer.getValue();
+                        returnType.itemsOf(XQLJavaType.Integer.getValue());
                     } else if (XQLInvocationHandler.DELETE_PATTERN.matcher(methodName).matches()) {
                         sqlType = SqlStatementType.delete.name();
-                        returnType = XQLJavaType.Integer.getValue();
+                        returnType.itemsOf(XQLJavaType.Integer.getValue());
                     } else if (XQLInvocationHandler.CALL_PATTERN.matcher(methodName).matches()) {
                         sqlType = SqlStatementType.procedure.name();
-                        returnType = XQLJavaType.GenericT.getValue();
+                        returnType.itemsOf(XQLJavaType.GenericT.getValue());
                     } else if (XQLInvocationHandler.QUERY_PATTERN.matcher(methodName).matches()) {
                         sqlType = SqlStatementType.query.name();
                         if (com.github.chengyuxing.common.util.StringUtils.startsWiths(methodName, "get", "query", "search", "select", "list")) {
-                            returnType = XQLJavaType.List.toString();
+                            returnType.itemsOf(XQLJavaType.List.toString());
                         } else {
-                            returnType = XQLJavaType.GenericT.getValue();
+                            returnType.itemsOf(XQLJavaType.GenericT.getValue());
                         }
                     }
 
@@ -360,8 +372,8 @@ public class MapperGenerateForm extends JPanel {
                         if (StringUtils.isNotEmpty(xqlMethod.getSqlType()) && SQL_TYPES.contains(xqlMethod.getSqlType())) {
                             sqlType = xqlMethod.getSqlType();
                         }
-                        if (StringUtils.isNotEmpty(xqlMethod.getReturnType()) &&
-                                new HashSet<>(RETURN_TYPES).containsAll(ReturnTypesForm.splitReturnTypes(xqlMethod.getReturnType()))) {
+                        if (xqlMethod.getReturnType() != null &&
+                                new HashSet<>(RETURN_TYPES).containsAll(xqlMethod.getReturnType().getItems())) {
                             returnType = xqlMethod.getReturnType();
                         }
 
@@ -410,9 +422,9 @@ public class MapperGenerateForm extends JPanel {
                     var y = table.columnAtPoint(e.getPoint());
                     if (x >= 0 && y == table.convertColumnIndexToView(4)) {
                         var method = table.getValueAt(x, 1).toString();
-                        var values = table.getValueAt(x, y).toString();
+                        var values = table.getValueAt(x, y);
                         ApplicationManager.getApplication().invokeLater(() -> {
-                            var queryTypesDialog = new ReturnTypesDialog(project, method, values, selected -> table.setValueAt(selected, x, y));
+                            var queryTypesDialog = new ReturnTypesDialog(project, method, (XQLMapperConfig.ReturnType) values, selected -> table.setValueAt(selected, x, y));
                             queryTypesDialog.showAndGet();
                         });
                     }

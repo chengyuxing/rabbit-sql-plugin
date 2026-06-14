@@ -7,7 +7,6 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.FieldInfoRender;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.components.JBCheckBox;
@@ -31,7 +30,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EntityGenerateFrom extends JPanel {
-    private final Project project;
     private final Map<String, Set<String>> fieldMapping;
     private final Map<String, XQLMapperConfig.XQLParam> paramMeta;
     private final Set<String> lombok;
@@ -85,8 +83,7 @@ public class EntityGenerateFrom extends JPanel {
             "@EqualsAndHashCode"
     );
 
-    public EntityGenerateFrom(Project project, Map<String, Set<String>> fieldMapping, Map<String, XQLMapperConfig.XQLParam> paramMeta, Set<String> lombok, Disposable disposable) {
-        this.project = project;
+    public EntityGenerateFrom(Map<String, Set<String>> fieldMapping, Map<String, XQLMapperConfig.XQLParam> paramMeta, Set<String> lombok, Disposable disposable) {
         this.fieldMapping = fieldMapping;
         this.paramMeta = paramMeta;
         this.lombok = lombok;

@@ -77,7 +77,7 @@ public class EntityGenerateDialog extends DialogWrapper {
                     }
                 }
             }
-            this.myForm = new EntityGenerateFrom(project, fieldMapping, params, lombok, getDisposable());
+            this.myForm = new EntityGenerateFrom(fieldMapping, params, lombok, getDisposable());
             this.myForm.setClassName(className);
             this.myForm.setComment(comment);
         }
