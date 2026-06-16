@@ -61,10 +61,13 @@ public class MapperGenerateForm extends JPanel {
             XQLJavaType.Set.toString(),
             XQLJavaType.Optional.toString(),
             XQLJavaType.GenericT.getValue(),
+            XQLJavaType.String.getValue(),
             XQLJavaType.Integer.getValue(),
             XQLJavaType.Long.getValue(),
-            XQLJavaType.Double.getValue());
-    public static final List<String> SQL_TYPES = List.of(SqlStatementType.query.name(),
+            XQLJavaType.Double.getValue(),
+            XQLJavaType.Boolean.getValue());
+    public static final List<String> SQL_TYPES = List.of(
+            SqlStatementType.query.name(),
             SqlStatementType.insert.name(),
             SqlStatementType.update.name(),
             SqlStatementType.delete.name(),

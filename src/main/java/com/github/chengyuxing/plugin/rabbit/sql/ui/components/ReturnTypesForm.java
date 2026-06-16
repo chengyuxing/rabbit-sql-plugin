@@ -45,7 +45,7 @@ public class ReturnTypesForm extends JPanel {
         setLayout(new MigLayout("", "[][][][][][grow]"));
         var restCheckboxes = checkBoxes.subList(2, checkBoxes.size());
         for (int i = 0, j = restCheckboxes.size(); i < j; i++) {
-            if (i > 0 && i % 4 == 0) {
+            if ((i + 1) % 5 == 0) {
                 add(restCheckboxes.get(i), "wrap");
             } else if (i == j - 1) {
                 add(restCheckboxes.get(i), "wrap");
