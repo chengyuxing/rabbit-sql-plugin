@@ -8,9 +8,11 @@ public enum XQLJavaType {
     PagedResource("PagedResource", "<T>"),
     GenericT("<T>", ""),
     IPageable("IPageable", ""),
+    String("String", ""),
     Integer("Integer", ""),
     Long("Long", ""),
     Double("Double", ""),
+    Boolean("Boolean", ""),
 
     Map("Map", "<String, Object>"),
     DataRow("DataRow", ""),

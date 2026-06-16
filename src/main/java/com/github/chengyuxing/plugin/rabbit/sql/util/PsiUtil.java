@@ -15,14 +15,24 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.PsiSearchHelper;
+import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class PsiUtil {
+    public static final String MAPPER_SCAN_FQN = "com.github.chengyuxing.sql.spring.autoconfigure.mapping.XQLMapperScan";
+    public static final String MAPPER_SCAN_ANNO_DISPLAY = "@XQLMapperScan";
+    public static final String MAPPER_ANNO_DISPLAY = "@" + XQLMapper.class.getSimpleName();
+
     public static void navigate2xqlFile(String alias, String name, XQLConfigManager.Config config) {
         var xqlVf = ProjectFileUtil.findXqlByAlias(alias, config);
         if (Objects.nonNull(xqlVf) && xqlVf.exists()) {
@@ -244,5 +254,73 @@ public class PsiUtil {
             return isXQLMapperMethod(psiMethod);
         }
         return false;
+    }
+
+    public static PsiClass getMapperScanPsiClass(PsiSearchHelper helper, GlobalSearchScope scope) {
+        AtomicReference<PsiClass> mapperScanPsiClass = new AtomicReference<>(null);
+        helper.processElementsWithWord((elem, offset) -> {
+            if (elem.getContainingFile() instanceof PsiJavaFile pjf) {
+                var psiClass = PsiTreeUtil.getChildOfType(pjf.getOriginalElement(), PsiClass.class);
+                if (Objects.nonNull(psiClass) && psiClass.hasAnnotation(MAPPER_SCAN_FQN)) {
+                    mapperScanPsiClass.set(psiClass);
+                }
+            }
+            return true;
+        }, scope, MAPPER_SCAN_ANNO_DISPLAY, UsageSearchContext.IN_CODE, true);
+        return mapperScanPsiClass.get();
+    }
+
+    public static Set<PsiClass> getMapperPsiClasses(PsiSearchHelper helper, GlobalSearchScope scope) {
+        Set<PsiClass> mapperPsiClasses = new HashSet<>();
+        helper.processElementsWithWord((elem, offset) -> {
+            if (elem.getContainingFile() instanceof PsiJavaFile pjf) {
+                var psiClass = PsiTreeUtil.getChildOfType(pjf.getOriginalElement(), PsiClass.class);
+                if (Objects.nonNull(psiClass) && psiClass.hasAnnotation(XQLMapper.class.getName())) {
+                    mapperPsiClasses.add(psiClass);
+                }
+            }
+            return true;
+        }, scope, MAPPER_ANNO_DISPLAY, UsageSearchContext.IN_CODE, true);
+        return mapperPsiClasses;
+    }
+
+    public static String[] getMapperScanBasePackages(PsiClass mapperScanClass) {
+        String[] basePackages = new String[0];
+        var anno = mapperScanClass.getAnnotation(MAPPER_SCAN_FQN);
+        if (Objects.nonNull(anno)) {
+            var packagesPsi = anno.findAttributeValue("basePackages");
+            if (packagesPsi instanceof PsiLiteralExpression psiLiteralExpression) {
+                var singlePackage = psiLiteralExpression.getValue();
+                if (Objects.nonNull(singlePackage)) {
+                    basePackages = new String[]{singlePackage + "."};
+                }
+            } else {
+                basePackages = PsiTreeUtil.findChildrenOfType(packagesPsi, PsiLiteralExpression.class)
+                        .stream()
+                        .map(PsiLiteralExpression::getValue)
+                        .filter(Objects::nonNull)
+                        .map(p -> p.toString().trim() + ".")
+                        .toArray(String[]::new);
+            }
+        }
+        return basePackages;
+    }
+
+    public static boolean isBeanInBasePackage(String[] basePackages, PsiClass psiClass) {
+        if (basePackages.length == 0) {
+            return true;
+        }
+        return StringUtils.startsWiths(psiClass.getQualifiedName(), basePackages);
+    }
+
+    public static boolean isSpringBootClass(PsiElement element) {
+        var psiClass = com.intellij.psi.util.PsiUtil.getTopLevelClass(element);
+        if (Objects.isNull(psiClass)) {
+            return false;
+        }
+        return psiClass.hasAnnotation("org.springframework.boot.autoconfigure.SpringBootApplication") ||
+                psiClass.hasAnnotation("org.springframework.context.annotation.Configuration") ||
+                psiClass.hasAnnotation("org.springframework.boot.autoconfigure.EnableAutoConfiguration") ||
+                psiClass.hasAnnotation("org.springframework.stereotype.Component");
     }
 }
