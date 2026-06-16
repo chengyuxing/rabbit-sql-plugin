@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.plugins.spring;
 
+import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
@@ -67,7 +68,7 @@ public class SpringXQLMapperMarkerProvider extends RelatedItemLineMarkerProvider
                         return super.getContainerText(element, name);
                     }
                 })
-                .setTooltipText("Navigate to the Spring XQL mapper bean declaration(s)")
+                .setTooltipText(MessageBundle.message("action.spring.xqlMapperScan.tooltip"))
                 .createLineMarkerInfo(mapperScanAnno);
         result.add(markInfo);
     }
