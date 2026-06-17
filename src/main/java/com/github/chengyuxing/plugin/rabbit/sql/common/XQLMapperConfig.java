@@ -202,7 +202,7 @@ public class XQLMapperConfig {
         private String className;
         private String comment;
         private Set<String> lombok = new HashSet<>();
-        private Map<String, XQLParam> params = new HashMap<>();
+        private Map<String, XQLParam> params = new LinkedHashMap<>();
 
         public String getClassName() {
             return className;

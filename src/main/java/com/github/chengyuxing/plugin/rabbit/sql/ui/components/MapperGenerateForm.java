@@ -17,6 +17,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.components.*;
 import com.intellij.ui.table.JBTable;
@@ -24,9 +25,11 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -179,6 +182,19 @@ public class MapperGenerateForm extends JPanel {
                     return Boolean.class;
                 }
                 return super.getColumnClass(column);
+            }
+
+            @Override
+            public @NotNull Component prepareRenderer(@NotNull TableCellRenderer renderer, int row, int column) {
+                Component comp = super.prepareRenderer(renderer, row, column);
+                String sqlName = table.getValueAt(row, convertColumnIndexToView(0)).toString();
+                boolean exists = mapperConfig.getMethods().containsKey(sqlName);
+                if (!exists) {
+                    comp.setBackground(new JBColor(new Color(0.1f, 0.9f, 0.1f, 0.4f), new Color(0.1f, 0.9f, 0.1f, 0.2f)));
+                } else {
+                    comp.setBackground(table.getBackground());
+                }
+                return comp;
             }
         };
         table.setBorder(BorderFactory.createEmptyBorder());
