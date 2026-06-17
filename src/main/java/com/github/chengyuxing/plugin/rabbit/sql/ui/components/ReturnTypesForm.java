@@ -42,7 +42,10 @@ public class ReturnTypesForm extends JPanel {
     }
 
     private void initComponents(XQLMapperConfig.PageableConfigProps pageableConfig) {
-        setLayout(new MigLayout("", "[][][][][][grow]"));
+        setLayout(new MigLayout(
+                "",
+                "[][][][][][grow]",
+                "[][][]20[][][][]"));
         var restCheckboxes = checkBoxes.subList(2, checkBoxes.size());
         for (int i = 0, j = restCheckboxes.size(); i < j; i++) {
             if ((i + 1) % 5 == 0) {
@@ -53,12 +56,9 @@ public class ReturnTypesForm extends JPanel {
                 add(restCheckboxes.get(i));
             }
         }
-        var line = new JSeparator();
-        line.setMinimumSize(new Dimension(0, 2));
-        add(line, "growx, span, wrap");
-        add(checkBoxes.get(0), "span 2");
-        add(checkBoxes.get(1), "wrap");
-
+        add(checkBoxes.get(0));
+        add(checkBoxes.get(1), "span 2, wrap");
+        add(new TitleLine(MessageBundle.message("ui.dialog.returnType.config.title")), "growx, span, wrap");
         pageConfigTable = new JBTable();
         pageConfigTable.setBorder(BorderFactory.createEmptyBorder());
         pageConfigTable.setShowVerticalLines(false);
@@ -79,7 +79,7 @@ public class ReturnTypesForm extends JPanel {
                                 pageableConfig.getPageHelperClass()
                         }
                 },
-                new Object[]{"startNumKey", "endNumKey", "pageHelper"}
+                new Object[]{"startNumKey", "endNumKey", "pageHelperProvider"}
         );
         pageConfigTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JBTextField()));
         pageConfigTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JBTextField()));

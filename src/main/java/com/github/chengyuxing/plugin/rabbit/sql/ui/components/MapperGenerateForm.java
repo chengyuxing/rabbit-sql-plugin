@@ -57,8 +57,8 @@ public class MapperGenerateForm extends JPanel {
 
     private static final Object[] thead = MessageBundle.message("ui.mapperGenForm.fields").split(",");
     public static final List<String> RETURN_TYPES = List.of(
-            XQLJavaType.PagedResource.toString(),
             XQLJavaType.IPageable.getValue(),
+            XQLJavaType.PagedResource.toString(),
             XQLJavaType.Stream.toString(),
             XQLJavaType.List.toString(),
             XQLJavaType.Set.toString(),
