@@ -9,6 +9,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.plugins.kotlin.KotlinUtil;
 import com.github.chengyuxing.sql.annotation.*;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -36,20 +37,24 @@ public class PsiUtil {
     public static void navigate2xqlFile(String alias, String name, XQLConfigManager.Config config) {
         var xqlVf = ProjectFileUtil.findXqlByAlias(alias, config);
         if (Objects.nonNull(xqlVf) && xqlVf.exists()) {
-            var psi = PsiManager.getInstance(config.getProject()).findFile(xqlVf);
+            var psi = ReadAction.compute(() -> PsiManager.getInstance(config.getProject()).findFile(xqlVf));
             navigate2xqlFile(psi, name);
         }
     }
 
     public static void navigate2xqlFile(PsiElement psi, String sqlFragmentName) {
         if (Objects.nonNull(psi)) {
-            var comments = PsiTreeUtil.findChildrenOfType(psi, PsiComment.class);
-            for (PsiComment comment : comments) {
-                if (StringUtil.isCommentSqlName(sqlFragmentName, comment.getText())) {
-                    var nav = comment.getNavigationElement();
-                    NavigationUtil.activateFileWithPsiElement(nav);
-                    return;
+            var target = ReadAction.compute(() -> {
+                var comments = PsiTreeUtil.findChildrenOfType(psi, PsiComment.class);
+                for (PsiComment comment : comments) {
+                    if (StringUtil.isCommentSqlName(sqlFragmentName, comment.getText())) {
+                        return comment.getNavigationElement();
+                    }
                 }
+                return null;
+            });
+            if (target != null) {
+                NavigationUtil.activateFileWithPsiElement(target);
             }
         }
     }
