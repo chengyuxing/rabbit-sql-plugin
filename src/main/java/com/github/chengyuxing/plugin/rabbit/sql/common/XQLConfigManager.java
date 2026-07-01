@@ -268,7 +268,6 @@ public final class XQLConfigManager implements Disposable {
         private final XQLFileManagerConfig xqlFileManagerConfig;
         private final PluginXQLFileManager xqlFileManager;
         private final Set<String> originalXqlFiles;
-        private SqlGenerator sqlGenerator = new SqlGenerator(':');
         private boolean active = false;
 
         public Config(VirtualFile moduleVfs) {
@@ -395,10 +394,7 @@ public final class XQLConfigManager implements Disposable {
         }
 
         public SqlGenerator getSqlGenerator() {
-            if (sqlGenerator.getNamedParamPrefix() != xqlFileManager.getNamedParamPrefix()) {
-                sqlGenerator = new SqlGenerator(xqlFileManager.getNamedParamPrefix());
-            }
-            return sqlGenerator;
+            return xqlFileManager.getSqlGenerator();
         }
 
         public XQLFileManagerConfig getXqlFileManagerConfig() {
