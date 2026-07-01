@@ -302,6 +302,7 @@ public final class XQLConfigManager implements Disposable {
             Set<Message> successes = new LinkedHashSet<>();
             Set<Message> warnings = new LinkedHashSet<>();
             try {
+                // source user project xql files
                 xqlFileManagerConfig.loadYaml(new FileResource(configPath.toUri().toString()));
                 if (xqlFileManagerConfig.getFiles().isEmpty()) {
                     return Set.of();
