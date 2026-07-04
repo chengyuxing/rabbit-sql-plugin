@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
+import com.github.chengyuxing.common.script.ast.impl.KeyExpressionParser;
 import com.github.chengyuxing.common.script.lang.Token;
 import com.github.chengyuxing.common.script.lang.TokenType;
 import com.github.chengyuxing.common.script.lexer.RabbitScriptLexer;
@@ -54,17 +55,7 @@ public class RabbitScriptParamParser {
         String key = name;
         String prop = "";
 
-        int idx = -1;
-        for (int i = 0; i < name.length(); i++) {
-            if (name.charAt(i) == '.') {
-                idx = i;
-                break;
-            }
-            if (name.charAt(i) == '[') {
-                idx = i;
-                break;
-            }
-        }
+        int idx = KeyExpressionParser.getFirstDotIndex(name);
 
         if (idx != -1) {
             key = name.substring(0, idx);
