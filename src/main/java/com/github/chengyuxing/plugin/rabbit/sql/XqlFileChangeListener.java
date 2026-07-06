@@ -7,6 +7,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -52,7 +53,9 @@ public class XqlFileChangeListener implements BulkFileListener {
                 processMatched(e.getFile(), affectedFiles::add);
             }
         }
-        handlerAffectedFiles(affectedFiles);
+        DumbService.getInstance(project).runWhenSmart(() -> {
+            handlerAffectedFiles(affectedFiles);
+        });
     }
 
     private void processMatched(VirtualFile vf, Consumer<VirtualFile> consumer) {
