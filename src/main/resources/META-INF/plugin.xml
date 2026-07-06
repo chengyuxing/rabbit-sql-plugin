@@ -82,6 +82,7 @@
             <h3>2.4.58</h3>
             <ul>
                 <li>Support <code>rabbit-sql-spring-boot-starter 5.3.13</code></li>
+                <li>Fixed file change listener error when project not initialized</li>
                 <li>Some optimized</li>
             </ul>
             <h3>2.4.57</h3>
