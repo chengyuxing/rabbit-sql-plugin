@@ -4,7 +4,6 @@ import com.github.chengyuxing.common.script.ast.impl.KeyExpressionParser;
 import com.github.chengyuxing.common.script.lang.ForContextProperty;
 import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.sql.XQLFileManager;
-import org.intellij.lang.annotations.Language;
 
 import java.nio.file.Path;
 import java.util.regex.Pattern;
@@ -13,10 +12,11 @@ public final class Constants {
     public static final Pattern SQL_NAME_PATTERN = Pattern.compile("^&[\\w\\-]+\\..+");
     public static final Pattern SQL_NAME_ANNOTATION_PATTERN = XQLFileManager.KEY_PATTERN;
     public static final String CONFIG_NAME = XQLFileManager.YML;
-    public static final Path RESOURCE_ROOT = Path.of("src", "main", "resources");
+    public static final Path RESOURCES_ROOT = Path.of("src", "main", "resources");
+    public static final String RESOURCE_ROOT_PATH = RESOURCES_ROOT.toString();
     public static final Path JAVA_SOURCE_ROOT = Path.of("src", "main", "java");
     public static final Path KT_SOURCE_ROOT = Path.of("src", "main", "kotlin");
-    public static final Path CONFIG_PATH = RESOURCE_ROOT.resolve(CONFIG_NAME);
+    public static final Path CONFIG_PATH = RESOURCES_ROOT.resolve(CONFIG_NAME);
     public static final Pattern CONFIG_PATTERN = Pattern.compile("xql-file-manager(-[a-zA-Z0-9_]+)?\\.yml");
     public static final String[] XQL_DIRECTIVE_KEYWORDS = new String[]{"of", "as", "throw"};
     public static final String[] FOR_PROPERTIES = new String[]{

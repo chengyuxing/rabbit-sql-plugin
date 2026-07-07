@@ -3,6 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.actions;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -21,13 +22,9 @@ public class ReloadConfigAction extends AnAction {
         var project = e.getProject();
         if (Objects.nonNull(project)) {
             PsiUtil.saveUnsavedXqlAndConfig(project);
+            ProjectFileUtil.loadProjectConfigs(project, false, () -> {
+            });
             XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance(project);
-            xqlConfigManager.getConfigMap()
-                    .forEach((module, configs) -> configs.forEach(config -> {
-                        if (config.isValid()) {
-                            config.fire();
-                        }
-                    }));
             xqlConfigManager.cleanup();
             PsiUtil.reHighlightActiveEditor(project);
             XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);

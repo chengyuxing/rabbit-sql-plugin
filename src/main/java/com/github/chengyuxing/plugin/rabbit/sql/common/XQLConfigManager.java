@@ -273,7 +273,7 @@ public final class XQLConfigManager implements Disposable {
         public Config(VirtualFile moduleVfs) {
             this.modulePath = moduleVfs.toNioPath();
 
-            this.resourcesRoot = this.modulePath.resolve(Constants.RESOURCE_ROOT);
+            this.resourcesRoot = this.modulePath.resolve(Constants.RESOURCES_ROOT);
 
             this.originalXqlFiles = ConcurrentHashMap.newKeySet();
 
@@ -360,7 +360,7 @@ public final class XQLConfigManager implements Disposable {
             return "[" + getModuleName() + configName + "]  ";
         }
 
-        private void fire(boolean silent) {
+        public void fire(boolean silent) {
             ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("xql.config.manager.loadXql.progress"), true) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {

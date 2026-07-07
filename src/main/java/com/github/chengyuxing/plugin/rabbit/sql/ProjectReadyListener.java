@@ -1,93 +1,41 @@
 package com.github.chengyuxing.plugin.rabbit.sql;
 
-import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.XqlFileManagerPanel;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.nio.file.Path;
 
 public class ProjectReadyListener implements DumbService.DumbModeListener {
-    private final XQLConfigManager xqlConfigManager;
     private final Project project;
+    private final Path projectPath;
 
     public ProjectReadyListener(Project project) {
         this.project = project;
-        this.xqlConfigManager = XQLConfigManager.getInstance(project);
+        this.projectPath = ProjectFileUtil.getProjectPath(project);
     }
 
     @Override
     public void exitDumbMode() {
+        if (projectPath == null) return;
         ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("project.ready.progress"), true) {
             @Override
             public void run(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setIndeterminate(true);
-                ApplicationManager.getApplication().runReadAction(() -> {
-                    var modules = ModuleManager.getInstance(project).getModules();
-                    if (modules.length > 0) {
-                        for (Module module : modules) {
-                            ProgressManager.checkCanceled();
-                            var moduleVfs = ProjectUtil.guessModuleDir(module);
-                            var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", module.getModuleContentScope());
-                            addConfigs(moduleVfs, allConfigVfs);
-                        }
-                    } else {
-                        var projectVf = ProjectUtil.guessProjectDir(project);
-                        var allConfigVfs = FilenameIndex.getAllFilesByExt(project, "yml", GlobalSearchScope.projectScope(project));
-                        addConfigs(projectVf, allConfigVfs);
-                    }
-                    ApplicationManager.getApplication().invokeLater(() -> XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates));
-                });
+                ProjectFileUtil.loadProjectConfigs(project, true, ProgressManager::checkCanceled);
+            }
+
+            @Override
+            public void onSuccess() {
+                ApplicationManager.getApplication().invokeLater(() -> XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates));
             }
         });
-    }
-
-    private void addConfigs(VirtualFile projectOrModuleVf, Collection<VirtualFile> allConfigVfs) {
-        if (Objects.isNull(projectOrModuleVf) || !projectOrModuleVf.exists()) {
-            return;
-        }
-        if (!ProjectFileUtil.isResourceProjectModule(projectOrModuleVf)) {
-            return;
-        }
-        var projectOrModulePath = projectOrModuleVf.toNioPath();
-
-        var projectPath = ProjectFileUtil.getProjectPath(project);
-
-        if (projectPath == null || !projectOrModulePath.startsWith(projectPath)) {
-            return;
-        }
-
-        var found = false;
-        for (VirtualFile configVfs : allConfigVfs) {
-            if (!ProjectFileUtil.isResourceXqlFileManagerConfig(projectOrModuleVf, configVfs)) {
-                continue;
-            }
-            found = true;
-            var config = xqlConfigManager.newConfig(projectOrModuleVf);
-            config.setConfigVfs(configVfs);
-            if (!config.isValid()) {
-                continue;
-            }
-            config.silentFire();
-            xqlConfigManager.add(projectOrModulePath, config);
-        }
-        if (!found) {
-            var config = xqlConfigManager.newConfig(projectOrModuleVf);
-            xqlConfigManager.add(projectOrModulePath, config);
-        }
     }
 }

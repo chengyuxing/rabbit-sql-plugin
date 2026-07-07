@@ -11,6 +11,8 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -85,16 +87,52 @@ public class ProjectFileUtil {
     public static boolean isResourceXqlFileManagerConfig(VirtualFile moduleFv, VirtualFile configVf) {
         var name = configVf.getName();
         if (isXqlFileManagerConfig(name)) {
-            var moduleResourcePath = moduleFv.toNioPath().resolve(Constants.RESOURCE_ROOT);
+            var moduleResourcePath = moduleFv.toNioPath().resolve(Constants.RESOURCES_ROOT);
             var configPath = configVf.toNioPath();
             return configPath.startsWith(moduleResourcePath);
         }
         return false;
     }
 
+    public static void loadProjectConfigs(Project project, boolean silent, Runnable foreach) {
+        XQLConfigManager xqlConfigManager = XQLConfigManager.getInstance(project);
+        var modules = ModuleManager.getInstance(project).getModules();
+        if (modules.length > 0) {
+            for (Module module : modules) {
+                foreach.run();
+                loadConfigs(ProjectUtil.guessModuleDir(module), xqlConfigManager, silent);
+            }
+        } else {
+            loadConfigs(ProjectUtil.guessProjectDir(project), xqlConfigManager, silent);
+        }
+    }
+
+    public static void loadConfigs(VirtualFile moduleVf, XQLConfigManager xqlConfigManager, boolean silent) {
+        if (moduleVf == null) return;
+        if (!ProjectFileUtil.isResourceProjectModule(moduleVf)) return;
+        var resourcesVfs = moduleVf.findFileByRelativePath(Constants.RESOURCE_ROOT_PATH);
+        if (resourcesVfs == null || !resourcesVfs.isDirectory()) return;
+        var resourcesFiles = resourcesVfs.getChildren();
+        boolean found = false;
+        for (VirtualFile vf : resourcesFiles) {
+            var name = vf.getName();
+            if (!ProjectFileUtil.isXqlFileManagerConfig(name)) continue;
+            var config = xqlConfigManager.newConfig(moduleVf);
+            config.setConfigVfs(vf);
+            if (!config.isValid()) continue;
+            config.fire(silent);
+            xqlConfigManager.add(moduleVf.toNioPath(), config);
+            found = true;
+        }
+        if (!found) {
+            var config = xqlConfigManager.newConfig(moduleVf);
+            xqlConfigManager.add(moduleVf.toNioPath(), config);
+        }
+    }
+
     public static boolean isResourceProjectModule(VirtualFile module) {
         var mPath = module.toNioPath();
-        var resourcesPath = mPath.resolve(Constants.RESOURCE_ROOT);
+        var resourcesPath = mPath.resolve(Constants.RESOURCES_ROOT);
         return Files.exists(resourcesPath);
     }
 

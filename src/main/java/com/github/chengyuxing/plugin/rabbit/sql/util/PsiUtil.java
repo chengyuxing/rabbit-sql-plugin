@@ -1,7 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
 import com.github.chengyuxing.common.util.StringUtils;
-import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.FeatureChecker;
 import com.github.chengyuxing.plugin.rabbit.sql.plugins.java.JavaUtil;
@@ -61,9 +60,10 @@ public class PsiUtil {
 
     public static void saveUnsavedXqlAndConfig(@NotNull Project project) {
         var fileDocumentManager = FileDocumentManager.getInstance();
+        var psiDm = PsiDocumentManager.getInstance(project);
         var unsaved = fileDocumentManager.getUnsavedDocuments();
         for (Document doc : unsaved) {
-            var psi = PsiDocumentManager.getInstance(project).getPsiFile(doc);
+            var psi = psiDm.getPsiFile(doc);
             if (Objects.nonNull(psi)) {
                 var vf = psi.getVirtualFile();
                 if (Objects.nonNull(vf) && vf.exists()) {
@@ -73,7 +73,7 @@ public class PsiUtil {
                         fileDocumentManager.saveDocument(doc);
                         continue;
                     }
-                    if (Constants.CONFIG_PATTERN.matcher(filename).matches()) {
+                    if (ProjectFileUtil.isXqlFileManagerConfig(filename)) {
                         fileDocumentManager.saveDocument(doc);
                     }
                 }

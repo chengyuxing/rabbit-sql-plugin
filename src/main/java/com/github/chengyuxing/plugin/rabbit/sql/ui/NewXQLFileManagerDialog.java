@@ -49,7 +49,7 @@ public class NewXQLFileManagerDialog extends DialogWrapper {
         var name = newXQLFileManagerForm.getSecondaryFileName();
         var configName = FileResource.getFileName(Constants.CONFIG_NAME, false);
         var secondaryFilename = configName + "-" + name + ".yml";
-        var secondaryAbsFilename = module.resolve(Constants.RESOURCE_ROOT).resolve(secondaryFilename);
+        var secondaryAbsFilename = module.resolve(Constants.RESOURCES_ROOT).resolve(secondaryFilename);
         if (Files.exists(secondaryAbsFilename)) {
             newXQLFileManagerForm.setMessage(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.newXqlFileManager.ok.error", secondaryFilename), HtmlUtil.Color.WARNING)));
             return;
