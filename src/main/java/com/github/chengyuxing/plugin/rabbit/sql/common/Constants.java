@@ -13,7 +13,7 @@ public final class Constants {
     public static final Pattern SQL_NAME_ANNOTATION_PATTERN = XQLFileManager.KEY_PATTERN;
     public static final String CONFIG_NAME = XQLFileManager.YML;
     public static final Path RESOURCES_ROOT = Path.of("src", "main", "resources");
-    public static final String RESOURCE_ROOT_PATH = RESOURCES_ROOT.toString();
+    public static final String RESOURCE_ROOT_PATH = "src/main/resources";
     public static final Path JAVA_SOURCE_ROOT = Path.of("src", "main", "java");
     public static final Path KT_SOURCE_ROOT = Path.of("src", "main", "kotlin");
     public static final Path CONFIG_PATH = RESOURCES_ROOT.resolve(CONFIG_NAME);
