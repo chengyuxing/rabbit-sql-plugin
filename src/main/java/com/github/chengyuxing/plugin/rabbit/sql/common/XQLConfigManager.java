@@ -364,8 +364,8 @@ public final class XQLConfigManager implements Disposable {
             ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("xql.config.manager.loadXql.progress"), true) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
-                    ProgressManager.checkCanceled();
                     indicator.setIndeterminate(true);
+                    ProgressManager.checkCanceled();
                     var messages = initXqlFileManager();
                     if (silent) {
                         return;
