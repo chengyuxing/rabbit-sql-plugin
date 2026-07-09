@@ -16,6 +16,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.intellij.ui.components.fields.ExpandableTextField;
 import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * @author chengyuxing
@@ -62,57 +63,35 @@ public class NewSQLForm extends JPanel {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
-        abc = new JLabel();
+        // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
+        JLabel abc = new JLabel();
         name = new JTextField();
-        def = new JLabel();
+        JLabel def = new JLabel();
         description = new ExpandableTextField();
-        panel1 = new JPanel();
-        message = new JLabel();
-        CellConstraints cc = new CellConstraints();
+        message = new InlineHelpText(MessageBundle.message("ui.newSqlForm.message"),250);
 
         name.setFont(Global.getEditorFont(name.getFont().getSize()));
         description.setFont(Global.getEditorFont(description.getFont().getSize()));
 
         //======== this ========
-        setPreferredSize(new Dimension(450, 103));
-        setLayout(new FormLayout(
-            new ColumnSpec[] {
-                new ColumnSpec(Sizes.dluX(40)),
-                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(50), FormSpec.DEFAULT_GROW)
-            },
-            RowSpec.decodeSpecs("default, 4dlu, min, 3dlu, default")));
+        setLayout(new MigLayout("insets 0,hidemode 3", "[][grow]","[][]"));
 
         //---- abc ----
         abc.setText(MessageBundle.message("ui.newSqlForm.name"));
-        add(abc, cc.xy(1, 1));
-        add(name, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+        add(abc);
+        add(name, "growx, wrap");
 
         //---- def ----
         def.setText(MessageBundle.message("ui.newSqlForm.description"));
-        add(def, cc.xy(1, 3));
-        add(description, cc.xy(3, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
+        add(def);
+        add(description, "growx, wrap");
 
-        //======== panel1 ========
-        {
-            panel1.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 1));
+        add(message, "skip, growx, span, wrap");
 
-            //---- message ----
-            message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
-            message.setText(MessageBundle.message("ui.newSqlForm.message"));
-            message.setForeground(InlineHelpText.COLOR);
-            panel1.add(message);
-        }
-        add(panel1, cc.xy(3, 5));
-        // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
 
-    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
-    private JLabel abc;
     private JTextField name;
-    private JLabel def;
     private ExpandableTextField description;
-    private JPanel panel1;
-    private JLabel message;
+    private InlineHelpText message;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }

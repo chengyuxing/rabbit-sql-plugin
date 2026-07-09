@@ -16,6 +16,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * @author chengyuxing
@@ -69,47 +70,27 @@ public class NewXQLFileManagerForm extends JPanel {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
-        title = new JLabel();
+        // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
+        JLabel title = new JLabel();
         secondaryFileName = new JTextField();
-        panel1 = new JPanel();
-        message = new JLabel();
-        CellConstraints cc = new CellConstraints();
+        message = new InlineHelpText("xql-file-manager-*.yml",220);
 
         secondaryFileName.setFont(Global.getEditorFont(secondaryFileName.getFont().getSize()));
 
         //======== this ========
-        setPreferredSize(new Dimension(370, 60));
-        setLayout(new FormLayout(
-            new ColumnSpec[] {
-                new ColumnSpec(Sizes.dluX(25)),
-                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(50), FormSpec.DEFAULT_GROW)
-            },
-            RowSpec.decodeSpecs("default, default")));
+        setLayout(new MigLayout("insets 0,hidemode 3", "[][grow]","[][]"));
 
         //---- title ----
         title.setText(MessageBundle.message("ui.newXqlFileManagerForm.name"));
-        add(title, cc.xy(1, 1));
-        add(secondaryFileName, cc.xy(3, 1));
+        add(title);
+        add(secondaryFileName, "growx, wrap");
 
-        //======== panel1 ========
-        {
-            panel1.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 1));
+        add(message, "skip, growx, wrap");
 
-            //---- message ----
-            message.setText("xql-file-manager-*.yml");
-            message.setForeground(InlineHelpText.COLOR);
-            message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
-            panel1.add(message);
-        }
-        add(panel1, cc.xy(3, 2, CellConstraints.FILL, CellConstraints.DEFAULT));
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
 
-    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
-    private JLabel title;
     private JTextField secondaryFileName;
-    private JPanel panel1;
-    private JLabel message;
+    private InlineHelpText message;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }

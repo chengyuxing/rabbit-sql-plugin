@@ -10,19 +10,15 @@ import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.components.fields.*;
-import com.intellij.util.ui.JBUI;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.util.Map;
 import java.util.Objects;
-import java.util.StringJoiner;
 import java.util.function.Consumer;
 
 /**
@@ -30,7 +26,6 @@ import java.util.function.Consumer;
  */
 public class NewXQLForm extends JPanel {
     private final String resourceRoot;
-    private Map<String, String> anchors = Map.of();
     private Consumer<Triple<String, String, String>> inputChanged = v -> {
     };
     private boolean aliasEditable = true;
@@ -91,12 +86,6 @@ public class NewXQLForm extends JPanel {
     public void init() {
         alias.setEditable(aliasEditable);
         alias.setText(defaultAlias);
-        if (!anchors.isEmpty()) {
-            var sb = new StringJoiner(", ");
-            anchors.forEach((k, v) -> sb.add(k + "=" + v));
-            anchorTag.setToolTipText(sb.toString());
-            anchorTag.setVisible(true);
-        }
         message.setText(resourceRoot);
         filename.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -191,11 +180,6 @@ public class NewXQLForm extends JPanel {
         return "[ " + path + " ]";
     }
 
-    public void setAnchors(Map<String, String> anchors) {
-        if (Objects.nonNull(anchors))
-            this.anchors = anchors;
-    }
-
     public void setInputChanged(Consumer<Triple<String, String, String>> inputChanged) {
         if (Objects.nonNull(inputChanged))
             this.inputChanged = inputChanged;
@@ -212,110 +196,47 @@ public class NewXQLForm extends JPanel {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
-        label1 = new JLabel();
+        // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
+        JLabel label1 = new JLabel();
         filename = new JTextField();
-        panel2 = new JPanel();
-        filenameTooltip = new JLabel();
-        anchorTag = new JLabel();
-        label2 = new JLabel();
+        JLabel label2 = new JLabel();
         alias = new JTextField();
-        label3 = new JLabel();
+        JLabel label3 = new JLabel();
         description = new ExpandableTextField();
-        panel1 = new JPanel();
-        message = new JLabel();
-        CellConstraints cc = new CellConstraints();
+        message = new InlineHelpText("...",300);
 
         filename.setFont(Global.getEditorFont(filename.getFont().getSize()));
         alias.setFont(Global.getEditorFont(alias.getFont().getSize()));
         description.setFont(Global.getEditorFont(description.getFont().getSize()));
 
         //======== this ========
-        setPreferredSize(new Dimension(500, 160));
-        setLayout(new FormLayout(
-            new ColumnSpec[] {
-                new ColumnSpec(Sizes.dluX(41)),
-                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(50), FormSpec.DEFAULT_GROW)
-            },
-            new RowSpec[] {
-                FormFactory.DEFAULT_ROWSPEC,
-                new RowSpec(Sizes.DLUY1),
-                FormFactory.MIN_ROWSPEC,
-                new RowSpec(Sizes.DLUY4),
-                FormFactory.DEFAULT_ROWSPEC,
-                FormFactory.LINE_GAP_ROWSPEC,
-                FormFactory.DEFAULT_ROWSPEC,
-                FormFactory.LINE_GAP_ROWSPEC,
-                FormFactory.DEFAULT_ROWSPEC
-            }));
+        setLayout(new MigLayout("insets 0,hidemode 3", "[][grow]","[][][][][]"));
 
         //---- label1 ----
         label1.setText(MessageBundle.message("ui.newXqlForm.name"));
-        add(label1, cc.xy(1, 1));
-        add(filename, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+        add(label1);
+        add(filename, "growx, wrap");
 
-        //======== panel2 ========
-        {
-            panel2.setLayout(new FormLayout(
-                new ColumnSpec[] {
-                    new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, 0.01),
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                    new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, 0.01)
-                },
-                RowSpec.decodeSpecs("fill:default:grow(0.01)")));
-
-            //---- filenameTooltip ----
-            filenameTooltip.setText(MessageBundle.message("ui.newXqlForm.name.tooltip"));
-            filenameTooltip.setVerticalAlignment(SwingConstants.TOP);
-            filenameTooltip.setFont(filenameTooltip.getFont().deriveFont(filenameTooltip.getFont().getSize() - 1f));
-            filenameTooltip.setForeground(InlineHelpText.COLOR);
-            panel2.add(filenameTooltip, cc.xy(1, 1, CellConstraints.LEFT, CellConstraints.CENTER));
-
-            //---- anchorTag ----
-            anchorTag.setText("[Anchors]");
-            anchorTag.setHorizontalAlignment(SwingConstants.TRAILING);
-            anchorTag.setFont(anchorTag.getFont().deriveFont(anchorTag.getFont().getSize() - 1f));
-            anchorTag.setForeground(new JBColor(new Color(0x48a0a2), new Color(0x1D7FC5)));
-            anchorTag.setVisible(false);
-            panel2.add(anchorTag, cc.xy(3, 1, CellConstraints.RIGHT, CellConstraints.CENTER));
-        }
-        add(panel2, new CellConstraints(3, 3, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, JBUI.insets(0, 4)));
+        add(new InlineHelpText(MessageBundle.message("ui.newXqlForm.name.tooltip"),300),"skip, growx, wrap");
 
         //---- label2 ----
         label2.setText(MessageBundle.message("ui.newXqlForm.alias"));
-        add(label2, cc.xy(1, 5));
-        add(alias, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
+        add(label2);
+        add(alias, "growx, wrap");
 
         //---- label3 ----
         label3.setText(MessageBundle.message("ui.newXqlForm.description"));
-        add(label3, cc.xy(1, 7));
-        add(description, cc.xy(3, 7));
+        add(label3);
+        add(description, "growx, wrap");
 
-        //======== panel1 ========
-        {
-            panel1.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 1));
+        add(message,"skip, growx, span, wrap");
 
-            //---- message ----
-            message.setText("...");
-            message.setFont(message.getFont().deriveFont(message.getFont().getSize() - 1f));
-            message.setForeground(InlineHelpText.COLOR);
-            panel1.add(message);
-        }
-        add(panel1, cc.xy(3, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
     }
 
-    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
-    private JLabel label1;
     private JTextField filename;
-    private JPanel panel2;
-    private JLabel filenameTooltip;
-    private JLabel anchorTag;
-    private JLabel label2;
     private JTextField alias;
-    private JLabel label3;
     private ExpandableTextField description;
-    private JPanel panel1;
-    private JLabel message;
+    private InlineHelpText message;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }

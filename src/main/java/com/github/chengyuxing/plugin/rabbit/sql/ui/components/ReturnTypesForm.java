@@ -43,7 +43,7 @@ public class ReturnTypesForm extends JPanel {
 
     private void initComponents(XQLMapperConfig.PageableConfigProps pageableConfig) {
         setLayout(new MigLayout(
-                "",
+                "insets 0,hidemode 3",
                 "[][][][][][grow]",
                 "[][][]20[][][][]"));
         var restCheckboxes = checkBoxes.subList(2, checkBoxes.size());
