@@ -55,8 +55,7 @@ public class NewXQLFileManagerDialog extends DialogWrapper {
             return;
         }
         ProjectFileUtil.createXqlConfigByTemplate(project, secondaryAbsFilename, () ->
-                ApplicationManager.getApplication().runWriteAction(() ->
-                        ProjectFileUtil.openFile(project, secondaryAbsFilename, true)));
+                ProjectFileUtil.openFile(project, secondaryAbsFilename, true));
         dispose();
     }
 }

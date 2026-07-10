@@ -4,12 +4,11 @@ import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.NewXQLForm;
-import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -17,7 +16,6 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -42,7 +40,6 @@ public class NewXqlDialog extends DialogWrapper {
     private static final Pattern INVALID_CHAR = Pattern.compile("\\s+|//|\\\\");
     private final Project project;
     private final XQLConfigManager.Config config;
-    private final Document doc;
     private String defaultAlias = "";
     private boolean enableAutoGenAlias = true;
     private String templateContent = "";
@@ -51,11 +48,10 @@ public class NewXqlDialog extends DialogWrapper {
     private NewXQLForm newXqlFileForm = null;
     private List<String> pathPrefix = List.of();
 
-    public NewXqlDialog(Project project, XQLConfigManager.Config config, Document doc) {
+    public NewXqlDialog(Project project, XQLConfigManager.Config config) {
         super(true);
         this.project = project;
         this.config = config;
-        this.doc = doc;
         setOKActionEnabled(false);
         setTitle(MessageBundle.message("ui.dialog.newXql.title"));
     }
@@ -152,18 +148,19 @@ public class NewXqlDialog extends DialogWrapper {
         var description = data.getItem4();
         var file = config.getResourcesRoot().resolve(abPath);
 
+        if (config.getXqlFileManagerConfig().getFiles().containsKey(alias)) {
+            newXqlFileForm.alert(MessageBundle.message("ui.dialog.newXql.ok.error.alias", alias));
+            return;
+        }
+        if (Files.exists(file)) {
+            newXqlFileForm.alert(MessageBundle.message("file.error.exists", abPath));
+            return;
+        }
+
         ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("ui.dialog.newXql.ok.progress"), false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 try {
-                    if (config.getXqlFileManagerConfig().getFiles().containsKey(alias)) {
-                        newXqlFileForm.alert(MessageBundle.message("ui.dialog.newXql.ok.error.alias", alias));
-                        return;
-                    }
-                    if (Files.exists(file)) {
-                        newXqlFileForm.alert(MessageBundle.message("ui.dialog.newXql.ok.error.path", abPath));
-                        return;
-                    }
                     var xqlFt = FileTemplateManager.getInstance(project).getTemplate("XQL File.xql");
                     var path = file.getParent();
                     if (!Files.exists(path)) {
@@ -184,50 +181,48 @@ public class NewXqlDialog extends DialogWrapper {
             @Override
             public void onSuccess() {
                 dispose();
-                ApplicationManager.getApplication().invokeLater(() -> {
-                    var newVf = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(file);
-                    if (Objects.isNull(newVf)) {
-                        return;
-                    }
+                var newVf = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(file);
+                if (Objects.isNull(newVf)) {
+                    return;
+                }
+                ApplicationManager.getApplication().runReadAction(() -> {
                     var psi = PsiManager.getInstance(project).findFile(newVf);
                     if (Objects.isNull(psi)) {
                         return;
                     }
-                    NavigationUtil.activateFileWithPsiElement(psi);
                     whenComplete.accept(psi);
+                });
 
-                    ApplicationManager.getApplication().runWriteAction(() ->
-                            WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("ui.dialog.newXql.command", config.getConfigName()), null, () -> {
-                                int filesNodeIndex = -1;
-                                for (int i = 0; i < doc.getLineCount(); i++) {
-                                    var line = doc.getText(new TextRange(doc.getLineStartOffset(i), doc.getLineEndOffset(i)));
-                                    if (line.equals("files:")) {
-                                        filesNodeIndex = doc.getLineEndOffset(i);
-                                        break;
-                                    }
-                                }
-                                var content = "  " + alias + ": " + userInput + "\n";
-                                if (filesNodeIndex != -1) {
-                                    doc.insertString(filesNodeIndex + 1, content);
-                                } else {
-                                    content = "files: \n" + content;
-                                    int start = doc.getTextLength();
-                                    if (start != 0) {
-                                        content = "\n" + content;
-                                    }
-                                    doc.insertString(doc.getTextLength(), content);
-                                }
-                                PsiDocumentManager.getInstance(project).commitDocument(doc);
-                                FileDocumentManager.getInstance().saveDocument(doc);
-                                // set false for open file after dialog closed.
-                                LocalFileSystem.getInstance().refresh(false);
-                            }));
+                WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("command.modify", config.getConfigName()), null, () -> {
+                    var doc = ProjectFileUtil.getDocument(project, config.getConfigVfs());
+                    if (doc == null) return;
+                    int filesNodeIndex = -1;
+                    for (int i = 0; i < doc.getLineCount(); i++) {
+                        var line = doc.getText(new TextRange(doc.getLineStartOffset(i), doc.getLineEndOffset(i)));
+                        if (line.equals("files:")) {
+                            filesNodeIndex = doc.getLineEndOffset(i);
+                            break;
+                        }
+                    }
+                    var content = "  " + alias + ": " + userInput + "\n";
+                    if (filesNodeIndex != -1) {
+                        doc.insertString(filesNodeIndex + 1, content);
+                    } else {
+                        content = "files:\n" + content;
+                        int start = doc.getTextLength();
+                        if (start != 0) {
+                            content = "\n" + content;
+                        }
+                        doc.insertString(start, content);
+                    }
+                    PsiDocumentManager.getInstance(project).commitDocument(doc);
+                    FileDocumentManager.getInstance().saveDocument(doc);
                 });
             }
 
             @Override
             public void onThrowable(@NotNull Throwable error) {
-                ApplicationManager.getApplication().invokeLater(() -> newXqlFileForm.alert(error.getMessage()));
+                newXqlFileForm.alert(error.getMessage());
                 log.warn(error);
             }
         });

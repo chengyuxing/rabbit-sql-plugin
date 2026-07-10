@@ -45,8 +45,7 @@ public class NewXqlFileManagerAction extends AnAction {
                 return;
             }
             ProjectFileUtil.createXqlConfigByTemplate(project, primaryAbsFilename, () ->
-                    ApplicationManager.getApplication().runWriteAction(() ->
-                            ProjectFileUtil.openFile(project, primaryAbsFilename, true)));
+                    ProjectFileUtil.openFile(project, primaryAbsFilename, true));
         }
     }
 

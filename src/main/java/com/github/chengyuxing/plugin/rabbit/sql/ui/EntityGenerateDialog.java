@@ -3,19 +3,14 @@ package com.github.chengyuxing.plugin.rabbit.sql.ui;
 import com.github.chengyuxing.common.DataRow;
 import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
-import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.EntityGenerateFrom;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.ClassTemplateData;
-import com.github.chengyuxing.plugin.rabbit.sql.util.BtnAction;
-import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.*;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -103,18 +98,6 @@ public class EntityGenerateDialog extends DialogWrapper {
         return panel;
     }
 
-    private Path createEntityFilePath(String className) {
-        var sourceRoot = config.getModulePath()
-                .resolve(Constants.KT_SOURCE_ROOT);
-        if (!Files.exists(sourceRoot)) {
-            sourceRoot = config.getModulePath().resolve(Constants.JAVA_SOURCE_ROOT);
-        }
-        var packages = className.split("\\.");
-        return sourceRoot
-                .resolve(Path.of(packages[0], Arrays.copyOfRange(packages, 1, packages.length - 1)))
-                .resolve(packages[packages.length - 1] + ".java");
-    }
-
     @Override
     protected void doOKAction() {
         if (!FULLY_CLASS_PATTERN.matcher(myForm.getFullyClassName()).matches()) {
@@ -123,6 +106,8 @@ public class EntityGenerateDialog extends DialogWrapper {
             message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.entityGen.error.classname", myForm.getFullyClassName()), HtmlUtil.Color.WARNING)));
             return;
         }
+
+        var absFilename = ProjectFileUtil.createJavaFilePath(config, myForm.getFullyClassName());
 
         doSaveConfiguration(myForm.getFullyClassName(), paramMeta -> {
             var imports = new LinkedHashSet<String>();
@@ -147,10 +132,9 @@ public class EntityGenerateDialog extends DialogWrapper {
             }
 
             try {
-                var absFilename = createEntityFilePath(paramMeta.getClassName());
-                var abs = absFilename.getParent();
-                if (!Files.exists(abs)) {
-                    Files.createDirectories(abs);
+                var classpackagePath = absFilename.getParent();
+                if (!Files.exists(classpackagePath)) {
+                    Files.createDirectories(classpackagePath);
                 }
 
                 var template = FileTemplateManager.getInstance(project).getInternalTemplate("entity.java");
@@ -168,13 +152,12 @@ public class EntityGenerateDialog extends DialogWrapper {
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
-        }, () -> ApplicationManager.getApplication().runWriteAction(() -> {
-            var absFilename = createEntityFilePath(myForm.getFullyClassName());
+        }, () -> {
             var vf = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(absFilename);
             if (Objects.nonNull(vf)) {
                 vf.refresh(false, false);
             }
-        }));
+        });
         dispose();
     }
 
@@ -216,12 +199,12 @@ public class EntityGenerateDialog extends DialogWrapper {
 
             @Override
             public void onSuccess() {
-                ApplicationManager.getApplication().invokeLater(onSuccess);
+                onSuccess.run();
             }
 
             @Override
             public void onThrowable(@NotNull Throwable error) {
-                ApplicationManager.getApplication().invokeLater(() -> NotificationUtil.showMessage(project, error.getMessage(), NotificationType.WARNING));
+                NotificationUtil.showMessage(project, error.getMessage(), NotificationType.WARNING);
                 log.warn(error);
             }
         });

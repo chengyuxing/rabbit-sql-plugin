@@ -7,7 +7,6 @@ import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.common.util.ValueUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.Helper;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
-import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLJavaType;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
@@ -15,12 +14,12 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLMapperTemplateData;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.MapperGenerateForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.util.SqlGenerator;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.notification.NotificationType;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -97,19 +96,6 @@ public class MapperGenerateDialog extends DialogWrapper {
         return panel;
     }
 
-    private Path createMapperFilePath(String packageName) {
-        var sourceRoot = config.getModulePath()
-                .resolve(Constants.KT_SOURCE_ROOT);
-        if (!Files.exists(sourceRoot)) {
-            sourceRoot = config.getModulePath().resolve(Constants.JAVA_SOURCE_ROOT);
-        }
-
-        var packages = packageName.split("\\.");
-        return sourceRoot
-                .resolve(Path.of(packages[0], Arrays.copyOfRange(packages, 1, packages.length)))
-                .resolve(StringUtil.generateInterfaceMapperName(this.alias) + ".java");
-    }
-
     @Override
     protected @NonNls @Nullable String getHelpId() {
         return Helper.SPRING_INTERFACE_MAPPER_USAGE;
@@ -122,7 +108,7 @@ public class MapperGenerateDialog extends DialogWrapper {
         if (!PACKAGE_PATTERN.matcher(packageName).matches()) {
             myForm.selectConfigTab();
             this.message.setVisible(true);
-            this.message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.mapperGen.error.package", packageName), HtmlUtil.Color.WARNING)));
+            this.message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("package.invalid.message", packageName), HtmlUtil.Color.WARNING)));
             return;
         }
         if (myForm.getPageKey().isEmpty() || myForm.getSizeKey().isEmpty()) {
@@ -132,7 +118,9 @@ public class MapperGenerateDialog extends DialogWrapper {
             return;
         }
 
-        doSaveConfiguration(config -> {
+        var absFilename = ProjectFileUtil.createJavaFilePath(config, myForm.getPackage());
+
+        doSaveConfiguration(xqlMapperCnf -> {
             try {
                 var resource = this.xqlFileManager.getResource(alias);
 
@@ -144,7 +132,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                 ));
                 var methods = new ArrayList<XQLMapperTemplateData.Method>();
 
-                for (Map.Entry<String, XQLMapperConfig.XQLMethod> entry : config.getMethods().entrySet()) {
+                for (Map.Entry<String, XQLMapperConfig.XQLMethod> entry : xqlMapperCnf.getMethods().entrySet()) {
                     String sqlName = entry.getKey();
                     XQLMapperConfig.XQLMethod method = entry.getValue();
 
@@ -201,7 +189,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                         if (Objects.nonNull(paramMeta)) {
                             methodData.setParamClassComment(paramMeta.getComment());
                         }
-                        var newParams = collectParams(sqlParamNames, sqlParamObj, methodData, config);
+                        var newParams = collectParams(sqlParamNames, sqlParamObj, methodData, xqlMapperCnf);
                         methodData.setParameters(newParams.getItem1());
 
                         classImports.addAll(newParams.getItem2());
@@ -225,7 +213,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                             if (Objects.nonNull(paramMeta)) {
                                 methodData.setParamClassComment(paramMeta.getComment());
                             }
-                            var newParams = collectParams(sqlParamNames, sqlParamObj, methodData, config);
+                            var newParams = collectParams(sqlParamNames, sqlParamObj, methodData, xqlMapperCnf);
                             methodData.setParameters(newParams.getItem1());
 
                             classImports.addAll(newParams.getItem2());
@@ -234,7 +222,6 @@ public class MapperGenerateDialog extends DialogWrapper {
                     }
                 }
 
-                var absFilename = createMapperFilePath(config.getPackageName());
                 var abs = absFilename.getParent();
                 if (!Files.exists(abs)) {
                     Files.createDirectories(abs);
@@ -293,13 +280,13 @@ public class MapperGenerateDialog extends DialogWrapper {
 
                 var template = FileTemplateManager.getInstance(project).getInternalTemplate("xqlMapperInterface.java");
 
-                var templateData = new XQLMapperTemplateData(config.getPackageName(), alias);
+                var templateData = new XQLMapperTemplateData(xqlMapperCnf.getPackageName(), alias);
                 templateData.setUserImports(userImports.toString().trim());
                 templateData.setUserMethods(userMethods.toString().trim());
                 templateData.setUserAnnotations(userAnnotations.toString().trim());
                 templateData.setUser(System.getProperty("user.name"));
                 templateData.setDate(MostDateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
-                templateData.setBaki(config.getBaki());
+                templateData.setBaki(xqlMapperCnf.getBaki());
                 templateData.setDescription(resource.getDescription());
                 templateData.setMethods(methods);
                 templateData.setClassImports(classImports);
@@ -309,13 +296,12 @@ public class MapperGenerateDialog extends DialogWrapper {
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
-        }, () -> ApplicationManager.getApplication().runWriteAction(() -> {
-            var absFilename = createMapperFilePath(myForm.getPackage());
+        }, () -> {
             var vf = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(absFilename);
             if (Objects.nonNull(vf)) {
                 vf.refresh(false, false);
             }
-        }));
+        });
         dispose();
     }
 
@@ -371,12 +357,12 @@ public class MapperGenerateDialog extends DialogWrapper {
 
             @Override
             public void onSuccess() {
-                ApplicationManager.getApplication().invokeLater(onSuccess);
+                onSuccess.run();
             }
 
             @Override
             public void onThrowable(@NotNull Throwable error) {
-                ApplicationManager.getApplication().invokeLater(() -> NotificationUtil.showMessage(project, error.getMessage(), NotificationType.WARNING));
+                NotificationUtil.showMessage(project, error.getMessage(), NotificationType.WARNING);
                 log.warn(error);
             }
         });

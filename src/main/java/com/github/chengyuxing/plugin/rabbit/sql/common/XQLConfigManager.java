@@ -17,7 +17,6 @@ import com.github.chengyuxing.sql.exceptions.XQLParseException;
 import com.github.chengyuxing.sql.util.SqlGenerator;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -375,12 +374,12 @@ public final class XQLConfigManager implements Disposable {
 
                 @Override
                 public void onSuccess() {
-                    ApplicationManager.getApplication().invokeLater(() -> XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates));
+                    XqlFileManagerToolWindow.getXqlFileManagerPanel(project, XqlFileManagerPanel::updateStates);
                 }
 
                 @Override
                 public void onCancel() {
-                    ApplicationManager.getApplication().invokeLater(() -> NotificationUtil.showMessage(project, "Loading XQL files canceled.", NotificationType.WARNING));
+                    NotificationUtil.showMessage(project, "Loading XQL files canceled.", NotificationType.WARNING);
                 }
             });
         }

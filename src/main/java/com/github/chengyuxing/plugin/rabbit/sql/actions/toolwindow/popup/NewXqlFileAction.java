@@ -12,7 +12,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -101,14 +100,8 @@ public class NewXqlFileAction extends AnAction {
     }
 
     private static void openNewXqlDialog(Project project, XQLConfigManager.Config config, List<String> pathPrefix) {
-        var configPath = config.getConfigPath();
-        var configVf = VirtualFileManager.getInstance().findFileByNioPath(configPath);
-        var doc = ProjectFileUtil.getDocument(project, configVf);
-        if (Objects.isNull(doc)) {
-            return;
-        }
         ApplicationManager.getApplication().invokeLater(() -> {
-            var d = new NewXqlDialog(project, config, doc);
+            var d = new NewXqlDialog(project, config);
             d.setPathPrefix(pathPrefix);
             d.initContent();
             d.showAndGet();

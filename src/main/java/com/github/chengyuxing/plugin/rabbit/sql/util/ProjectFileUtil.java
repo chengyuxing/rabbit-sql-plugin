@@ -19,6 +19,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -37,8 +38,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 public class ProjectFileUtil {
     private final static Logger log = Logger.getInstance(ProjectFileUtil.class);
@@ -47,11 +50,13 @@ public class ProjectFileUtil {
         if (Objects.isNull(virtualFile)) {
             return null;
         }
-        var psi = PsiManager.getInstance(project).findFile(virtualFile);
-        if (Objects.isNull(psi)) {
-            return null;
-        }
-        var doc = PsiDocumentManager.getInstance(project).getDocument(psi);
+        var doc = ApplicationManager.getApplication().runReadAction((Computable<Document>) () -> {
+            var psi = PsiManager.getInstance(project).findFile(virtualFile);
+            if (Objects.isNull(psi)) {
+                return null;
+            }
+            return PsiDocumentManager.getInstance(project).getDocument(psi);
+        });
         if (Objects.isNull(doc)) {
             return null;
         }
@@ -65,11 +70,13 @@ public class ProjectFileUtil {
         if (Objects.isNull(newVf)) {
             return;
         }
-        var psi = PsiManager.getInstance(project).findFile(newVf);
-        if (Objects.isNull(psi)) {
-            return;
-        }
-        NavigationUtil.activateFileWithPsiElement(psi);
+        ApplicationManager.getApplication().runReadAction(() -> {
+            var psi = PsiManager.getInstance(project).findFile(newVf);
+            if (Objects.isNull(psi)) {
+                return;
+            }
+            NavigationUtil.activateFileWithPsiElement(psi);
+        });
     }
 
     public static @Nullable Path getProjectPath(Project project) {
@@ -156,12 +163,12 @@ public class ProjectFileUtil {
 
             @Override
             public void onSuccess() {
-                ApplicationManager.getApplication().invokeLater(then);
+                then.run();
             }
 
             @Override
             public void onThrowable(@NotNull Throwable error) {
-                ApplicationManager.getApplication().invokeLater(() -> NotificationUtil.showMessage(project, error.getMessage(), NotificationType.ERROR));
+                NotificationUtil.showMessage(project, error.getMessage(), NotificationType.ERROR);
                 log.warn(error);
             }
         });
@@ -226,5 +233,23 @@ public class ProjectFileUtil {
 
     public static boolean isLocalFileUri(String path) {
         return StringUtils.startsWithIgnoreCase(path, "file:");
+    }
+
+    public static Path createJavaFilePath(XQLConfigManager.Config config, String className) {
+        var sourceRoot = config.getModulePath()
+                .resolve(Constants.JAVA_SOURCE_ROOT);
+        if (!className.contains(".")) {
+            return sourceRoot.resolve(className + ".java");
+        }
+        var packages = className.split("\\.");
+        return sourceRoot
+                .resolve(Path.of(packages[0], Arrays.copyOfRange(packages, 1, packages.length - 1)))
+                .resolve(packages[packages.length - 1] + ".java");
+    }
+
+    public static String formatPath(Path path) {
+        StringJoiner sb = new StringJoiner("/");
+        path.forEach(p -> sb.add(p.toString()));
+        return sb.toString();
     }
 }

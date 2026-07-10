@@ -8,9 +8,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -79,19 +77,17 @@ public class NewSQLDialog extends DialogWrapper {
                 return;
             }
             dispose();
-            ApplicationManager.getApplication().runWriteAction(() ->
-                    WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("ui.dialog.newSql.command", sqlFileVf.getName()), null, () -> {
-                        var sqlFragment = "\n/*[" + name + "]*/";
-                        if (!StringUtils.isBlank(desc)) {
-                            sqlFragment += "\n/*#" + desc + "#*/";
-                        }
-                        sqlFragment += "\n\n;\n";
-                        var lastIdx = doc.getTextLength();
-                        doc.insertString(lastIdx, sqlFragment);
-                        PsiDocumentManager.getInstance(project).commitDocument(doc);
-                        FileDocumentManager.getInstance().saveDocument(doc);
-                        PsiUtil.navigate2xqlFile(alias, name, config);
-                    }));
+            WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("ui.dialog.newSql.command", sqlFileVf.getName()), null, () -> {
+                var sqlFragment = "\n/*[" + name + "]*/";
+                if (!StringUtils.isBlank(desc)) {
+                    sqlFragment += "\n/*#" + desc + "#*/";
+                }
+                sqlFragment += "\n\n;\n";
+                var lastIdx = doc.getTextLength();
+                doc.insertString(lastIdx, sqlFragment);
+                PsiDocumentManager.getInstance(project).commitDocument(doc);
+                PsiUtil.navigate2xqlFile(alias, name, config);
+            });
         }
     }
 }
