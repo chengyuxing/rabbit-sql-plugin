@@ -61,7 +61,10 @@ public class NewXqlDialog extends DialogWrapper {
     }
 
     public void initContent() {
-        this.newXqlFileForm = new NewXQLForm(getAbResourceRoot() + "/" + String.join("/", pathPrefix));
+        String resourceFolders = pathPrefix.isEmpty()
+                ? ""
+                : "/" + String.join("/", pathPrefix);
+        this.newXqlFileForm = new NewXQLForm(getAbResourceRoot() + resourceFolders);
         this.newXqlFileForm.setDefaultAlias(defaultAlias);
         this.newXqlFileForm.setAliasEditable(enableAutoGenAlias);
         this.newXqlFileForm.setInputChanged(data -> {
@@ -102,7 +105,7 @@ public class NewXqlDialog extends DialogWrapper {
     private String getAbResourceRoot() {
         var resourcePath = config.getResourcesRoot();
         var modulePath = config.getModulePath();
-        return modulePath.getParent().relativize(resourcePath).toString();
+        return ProjectFileUtil.formatPath(modulePath.getParent().relativize(resourcePath));
     }
 
     private String formatUserInputPath(String userInputPath) {
