@@ -15,7 +15,6 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -57,13 +56,8 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
                 if (Objects.isNull(config)) {
                     return;
                 }
-                var configVf = VirtualFileManager.getInstance().findFileByNioPath(config.getConfigPath());
-                var doc = ProjectFileUtil.getDocument(project, configVf);
-                if (Objects.isNull(doc)) {
-                    return;
-                }
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    var d = new NewXqlDialog(project, config, doc);
+                    var d = new NewXqlDialog(project, config);
                     d.setDefaultAlias(alias);
                     d.setEnableAutoGenAlias(false);
                     d.setTemplateContent("/*[" + name + "]*/\n\n;\n");
@@ -80,18 +74,16 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
             if (Objects.isNull(sqlFileVf)) {
                 return;
             }
-            var doc = ProjectFileUtil.getDocument(project, sqlFileVf);
-            if (Objects.isNull(doc)) {
-                return;
-            }
-            ApplicationManager.getApplication().runWriteAction(() ->
-                    WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("intention.action.newXqlIfNotExists.command", sqlFileVf.getName()), null, () -> {
-                        var lastIdx = doc.getTextLength();
-                        doc.insertString(lastIdx, "\n/*[" + name + "]*/\n\n;\n");
-                        PsiDocumentManager.getInstance(project).commitDocument(doc);
-                        FileDocumentManager.getInstance().saveDocument(doc);
-                        PsiUtil.navigate2xqlFile(alias, name, config);
-                    }));
+            WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("intention.action.newXqlIfNotExists.command", sqlFileVf.getName()), null, () -> {
+                var doc = ProjectFileUtil.getDocument(project, sqlFileVf);
+                if (Objects.isNull(doc)) {
+                    return;
+                }
+                var lastIdx = doc.getTextLength();
+                doc.insertString(lastIdx, "\n/*[" + name + "]*/\n\n;\n");
+                PsiDocumentManager.getInstance(project).commitDocument(doc);
+                PsiUtil.navigate2xqlFile(alias, name, config);
+            });
 
         } catch (Exception e) {
             if (e instanceof ControlFlowException) {
@@ -109,18 +101,12 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
         }
         if (SQL_NAME_PATTERN.matcher(sqlRef).matches()) {
             String sqlName = sqlRef.substring(1);
-            var xqlConfigManager = project.getService(XQLConfigManager.class);
+            var xqlConfigManager = XQLConfigManager.getInstance(project);
             var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(element);
             if (Objects.nonNull(xqlFileManager)) {
                 var alias = XQLFileManager.decodeSqlReference(sqlName).getItem1();
                 var resource = xqlFileManager.getResource(alias);
-                if (Objects.isNull(resource)) {
-                    return false;
-                }
-                if (ProjectFileUtil.isLocalFileUri(resource.getFilename())) {
-                    return !xqlFileManager.contains(sqlName);
-                }
-                return false;
+                return resource == null || ProjectFileUtil.isLocalFileUri(resource.getFilename());
             }
         }
         return false;
