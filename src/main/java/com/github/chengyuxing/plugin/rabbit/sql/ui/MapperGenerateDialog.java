@@ -1,23 +1,16 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
 import com.github.chengyuxing.common.DataRow;
-import com.github.chengyuxing.common.MostDateTime;
-import com.github.chengyuxing.common.tuple.Pair;
-import com.github.chengyuxing.common.util.StringUtils;
-import com.github.chengyuxing.common.util.ValueUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.Helper;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
+import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLJavaType;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.ClassTemplateData;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLMapperTemplateData;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.MapperGenerateForm;
-import com.github.chengyuxing.plugin.rabbit.sql.util.HtmlUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
-import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.*;
 import com.github.chengyuxing.sql.XQLFileManager;
-import com.github.chengyuxing.sql.util.SqlGenerator;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.diagnostic.Logger;
@@ -27,6 +20,8 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,10 +34,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
-import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.FULLY_CLASS_PATTERN;
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.PACKAGE_PATTERN;
 
 public class MapperGenerateDialog extends DialogWrapper {
@@ -51,7 +44,6 @@ public class MapperGenerateDialog extends DialogWrapper {
     private final String alias;
     private final XQLConfigManager.Config config;
     private final XQLFileManager xqlFileManager;
-    private final SqlGenerator sqlGenerator;
     private final MapperGenerateForm myForm;
     private final JButton message;
     private final Path configPath;
@@ -63,7 +55,6 @@ public class MapperGenerateDialog extends DialogWrapper {
         this.alias = alias;
         this.config = config;
         this.xqlFileManager = this.config.getXqlFileManager();
-        this.sqlGenerator = this.config.getSqlGenerator();
         this.message = new JButton();
         this.configPath = XQLMapperConfig.getDefaultPath(config, xqlFileManager.getResource(alias));
 
@@ -118,195 +109,27 @@ public class MapperGenerateDialog extends DialogWrapper {
             return;
         }
 
-        var absFilename = ProjectFileUtil.createJavaFilePath(config, myForm.getPackage());
+        var mapperClass = myForm.getPackage() + "." + StringUtil.generateInterfaceMapperName(alias);
+        var absFilename = ProjectFileUtil.createJavaFilePath(config, mapperClass);
 
-        doSaveConfiguration(xqlMapperCnf -> {
-            try {
-                var resource = this.xqlFileManager.getResource(alias);
-
-                var classImports = new LinkedHashSet<>(List.of(
-                        List.class.getName(),
-                        Map.class.getName(),
-                        Set.class.getName(),
-                        ""
-                ));
-                var methods = new ArrayList<XQLMapperTemplateData.Method>();
-
-                for (Map.Entry<String, XQLMapperConfig.XQLMethod> entry : xqlMapperCnf.getMethods().entrySet()) {
-                    String sqlName = entry.getKey();
-                    XQLMapperConfig.XQLMethod method = entry.getValue();
-
-                    if (!method.getEnable()) {
-                        continue;
-                    }
-
-                    var paramType = method.getParamType();
-                    if (paramType.isEmpty()) {
-                        paramType = XQLJavaType.Map.getValue();
-                    }
-                    var paramUserEntity = getUserEntity(paramType);
-                    if (Objects.nonNull(paramUserEntity)) {
-                        classImports.add(paramType);
-                        paramType = paramUserEntity;
-                    }
-
-                    var returnTypes = method.getReturnType();
-                    var returnGenericType = method.getReturnGenericType();
-                    var methodName = StringUtil.camelizeAndClean(sqlName);
-                    var sqlType = method.getSqlType();
-                    var sql = resource.getEntry().get(sqlName);
-                    var sqlParamNames = StringUtil.getParamsMappingInfo(sqlGenerator, sql.getSource())
-                            .keySet();
-                    var paramMeta = method.getParamMeta();
-                    var sqlParamObj = paramMeta == null ? Map.<String, XQLMapperConfig.XQLParam>of() : paramMeta.getParams();
-
-                    var genericUserEntity = getUserEntity(returnGenericType);
-                    if (Objects.nonNull(genericUserEntity)) {
-                        classImports.add(returnGenericType);
-                        returnGenericType = genericUserEntity;
-                    }
-
-                    var pageHelperClass = returnTypes.getPageConfig().getPageHelperClass();
-                    if (!pageHelperClass.isEmpty()) {
-                        classImports.add(pageHelperClass);
-                    }
-
-                    var returnTypeList = returnTypes.getItems();
-                    if (returnTypeList.isEmpty()) {
-                        returnTypeList = List.of(XQLJavaType.List.toString());
-                    }
-                    if (returnTypeList.size() == 1) {
-                        var methodData = new XQLMapperTemplateData.Method(replaceGenericT(returnTypeList.get(0), returnGenericType), methodName);
-                        methodData.setEnable(method.getEnable());
-                        methodData.setParamType(paramType);
-                        methodData.setDescription(sql.getDescription());
-                        methodData.setSqlType(sqlType);
-                        methodData.setCountQuery(detectCountQuery(sqlName, methodData));
-                        methodData.setPageConfig(getPageConfig(returnTypes.getPageConfig(), methodData));
-                        if (!sqlName.equals(methodName)) {
-                            methodData.setAnnotationValue(sqlName);
-                        }
-                        if (Objects.nonNull(paramMeta)) {
-                            methodData.setParamClassComment(paramMeta.getComment());
-                        }
-                        var newParams = collectParams(sqlParamNames, sqlParamObj, methodData, xqlMapperCnf);
-                        methodData.setParameters(newParams.getItem1());
-
-                        classImports.addAll(newParams.getItem2());
-                        methods.add(methodData);
-                    } else {
-                        var newReturnTypes = new LinkedHashSet<String>();
-                        for (var returnType : returnTypeList) {
-                            newReturnTypes.add(replaceGenericT(returnType, returnGenericType));
-                        }
-                        for (var returnType : newReturnTypes) {
-                            var extMethodName = methodName + returnTypeName(returnType, returnGenericType);
-                            var methodData = new XQLMapperTemplateData.Method(replaceGenericT(returnType, returnGenericType), extMethodName);
-                            methodData.setEnable(method.getEnable());
-                            methodData.setParamType(paramType);
-                            methodData.setDescription(sql.getDescription());
-                            methodData.setSqlType(sqlType);
-                            methodData.setCountQuery(detectCountQuery(sqlName, methodData));
-                            methodData.setPageConfig(getPageConfig(returnTypes.getPageConfig(), methodData));
-
-                            methodData.setAnnotationValue(sqlName);
-                            if (Objects.nonNull(paramMeta)) {
-                                methodData.setParamClassComment(paramMeta.getComment());
-                            }
-                            var newParams = collectParams(sqlParamNames, sqlParamObj, methodData, xqlMapperCnf);
-                            methodData.setParameters(newParams.getItem1());
-
-                            classImports.addAll(newParams.getItem2());
-                            methods.add(methodData);
-                        }
-                    }
-                }
-
-                var abs = absFilename.getParent();
-                if (!Files.exists(abs)) {
-                    Files.createDirectories(abs);
-                }
-
-                var userImports = new StringJoiner("\n");
-                var userMethods = new StringJoiner("\n");
-                var userAnnotations = new StringJoiner("\n");
-
-                if (Files.exists(absFilename)) {
-                    var importsBlockFlag = 0;
-                    var methodsBlockFlag = 0;
-                    var annotationsBlockFlag = 0;
-                    try (var reader = Files.newBufferedReader(absFilename)) {
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            if (importsBlockFlag == 2 && methodsBlockFlag == 2 && annotationsBlockFlag == 2) {
-                                break;
-                            }
-                            if (line.contains("//CODE-BEGIN:imports")) {
-                                importsBlockFlag++;
-                                String importContent;
-                                while ((importContent = reader.readLine()) != null) {
-                                    if (importContent.contains("//CODE-END:imports")) {
-                                        importsBlockFlag++;
-                                        break;
-                                    }
-                                    userImports.add(importContent);
-                                }
-                            }
-                            if (line.contains("//CODE-BEGIN:annotations")) {
-                                annotationsBlockFlag++;
-                                String annoContent;
-                                while ((annoContent = reader.readLine()) != null) {
-                                    if (annoContent.contains("//CODE-END:annotations")) {
-                                        annotationsBlockFlag++;
-                                        break;
-                                    }
-                                    userAnnotations.add(annoContent);
-                                }
-                            }
-                            if (line.contains("//CODE-BEGIN:methods")) {
-                                methodsBlockFlag++;
-                                String declarationContent;
-                                while ((declarationContent = reader.readLine()) != null) {
-                                    if (declarationContent.contains("//CODE-END:methods")) {
-                                        methodsBlockFlag++;
-                                        break;
-                                    }
-                                    userMethods.add(declarationContent);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                var template = FileTemplateManager.getInstance(project).getInternalTemplate("xqlMapperInterface.java");
-
-                var templateData = new XQLMapperTemplateData(xqlMapperCnf.getPackageName(), alias);
-                templateData.setUserImports(userImports.toString().trim());
-                templateData.setUserMethods(userMethods.toString().trim());
-                templateData.setUserAnnotations(userAnnotations.toString().trim());
-                templateData.setUser(System.getProperty("user.name"));
-                templateData.setDate(MostDateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
-                templateData.setBaki(xqlMapperCnf.getBaki());
-                templateData.setDescription(resource.getDescription());
-                templateData.setMethods(methods);
-                templateData.setClassImports(classImports);
-
-                var result = template.getText(DataRow.ofEntity(templateData));
-                Files.writeString(absFilename, result, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
+        var file = VirtualFileManager.getInstance().findFileByNioPath(absFilename);
+        if (file != null && file.exists()) {
+            var byPlugin = ProjectFileUtil.isGeneratedByPlugin(file);
+            if (!byPlugin) {
+                this.message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("file.error.exists", mapperClass), HtmlUtil.Color.WARNING)));
+                return;
             }
-        }, () -> {
-            var vf = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(absFilename);
-            if (Objects.nonNull(vf)) {
-                vf.refresh(false, false);
-            }
-        });
+        }
+
+        doSaveConfiguration(mapperClass, absFilename);
         dispose();
     }
 
-    private void doSaveConfiguration(Consumer<XQLMapperConfig> then, Runnable onSuccess) {
+    private void doSaveConfiguration(String mapperClass, Path absFile) {
         ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("ui.dialog.mapperGen.ok.progress"), false) {
+            private final Set<Path> refreshFiles = new HashSet<>();
+            private final StringJoiner generated = new StringJoiner(", ");
+
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 indicator.setIndeterminate(true);
@@ -351,13 +174,46 @@ public class MapperGenerateDialog extends DialogWrapper {
                     return true;
                 });
 
-                mapperConfig.saveTo(configPath);
-                then.accept(mapperConfig);
+                try {
+                    mapperConfig.saveTo(configPath);
+
+                    var template = FileTemplateManager.getInstance(project).getInternalTemplate("xqlMapperInterface.java");
+                    var templateData = XQLMapperTemplateData.of(mapperConfig, alias, config);
+                    var result = template.getText(DataRow.ofEntity(templateData));
+
+                    var pDir = absFile.getParent();
+                    if (!Files.exists(pDir)) {
+                        Files.createDirectories(pDir);
+                    }
+                    Files.writeString(absFile, result, StandardCharsets.UTF_8);
+                    refreshFiles.add(absFile);
+                    generated.add(mapperClass);
+
+                    // generate user custom entity type files
+                    var userEntityClasses = templateData.getUserEntities();
+                    if (!userEntityClasses.isEmpty()) {
+                        generateCustomEntityClass(userEntityClasses, (clazz, file) -> {
+                            refreshFiles.add(file);
+                            generated.add(clazz);
+                        });
+                    }
+
+                    var lsm = LocalFileSystem.getInstance();
+                    refreshFiles.forEach(file -> {
+                        var vf = lsm.refreshAndFindFileByNioFile(file);
+                        if (vf != null) {
+                            vf.refresh(false, false);
+                        }
+                    });
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
             }
 
             @Override
             public void onSuccess() {
-                onSuccess.run();
+                String message = MessageBundle.message("ui.dialog.mapperGen.save.generated") + " " + generated;
+                NotificationUtil.showMessage(project, message, NotificationType.INFORMATION);
             }
 
             @Override
@@ -368,111 +224,54 @@ public class MapperGenerateDialog extends DialogWrapper {
         });
     }
 
-    private Pair<Set<XQLMapperTemplateData.Parameter>, Set<String>> collectParams(Set<String> paramNames, Map<String, XQLMapperConfig.XQLParam> paramObjects, XQLMapperTemplateData.Method method, XQLMapperConfig config) {
-        var newParams = new LinkedHashSet<XQLMapperTemplateData.Parameter>();
-        var imports = new LinkedHashSet<String>();
-        if (paramObjects.isEmpty()) {
-            for (var param : paramNames) {
-                newParams.add(new XQLMapperTemplateData.Parameter(param, Object.class.getSimpleName(), ""));
+    private void generateCustomEntityClass(Map<String, XQLMapperTemplateData.SimpleEntity> userEntityClasses, BiConsumer<String, Path> generate) throws IOException {
+        for (Map.Entry<String, XQLMapperTemplateData.SimpleEntity> entry : userEntityClasses.entrySet()) {
+            Path file = ProjectFileUtil.createJavaFilePath(config, entry.getKey());
+            VirtualFile vf = VirtualFileManager.getInstance().findFileByNioPath(file);
+            var exists = vf != null && vf.exists();
+            var byPlugin = ProjectFileUtil.isGeneratedByPlugin(vf);
+
+            if (exists && !byPlugin) {
+                continue;
             }
-        } else {
-            for (var paramName : paramNames) {
-                var paramObj = paramObjects.get(paramName);
-                if (Objects.isNull(paramObj)) {
-                    newParams.add(new XQLMapperTemplateData.Parameter(paramName, Object.class.getSimpleName(), ""));
-                    continue;
-                }
-                if (Objects.equals(paramObj.getRequired(), false)) {
-                    continue;
-                }
-
-                String shortType = Object.class.getSimpleName();
-
-                var type = paramObj.getType();
-                if (Objects.nonNull(type)) {
-                    shortType = type;
-                    if (type.contains(".")) {
-                        var typeNameAndPackage = StringUtil.getTypeAndPackagePath(type);
-                        shortType = typeNameAndPackage.getItem1();
-                        imports.add(typeNameAndPackage.getItem2());
+            var pDir = file.getParent();
+            if (!Files.exists(pDir)) {
+                Files.createDirectories(pDir);
+            }
+            var simpleEntity = entry.getValue();
+            var tmpName = simpleEntity.getTemplateName();
+            switch (tmpName) {
+                case "class.java", "pagehelper.java" -> {
+                    if (!Files.exists(file)) {
+                        var template = FileTemplateManager.getInstance(project).getInternalTemplate(tmpName);
+                        var args = Global.usefulArgs()
+                                .add("clazz", TypeUtil.extractFullClassInfo(entry.getKey()));
+                        var result = template.getText(args);
+                        Files.writeString(file, result, StandardCharsets.UTF_8);
+                        generate.accept(entry.getKey(), file);
                     }
                 }
-
-                newParams.add(new XQLMapperTemplateData.Parameter(
-                        paramName,
-                        shortType,
-                        ValueUtils.coalesce(paramObj.getComment(), ""))
-                );
+                case "entity.java" -> {
+                    var template = FileTemplateManager.getInstance(project).getInternalTemplate(tmpName);
+                    var paramMeta = new XQLMapperConfig.XQLParamMeta();
+                    paramMeta.setLombok(simpleEntity.getLombok());
+                    paramMeta.setLombok(simpleEntity.getLombok());
+                    paramMeta.setClassName(entry.getKey());
+                    var params = new LinkedHashMap<String, XQLMapperConfig.XQLParam>();
+                    simpleEntity.getParameters().forEach(p -> {
+                        var xqlParam = new XQLMapperConfig.XQLParam();
+                        xqlParam.setComment(p.getComment());
+                        xqlParam.setType(p.getType());
+                        xqlParam.setRequired(true);
+                        params.put(p.getName(), xqlParam);
+                    });
+                    paramMeta.setParams(params);
+                    var templateData = ClassTemplateData.of(paramMeta);
+                    var result = template.getText(DataRow.ofEntity(templateData));
+                    Files.writeString(file, result, StandardCharsets.UTF_8);
+                    generate.accept(entry.getKey(), file);
+                }
             }
         }
-
-        if (method.getReturnType().equals(XQLJavaType.PagedResource.getValue()) || method.getReturnType().startsWith(XQLJavaType.PagedResource.getValue() + "<")) {
-            newParams.add(new XQLMapperTemplateData.Parameter(config.getPageKey(), int.class.getSimpleName(), "page number"));
-            newParams.add(new XQLMapperTemplateData.Parameter(config.getSizeKey(), int.class.getSimpleName(), "page size"));
-        }
-        return Pair.of(newParams, imports);
-    }
-
-    private boolean isPageReturnType(XQLMapperTemplateData.Method method) {
-        return StringUtils.startsWiths(method.getReturnType(), XQLJavaType.PagedResource.getValue() + "<",
-                XQLJavaType.PagedResource.getValue() + " ",
-                XQLJavaType.IPageable.getValue() + " ");
-    }
-
-    private String getPageConfig(XQLMapperConfig.PageableConfigProps pageableConfig, XQLMapperTemplateData.Method method) {
-        if (isPageReturnType(method) && !pageableConfig.isEmpty()) {
-            return pageableConfig.formatToTemplate();
-        }
-        return null;
-    }
-
-    private String detectCountQuery(String sqlName, XQLMapperTemplateData.Method method) {
-        if (isPageReturnType(method)) {
-            var cqName = sqlName + "Count";
-            if (!xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
-                cqName = sqlName + "count";
-            }
-            if (!xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
-                cqName = sqlName + "-count";
-            }
-            if (!xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
-                cqName = sqlName + "_count";
-            }
-            if (xqlFileManager.contains(XQLFileManager.encodeSqlReference(alias, cqName))) {
-                return cqName;
-            }
-        }
-        return null;
-    }
-
-    private static String replaceGenericT(String returnType, String genericType) {
-        if (returnType.equals(XQLJavaType.GenericT.getValue())) {
-            return genericType;
-        }
-        return returnType.replace(XQLJavaType.GenericT.getValue(), "<" + genericType + ">");
-    }
-
-    private static String returnTypeName(String returnType, String genericType) {
-        if (returnType.equals(XQLJavaType.GenericT.getValue())) {
-            return genericType;
-        }
-        if (returnType.contains("<")) {
-            return returnType.substring(0, returnType.indexOf("<"));
-        }
-        return returnType;
-    }
-
-    private static String getUserEntity(String paramTypeOrGenericType) {
-        if (MapperGenerateForm.GENERIC_TYPES.contains(paramTypeOrGenericType)) {
-            return null;
-        }
-        if (MapperGenerateForm.PARAM_TYPES.contains(paramTypeOrGenericType)) {
-            return null;
-        }
-        if (FULLY_CLASS_PATTERN.matcher(paramTypeOrGenericType).matches()) {
-            int lastDotIdx = paramTypeOrGenericType.lastIndexOf(".");
-            return paramTypeOrGenericType.substring(lastDotIdx + 1);
-        }
-        return null;
     }
 }

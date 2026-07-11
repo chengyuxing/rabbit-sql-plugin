@@ -1,11 +1,16 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.types;
 
+import com.github.chengyuxing.common.MostDateTime;
+import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
+import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.TypeUtil;
+
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class ClassTemplateData {
-    private final String className;
-    private final String packageName;
+    private final ClassInfo clazz;
     private String comment;
     private Set<Field> fields = new LinkedHashSet<>();
     private Set<String> imports = new LinkedHashSet<>();
@@ -15,13 +20,37 @@ public class ClassTemplateData {
     private String date;
 
     public ClassTemplateData(String className) {
-        if (className.contains(".")) {
-            this.packageName = className.substring(0, className.lastIndexOf("."));
-            this.className = className.substring(className.lastIndexOf(".") + 1);
-        } else {
-            this.packageName = null;
-            this.className = className;
+        this.clazz = TypeUtil.extractFullClassInfo(className);
+    }
+
+    public static ClassTemplateData of(XQLMapperConfig.XQLParamMeta paramMeta) {
+        var imports = new LinkedHashSet<String>();
+        var fields = new LinkedHashSet<Field>();
+        for (Map.Entry<String, XQLMapperConfig.XQLParam> entry : paramMeta.getParams().entrySet()) {
+            String name = entry.getKey();
+            XQLMapperConfig.XQLParam param = entry.getValue();
+            if (!param.getRequired()) {
+                continue;
+            }
+            var type = param.getType();
+            var shortType = type;
+            if (type.contains(".")) {
+                var typeNameAndPackage = StringUtil.getTypeAndPackagePath(type);
+                shortType = typeNameAndPackage.getItem1();
+                imports.add(typeNameAndPackage.getItem2());
+            }
+            var field = new ClassTemplateData.Field(name, shortType);
+            field.setComment(param.getComment());
+            fields.add(field);
         }
+        var templateData = new ClassTemplateData(paramMeta.getClassName());
+        templateData.setUser(System.getProperty("user.name"));
+        templateData.setDate(MostDateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
+        templateData.setImports(imports);
+        templateData.setFields(fields);
+        templateData.setLombok(paramMeta.getLombok());
+        templateData.setComment(paramMeta.getComment());
+        return templateData;
     }
 
     public String getUser() {
@@ -70,12 +99,8 @@ public class ClassTemplateData {
         }
     }
 
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public String getClassName() {
-        return className;
+    public ClassInfo getClazz() {
+        return clazz;
     }
 
     public String getComment() {

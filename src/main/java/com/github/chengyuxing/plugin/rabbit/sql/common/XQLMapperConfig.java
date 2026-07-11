@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.TypeUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.annotation.PageableConfig;
 import com.intellij.openapi.diagnostic.Logger;
@@ -130,6 +131,10 @@ public class XQLMapperConfig {
 
         public void setParamType(String paramType) {
             this.paramType = paramType;
+            if (this.paramMeta == null && TypeUtil.getUserEntity(paramType) != null) {
+                this.paramMeta = new XQLParamMeta();
+                this.paramMeta.setClassName(paramType);
+            }
         }
 
         public String getReturnGenericType() {

@@ -1,13 +1,15 @@
 /*
  * Created by IntelliJ IDEA Rabbit SQL plugin.
+ * @GeneratedByRabbitSQL
  * User: $user
  * Update: $date
  */
-#if($packageName)
-package $packageName;
+#if($clazz.packageName)
+package $clazz.packageName;
 
 #end
 #if($lombok.size() > 0)
+
 #foreach($anno in $lombok)
 import lombok.$anno.substring(1);
 #end
@@ -18,8 +20,8 @@ import lombok.$anno.substring(1);
 import $import;
 #end
 #end
-
 #if($comment && $comment.length() > 0)
+
 /**
  * $comment
  */
@@ -29,7 +31,7 @@ import $import;
 $anno
 #end
 #end
-public class ${className} {
+public class $clazz.className {
 #foreach($field in $fields)
 #if($field.comment.length() > 0)
     /**

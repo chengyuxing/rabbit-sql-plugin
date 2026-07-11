@@ -1,24 +1,36 @@
 /*
  * Created by IntelliJ IDEA Rabbit SQL plugin.
+ * @GeneratedByRabbitSQL
  * User: $user
  * Update: $date
  */
-
 package $packageName;
 
 import com.github.chengyuxing.common.DataRow;
+#if($state.hasIPageable)
 import com.github.chengyuxing.sql.page.IPageable;
+#end
+#if($state.hasPagedResource)
 import com.github.chengyuxing.sql.PagedResource;
+#end
 import com.github.chengyuxing.sql.annotation.*;
+#if($state.hasProceudre)
 import com.github.chengyuxing.sql.types.Param;
+#end
 #if($baki)
 import com.github.chengyuxing.sql.spring.autoconfigure.mapping.Baki;
 #end
 
+#if($state.hasOptional)
 import java.util.Optional;
+#end
+#if($state.hasStream)
 import java.util.stream.Stream;
+#end
+#if($state.hasSet)
+import java.util.Set;
+#end
 #if($classImports.size() > 0)
-
 #foreach($classImport in $classImports)
 #if($classImport != "")
 import $classImport;
@@ -67,12 +79,13 @@ $userMethods
 #elseif($method.paramType == "Map")
      * @param args <ul>
 #foreach($param in $method.parameters)
-     *        <li>{@code $param.name}#if($param.comment.trim() != "") ($param.comment)#end</li>
+     *             <li>{@code $param.name}#if($param.comment.trim() != "") ($param.comment)#end</li>
 #end
-     * </ul>
+     *             </ul>
 #else
      * @param ${method.paramType.toLowerCase()} #if($method.paramClassComment)$method.paramClassComment
 #end
+
 #end
 #end
      * @return {@code ${method.returnType.replace("<","[").replace(">","]")}}

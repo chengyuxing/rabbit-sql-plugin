@@ -1,0 +1,13 @@
+/*
+ * Created by IntelliJ IDEA Rabbit SQL plugin.
+ * @GeneratedByRabbitSQL
+ * User: $USER
+ * Date: $DATE $TIME
+ */
+#if($clazz.packageName)
+package $clazz.packageName;
+
+#end
+public class $clazz.className {
+    // FIXME Add your fields, getters and setters.
+}

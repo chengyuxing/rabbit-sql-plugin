@@ -1,0 +1,23 @@
+/*
+ * Created by IntelliJ IDEA Rabbit SQL plugin.
+ * @GeneratedByRabbitSQL
+ * User: $USER
+ * Date: $DATE $TIME
+ */
+#if($clazz.packageName)
+package $clazz.packageName;
+#end
+
+import com.github.chengyuxing.sql.page.PageHelper;
+import com.github.chengyuxing.sql.plugins.PageHelperProvider;
+import com.github.chengyuxing.sql.types.DatabaseInfo;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public class $clazz.className implements PageHelperProvider {
+    @Override
+    public @Nullable PageHelper customPageHelper(@NotNull DatabaseInfo databaseInfo, char namedParamPrefix) {
+        // FIXME Implement your custom page helper logic for the special page query.
+        return null;
+    }
+}

@@ -11,6 +11,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtil;
@@ -20,6 +21,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -251,5 +253,18 @@ public class ProjectFileUtil {
         StringJoiner sb = new StringJoiner("/");
         path.forEach(p -> sb.add(p.toString()));
         return sb.toString();
+    }
+
+    public static boolean containsWord(VirtualFile file, String word) {
+        if (file == null) return false;
+        var doc = ApplicationManager.getApplication().runReadAction((Computable<Document>) () -> FileDocumentManager.getInstance().getDocument(file));
+        if (doc == null) return false;
+        int end = Math.min(doc.getTextLength(), 100);
+        String header = doc.getText(new TextRange(0, end));
+        return header.contains(word);
+    }
+
+    public static boolean isGeneratedByPlugin(VirtualFile file) {
+        return containsWord(file, "@GeneratedByRabbitSQL");
     }
 }
