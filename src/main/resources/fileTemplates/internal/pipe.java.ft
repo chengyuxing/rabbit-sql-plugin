@@ -1,0 +1,20 @@
+/*
+ * Created by IntelliJ IDEA Rabbit SQL plugin.
+ * @GeneratedByRabbitSQL
+ * User: $USER
+ * Date: $DATE $TIME
+ */
+#if($clazz.packageName)
+package $clazz.packageName;
+#end
+
+import com.github.chengyuxing.common.script.pipe.IPipe;
+
+public class $clazz.className implements IPipe<$resultType> {
+
+    @Override
+    public $resultType transform(Object value, Object... params) {
+        // FIXME Implement value transform logic
+        return null;
+    }
+}
