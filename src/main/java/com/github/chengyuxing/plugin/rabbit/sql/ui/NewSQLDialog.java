@@ -60,7 +60,7 @@ public class NewSQLDialog extends DialogWrapper {
         var xqlFileManager = config.getXqlFileManager();
         if (Objects.nonNull(xqlFileManager)) {
             if (xqlFileManager.contains(sqlReference)) {
-                newSQLForm.setMessage(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.newSql.error.exists", name), HtmlUtil.Color.WARNING)));
+                newSQLForm.setMessage(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("object.error.exists", name), HtmlUtil.Color.WARNING)));
                 return;
             }
             var resource = xqlFileManager.getResource(alias);
@@ -77,7 +77,7 @@ public class NewSQLDialog extends DialogWrapper {
                 return;
             }
             dispose();
-            WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("ui.dialog.newSql.command", sqlFileVf.getName()), null, () -> {
+            WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("command.modify", sqlFileVf.getName()), null, () -> {
                 var sqlFragment = "\n/*[" + name + "]*/";
                 if (!StringUtils.isBlank(desc)) {
                     sqlFragment += "\n/*#" + desc + "#*/";

@@ -1,7 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui;
 
 import com.github.chengyuxing.common.DataRow;
-import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.EntityGenerateFrom;
@@ -30,7 +29,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Consumer;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.FULLY_CLASS_PATTERN;
 
@@ -106,62 +104,14 @@ public class EntityGenerateDialog extends DialogWrapper {
             message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.entityGen.error.classname", myForm.getFullyClassName()), HtmlUtil.Color.WARNING)));
             return;
         }
-
-        var absFilename = ProjectFileUtil.createJavaFilePath(config, myForm.getFullyClassName());
-
-        doSaveConfiguration(myForm.getFullyClassName(), paramMeta -> {
-            var imports = new LinkedHashSet<String>();
-            var fields = new LinkedHashSet<ClassTemplateData.Field>();
-
-            for (Map.Entry<String, XQLMapperConfig.XQLParam> entry : paramMeta.getParams().entrySet()) {
-                String name = entry.getKey();
-                XQLMapperConfig.XQLParam param = entry.getValue();
-                if (!param.getRequired()) {
-                    continue;
-                }
-                var type = param.getType();
-                var shortType = type;
-                if (type.contains(".")) {
-                    var typeNameAndPackage = StringUtil.getTypeAndPackagePath(type);
-                    shortType = typeNameAndPackage.getItem1();
-                    imports.add(typeNameAndPackage.getItem2());
-                }
-                var field = new ClassTemplateData.Field(name, shortType);
-                field.setComment(param.getComment());
-                fields.add(field);
-            }
-
-            try {
-                var classpackagePath = absFilename.getParent();
-                if (!Files.exists(classpackagePath)) {
-                    Files.createDirectories(classpackagePath);
-                }
-
-                var template = FileTemplateManager.getInstance(project).getInternalTemplate("entity.java");
-
-                var templateData = new ClassTemplateData(paramMeta.getClassName());
-                templateData.setUser(System.getProperty("user.name"));
-                templateData.setDate(MostDateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
-                templateData.setImports(imports);
-                templateData.setFields(fields);
-                templateData.setLombok(paramMeta.getLombok());
-                templateData.setComment(paramMeta.getComment());
-
-                var result = template.getText(DataRow.ofEntity(templateData));
-                Files.writeString(absFilename, result, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }, () -> {
-            var vf = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(absFilename);
-            if (Objects.nonNull(vf)) {
-                vf.refresh(false, false);
-            }
+        doSaveConfiguration(true, () -> {
+            String message = MessageBundle.message("ui.dialog.entityGen.save.generated") + " " + myForm.getFullyClassName();
+            NotificationUtil.showMessage(project, message, NotificationType.INFORMATION);
         });
         dispose();
     }
 
-    private void doSaveConfiguration(String className, Consumer<XQLMapperConfig.XQLParamMeta> then, Runnable onSuccess) {
+    private void doSaveConfiguration(boolean generateEntityClass, Runnable success) {
         ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("ui.dialog.entityGen.ok.progress"), false) {
             @Override
             public void run(@NotNull ProgressIndicator progressIndicator) {
@@ -178,7 +128,7 @@ public class EntityGenerateDialog extends DialogWrapper {
                 });
 
                 var xqlParamMeta = new XQLMapperConfig.XQLParamMeta();
-                xqlParamMeta.setClassName(className);
+                xqlParamMeta.setClassName(myForm.getFullyClassName());
                 xqlParamMeta.setLombok(myForm.getSelectedLombok());
                 xqlParamMeta.setComment(myForm.getComment());
                 xqlParamMeta.setParams(params);
@@ -186,20 +136,42 @@ public class EntityGenerateDialog extends DialogWrapper {
                 var exists = xqlMapperConfig.getMethods().get(sqlName);
                 if (Objects.nonNull(exists)) {
                     exists.setParamMeta(xqlParamMeta);
+                    exists.setParamType(xqlParamMeta.getClassName());
                 } else {
                     var xqlMethod = new XQLMapperConfig.XQLMethod();
                     xqlMethod.setParamMeta(xqlParamMeta);
+                    xqlMethod.setParamType(xqlParamMeta.getClassName());
                     xqlMapperConfig.getMethods().put(sqlName, xqlMethod);
                 }
 
-                xqlMapperConfig.saveTo(configPath);
+                try {
+                    xqlMapperConfig.saveTo(configPath);
+                    if (!generateEntityClass) {
+                        return;
+                    }
+                    var absFilename = ProjectFileUtil.createJavaFilePath(config, myForm.getFullyClassName());
+                    var classpackagePath = absFilename.getParent();
+                    if (!Files.exists(classpackagePath)) {
+                        Files.createDirectories(classpackagePath);
+                    }
 
-                then.accept(xqlParamMeta);
+                    var template = FileTemplateManager.getInstance(project).getInternalTemplate("entity.java");
+                    var templateData = ClassTemplateData.of(xqlParamMeta);
+
+                    var result = template.getText(DataRow.ofEntity(templateData));
+                    Files.writeString(absFilename, result, StandardCharsets.UTF_8);
+                    var vf = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(absFilename);
+                    if (Objects.nonNull(vf)) {
+                        vf.refresh(false, false);
+                    }
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
             }
 
             @Override
             public void onSuccess() {
-                onSuccess.run();
+                success.run();
             }
 
             @Override
@@ -224,8 +196,7 @@ public class EntityGenerateDialog extends DialogWrapper {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                doSaveConfiguration(null, paramMeta -> {
-                }, () -> {
+                doSaveConfiguration(false, () -> {
                     message.setVisible(true);
                     message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.entityGen.save.success"), HtmlUtil.Color.STRING)));
                 });

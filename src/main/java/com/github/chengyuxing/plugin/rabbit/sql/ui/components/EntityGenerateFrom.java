@@ -1,6 +1,5 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
-import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.util.ValueUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.FieldInfoRender;
@@ -46,6 +45,7 @@ public class EntityGenerateFrom extends JPanel {
     private static final Object[] thead = MessageBundle.message("ui.entityGenForm.fields").split(",");
 
     private static final List<String> FIELD_TYPES = List.of(
+            Object.class.getSimpleName(),
             String.class.getSimpleName(),
             Integer.class.getSimpleName(),
             Double.class.getSimpleName(),
@@ -55,7 +55,6 @@ public class EntityGenerateFrom extends JPanel {
             Boolean.class.getSimpleName(),
             Short.class.getSimpleName(),
             byte[].class.getSimpleName(),
-            Object.class.getSimpleName(),
             UUID.class.getName(),
             Date.class.getName(),
             LocalDateTime.class.getName(),
@@ -65,7 +64,6 @@ public class EntityGenerateFrom extends JPanel {
             LocalTime.class.getName(),
             OffsetTime.class.getName(),
             Instant.class.getName(),
-            MostDateTime.class.getName(),
             File.class.getName(),
             InputStream.class.getName(),
             Path.class.getName(),

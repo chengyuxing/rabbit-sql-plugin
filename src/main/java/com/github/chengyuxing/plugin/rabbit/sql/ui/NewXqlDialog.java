@@ -149,7 +149,7 @@ public class NewXqlDialog extends DialogWrapper {
         var file = config.getResourcesRoot().resolve(abPath);
 
         if (config.getXqlFileManagerConfig().getFiles().containsKey(alias)) {
-            newXqlFileForm.alert(MessageBundle.message("ui.dialog.newXql.ok.error.alias", alias));
+            newXqlFileForm.alert(MessageBundle.message("object.error.exists", alias));
             return;
         }
         if (Files.exists(file)) {
