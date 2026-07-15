@@ -255,16 +255,16 @@ public class ProjectFileUtil {
         return sb.toString();
     }
 
-    public static boolean containsWord(VirtualFile file, String word) {
+    public static boolean containsWord(VirtualFile file, String id) {
         if (file == null) return false;
         var doc = ApplicationManager.getApplication().runReadAction((Computable<Document>) () -> FileDocumentManager.getInstance().getDocument(file));
         if (doc == null) return false;
         int end = Math.min(doc.getTextLength(), 100);
         String header = doc.getText(new TextRange(0, end));
-        return header.contains(word);
+        return header.contains(id);
     }
 
-    public static boolean isGeneratedByPlugin(VirtualFile file) {
-        return containsWord(file, "@GeneratedByRabbitSQL");
+    public static boolean isPluginGenerated(VirtualFile file) {
+        return containsWord(file, "@RabbitSqlGenerated");
     }
 }

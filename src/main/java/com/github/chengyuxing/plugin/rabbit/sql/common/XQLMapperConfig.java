@@ -106,6 +106,7 @@ public class XQLMapperConfig {
         private String returnGenericType;
         private String sqlType;
         private String paramType;
+        private ParamSource paramSource = ParamSource.GENERATED;
         private XQLParamMeta paramMeta;
         private Boolean enable = true;
 
@@ -160,6 +161,16 @@ public class XQLMapperConfig {
         public void setParamMeta(XQLParamMeta paramMeta) {
             this.paramMeta = paramMeta;
         }
+
+        public ParamSource getParamSource() {
+            return paramSource;
+        }
+
+        public void setParamSource(ParamSource paramSource) {
+            if (paramSource != null) {
+                this.paramSource = paramSource;
+            }
+        }
     }
 
     public static class ReturnType {
@@ -201,6 +212,11 @@ public class XQLMapperConfig {
         public String toString() {
             return String.join(" & ", items);
         }
+    }
+
+    public enum ParamSource {
+        USER,
+        GENERATED
     }
 
     public static class XQLParamMeta {

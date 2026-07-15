@@ -4,13 +4,13 @@ import com.github.chengyuxing.common.MostDateTime;
 import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
-import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.TypeUtil;
 import com.github.chengyuxing.sql.annotation.SqlStatementType;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -37,7 +37,7 @@ public class XQLMapperTemplateData {
         this.mapperInterfaceName = StringUtil.generateInterfaceMapperName(mapperAlias);
     }
 
-    public static XQLMapperTemplateData of(XQLMapperConfig xqlMapperCnf, String alias, XQLConfigManager.Config config) throws IOException {
+    public static XQLMapperTemplateData of(XQLMapperConfig xqlMapperCnf, String alias, XQLConfigManager.Config config, Path mapperFile) throws IOException {
         var xqlFileManager = config.getXqlFileManager();
         var resource = xqlFileManager.getResource(alias);
         if (resource == null) {
@@ -177,13 +177,11 @@ public class XQLMapperTemplateData {
         var userMethods = new StringJoiner("\n");
         var userAnnotations = new StringJoiner("\n");
 
-        var absFilename = ProjectFileUtil.createJavaFilePath(config, xqlMapperCnf.getPackageName());
-
-        if (Files.exists(absFilename)) {
+        if (Files.exists(mapperFile)) {
             var importsBlockFlag = 0;
             var methodsBlockFlag = 0;
             var annotationsBlockFlag = 0;
-            try (var reader = Files.newBufferedReader(absFilename)) {
+            try (var reader = Files.newBufferedReader(mapperFile)) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (importsBlockFlag == 2 && methodsBlockFlag == 2 && annotationsBlockFlag == 2) {
