@@ -6,10 +6,11 @@ import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Global;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.ClassTemplateData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.EntityTemplateData;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XQLMapperTemplateData;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.MapperGenerateForm;
 import com.github.chengyuxing.plugin.rabbit.sql.util.*;
+import com.github.chengyuxing.sql.Args;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.notification.NotificationType;
@@ -20,7 +21,6 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +37,8 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.PACKAGE_PATTERN;
+import static com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig.ParamSource.GENERATED;
+import static com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig.ParamSource.USER;
 
 public class MapperGenerateDialog extends DialogWrapper {
     private final static Logger log = Logger.getInstance(MapperGenerateDialog.class);
@@ -111,24 +113,22 @@ public class MapperGenerateDialog extends DialogWrapper {
 
         var mapperClass = myForm.getPackage() + "." + StringUtil.generateInterfaceMapperName(alias);
         var absFilename = ProjectFileUtil.createJavaFilePath(config, mapperClass);
-
-        var file = VirtualFileManager.getInstance().findFileByNioPath(absFilename);
-        if (file != null && file.exists()) {
-            var byPlugin = ProjectFileUtil.isGeneratedByPlugin(file);
-            if (!byPlugin) {
-                this.message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("file.error.exists", mapperClass), HtmlUtil.Color.WARNING)));
-                return;
-            }
+        var isSame = Objects.equals(mapperConfig.getPackageName(), myForm.getPackage());
+        if (!Files.exists(absFilename) || isSame) {
+            doSaveConfiguration(mapperClass, absFilename);
+            dispose();
+            return;
         }
-
-        doSaveConfiguration(mapperClass, absFilename);
-        dispose();
+        this.message.setVisible(true);
+        this.message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("overwrite.error.exists"), HtmlUtil.Color.WARNING)));
+        this.message.setToolTipText(MessageBundle.message("overwrite.error.exists.tooltip", mapperClass));
     }
 
     private void doSaveConfiguration(String mapperClass, Path absFile) {
         ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("ui.dialog.mapperGen.ok.progress"), false) {
             private final Set<Path> refreshFiles = new HashSet<>();
             private final StringJoiner generated = new StringJoiner(", ");
+            private final Set<String> paramTypes4overwrite = new HashSet<>();
 
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
@@ -147,26 +147,37 @@ public class MapperGenerateDialog extends DialogWrapper {
                     mapperConfig.setBaki(bakiBean);
                 }
 
-                myForm.getData().forEach(row -> {
-                    var mapperMethod = new XQLMapperConfig.XQLMethod();
-                    mapperMethod.setEnable((Boolean) row.get(6));
-                    mapperMethod.setSqlType(row.get(2).toString());
-                    mapperMethod.setParamType(row.get(3).toString().trim());
-                    mapperMethod.setReturnType((XQLMapperConfig.ReturnType) row.get(4));
-                    mapperMethod.setReturnGenericType(row.get(5).toString().trim());
+                var methodsCache = mapperConfig.getMethods();
 
-                    var exists = mapperConfig.getMethods().get(row.get(0).toString());
-                    if (Objects.nonNull(exists)) {
+                myForm.getData().forEach(row -> {
+                    var methodName = row.get(0).toString();
+                    var exists = methodsCache.get(methodName);
+                    var inputParamType = row.get(3).toString().trim();
+                    var inputParamSource = detectParamSource(inputParamType, exists);
+
+                    var newMapperMethod = new XQLMapperConfig.XQLMethod();
+                    newMapperMethod.setEnable((Boolean) row.get(6));
+                    newMapperMethod.setSqlType(row.get(2).toString());
+                    newMapperMethod.setParamSource(inputParamSource);
+                    newMapperMethod.setParamType(inputParamType);
+                    newMapperMethod.setReturnType((XQLMapperConfig.ReturnType) row.get(4));
+                    newMapperMethod.setReturnGenericType(row.get(5).toString().trim());
+
+                    if (exists != null) {
                         var paramMeta = exists.getParamMeta();
-                        if (Objects.nonNull(paramMeta)) {
-                            mapperMethod.setParamMeta(paramMeta);
+                        if (paramMeta != null) {
+                            newMapperMethod.setParamMeta(paramMeta);
                         }
                     }
+                    methodsCache.put(methodName, newMapperMethod);
 
-                    mapperConfig.getMethods().put(row.get(0).toString(), mapperMethod);
+                    // excludes Map, @Args
+                    if (isUserCustomClass(inputParamType) && inputParamSource == GENERATED) {
+                        paramTypes4overwrite.add(inputParamType);
+                    }
                 });
                 // remove sqls if cache contains the changed sql name.
-                mapperConfig.getMethods().entrySet().removeIf(e -> {
+                methodsCache.entrySet().removeIf(e -> {
                     var resource = xqlFileManager.getResource(alias);
                     if (Objects.nonNull(resource)) {
                         return !resource.getEntry().containsKey(e.getKey());
@@ -178,7 +189,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                     mapperConfig.saveTo(configPath);
 
                     var template = FileTemplateManager.getInstance(project).getInternalTemplate("xqlMapperInterface.java");
-                    var templateData = XQLMapperTemplateData.of(mapperConfig, alias, config);
+                    var templateData = XQLMapperTemplateData.of(mapperConfig, alias, config, absFile);
                     var result = template.getText(DataRow.ofEntity(templateData));
 
                     var pDir = absFile.getParent();
@@ -192,7 +203,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                     // generate user custom entity type files
                     var userEntityClasses = templateData.getUserEntities();
                     if (!userEntityClasses.isEmpty()) {
-                        generateCustomEntityClass(userEntityClasses, (clazz, file) -> {
+                        generateCustomEntityClass(userEntityClasses, paramTypes4overwrite, (clazz, file) -> {
                             refreshFiles.add(file);
                             generated.add(clazz);
                         });
@@ -224,16 +235,31 @@ public class MapperGenerateDialog extends DialogWrapper {
         });
     }
 
-    private void generateCustomEntityClass(Map<String, XQLMapperTemplateData.SimpleEntity> userEntityClasses, BiConsumer<String, Path> generate) throws IOException {
+    private boolean isUserCustomClass(String input) {
+        return !MapperGenerateForm.PARAM_TYPES.contains(input);
+    }
+
+    private XQLMapperConfig.ParamSource detectParamSource(String inputParamType, XQLMapperConfig.XQLMethod exists) {
+        if (!isUserCustomClass(inputParamType)) return GENERATED;
+        if (exists != null && Objects.equals(inputParamType, exists.getParamType()) &&
+                exists.getParamSource() == USER) return USER;
+        var inputParamFile = ProjectFileUtil.createJavaFilePath(config, inputParamType);
+        // 1. file not exists, generate
+        if (!Files.exists(inputParamFile)) return GENERATED;
+        // at first generate action with an exists input class name, do not overwrite.
+        if (exists == null) return USER;
+        // another already exists user custom class, do not overwrite
+        if (!Objects.equals(inputParamType, exists.getParamType())) return USER;
+        var vf = VirtualFileManager.getInstance().findFileByNioPath(inputParamFile);
+        // generated user class is modified by user, do not overwrite
+        if (!ProjectFileUtil.isPluginGenerated(vf)) return USER;
+        // file has comment: @RabbitSqlGenerated
+        return GENERATED;
+    }
+
+    private void generateCustomEntityClass(Map<String, XQLMapperTemplateData.SimpleEntity> userEntityClasses, Set<String> entities4overwrite, BiConsumer<String, Path> generate) throws IOException {
         for (Map.Entry<String, XQLMapperTemplateData.SimpleEntity> entry : userEntityClasses.entrySet()) {
             Path file = ProjectFileUtil.createJavaFilePath(config, entry.getKey());
-            VirtualFile vf = VirtualFileManager.getInstance().findFileByNioPath(file);
-            var exists = vf != null && vf.exists();
-            var byPlugin = ProjectFileUtil.isGeneratedByPlugin(vf);
-
-            if (exists && !byPlugin) {
-                continue;
-            }
             var pDir = file.getParent();
             if (!Files.exists(pDir)) {
                 Files.createDirectories(pDir);
@@ -252,24 +278,27 @@ public class MapperGenerateDialog extends DialogWrapper {
                     }
                 }
                 case "entity.java" -> {
-                    var template = FileTemplateManager.getInstance(project).getInternalTemplate(tmpName);
-                    var paramMeta = new XQLMapperConfig.XQLParamMeta();
-                    paramMeta.setLombok(simpleEntity.getLombok());
-                    paramMeta.setLombok(simpleEntity.getLombok());
-                    paramMeta.setClassName(entry.getKey());
-                    var params = new LinkedHashMap<String, XQLMapperConfig.XQLParam>();
-                    simpleEntity.getParameters().forEach(p -> {
-                        var xqlParam = new XQLMapperConfig.XQLParam();
-                        xqlParam.setComment(p.getComment());
-                        xqlParam.setType(p.getType());
-                        xqlParam.setRequired(true);
-                        params.put(p.getName(), xqlParam);
-                    });
-                    paramMeta.setParams(params);
-                    var templateData = ClassTemplateData.of(paramMeta);
-                    var result = template.getText(DataRow.ofEntity(templateData));
-                    Files.writeString(file, result, StandardCharsets.UTF_8);
-                    generate.accept(entry.getKey(), file);
+                    if (entities4overwrite.contains(entry.getKey())) {
+                        var template = FileTemplateManager.getInstance(project).getInternalTemplate(tmpName);
+                        var paramMeta = new XQLMapperConfig.XQLParamMeta();
+                        paramMeta.setLombok(simpleEntity.getLombok());
+                        paramMeta.setLombok(simpleEntity.getLombok());
+                        paramMeta.setClassName(entry.getKey());
+                        var params = new LinkedHashMap<String, XQLMapperConfig.XQLParam>();
+                        simpleEntity.getParameters().forEach(p -> {
+                            var xqlParam = new XQLMapperConfig.XQLParam();
+                            xqlParam.setComment(p.getComment());
+                            xqlParam.setType(p.getType());
+                            xqlParam.setRequired(true);
+                            params.put(p.getName(), xqlParam);
+                        });
+                        paramMeta.setParams(params);
+                        var templateData = EntityTemplateData.of(paramMeta);
+                        var args = Args.ofEntity(templateData);
+                        var result = template.getText(args);
+                        Files.writeString(file, result, StandardCharsets.UTF_8);
+                        generate.accept(entry.getKey(), file);
+                    }
                 }
             }
         }
