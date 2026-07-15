@@ -356,7 +356,9 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         new Separator(),
                         new CopyXqlFile(tree),
                         copyGroup,
-                        new OpenInEditorAction(tree)
+                        new OpenInEditorAction(tree),
+                        new Separator(),
+                        new RemoveAction(tree),
                 };
             }
         });
@@ -374,12 +376,26 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     }
 
     private ActionPopupMenu createXqlFileManagerPopMenu(JTree tree) {
+        var configGroup = new SplitButtonAction(new ActionGroup() {
+            @Override
+            public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
+                return new AnAction[]{
+                        new NewXqlFileAction(tree),
+                        new NewPipeAction(tree),
+                };
+            }
+        }) {
+            @Override
+            public void update(@NotNull AnActionEvent e) {
+                e.getPresentation().setText(MessageBundle.message("new.text"));
+            }
+        };
 
         return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
             @Override
             public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
                 return new AnAction[]{
-                        new NewXqlFileAction(tree),
+                        configGroup,
                         new OpenInEditorAction(tree),
                         new Separator(),
                         new ReloadSelectedAction(tree),
@@ -414,7 +430,9 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         new GenerateEntityAction(tree),
                         new Separator(),
                         copyGroup,
-                        new GotoXqlFileAction(tree)
+                        new GotoXqlFileAction(tree),
+                        new Separator(),
+                        new RemoveAction(tree),
                 };
             }
         });
