@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ClassTemplateData {
+public class EntityTemplateData {
     private final ClassInfo clazz;
     private String comment;
     private Set<Field> fields = new LinkedHashSet<>();
@@ -19,11 +19,11 @@ public class ClassTemplateData {
     private String user;
     private String date;
 
-    public ClassTemplateData(String className) {
+    public EntityTemplateData(String className) {
         this.clazz = TypeUtil.extractFullClassInfo(className);
     }
 
-    public static ClassTemplateData of(XQLMapperConfig.XQLParamMeta paramMeta) {
+    public static EntityTemplateData of(XQLMapperConfig.XQLParamMeta paramMeta) {
         var imports = new LinkedHashSet<String>();
         var fields = new LinkedHashSet<Field>();
         for (Map.Entry<String, XQLMapperConfig.XQLParam> entry : paramMeta.getParams().entrySet()) {
@@ -39,11 +39,11 @@ public class ClassTemplateData {
                 shortType = typeNameAndPackage.getItem1();
                 imports.add(typeNameAndPackage.getItem2());
             }
-            var field = new ClassTemplateData.Field(name, shortType);
+            var field = new EntityTemplateData.Field(name, shortType);
             field.setComment(param.getComment());
             fields.add(field);
         }
-        var templateData = new ClassTemplateData(paramMeta.getClassName());
+        var templateData = new EntityTemplateData(paramMeta.getClassName());
         templateData.setUser(System.getProperty("user.name"));
         templateData.setDate(MostDateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
         templateData.setImports(imports);

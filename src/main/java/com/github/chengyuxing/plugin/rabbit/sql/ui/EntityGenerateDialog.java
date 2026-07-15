@@ -5,7 +5,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.components.EntityGenerateFrom;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.ClassTemplateData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.EntityTemplateData;
 import com.github.chengyuxing.plugin.rabbit.sql.util.*;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -42,6 +42,7 @@ public class EntityGenerateDialog extends DialogWrapper {
     private final JButton message;
     private final Path configPath;
     private final XQLMapperConfig xqlMapperConfig;
+    private String loadedClassName;
 
     public EntityGenerateDialog(@NotNull Project project, String alias, String sqlName, XQLConfigManager.Config config, Map<String, Set<String>> fieldMapping) {
         super(project, true);
@@ -67,6 +68,7 @@ public class EntityGenerateDialog extends DialogWrapper {
                         lombok = paramMeta.getLombok();
                         params = paramMeta.getParams();
                         comment = paramMeta.getComment();
+                        this.loadedClassName = className;
                     }
                 }
             }
@@ -104,11 +106,20 @@ public class EntityGenerateDialog extends DialogWrapper {
             message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.entityGen.error.classname", myForm.getFullyClassName()), HtmlUtil.Color.WARNING)));
             return;
         }
-        doSaveConfiguration(true, () -> {
-            String message = MessageBundle.message("ui.dialog.entityGen.save.generated") + " " + myForm.getFullyClassName();
-            NotificationUtil.showMessage(project, message, NotificationType.INFORMATION);
-        });
-        dispose();
+
+        var absFilename = ProjectFileUtil.createJavaFilePath(config, myForm.getFullyClassName());
+        var isSameFile = Objects.equals(loadedClassName, myForm.getFullyClassName());
+        if (!Files.exists(absFilename) || isSameFile) {
+            doSaveConfiguration(true, () -> {
+                String message = MessageBundle.message("ui.dialog.entityGen.save.generated") + " " + myForm.getFullyClassName();
+                NotificationUtil.showMessage(project, message, NotificationType.INFORMATION);
+            });
+            dispose();
+            return;
+        }
+        message.setVisible(true);
+        message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("overwrite.error.exists"), HtmlUtil.Color.WARNING)));
+        message.setToolTipText(MessageBundle.message("overwrite.error.exists.tooltip", myForm.getFullyClassName()));
     }
 
     private void doSaveConfiguration(boolean generateEntityClass, Runnable success) {
@@ -154,9 +165,8 @@ public class EntityGenerateDialog extends DialogWrapper {
                     if (!Files.exists(classpackagePath)) {
                         Files.createDirectories(classpackagePath);
                     }
-
                     var template = FileTemplateManager.getInstance(project).getInternalTemplate("entity.java");
-                    var templateData = ClassTemplateData.of(xqlParamMeta);
+                    var templateData = EntityTemplateData.of(xqlParamMeta);
 
                     var result = template.getText(DataRow.ofEntity(templateData));
                     Files.writeString(absFilename, result, StandardCharsets.UTF_8);
