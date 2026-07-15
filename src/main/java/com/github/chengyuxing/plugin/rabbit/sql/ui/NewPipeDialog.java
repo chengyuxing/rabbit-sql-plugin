@@ -83,9 +83,10 @@ public class NewPipeDialog extends DialogWrapper {
         var resultType = form.getResultType();
 
         var absFilename = ProjectFileUtil.createJavaFilePath(config, form.getFullClassName());
+        var classInfo = TypeUtil.extractFullClassInfo(form.getFullClassName());
 
         var args = Global.usefulArgs()
-                .add("clazz", TypeUtil.extractFullClassInfo(form.getFullClassName()))
+                .add("clazz", classInfo)
                 .add("resultType", resultType);
 
         if (config.getXqlFileManagerConfig().getPipes().containsKey(pipeName)) {
@@ -94,7 +95,7 @@ public class NewPipeDialog extends DialogWrapper {
         }
         // whatever do not overwrite the exists file
         if (Files.exists(absFilename)) {
-            showWarn(MessageBundle.message("file.error.exists", args.get("className")));
+            showWarn(MessageBundle.message("file.error.exists", form.getFullClassName()));
             return;
         }
 
