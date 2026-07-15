@@ -15,7 +15,6 @@ public final class Constants {
     public static final Path RESOURCES_ROOT = Path.of("src", "main", "resources");
     public static final String RESOURCE_ROOT_PATH = "src/main/resources";
     public static final Path JAVA_SOURCE_ROOT = Path.of("src", "main", "java");
-    public static final Path KT_SOURCE_ROOT = Path.of("src", "main", "kotlin");
     public static final Path CONFIG_PATH = RESOURCES_ROOT.resolve(CONFIG_NAME);
     public static final Pattern CONFIG_PATTERN = Pattern.compile("xql-file-manager(-[a-zA-Z0-9_]+)?\\.yml");
     public static final String[] XQL_DIRECTIVE_KEYWORDS = new String[]{"of", "as", "throw"};
