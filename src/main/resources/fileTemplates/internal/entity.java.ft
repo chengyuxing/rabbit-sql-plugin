@@ -1,27 +1,26 @@
 /*
+ * @RabbitSqlGenerated
  * Created by IntelliJ IDEA Rabbit SQL plugin.
- * @GeneratedByRabbitSQL
  * User: $user
  * Update: $date
  */
 #if($clazz.packageName)
 package $clazz.packageName;
-
 #end
-#if($lombok.size() > 0)
 
+#if($lombok.size() > 0)
 #foreach($anno in $lombok)
 import lombok.$anno.substring(1);
 #end
+
 #end
 #if($imports.size() > 0)
-
 #foreach($import in $imports)
 import $import;
 #end
+
 #end
 #if($comment && $comment.length() > 0)
-
 /**
  * $comment
  */
@@ -44,13 +43,13 @@ public class $clazz.className {
 #foreach($field in $fields)
 #if(!$lombok.contains("@Data"))
 #if(!$lombok.contains("@Getter"))
-    public ${field.type} get${field.name.substring(0,1).toUpperCase()}${field.name.substring(1)}(){
+    public ${field.type} get${field.name.substring(0,1).toUpperCase()}${field.name.substring(1)}() {
         return ${field.name};
     }
 
 #end
 #if(!$lombok.contains("@Setter"))
-    public void set${field.name.substring(0,1).toUpperCase()}${field.name.substring(1)}(${field.type} ${field.name}){
+    public void set${field.name.substring(0,1).toUpperCase()}${field.name.substring(1)}(${field.type} ${field.name}) {
         this.${field.name} = ${field.name};
     }
 

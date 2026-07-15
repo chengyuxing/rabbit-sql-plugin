@@ -1,8 +1,7 @@
 /*
  Created by IntelliJ IDEA Rabbit SQL plugin.
  User: $USER
- Date: $DATE
- Time: $TIME
+ Date: $DATE $TIME
 #if($Description && $Description != "")
  @@@
  $Description

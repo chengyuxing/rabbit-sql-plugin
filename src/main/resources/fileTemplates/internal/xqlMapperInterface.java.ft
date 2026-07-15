@@ -1,6 +1,5 @@
 /*
  * Created by IntelliJ IDEA Rabbit SQL plugin.
- * @GeneratedByRabbitSQL
  * User: $user
  * Update: $date
  */
@@ -60,7 +59,7 @@ $userAnnotations
 @XQLMapper("$mapperAlias")
 public interface ${mapperInterfaceName} {
     // Rabbit SQL plugin - Your methods  //CODE-BEGIN:methods
-$userMethods
+    $userMethods
     // Rabbit SQL plugin - End of your methods  //CODE-END:methods
 
 #foreach($method in $methods)
