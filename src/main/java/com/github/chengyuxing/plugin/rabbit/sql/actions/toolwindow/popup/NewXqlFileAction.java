@@ -2,11 +2,12 @@ package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXqlDialog;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.XqlTreeNode;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlConfig;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlFileFolder;
 import com.github.chengyuxing.plugin.rabbit.sql.util.*;
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -24,7 +25,13 @@ public class NewXqlFileAction extends AnAction {
     private final JTree tree;
 
     public NewXqlFileAction(JTree tree) {
-        super(MessageBundle.message("action.newXql.text"), MessageBundle.message("action.newXql.description"), AllIcons.Actions.AddMulticaret);
+        super(() -> {
+            var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
+            if (nodeSource instanceof XqlFileFolder) {
+                return MessageBundle.message("action.newXql.text");
+            }
+            return MessageBundle.message("new.text");
+        }, () -> MessageBundle.message("action.newXql.description"), XqlIcons.XQL_FILE);
         this.tree = tree;
     }
 
@@ -35,16 +42,12 @@ public class NewXqlFileAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.isNull(nodeSource)) {
+        if (nodeSource instanceof XqlConfig xqlConfig) {
+            openNewXqlDialog(project, xqlConfig.config(), List.of());
             return;
         }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_CONFIG) {
-            var config = (XQLConfigManager.Config) nodeSource.source();
-            openNewXqlDialog(project, config, List.of());
-            return;
-        }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE_FOLDER) {
-            var config = (XQLConfigManager.Config) nodeSource.source();
+        if (nodeSource instanceof XqlFileFolder xqlFileFolder) {
+            var config = xqlFileFolder.config();
             var selected = tree.getSelectionPath();
             if (Objects.isNull(selected)) {
                 return;
@@ -64,10 +67,7 @@ public class NewXqlFileAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.isNull(nodeSource)) {
-            return;
-        }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE_FOLDER) {
+        if (nodeSource instanceof XqlFileFolder) {
             var selected = tree.getSelectionPath();
             if (Objects.isNull(selected)) {
                 return;
@@ -92,10 +92,9 @@ public class NewXqlFileAction extends AnAction {
         return Stream.of(selected.getPath())
                 .filter(p -> p instanceof XqlTreeNode)
                 .map(p -> ((XqlTreeNode) p).getUserObject())
-                .filter(n -> n instanceof XqlTreeNodeData)
-                .map(n -> (XqlTreeNodeData) n)
-                .filter(n -> n.type() == XqlTreeNodeData.Type.XQL_FILE_FOLDER)
-                .map(XqlTreeNodeData::title)
+                .filter(n -> n instanceof XqlFileFolder)
+                .map(n -> (XqlFileFolder) n)
+                .map(XqlFileFolder::title)
                 .toList();
     }
 

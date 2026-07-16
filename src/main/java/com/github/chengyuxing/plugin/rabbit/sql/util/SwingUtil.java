@@ -1,9 +1,11 @@
 package com.github.chengyuxing.plugin.rabbit.sql.util;
 
-import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.XqlTreeNode;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.NodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.SqlFragment;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlFile;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlFileFolder;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -22,13 +24,13 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 public class SwingUtil {
-    public static XqlTreeNodeData getTreeSelectionNodeUserData(JTree tree) {
+    public static NodeData getTreeSelectionNodeUserData(JTree tree) {
         var selected = tree.getSelectionPath();
         if (Objects.isNull(selected)) {
             return null;
         }
         var node = (XqlTreeNode) selected.getLastPathComponent();
-        if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
+        if (node.getUserObject() instanceof NodeData nodeSource) {
             return nodeSource;
         }
         return null;
@@ -77,10 +79,10 @@ public class SwingUtil {
                     continue;
                 }
                 var filename = config.getXqlFileManagerConfig().getFiles().get(item);
-                pNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE, item, Tuples.of(item, filename, resource.getFilename(), config, resource.getDescription())));
+                pNode = new XqlTreeNode(new XqlFile(item, filename, resource, config));
                 buildXQLNodes(config, item, pNode, resource);
             } else {
-                pNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE_FOLDER, item, config));
+                pNode = new XqlTreeNode(new XqlFileFolder(config, item));
             }
             rootNode.add(pNode);
             buildXQLTree(children, config, pNode);
@@ -90,8 +92,7 @@ public class SwingUtil {
     public static void buildXQLNodes(XQLConfigManager.Config config, String item, XqlTreeNode XQLNode, XQLFileManager.Resource resource) {
         resource.getEntry().forEach((name, sql) -> {
             if (!name.startsWith("${") && !name.endsWith("}")) {
-                var sqlNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FRAGMENT,
-                        name, Tuples.of(item, name, sql, config)));
+                var sqlNode = new XqlTreeNode(new SqlFragment(item, name, sql, config));
                 XQLNode.add(sqlNode);
             }
         });

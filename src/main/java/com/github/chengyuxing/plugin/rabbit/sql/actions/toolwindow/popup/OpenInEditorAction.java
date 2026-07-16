@@ -1,9 +1,9 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
-import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
-import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.NodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlConfig;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlFile;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.intellij.codeInsight.navigation.NavigationUtil;
@@ -34,15 +34,13 @@ public class OpenInEditorAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource)) {
-            var filePath = detectedExistsFilePath(nodeSource);
-            if (Objects.nonNull(filePath)) {
-                var xqlVf = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(filePath);
-                if (Objects.nonNull(xqlVf) && xqlVf.exists()) {
-                    var psi = PsiManager.getInstance(project).findFile(xqlVf);
-                    if (Objects.nonNull(psi)) {
-                        NavigationUtil.activateFileWithPsiElement(psi);
-                    }
+        var filePath = detectedExistsFilePath(nodeSource);
+        if (Objects.nonNull(filePath)) {
+            var xqlVf = VirtualFileManager.getInstance().refreshAndFindFileByNioPath(filePath);
+            if (Objects.nonNull(xqlVf) && xqlVf.exists()) {
+                var psi = PsiManager.getInstance(project).findFile(xqlVf);
+                if (Objects.nonNull(psi)) {
+                    NavigationUtil.activateFileWithPsiElement(psi);
                 }
             }
         }
@@ -55,14 +53,10 @@ public class OpenInEditorAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource)) {
-            if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
-                @SuppressWarnings("unchecked")
-                var sqlMeta = (Triple<String, String, String>) nodeSource.source();
-                var filepath = sqlMeta.getItem3();
-                if (!ProjectFileUtil.isLocalFileUri(filepath)) {
-                    e.getPresentation().setEnabled(false);
-                }
+        if (nodeSource instanceof XqlFile xqlFile) {
+            var filepath = xqlFile.getAbsoluteFilePath();
+            if (!ProjectFileUtil.isLocalFileUri(filepath)) {
+                e.getPresentation().setEnabled(false);
             }
         }
     }
@@ -72,19 +66,14 @@ public class OpenInEditorAction extends AnAction {
         return ActionUpdateThread.EDT;
     }
 
-    private static Path detectedExistsFilePath(XqlTreeNodeData nodeData) {
-        return switch (nodeData.type()) {
-            case XQL_CONFIG -> {
-                var config = (XQLConfigManager.Config) nodeData.source();
-                yield config.getConfigPath();
-            }
-            case XQL_FILE -> {
-                @SuppressWarnings("unchecked")
-                var sqlMeta = (Triple<String, String, String>) nodeData.source();
-                var filepath = sqlMeta.getItem3();
-                yield Path.of(URI.create(filepath));
-            }
-            case XQL_FILE_FOLDER, MODULE, XQL_FRAGMENT -> null;
-        };
+    private static Path detectedExistsFilePath(NodeData nodeSource) {
+        if (nodeSource instanceof XqlConfig xqlConfig) {
+            return xqlConfig.config().getConfigPath();
+        }
+        if (nodeSource instanceof XqlFile xqlFile) {
+            var filepath = xqlFile.getAbsoluteFilePath();
+            return Path.of(URI.create(filepath));
+        }
+        return null;
     }
 }

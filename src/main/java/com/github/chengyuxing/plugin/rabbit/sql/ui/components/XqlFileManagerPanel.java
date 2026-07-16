@@ -1,17 +1,14 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
-import com.github.chengyuxing.common.tuple.Quadruple;
-import com.github.chengyuxing.common.tuple.Quintuple;
-import com.github.chengyuxing.common.tuple.Tuples;
 import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup.*;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.renderer.TreeNodeRenderer;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.XqlTreeNode;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.NodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.*;
 import com.github.chengyuxing.plugin.rabbit.sql.util.*;
-import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
@@ -110,34 +107,31 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         return;
                     }
                     var node = (XqlTreeNode) selection.getLastPathComponent();
-                    if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
+                    if (node.getUserObject() instanceof NodeData source) {
                         var point = pointRef.get();
                         if (point == null) {
                             return;
                         }
-                        switch (nodeSource.type()) {
-                            case XQL_FRAGMENT -> {
-                                @SuppressWarnings("unchecked") var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
-                                var sql = sqlMeta.getItem3();
-                                var html = HtmlUtil.highlightSql(sql.getSource());
-                                if (!sql.getDescription().isEmpty()) {
-                                    var desc = HtmlUtil.pre("/*" + sql.getDescription() + "*/", HtmlUtil.Color.ANNOTATION);
-                                    html = HtmlUtil.wrap("div", desc + html, HtmlUtil.Color.EMPTY);
-                                }
-                                var height = StringUtils.countOccurrences(sql.getSource(), NEW_LINE) * 21 + 39;
-                                popup = SwingUtil.showPreview(html, height, tree.getComponentAt(point), point);
+                        if (source instanceof SqlFragment sqlFragment) {
+                            var sql = sqlFragment.sql();
+                            var html = HtmlUtil.highlightSql(sql.getSource());
+                            if (!sql.getDescription().isEmpty()) {
+                                var desc = HtmlUtil.pre("/*" + sql.getDescription() + "*/", HtmlUtil.Color.ANNOTATION);
+                                html = HtmlUtil.wrap("div", desc + html, HtmlUtil.Color.EMPTY);
                             }
-                            case XQL_FILE -> {
-                                @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
-                                var config = sqlMeta.getItem4().getXqlFileManager();
-                                var alias = sqlMeta.getItem1();
-                                var errors = config.getErrorAlias();
-                                var error = errors.get(alias);
-                                if (error != null) {
-                                    var html = HtmlUtil.wrap("pre", error, HtmlUtil.Color.ERROR);
-                                    var height = StringUtils.countOccurrences(html, NEW_LINE) * 21 + 39;
-                                    popup = SwingUtil.showPreview(html, height, tree.getComponentAt(point), point);
-                                }
+                            var height = StringUtils.countOccurrences(sql.getSource(), NEW_LINE) * 21 + 39;
+                            popup = SwingUtil.showPreview(html, height, tree.getComponentAt(point), point);
+                            return;
+                        }
+                        if (source instanceof XqlFile xqlFile) {
+                            var config = xqlFile.config().getXqlFileManager();
+                            var alias = xqlFile.alias();
+                            var errors = config.getErrorAlias();
+                            var error = errors.get(alias);
+                            if (error != null) {
+                                var html = HtmlUtil.wrap("pre", error, HtmlUtil.Color.ERROR);
+                                var height = StringUtils.countOccurrences(html, NEW_LINE) * 21 + 39;
+                                popup = SwingUtil.showPreview(html, height, tree.getComponentAt(point), point);
                             }
                         }
                     }
@@ -154,20 +148,12 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         return;
                     }
                     var node = (XqlTreeNode) selected.getLastPathComponent();
-                    if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
-                        switch (nodeSource.type()) {
-                            case MODULE, XQL_CONFIG, XQL_FILE, XQL_FILE_FOLDER -> {
-                            }
-                            case XQL_FRAGMENT -> {
-                                @SuppressWarnings("unchecked")
-                                var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
-                                var sqlPath = sqlMeta.getItem4().getXqlFileManager().getResource(sqlMeta.getItem1()).getFilename();
-                                if (ProjectFileUtil.isLocalFileUri(sqlPath)) {
-                                    PsiUtil.navigate2xqlFile(sqlMeta.getItem1(), sqlMeta.getItem2(), sqlMeta.getItem4());
-                                } else {
-                                    NotificationUtil.showMessage(project, MessageBundle.message("ui.xqlFileManagerPanel.xql.parse.warning"), NotificationType.WARNING);
-                                }
-                            }
+                    if (node.getUserObject() instanceof SqlFragment sqlFragment) {
+                        var sqlPath = sqlFragment.config().getXqlFileManager().getResource(sqlFragment.xqlAlias()).getFilename();
+                        if (ProjectFileUtil.isLocalFileUri(sqlPath)) {
+                            PsiUtil.navigate2xqlFile(sqlFragment.xqlAlias(), sqlFragment.sqlName(), sqlFragment.config());
+                        } else {
+                            NotificationUtil.showMessage(project, MessageBundle.message("ui.xqlFileManagerPanel.xql.parse.warning"), NotificationType.WARNING);
                         }
                     }
                 }
@@ -181,14 +167,25 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         return;
                     }
                     var node = (XqlTreeNode) selected.getLastPathComponent();
-                    if (node.getUserObject() instanceof XqlTreeNodeData nodeSource) {
-                        switch (nodeSource.type()) {
-                            case MODULE -> moduleMenu.getComponent().show(tree, e.getX(), e.getY());
-                            case XQL_CONFIG -> xqlFileManagerMenu.getComponent().show(tree, e.getX(), e.getY());
-                            case XQL_FILE -> xqlFileMenu.getComponent().show(tree, e.getX(), e.getY());
-                            case XQL_FRAGMENT -> xqlFragmentMenu.getComponent().show(tree, e.getX(), e.getY());
-                            case XQL_FILE_FOLDER -> xqlFolderMenu.getComponent().show(tree, e.getX(), e.getY());
-                        }
+                    Object source = node.getUserObject();
+                    if (source instanceof ProjectModule) {
+                        moduleMenu.getComponent().show(tree, e.getX(), e.getY());
+                        return;
+                    }
+                    if (source instanceof XqlConfig) {
+                        xqlFileManagerMenu.getComponent().show(tree, e.getX(), e.getY());
+                        return;
+                    }
+                    if (source instanceof XqlFile) {
+                        xqlFileMenu.getComponent().show(tree, e.getX(), e.getY());
+                        return;
+                    }
+                    if (source instanceof SqlFragment) {
+                        xqlFragmentMenu.getComponent().show(tree, e.getX(), e.getY());
+                        return;
+                    }
+                    if (source instanceof XqlFileFolder) {
+                        xqlFolderMenu.getComponent().show(tree, e.getX(), e.getY());
                     }
                 }
             }
@@ -257,11 +254,10 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         root.removeAllChildren();
         xqlConfigManager.getConfigMap()
                 .forEach((module, configs) -> {
-                    var mNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.MODULE, module.getFileName().toString(), module));
+                    var mNode = new XqlTreeNode(new ProjectModule(module));
                     configs.forEach(config -> {
                         if (config.isValid()) {
-                            var ds = new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_CONFIG, config.getConfigName(), config);
-                            var configNode = new XqlTreeNode(ds);
+                            var configNode = new XqlTreeNode(new XqlConfig(config));
                             mNode.add(configNode);
                             if (treeViewNodes) {
                                 var nestTreeNodes = new LinkedHashMap<String, Object>();
@@ -275,7 +271,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                                 config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
                                     var resource = config.getXqlFileManager().getResource(alias);
                                     if (Objects.nonNull(resource)) {
-                                        var fileNode = new XqlTreeNode(new XqlTreeNodeData(XqlTreeNodeData.Type.XQL_FILE, alias, Tuples.of(alias, filename, resource.getFilename(), config, resource.getDescription())));
+                                        var fileNode = new XqlTreeNode(new XqlFile(alias, filename, resource, config));
                                         configNode.add(fileNode);
                                         SwingUtil.buildXQLNodes(config, alias, fileNode, resource);
                                     }

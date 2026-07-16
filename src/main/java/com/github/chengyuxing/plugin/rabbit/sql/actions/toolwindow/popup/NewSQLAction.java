@@ -1,10 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
-import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
-import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewSQLDialog;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlFile;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.intellij.icons.AllIcons;
@@ -32,12 +30,9 @@ public class NewSQLAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
-            @SuppressWarnings("unchecked") var data = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
-            var alias = data.getItem1();
-            var config = data.getItem4();
+        if (nodeSource instanceof XqlFile xqlFile) {
             ApplicationManager.getApplication().invokeLater(() -> {
-                var d = new NewSQLDialog(project, alias, config);
+                var d = new NewSQLDialog(project, xqlFile.alias(), xqlFile.config());
                 d.showAndGet();
             });
         }
@@ -50,15 +45,14 @@ public class NewSQLAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
-            @SuppressWarnings("unchecked") var data = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
-            var filename = data.getItem3();
+        if (nodeSource instanceof XqlFile xqlFile) {
+            var filename = xqlFile.getAbsoluteFilePath();
             if (!ProjectFileUtil.isLocalFileUri(filename)) {
                 e.getPresentation().setEnabled(false);
                 return;
             }
             // is error file, do not allow 'new' action
-            if (data.getItem4().getXqlFileManager().getErrorAlias().containsKey(data.getItem1())) {
+            if (xqlFile.config().getXqlFileManager().getErrorAlias().containsKey(xqlFile.alias())) {
                 e.getPresentation().setEnabled(false);
             }
         }

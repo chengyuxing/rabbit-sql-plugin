@@ -1,9 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
-import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
-import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.SqlFragment;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlFile;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -41,22 +40,18 @@ public class RemoveAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.isNull(nodeSource)) {
+        if (nodeSource instanceof XqlFile xqlFile) {
+            removeXQLFile(project, xqlFile);
             return;
         }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
-            removeXQLFile(project, nodeSource);
-            return;
-        }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
-            removeSQLObject(project, nodeSource);
+        if (nodeSource instanceof SqlFragment sqlFragment) {
+            removeSQLObject(project, sqlFragment);
         }
     }
 
-    private void removeXQLFile(Project project, XqlTreeNodeData nodeSource) {
-        @SuppressWarnings("unchecked") var data = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
-        var alias = data.getItem1();
-        var config = data.getItem4();
+    private void removeXQLFile(Project project, XqlFile xqlFile) {
+        var alias = xqlFile.alias();
+        var config = xqlFile.config();
         int result = Messages.showOkCancelDialog(project,
                 "Remove the '" + alias + "' from XQL Configuration?",
                 "Remove XQL",
@@ -97,11 +92,10 @@ public class RemoveAction extends AnAction {
         }
     }
 
-    private void removeSQLObject(Project project, XqlTreeNodeData nodeSource) {
-        @SuppressWarnings("unchecked") var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
-        var alias = sqlMeta.getItem1();
-        var sqlName = sqlMeta.getItem2();
-        var config = sqlMeta.getItem4();
+    private void removeSQLObject(Project project, SqlFragment sqlFragment) {
+        var alias = sqlFragment.xqlAlias();
+        var sqlName = sqlFragment.sqlName();
+        var config = sqlFragment.config();
         int result = Messages.showOkCancelDialog(project,
                 "Comment out the SQL '" + sqlName + "' from XQL file?",
                 "Comment out SQL",
@@ -112,7 +106,7 @@ public class RemoveAction extends AnAction {
             var path = config.getXqlFileManager().getFiles().get(alias);
             var sqlVf = VirtualFileManager.getInstance().findFileByUrl(path);
             if (sqlVf == null) return;
-            WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("command.modify", config.getConfigName()), null, () -> {
+            WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("command.modify", sqlName), null, () -> {
                 var doc = ApplicationManager.getApplication().runReadAction((Computable<Document>) () ->
                         FileDocumentManager.getInstance().getDocument(sqlVf));
                 if (doc != null) {
@@ -152,11 +146,9 @@ public class RemoveAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (nodeSource == null) return;
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
-            @SuppressWarnings("unchecked") var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
-            var alias = sqlMeta.getItem1();
-            var config = sqlMeta.getItem4();
+        if (nodeSource instanceof SqlFragment sqlFragment) {
+            var alias = sqlFragment.xqlAlias();
+            var config = sqlFragment.config();
             var path = config.getXqlFileManager().getFiles().get(alias);
             if (!ProjectFileUtil.isLocalFileUri(path)) {
                 e.getPresentation().setEnabled(false);

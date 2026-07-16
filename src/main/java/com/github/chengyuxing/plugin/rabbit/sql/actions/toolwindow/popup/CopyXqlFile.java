@@ -1,9 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.common.io.FileResource;
-import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlFile;
 import com.github.chengyuxing.plugin.rabbit.sql.util.FileTransferable;
 import com.github.chengyuxing.plugin.rabbit.sql.util.NotificationUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
@@ -40,13 +39,8 @@ public class CopyXqlFile extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.isNull(nodeSource)) {
-            return;
-        }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
-            //noinspection unchecked
-            var sqlMeta = (Triple<String, String, String>) nodeSource.source();
-            var filepath = sqlMeta.getItem3();
+        if (nodeSource instanceof XqlFile xqlFile) {
+            var filepath = xqlFile.getAbsoluteFilePath();
             ApplicationManager.getApplication().executeOnPooledThread(() -> {
                 try {
                     var file = createFileByUri(project, filepath);

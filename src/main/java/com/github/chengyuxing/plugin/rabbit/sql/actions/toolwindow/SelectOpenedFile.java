@@ -1,12 +1,13 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow;
 
-import com.github.chengyuxing.common.tuple.Triple;
 import com.github.chengyuxing.common.util.ValueUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.XqlFileManagerToolWindow;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNode;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.XqlTreeNode;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.SqlFragment;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlConfig;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlFile;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
@@ -95,22 +96,19 @@ public class SelectOpenedFile extends AnAction {
                 var alias = sqlRefParts.getItem1();
                 var name = sqlRefParts.getItem2();
                 node = SwingUtil.findNode((XqlTreeNode) root, treeNode -> {
-                    if (treeNode.getUserObject() instanceof XqlTreeNodeData nodeData) {
-                        if (nodeData.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
-                            if (!nodeData.title().equals(name)) {
-                                return false;
-                            }
-                            // find xql node
-                            if (treeNode.getParent() instanceof XqlTreeNode xqlFileTreeNode) {
-                                if (xqlFileTreeNode.getUserObject() instanceof XqlTreeNodeData xqlFileNodeData && xqlFileNodeData.type() == XqlTreeNodeData.Type.XQL_FILE) {
-                                    // find xql config node
-                                    if (xqlFileTreeNode.getParent() instanceof XqlTreeNode configNode) {
-                                        if (configNode.getUserObject() instanceof XqlTreeNodeData configNodeData && configNodeData.type() == XqlTreeNodeData.Type.XQL_CONFIG) {
-                                            var activeConfig = xqlConfigManager.getActiveConfig(element);
-                                            if (Objects.nonNull(activeConfig) && activeConfig.getConfigName().equals(configNodeData.title())) {
-                                                return xqlFileNodeData.title().equals(alias);
-                                            }
-                                        }
+                    if (treeNode.getUserObject() instanceof SqlFragment sqlFragment) {
+                        if (!sqlFragment.sqlName().equals(name)) {
+                            return false;
+                        }
+                        // find xql node
+                        if (treeNode.getParent() instanceof XqlTreeNode xqlFileTreeNode) {
+                            if (xqlFileTreeNode.getUserObject() instanceof XqlFile xqlFile) {
+                                // find xql config node
+                                if (xqlFileTreeNode.getParent() instanceof XqlTreeNode configNode
+                                        && configNode.getUserObject() instanceof XqlConfig xqlConfig) {
+                                    var activeConfig = xqlConfigManager.getActiveConfig(element);
+                                    if (Objects.nonNull(activeConfig) && activeConfig.getConfigName().equals(xqlConfig.config().getConfigName())) {
+                                        return xqlFile.alias().equals(alias);
                                     }
                                 }
                             }
@@ -128,29 +126,26 @@ public class SelectOpenedFile extends AnAction {
                     return;
                 }
                 node = SwingUtil.findNode((XqlTreeNode) root, treeNode -> {
-                    if (treeNode.getUserObject() instanceof XqlTreeNodeData nodeData && nodeData.type() == XqlTreeNodeData.Type.XQL_FILE) {
+                    if (treeNode.getUserObject() instanceof XqlFile xqlFile) {
                         // find xql config node
-                        if (treeNode.getParent() instanceof XqlTreeNode configNode) {
-                            if (configNode.getUserObject() instanceof XqlTreeNodeData configNodeData && configNodeData.type() == XqlTreeNodeData.Type.XQL_CONFIG) {
-                                var activeConfig = xqlConfigManager.getActiveConfig(element);
-                                if (Objects.isNull(activeConfig) || !activeConfig.getConfigName().equals(configNodeData.title())) {
-                                    return false;
-                                }
+                        if (treeNode.getParent() instanceof XqlTreeNode configNode &&
+                                configNode.getUserObject() instanceof XqlConfig xqlConfig) {
+                            var activeConfig = xqlConfigManager.getActiveConfig(element);
+                            if (Objects.isNull(activeConfig) || !activeConfig.getConfigName().equals(xqlConfig.config().getConfigName())) {
+                                return false;
                             }
                         }
 
-                        @SuppressWarnings("unchecked") var sqlMeta = (Triple<String, String, String>) nodeData.source();
-                        var filepath = sqlMeta.getItem3();
+                        var filepath = xqlFile.getAbsoluteFilePath();
                         var matchFile = filepath.equals(currentFile.toNioPath().toUri().toString());
 
                         for (int i = 0, j = treeNode.getChildCount(); i < j; i++) {
-                            if (treeNode.getChildAt(i) instanceof XqlTreeNode childNode) {
-                                if (childNode.getUserObject() instanceof XqlTreeNodeData childNodeData) {
-                                    var matchSqlName = childNodeData.title().equals(finalSqlRef);
-                                    if (matchSqlName) {
-                                        sqlCommentNode.set(childNode);
-                                        return true;
-                                    }
+                            if (treeNode.getChildAt(i) instanceof XqlTreeNode childNode &&
+                                    childNode.getUserObject() instanceof SqlFragment sqlFragment) {
+                                var matchSqlName = sqlFragment.sqlName().equals(finalSqlRef);
+                                if (matchSqlName) {
+                                    sqlCommentNode.set(childNode);
+                                    return true;
                                 }
                             }
                         }

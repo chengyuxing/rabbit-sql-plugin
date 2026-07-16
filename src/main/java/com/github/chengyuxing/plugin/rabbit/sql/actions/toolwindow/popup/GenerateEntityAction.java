@@ -1,13 +1,10 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
-import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
-import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.EntityGenerateDialog;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.SqlFragment;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
-import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -33,12 +30,11 @@ public class GenerateEntityAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
-            @SuppressWarnings("unchecked") var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
-            var alias = sqlMeta.getItem1();
-            var sqlName = sqlMeta.getItem2();
-            var sql = sqlMeta.getItem3().getSource();
-            var config = sqlMeta.getItem4();
+        if (nodeSource instanceof SqlFragment sqlFragment) {
+            var alias = sqlFragment.xqlAlias();
+            var sqlName = sqlFragment.sqlName();
+            var sql = sqlFragment.sql().getSource();
+            var config = sqlFragment.config();
             var fieldMapping = StringUtil.getParamsMappingInfo(config.getSqlGenerator(), sql);
             if (fieldMapping.isEmpty()) {
                 return;
@@ -55,10 +51,9 @@ public class GenerateEntityAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
-            @SuppressWarnings("unchecked") var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
-            var config = sqlMeta.getItem4();
-            var sql = sqlMeta.getItem3().getSource();
+        if (nodeSource instanceof SqlFragment sqlFragment) {
+            var config = sqlFragment.config();
+            var sql = sqlFragment.sql().getSource();
             var paramsCount = (long) StringUtil.getParamsMappingInfo(config.getSqlGenerator(), sql).size();
             if (paramsCount > 0) {
                 e.getPresentation().setEnabled(true);

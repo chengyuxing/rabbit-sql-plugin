@@ -3,7 +3,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.NewXQLFileManagerDialog;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.ProjectModule;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.intellij.icons.AllIcons;
@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Objects;
 
 public class NewXqlFileManagerAction extends AnAction {
@@ -33,8 +32,8 @@ public class NewXqlFileManagerAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.MODULE) {
-            var module = (Path) nodeSource.source();
+        if (nodeSource instanceof ProjectModule projectModule) {
+            var module = projectModule.module();
 
             var primaryAbsFilename = module.resolve(Constants.CONFIG_PATH);
             if (Files.exists(primaryAbsFilename)) {

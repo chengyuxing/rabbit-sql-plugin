@@ -1,10 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
-import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
-import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.DynamicSqlCalcDialog;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.SqlFragment;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.intellij.icons.AllIcons;
@@ -23,13 +21,9 @@ public class ExecuteSqlAction extends AnAction {
     public ExecuteSqlAction(JTree tree) {
         super(() -> {
             var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-            if (Objects.nonNull(nodeSource)) {
-                if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
-                    @SuppressWarnings("unchecked")
-                    var data = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
-                    var name = data.getItem2();
-                    return MessageBundle.message("action.executeSql.text", name);
-                }
+            if (nodeSource instanceof SqlFragment sqlFragment) {
+                var name = sqlFragment.sqlName();
+                return MessageBundle.message("action.executeSql.text", name);
             }
             return MessageBundle.message("action.executeSql.text.default");
         }, () -> MessageBundle.message("action.executeSql.description.default"), AllIcons.Actions.Execute);
@@ -43,12 +37,10 @@ public class ExecuteSqlAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
-            @SuppressWarnings("unchecked")
-            var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
-            var alias = sqlMeta.getItem1();
-            var name = sqlMeta.getItem2();
-            var config = sqlMeta.getItem4();
+        if (nodeSource instanceof SqlFragment sqlFragment) {
+            var alias = sqlFragment.xqlAlias();
+            var name = sqlFragment.sqlName();
+            var config = sqlFragment.config();
             ApplicationManager.getApplication().invokeLater(() -> {
                 var dialog = new DynamicSqlCalcDialog(XQLFileManager.encodeSqlReference(alias, name), config, project);
                 dialog.showAndGet();
@@ -60,7 +52,7 @@ public class ExecuteSqlAction extends AnAction {
     public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setEnabled(false);
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
+        if (nodeSource instanceof SqlFragment) {
             e.getPresentation().setEnabled(true);
         }
     }

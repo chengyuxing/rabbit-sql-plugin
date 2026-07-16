@@ -1,10 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
-import com.github.chengyuxing.common.tuple.Quadruple;
-import com.github.chengyuxing.common.tuple.Quintuple;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
-import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.SqlFragment;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlFile;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
@@ -27,37 +25,33 @@ public class CopySqlAction extends AnAction {
     public CopySqlAction(JTree tree, CopyType copyType) {
         super(() -> {
             var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-            if (Objects.nonNull(nodeSource)) {
-                if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
-                    @SuppressWarnings("unchecked")
-                    var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
-                    var name = sqlMeta.getItem2();
-                    switch (copyType) {
-                        case SQL_NAME -> {
-                            return MessageBundle.message("action.copySql.type.xql.name", name);
-                        }
-                        case SQL_PATH -> {
-                            return MessageBundle.message("action.copySql.type.xql.path", name);
-                        }
-                        case SQL_DEFINITION -> {
-                            return MessageBundle.message("action.copySql.type.xql.def", name);
-                        }
+            if (nodeSource instanceof SqlFragment sqlFragment) {
+                var name = sqlFragment.sqlName();
+                switch (copyType) {
+                    case SQL_NAME -> {
+                        return MessageBundle.message("action.copySql.type.xql.name", name);
                     }
-                } else if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
-                    @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
-                    switch (copyType) {
-                        case ALIAS -> {
-                            return MessageBundle.message("action.copySql.type.file.alias", sqlMeta.getItem1());
-                        }
-                        case ABSOLUTE_PATH -> {
-                            return MessageBundle.message("action.copySql.type.file.abPath", sqlMeta.getItem1());
-                        }
-                        case PATH_FROM_CLASSPATH -> {
-                            return MessageBundle.message("action.copySql.type.file.classpath", sqlMeta.getItem1());
-                        }
-                        case YML_ARRAY_PATH_FROM_CLASSPATH -> {
-                            return MessageBundle.message("action.copySql.type.file.classArrayPath", sqlMeta.getItem1());
-                        }
+                    case SQL_PATH -> {
+                        return MessageBundle.message("action.copySql.type.xql.path", name);
+                    }
+                    case SQL_DEFINITION -> {
+                        return MessageBundle.message("action.copySql.type.xql.def", name);
+                    }
+                }
+            } else if (nodeSource instanceof XqlFile xqlFile) {
+                var alias = xqlFile.alias();
+                switch (copyType) {
+                    case ALIAS -> {
+                        return MessageBundle.message("action.copySql.type.file.alias", alias);
+                    }
+                    case ABSOLUTE_PATH -> {
+                        return MessageBundle.message("action.copySql.type.file.abPath", alias);
+                    }
+                    case PATH_FROM_CLASSPATH -> {
+                        return MessageBundle.message("action.copySql.type.file.classpath", alias);
+                    }
+                    case YML_ARRAY_PATH_FROM_CLASSPATH -> {
+                        return MessageBundle.message("action.copySql.type.file.classArrayPath", alias);
                     }
                 }
             }
@@ -74,15 +68,10 @@ public class CopySqlAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.isNull(nodeSource)) {
-            return;
-        }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FRAGMENT) {
-            @SuppressWarnings("unchecked")
-            var sqlMeta = (Quadruple<String, String, XQLFileManager.Sql, XQLConfigManager.Config>) nodeSource.source();
-            var alias = sqlMeta.getItem1();
-            var name = sqlMeta.getItem2();
-            var sql = sqlMeta.getItem3();
+        if (nodeSource instanceof SqlFragment sqlMeta) {
+            var alias = sqlMeta.xqlAlias();
+            var name = sqlMeta.sqlName();
+            var sql = sqlMeta.sql();
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             switch (copyType) {
                 case SQL_NAME -> clipboard.setContents(new StringSelection(name), null);
@@ -92,23 +81,22 @@ public class CopySqlAction extends AnAction {
             }
             return;
         }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
-            @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
+        if (nodeSource instanceof XqlFile xqlFile) {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             switch (copyType) {
-                case ALIAS -> clipboard.setContents(new StringSelection(sqlMeta.getItem1()), null);
-                case ABSOLUTE_PATH -> clipboard.setContents(new StringSelection(sqlMeta.getItem3()), null);
+                case ALIAS -> clipboard.setContents(new StringSelection(xqlFile.alias()), null);
+                case ABSOLUTE_PATH -> clipboard.setContents(new StringSelection(xqlFile.getAbsoluteFilePath()), null);
                 case PATH_FROM_CLASSPATH -> {
-                    if (ProjectFileUtil.isURI(sqlMeta.getItem2())) {
+                    if (ProjectFileUtil.isURI(xqlFile.classPathFileName())) {
                         return;
                     }
-                    clipboard.setContents(new StringSelection(sqlMeta.getItem2()), null);
+                    clipboard.setContents(new StringSelection(xqlFile.classPathFileName()), null);
                 }
                 case YML_ARRAY_PATH_FROM_CLASSPATH -> {
-                    if (ProjectFileUtil.isURI(sqlMeta.getItem2())) {
+                    if (ProjectFileUtil.isURI(xqlFile.classPathFileName())) {
                         return;
                     }
-                    var classpathPath = sqlMeta.getItem2().split("/");
+                    var classpathPath = xqlFile.classPathFileName().split("/");
                     var arrayPath = "[ " + String.join(", ", classpathPath) + " ]";
                     clipboard.setContents(new StringSelection(arrayPath), null);
                 }
@@ -123,14 +111,10 @@ public class CopySqlAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.isNull(nodeSource)) {
-            return;
-        }
-        if (nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
-            @SuppressWarnings("unchecked") var sqlMeta = (Quintuple<String, String, String, XQLConfigManager.Config, String>) nodeSource.source();
+        if (nodeSource instanceof XqlFile xqlFile) {
             switch (copyType) {
                 case PATH_FROM_CLASSPATH, YML_ARRAY_PATH_FROM_CLASSPATH -> {
-                    if (ProjectFileUtil.isURI(sqlMeta.getItem2())) {
+                    if (ProjectFileUtil.isURI(xqlFile.classPathFileName())) {
                         e.getPresentation().setEnabled(false);
                     }
                 }

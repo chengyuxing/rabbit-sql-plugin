@@ -1,10 +1,8 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
-import com.github.chengyuxing.common.tuple.Quadruple;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
-import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.MapperGenerateDialog;
-import com.github.chengyuxing.plugin.rabbit.sql.ui.types.XqlTreeNodeData;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlFile;
 import com.github.chengyuxing.plugin.rabbit.sql.util.SwingUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
@@ -33,11 +31,9 @@ public class GenerateXqlMapperAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
-            @SuppressWarnings("unchecked") var data = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
-            var alias = data.getItem1();
-            var config = data.getItem4();
-            ApplicationManager.getApplication().invokeLater(() -> new MapperGenerateDialog(project, alias, config).showAndGet());
+        if (nodeSource instanceof XqlFile xqlFile) {
+            ApplicationManager.getApplication().invokeLater(() ->
+                    new MapperGenerateDialog(project, xqlFile.alias(), xqlFile.config()).showAndGet());
         }
     }
 
@@ -49,13 +45,12 @@ public class GenerateXqlMapperAction extends AnAction {
             return;
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
-        if (Objects.nonNull(nodeSource) && nodeSource.type() == XqlTreeNodeData.Type.XQL_FILE) {
-            @SuppressWarnings("unchecked") var data = (Quadruple<String, String, String, XQLConfigManager.Config>) nodeSource.source();
-            var config = data.getItem4();
+        if (nodeSource instanceof XqlFile xqlFile) {
+            var config = xqlFile.config();
             var module = ModuleUtil.findModuleForFile(config.getConfigVfs(), project);
             if (Objects.nonNull(module)) {
                 // is error file, do not allow 'generate mapper' action
-                if (data.getItem4().getXqlFileManager().getErrorAlias().containsKey(data.getItem1())) {
+                if (config.getXqlFileManager().getErrorAlias().containsKey(xqlFile.alias())) {
                     e.getPresentation().setEnabled(false);
                     return;
                 }
