@@ -25,9 +25,8 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -262,6 +261,18 @@ public class ProjectFileUtil {
         int end = Math.min(doc.getTextLength(), 100);
         String header = doc.getText(new TextRange(0, end));
         return header.contains(id);
+    }
+
+    public static void openJavaFile(Project project, Module module, String className) {
+        JavaPsiFacade facade = JavaPsiFacade.getInstance(project);
+        var scope = module == null
+                ? GlobalSearchScope.allScope(project)
+                : GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
+        ApplicationManager.getApplication().runReadAction(() -> {
+            PsiClass psiClass = facade.findClass(className, scope);
+            if (psiClass == null) return;
+            psiClass.navigate(true);
+        });
     }
 
     public static boolean isPluginGenerated(VirtualFile file) {
