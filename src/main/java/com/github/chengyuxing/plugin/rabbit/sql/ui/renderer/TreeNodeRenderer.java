@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.renderer;
 
+import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
@@ -28,7 +29,6 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
         if (value instanceof XqlTreeNode node) {
             if (node.getUserObject() instanceof NodeData source) {
                 setToolTipText(null);
-
                 if (source instanceof ProjectModule) {
                     setIcon(AllIcons.Nodes.Module);
                     append(source.toString());
@@ -94,9 +94,32 @@ public class TreeNodeRenderer extends ColoredTreeCellRenderer {
                     } else {
                         setToolTipText(info);
                     }
+                } else if (source instanceof PipeFolder pipeFolder) {
+                    setIcon(AllIcons.Nodes.ConfigFolder);
+                    append(pipeFolder.toString());
+                } else if (source instanceof PipeName pipeName) {
+                    if (pipeName.builtin()) {
+                        setIcon(AllIcons.Ide.Readonly);
+                    } else {
+                        setIcon(AllIcons.Nodes.Function);
+                    }
+                    append(pipeName.name() + " -> ");
+                    append(shortPackageName(pipeName.className()), SimpleTextAttributes.GRAY_ATTRIBUTES);
                 }
             }
         }
+    }
+
+    private static String shortPackageName(String packageName) {
+        int dotCount = StringUtils.countOccurrences(packageName, ".");
+        if (dotCount >= 7) {
+            String[] ps = packageName.split("\\.");
+            ps[0] = String.valueOf(ps[0].charAt(0));
+            ps[1] = String.valueOf(ps[1].charAt(0));
+            ps[2] = String.valueOf(ps[2].charAt(0));
+            return String.join(".", ps);
+        }
+        return packageName;
     }
 
     @NotNull

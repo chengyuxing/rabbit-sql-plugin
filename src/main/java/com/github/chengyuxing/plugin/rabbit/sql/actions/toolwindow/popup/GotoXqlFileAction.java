@@ -17,7 +17,7 @@ public class GotoXqlFileAction extends AnAction {
     private final JTree tree;
 
     public GotoXqlFileAction(JTree tree) {
-        super(MessageBundle.message("action.gotoXqlFile.text"));
+        super(MessageBundle.message("action.gotoDefinition.text"));
         this.tree = tree;
     }
 

@@ -28,9 +28,9 @@ public class NewXqlFileAction extends AnAction {
         super(() -> {
             var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
             if (nodeSource instanceof XqlFileFolder) {
-                return MessageBundle.message("action.newXql.text");
+                return MessageBundle.message("new.text");
             }
-            return MessageBundle.message("new.text");
+            return MessageBundle.message("action.newXql.text");
         }, () -> MessageBundle.message("action.newXql.description"), XqlIcons.XQL_FILE);
         this.tree = tree;
     }

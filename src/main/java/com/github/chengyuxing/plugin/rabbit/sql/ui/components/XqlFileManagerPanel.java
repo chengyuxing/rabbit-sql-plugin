@@ -1,5 +1,6 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.components;
 
+import com.github.chengyuxing.common.script.pipe.BuiltinPipes;
 import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
 import com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup.*;
@@ -11,6 +12,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.*;
 import com.github.chengyuxing.plugin.rabbit.sql.util.*;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -45,6 +47,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     private ActionPopupMenu xqlFileMenu;
     private ActionPopupMenu xqlFolderMenu;
     private ActionPopupMenu moduleMenu;
+    private ActionPopupMenu pipeMenu;
 
     private Tree tree;
     private final Map<TreePath, Boolean> treeExpandedState = new HashMap<>();
@@ -90,6 +93,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         xqlFragmentMenu = createXqlFragmentPopMenu(tree);
         moduleMenu = createModuleMenu(tree);
         xqlFolderMenu = createXqlFolderPopMenu(tree);
+        pipeMenu = createPipePopMenu(tree);
 
         AtomicReference<Point> pointRef = new AtomicReference<>();
         tree.addKeyListener(new KeyAdapter() {
@@ -155,6 +159,11 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         } else {
                             NotificationUtil.showMessage(project, MessageBundle.message("ui.xqlFileManagerPanel.xql.parse.warning"), NotificationType.WARNING);
                         }
+                        return;
+                    }
+                    if (node.getUserObject() instanceof PipeName pipeName) {
+                        var module = ModuleUtil.findModuleForFile(pipeName.config().getConfigVfs(), project);
+                        ProjectFileUtil.openJavaFile(project, module, pipeName.className());
                     }
                 }
             }
@@ -186,6 +195,10 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                     }
                     if (source instanceof XqlFileFolder) {
                         xqlFolderMenu.getComponent().show(tree, e.getX(), e.getY());
+                        return;
+                    }
+                    if (source instanceof PipeName) {
+                        pipeMenu.getComponent().show(tree, e.getX(), e.getY());
                     }
                 }
             }
@@ -259,6 +272,19 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                         if (config.isValid()) {
                             var configNode = new XqlTreeNode(new XqlConfig(config));
                             mNode.add(configNode);
+
+                            var pipeMaps = config.getXqlFileManagerConfig().getPipes();
+                            var pipeFolderNode = new XqlTreeNode(new PipeFolder());
+                            configNode.add(pipeFolderNode);
+                            BuiltinPipes.getAll().forEach((k, c) -> {
+                                var pipe = new XqlTreeNode(new PipeName(k, c.getClass().getName(), true, config));
+                                pipeFolderNode.add(pipe);
+                            });
+                            pipeMaps.forEach((k, v) -> {
+                                var pipe = new XqlTreeNode(new PipeName(k, v, false, config));
+                                pipeFolderNode.add(pipe);
+                            });
+
                             if (treeViewNodes) {
                                 var nestTreeNodes = new LinkedHashMap<String, Object>();
                                 config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
