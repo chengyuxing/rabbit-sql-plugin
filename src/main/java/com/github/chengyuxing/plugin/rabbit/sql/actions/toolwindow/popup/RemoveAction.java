@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.PipeName;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.SqlFragment;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlFile;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
@@ -44,6 +45,10 @@ public class RemoveAction extends AnAction {
             removeXQLFile(project, xqlFile);
             return;
         }
+        if (nodeSource instanceof PipeName pipeName) {
+            removePipe(project, pipeName);
+            return;
+        }
         if (nodeSource instanceof SqlFragment sqlFragment) {
             removeSQLObject(project, sqlFragment);
         }
@@ -53,7 +58,7 @@ public class RemoveAction extends AnAction {
         var alias = xqlFile.alias();
         var config = xqlFile.config();
         int result = Messages.showOkCancelDialog(project,
-                "Remove the '" + alias + "' from XQL Configuration?",
+                "Remove the XQL '" + alias + "' from XQL Configuration?",
                 "Remove XQL",
                 "Ok",
                 "Cancel",
@@ -63,32 +68,61 @@ public class RemoveAction extends AnAction {
                 var doc = ApplicationManager.getApplication().runReadAction((Computable<Document>) () ->
                         FileDocumentManager.getInstance().getDocument(config.getConfigVfs()));
                 if (doc != null) {
-                    int targetLn = -1;
-                    int filesNodeLn = -1;
-                    int pipesNodeLn = -1;
-                    for (int i = 0; i < doc.getLineCount(); i++) {
-                        var line = doc.getText(new TextRange(doc.getLineStartOffset(i), doc.getLineEndOffset(i)));
-                        if (line.matches("^files:\\s*")) {
-                            filesNodeLn = i;
-                            continue;
-                        }
-                        if (line.startsWith("  " + alias + ":")) {
-                            targetLn = i;
-                            continue;
-                        }
-                        if (line.matches("^#?pipes:\\s*")) {
-                            pipesNodeLn = i;
-                            break;
-                        }
-                    }
-                    if (targetLn != -1 && targetLn > filesNodeLn && targetLn < pipesNodeLn) {
-                        var idx = doc.getLineStartOffset(targetLn);
-                        doc.insertString(idx, "#");
+                    removeSecondNode(doc, "files", alias, () -> {
                         PsiDocumentManager.getInstance(project).commitDocument(doc);
                         FileDocumentManager.getInstance().saveDocument(doc);
-                    }
+                    });
                 }
             });
+        }
+    }
+
+    private void removePipe(Project project, PipeName pipeName) {
+        var config = pipeName.config();
+        int result = Messages.showOkCancelDialog(project,
+                "Remove the pipe '" + pipeName.name() + "' from XQL Configuration?",
+                "Remove Pipe",
+                "Ok",
+                "Cancel",
+                Messages.getQuestionIcon());
+        if (result == Messages.OK) {
+            WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("command.modify", config.getConfigName()), null, () -> {
+                var doc = ApplicationManager.getApplication().runReadAction((Computable<Document>) () ->
+                        FileDocumentManager.getInstance().getDocument(config.getConfigVfs()));
+                if (doc != null) {
+                    removeSecondNode(doc, "pipes", pipeName.name(), () -> {
+                        PsiDocumentManager.getInstance(project).commitDocument(doc);
+                        FileDocumentManager.getInstance().saveDocument(doc);
+                    });
+                }
+            });
+        }
+    }
+
+    private void removeSecondNode(Document doc, String root, String secondNode, Runnable then) {
+        int startIdx = -1;
+        for (int i = 0; i < doc.getLineCount(); i++) {
+            var line = doc.getText(new TextRange(doc.getLineStartOffset(i), doc.getLineEndOffset(i)));
+            if (line.matches("^" + root + ":\\s*")) {
+                startIdx = i;
+                break;
+            }
+        }
+        if (startIdx != -1) {
+            startIdx++;
+            while (startIdx < doc.getLineCount()) {
+                var line = doc.getText(new TextRange(doc.getLineStartOffset(startIdx), doc.getLineEndOffset(startIdx)));
+                if (line.startsWith("  " + secondNode + ":")) {
+                    int idx = doc.getLineStartOffset(startIdx);
+                    doc.insertString(idx, "#");
+                    then.run();
+                    break;
+                }
+                if (line.matches("^\\w+.*")) {
+                    break;
+                }
+                startIdx++;
+            }
         }
     }
 
@@ -153,6 +187,10 @@ public class RemoveAction extends AnAction {
             if (!ProjectFileUtil.isLocalFileUri(path)) {
                 e.getPresentation().setEnabled(false);
             }
+            return;
+        }
+        if (nodeSource instanceof PipeName pipeName) {
+            e.getPresentation().setEnabled(!pipeName.builtin());
         }
     }
 

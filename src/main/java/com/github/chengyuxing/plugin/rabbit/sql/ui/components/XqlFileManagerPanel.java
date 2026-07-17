@@ -371,6 +371,19 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         });
     }
 
+    private ActionPopupMenu createPipePopMenu(Tree tree) {
+        return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
+            @Override
+            public AnAction @NotNull [] getChildren(@Nullable AnActionEvent anActionEvent) {
+                return new AnAction[]{
+                        new OpenPipeDefAction(tree),
+                        new Separator(),
+                        new RemoveAction(tree)
+                };
+            }
+        });
+    }
+
     private ActionPopupMenu createXqlFileManagerPopMenu(JTree tree) {
         var configGroup = new SplitButtonAction(new ActionGroup() {
             @Override
