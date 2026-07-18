@@ -241,16 +241,20 @@ public class MapperGenerateDialog extends DialogWrapper {
 
     private XQLMapperConfig.ParamSource detectParamSource(String inputParamType, XQLMapperConfig.XQLMethod exists) {
         if (!isUserCustomClass(inputParamType)) return GENERATED;
-        if (exists != null && Objects.equals(inputParamType, exists.getParamType()) &&
-                exists.getParamSource() == USER) return USER;
         var inputParamFile = ProjectFileUtil.createJavaFilePath(config, inputParamType);
         // 1. file not exists, generate
         if (!Files.exists(inputParamFile)) return GENERATED;
+        var vf = VirtualFileManager.getInstance().findFileByNioPath(inputParamFile);
+        if (exists != null && Objects.equals(inputParamType, exists.getParamType()) &&
+                exists.getParamSource() == USER) {
+            // the real file status priority gt than config
+            if (ProjectFileUtil.isPluginGenerated(vf)) return GENERATED;
+            return USER;
+        }
         // at first generate action with an exists input class name, do not overwrite.
         if (exists == null) return USER;
         // another already exists user custom class, do not overwrite
         if (!Objects.equals(inputParamType, exists.getParamType())) return USER;
-        var vf = VirtualFileManager.getInstance().findFileByNioPath(inputParamFile);
         // generated user class is modified by user, do not overwrite
         if (!ProjectFileUtil.isPluginGenerated(vf)) return USER;
         // file has comment: @RabbitSqlGenerated
