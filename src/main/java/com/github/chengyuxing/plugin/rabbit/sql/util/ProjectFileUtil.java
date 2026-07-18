@@ -263,6 +263,10 @@ public class ProjectFileUtil {
         return header.contains(id);
     }
 
+    public static boolean isPluginGenerated(VirtualFile file) {
+        return containsWord(file, "@RabbitSqlGenerated");
+    }
+
     public static void openJavaFile(Project project, Module module, String className) {
         JavaPsiFacade facade = JavaPsiFacade.getInstance(project);
         var scope = module == null
@@ -273,9 +277,5 @@ public class ProjectFileUtil {
             if (psiClass == null) return;
             psiClass.navigate(true);
         });
-    }
-
-    public static boolean isPluginGenerated(VirtualFile file) {
-        return containsWord(file, "@RabbitSqlGenerated");
     }
 }
