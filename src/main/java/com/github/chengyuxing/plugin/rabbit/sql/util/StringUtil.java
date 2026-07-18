@@ -13,8 +13,11 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class StringUtil {
+    private static final Pattern W_PATTERN = Pattern.compile("\\W+");
+
     /**
      * get alias and sqlName
      *
@@ -109,5 +112,22 @@ public class StringUtil {
             return ts.substring(1, ts.length() - 1);
         }
         return literal;
+    }
+
+    public static String safeYamlValue(String value) {
+        if (value.length() == 1) {
+            if (value.equals("'")) {
+                return "\"" + value + "\"";
+            }
+            if (value.equals("\"")) {
+                return "'" + value + "'";
+            }
+            return "'" + value + "'";
+        }
+        var m = W_PATTERN.matcher(value);
+        if (m.find()) {
+            return "'" + value + "'";
+        }
+        return value;
     }
 }

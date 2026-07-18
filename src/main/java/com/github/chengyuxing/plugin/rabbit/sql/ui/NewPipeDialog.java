@@ -59,7 +59,7 @@ public class NewPipeDialog extends DialogWrapper {
             this.form.setMessage(formatPath(p.getItem1()));
         });
         setOKActionEnabled(false);
-        setTitle("New Pipe Class");
+        setTitle(MessageBundle.message("ui.dialog.newPipe.title"));
         init();
     }
 
@@ -90,7 +90,7 @@ public class NewPipeDialog extends DialogWrapper {
                 .add("resultType", resultType);
 
         if (config.getXqlFileManagerConfig().getPipes().containsKey(pipeName)) {
-            showWarn(MessageBundle.message("ui.dialog.newPipe.ok.error.alias", pipeName));
+            showWarn(MessageBundle.message("object.error.exists", pipeName));
             return;
         }
         // whatever do not overwrite the exists file
@@ -127,11 +127,11 @@ public class NewPipeDialog extends DialogWrapper {
                     int nodeIndex = -1;
                     for (int i = 0; i < doc.getLineCount(); i++) {
                         var line = doc.getText(new TextRange(doc.getLineStartOffset(i), doc.getLineEndOffset(i)));
-                        if (line.equals("pipes:")) {
+                        if (line.matches("^pipes: *")) {
                             nodeIndex = doc.getLineEndOffset(i);
                             break;
                         }
-                        if (line.equals("#pipes:")) {
+                        if (line.matches("^#pipes: *")) {
                             int start = doc.getLineStartOffset(i);
                             doc.replaceString(start, start + 1, "");
                             nodeIndex = doc.getLineEndOffset(i);
@@ -142,11 +142,8 @@ public class NewPipeDialog extends DialogWrapper {
                     if (nodeIndex != -1) {
                         doc.insertString(nodeIndex + 1, content);
                     } else {
-                        content = "pipes:\n" + content;
+                        content = "\npipes:\n" + content;
                         int start = doc.getTextLength();
-                        if (start != 0) {
-                            content = "\n" + content;
-                        }
                         doc.insertString(start, content);
                     }
                     PsiDocumentManager.getInstance(project).commitDocument(doc);

@@ -199,7 +199,13 @@ public class NewXqlDialog extends DialogWrapper {
                     int filesNodeIndex = -1;
                     for (int i = 0; i < doc.getLineCount(); i++) {
                         var line = doc.getText(new TextRange(doc.getLineStartOffset(i), doc.getLineEndOffset(i)));
-                        if (line.equals("files:")) {
+                        if (line.matches("^files: *")) {
+                            filesNodeIndex = doc.getLineEndOffset(i);
+                            break;
+                        }
+                        if (line.matches("^#files: *")) {
+                            int start = doc.getLineStartOffset(i);
+                            doc.replaceString(start, start + 1, "");
                             filesNodeIndex = doc.getLineEndOffset(i);
                             break;
                         }
@@ -208,11 +214,8 @@ public class NewXqlDialog extends DialogWrapper {
                     if (filesNodeIndex != -1) {
                         doc.insertString(filesNodeIndex + 1, content);
                     } else {
-                        content = "files:\n" + content;
+                        content = "\nfiles:\n" + content;
                         int start = doc.getTextLength();
-                        if (start != 0) {
-                            content = "\n" + content;
-                        }
                         doc.insertString(start, content);
                     }
                     PsiDocumentManager.getInstance(project).commitDocument(doc);

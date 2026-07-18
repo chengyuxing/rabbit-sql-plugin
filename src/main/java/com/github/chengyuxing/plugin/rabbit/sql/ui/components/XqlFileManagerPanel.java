@@ -10,6 +10,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.NodeData;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.*;
 import com.github.chengyuxing.plugin.rabbit.sql.util.*;
+import com.intellij.icons.AllIcons;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.module.ModuleUtil;
@@ -48,6 +49,8 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     private ActionPopupMenu xqlFolderMenu;
     private ActionPopupMenu moduleMenu;
     private ActionPopupMenu pipeMenu;
+    private ActionPopupMenu constantMenu;
+    private ActionPopupMenu propertyMenu;
 
     private Tree tree;
     private final Map<TreePath, Boolean> treeExpandedState = new HashMap<>();
@@ -94,6 +97,8 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         moduleMenu = createModuleMenu(tree);
         xqlFolderMenu = createXqlFolderPopMenu(tree);
         pipeMenu = createPipePopMenu(tree);
+        constantMenu = createConstantPopMenu(tree);
+        propertyMenu = createPropertyPopMenu(tree);
 
         AtomicReference<Point> pointRef = new AtomicReference<>();
         tree.addKeyListener(new KeyAdapter() {
@@ -272,48 +277,69 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         var root = (XqlTreeNode) model.getRoot();
         saveTreeExpandedState();
         root.removeAllChildren();
-        xqlConfigManager.getConfigMap()
-                .forEach((module, configs) -> {
-                    var mNode = new XqlTreeNode(new ProjectModule(module));
-                    configs.forEach(config -> {
-                        if (config.isValid()) {
-                            var configNode = new XqlTreeNode(new XqlConfig(config));
-                            mNode.add(configNode);
+        xqlConfigManager.getConfigMap().forEach((module, configs) -> {
+            var mNode = new XqlTreeNode(new ProjectModule(module));
+            for (XQLConfigManager.Config config : configs) {
+                if (!config.isValid()) {
+                    continue;
+                }
+                var configNode = new XqlTreeNode(new XqlConfig(config));
+                mNode.add(configNode);
 
-                            var pipeMaps = config.getXqlFileManagerConfig().getPipes();
-                            var pipeFolderNode = new XqlTreeNode(new PipeFolder());
-                            configNode.add(pipeFolderNode);
-                            BuiltinPipes.getAll().forEach((k, c) -> {
-                                var pipe = new XqlTreeNode(new PipeName(k, c.getClass().getName(), true, config));
-                                pipeFolderNode.add(pipe);
-                            });
-                            pipeMaps.forEach((k, v) -> {
-                                var pipe = new XqlTreeNode(new PipeName(k, v, false, config));
-                                pipeFolderNode.add(pipe);
-                            });
-
-                            if (treeViewNodes) {
-                                var nestTreeNodes = new LinkedHashMap<String, Object>();
-                                config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
-                                    var isURI = ProjectFileUtil.isURI(filename);
-                                    var paths = getPaths(alias, filename, isURI);
-                                    SwingUtil.path2tree(paths, nestTreeNodes);
-                                });
-                                SwingUtil.buildXQLTree(nestTreeNodes, config, configNode);
-                            } else {
-                                config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
-                                    var resource = config.getXqlFileManager().getResource(alias);
-                                    if (Objects.nonNull(resource)) {
-                                        var fileNode = new XqlTreeNode(new XqlFile(alias, filename, resource, config));
-                                        configNode.add(fileNode);
-                                        SwingUtil.buildXQLNodes(config, alias, fileNode, resource);
-                                    }
-                                });
-                            }
+                // files node
+                var filesFolderNode = new XqlTreeNode(new Folder("files", AllIcons.Nodes.ConfigFolder));
+                configNode.add(filesFolderNode);
+                if (treeViewNodes) {
+                    var nestTreeNodes = new LinkedHashMap<String, Object>();
+                    config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
+                        var isURI = ProjectFileUtil.isURI(filename);
+                        var paths = getPaths(alias, filename, isURI);
+                        SwingUtil.path2tree(paths, nestTreeNodes);
+                    });
+                    SwingUtil.buildXQLTree(nestTreeNodes, config, filesFolderNode);
+                } else {
+                    config.getXqlFileManagerConfig().getFiles().forEach((alias, filename) -> {
+                        var resource = config.getXqlFileManager().getResource(alias);
+                        if (Objects.nonNull(resource)) {
+                            var fileNode = new XqlTreeNode(new XqlFile(alias, filename, resource, config));
+                            filesFolderNode.add(fileNode);
+                            SwingUtil.buildXQLNodes(config, alias, fileNode, resource);
                         }
                     });
-                    root.add(mNode);
+                }
+
+                // constants node
+                var constantMaps = config.getXqlFileManager().getConstants();
+                if (!constantMaps.isEmpty()) {
+                    var constantsFolderNode = new XqlTreeNode(new Folder("constants", AllIcons.Nodes.ConfigFolder));
+                    configNode.add(constantsFolderNode);
+                    constantMaps.forEach((k, v) -> {
+                        var constant = new XqlTreeNode(new Constant(k, v, config));
+                        constantsFolderNode.add(constant);
+                    });
+                }
+
+                // pipes node
+                var pipeMaps = config.getXqlFileManager().getPipes();
+                var pipeFolderNode = new XqlTreeNode(new Folder("pipes", AllIcons.Nodes.ConfigFolder));
+                configNode.add(pipeFolderNode);
+                BuiltinPipes.getAll().forEach((k, c) -> {
+                    var pipe = new XqlTreeNode(new PipeName(k, c.getClass().getName(), true, config));
+                    pipeFolderNode.add(pipe);
                 });
+                pipeMaps.forEach((k, v) -> {
+                    var pipe = new XqlTreeNode(new PipeName(k, v, false, config));
+                    pipeFolderNode.add(pipe);
+                });
+
+                //named param prefix node
+                configNode.add(new XqlTreeNode(new Property("named-param-prefix", "'" + config.getXqlFileManager().getNamedParamPrefix() + "'", config)));
+
+                // charset node
+                configNode.add(new XqlTreeNode(new Property("charset", config.getXqlFileManager().getCharset(), config)));
+            }
+            root.add(mNode);
+        });
         model.reload();
         restoreTreeExpandedState();
     }

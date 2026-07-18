@@ -8,6 +8,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.XqlTreeNode;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlConfig;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlFileFolder;
 import com.github.chengyuxing.plugin.rabbit.sql.util.*;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -68,6 +69,7 @@ public class NewXqlFileAction extends AnAction {
         }
         var nodeSource = SwingUtil.getTreeSelectionNodeUserData(tree);
         if (nodeSource instanceof XqlFileFolder) {
+            e.getPresentation().setIcon(AllIcons.Actions.AddMulticaret);
             var selected = tree.getSelectionPath();
             if (Objects.isNull(selected)) {
                 return;
