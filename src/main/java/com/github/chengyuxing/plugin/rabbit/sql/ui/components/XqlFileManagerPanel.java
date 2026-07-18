@@ -199,6 +199,13 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                     }
                     if (source instanceof PipeName) {
                         pipeMenu.getComponent().show(tree, e.getX(), e.getY());
+                        return;
+                    }
+                    if (source instanceof Constant) {
+                        constantMenu.getComponent().show(tree, e.getX(), e.getY());
+                    }
+                    if (source instanceof Property) {
+                        propertyMenu.getComponent().show(tree, e.getX(), e.getY());
                     }
                 }
             }
@@ -410,6 +417,30 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         });
     }
 
+    private ActionPopupMenu createConstantPopMenu(Tree tree) {
+        return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
+            @Override
+            public AnAction @NotNull [] getChildren(@Nullable AnActionEvent anActionEvent) {
+                return new AnAction[]{
+                        new ModifyPropertyAction(tree),
+                        new Separator(),
+                        new RemoveAction(tree)
+                };
+            }
+        });
+    }
+
+    private ActionPopupMenu createPropertyPopMenu(Tree tree) {
+        return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
+            @Override
+            public AnAction @NotNull [] getChildren(@Nullable AnActionEvent anActionEvent) {
+                return new AnAction[]{
+                        new ModifyPropertyAction(tree)
+                };
+            }
+        });
+    }
+
     private ActionPopupMenu createXqlFileManagerPopMenu(JTree tree) {
         var configGroup = new SplitButtonAction(new ActionGroup() {
             @Override
@@ -417,6 +448,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                 return new AnAction[]{
                         new NewXqlFileAction(tree),
                         new NewPipeAction(tree),
+                        new NewConstantAction(tree)
                 };
             }
         }) {

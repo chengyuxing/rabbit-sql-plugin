@@ -1,6 +1,7 @@
 package com.github.chengyuxing.plugin.rabbit.sql.actions.toolwindow.popup;
 
 import com.github.chengyuxing.plugin.rabbit.sql.MessageBundle;
+import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.Constant;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.PipeName;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.SqlFragment;
 import com.github.chengyuxing.plugin.rabbit.sql.ui.types.tree.data.impl.XqlFile;
@@ -51,6 +52,10 @@ public class RemoveAction extends AnAction {
         }
         if (nodeSource instanceof SqlFragment sqlFragment) {
             removeSQLObject(project, sqlFragment);
+            return;
+        }
+        if (nodeSource instanceof Constant constant) {
+            removeConstant(project, constant);
         }
     }
 
@@ -58,10 +63,10 @@ public class RemoveAction extends AnAction {
         var alias = xqlFile.alias();
         var config = xqlFile.config();
         int result = Messages.showOkCancelDialog(project,
-                "Remove the XQL '" + alias + "' from XQL Configuration?",
-                "Remove XQL",
-                "Ok",
-                "Cancel",
+                MessageBundle.message("action.remove.confirm.xql.message", alias),
+                MessageBundle.message("action.remove.confirm.xql.title"),
+                MessageBundle.message("confirm.ok"),
+                MessageBundle.message("confirm.cancel"),
                 Messages.getQuestionIcon());
         if (result == Messages.OK) {
             WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("command.modify", config.getConfigName()), null, () -> {
@@ -80,10 +85,10 @@ public class RemoveAction extends AnAction {
     private void removePipe(Project project, PipeName pipeName) {
         var config = pipeName.config();
         int result = Messages.showOkCancelDialog(project,
-                "Remove the pipe '" + pipeName.name() + "' from XQL Configuration?",
-                "Remove Pipe",
-                "Ok",
-                "Cancel",
+                MessageBundle.message("action.remove.confirm.pipe.message", pipeName.name()),
+                MessageBundle.message("action.remove.confirm.pipe.title"),
+                MessageBundle.message("confirm.ok"),
+                MessageBundle.message("confirm.cancel"),
                 Messages.getQuestionIcon());
         if (result == Messages.OK) {
             WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("command.modify", config.getConfigName()), null, () -> {
@@ -99,11 +104,33 @@ public class RemoveAction extends AnAction {
         }
     }
 
+    private void removeConstant(Project project, Constant constant) {
+        var config = constant.config();
+        int result = Messages.showOkCancelDialog(project,
+                MessageBundle.message("action.remove.confirm.constant.message", constant.name()),
+                MessageBundle.message("action.remove.confirm.constant.title"),
+                MessageBundle.message("confirm.ok"),
+                MessageBundle.message("confirm.cancel"),
+                Messages.getQuestionIcon());
+        if (result == Messages.OK) {
+            WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("command.modify", config.getConfigName()), null, () -> {
+                var doc = ApplicationManager.getApplication().runReadAction((Computable<Document>) () ->
+                        FileDocumentManager.getInstance().getDocument(config.getConfigVfs()));
+                if (doc != null) {
+                    removeSecondNode(doc, "constants", constant.name(), () -> {
+                        PsiDocumentManager.getInstance(project).commitDocument(doc);
+                        FileDocumentManager.getInstance().saveDocument(doc);
+                    });
+                }
+            });
+        }
+    }
+
     private void removeSecondNode(Document doc, String root, String secondNode, Runnable then) {
         int startIdx = -1;
         for (int i = 0; i < doc.getLineCount(); i++) {
             var line = doc.getText(new TextRange(doc.getLineStartOffset(i), doc.getLineEndOffset(i)));
-            if (line.matches("^" + root + ":\\s*")) {
+            if (line.matches("^" + root + ": *")) {
                 startIdx = i;
                 break;
             }
@@ -147,12 +174,10 @@ public class RemoveAction extends AnAction {
                     int startLine = -1;
                     for (int i = 0; i < doc.getLineCount(); i++) {
                         var line = doc.getText(new TextRange(doc.getLineStartOffset(i), doc.getLineEndOffset(i)));
-                        if (line.contains(sqlName)) {
-                            var m = XQLFileManager.KEY_PATTERN.matcher(line);
-                            if (m.matches()) {
-                                startLine = i;
-                                break;
-                            }
+                        var m = XQLFileManager.KEY_PATTERN.matcher(line);
+                        if (m.matches() && Objects.equals(m.group("sqlName"), sqlName)) {
+                            startLine = i;
+                            break;
                         }
                     }
                     if (startLine != -1) {
