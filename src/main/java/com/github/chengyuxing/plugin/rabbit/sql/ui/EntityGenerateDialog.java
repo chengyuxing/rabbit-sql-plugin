@@ -80,7 +80,7 @@ public class EntityGenerateDialog extends DialogWrapper {
         setTitle(MessageBundle.message("ui.dialog.entityGen.title", sqlName));
         setOKButtonText(MessageBundle.message("ui.dialog.entityGen.ok"));
         setOKButtonTooltip(MessageBundle.message("ui.dialog.entityGen.ok.tooltip"));
-        setCancelButtonText(MessageBundle.message("ui.dialog.entityGen.cancel"));
+        setCancelButtonText(MessageBundle.message("confirm.close"));
         init();
     }
 

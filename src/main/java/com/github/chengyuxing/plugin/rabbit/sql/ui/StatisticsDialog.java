@@ -33,7 +33,7 @@ public class StatisticsDialog extends DialogWrapper {
         });
         setTitle(MessageBundle.message("ui.dialog.statistics.title"));
         setOKButtonText(MessageBundle.message("ui.dialog.statistics.ok"));
-        setCancelButtonText(MessageBundle.message("ui.dialog.statistics.cancel"));
+        setCancelButtonText(MessageBundle.message("confirm.close"));
         setSize(650, 320);
         init();
     }

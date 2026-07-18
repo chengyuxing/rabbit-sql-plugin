@@ -30,7 +30,7 @@ public class DynamicSqlParamValueHistoryDialog extends DialogWrapper {
         this.histories = histories;
         setTitle(MessageBundle.message("ui.dialog.paramHistory.title"));
         setOKButtonText(MessageBundle.message("ui.dialog.paramHistory.ok"));
-        setCancelButtonText(MessageBundle.message("ui.dialog.paramHistory.cancel"));
+        setCancelButtonText(MessageBundle.message("confirm.cancel"));
         setSize(350, Math.min(Math.max(histories.size() * 30 + 50, 230), 470));
         init();
     }

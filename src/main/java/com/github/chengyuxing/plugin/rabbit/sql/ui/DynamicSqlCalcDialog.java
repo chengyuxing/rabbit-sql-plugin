@@ -68,7 +68,7 @@ public class DynamicSqlCalcDialog extends DialogWrapper {
         this.datasourceList = new ComboBox<>();
         setTitle(MessageBundle.message("ui.dialog.execute.title"));
         setOKButtonText(MessageBundle.message("ui.dialog.execute.ok"));
-        setCancelButtonText(MessageBundle.message("ui.dialog.execute.cancel"));
+        setCancelButtonText(MessageBundle.message("confirm.close"));
         init();
     }
 

@@ -71,7 +71,7 @@ public class MapperGenerateDialog extends DialogWrapper {
 
         setTitle(MessageBundle.message("ui.dialog.mapperGen.title", alias));
         setOKButtonText(MessageBundle.message("ui.dialog.mapperGen.ok"));
-        setCancelButtonText(MessageBundle.message("ui.dialog.mapperGen.cancel"));
+        setCancelButtonText(MessageBundle.message("confirm.close"));
         init();
     }
 
