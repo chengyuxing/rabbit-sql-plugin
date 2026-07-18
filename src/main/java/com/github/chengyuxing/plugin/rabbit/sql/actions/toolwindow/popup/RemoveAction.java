@@ -158,10 +158,10 @@ public class RemoveAction extends AnAction {
         var sqlName = sqlFragment.sqlName();
         var config = sqlFragment.config();
         int result = Messages.showOkCancelDialog(project,
-                "Comment out the SQL '" + sqlName + "' from XQL file?",
-                "Comment out SQL",
-                "Ok",
-                "Cancel",
+                MessageBundle.message("action.remove.sql.constant.message", sqlName),
+                MessageBundle.message("action.remove.sql.constant.title"),
+                MessageBundle.message("confirm.ok"),
+                MessageBundle.message("confirm.cancel"),
                 Messages.getQuestionIcon());
         if (result == Messages.OK) {
             var path = config.getXqlFileManager().getFiles().get(alias);
