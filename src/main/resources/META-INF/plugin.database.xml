@@ -30,5 +30,8 @@
 
         <codeInsight.lineMarkerProvider language="SQL"
                                         implementationClass="com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions.GotoJvmLangCallable"/>
+
+        <codeInsight.lineMarkerProvider language="SQL"
+                                        implementationClass="com.github.chengyuxing.plugin.rabbit.sql.plugins.database.extensions.XQLTemplateNavigator"/>
     </extensions>
 </idea-plugin>
