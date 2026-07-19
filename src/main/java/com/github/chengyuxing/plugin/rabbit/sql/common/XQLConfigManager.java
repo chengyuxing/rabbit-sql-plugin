@@ -379,7 +379,7 @@ public final class XQLConfigManager implements Disposable {
 
                 @Override
                 public void onCancel() {
-                    NotificationUtil.showMessage(project, "Loading XQL files canceled.", NotificationType.WARNING);
+                    NotificationUtil.showMessage(project, MessageBundle.message("xql.config.manager.loadXql.cancel"), NotificationType.WARNING);
                 }
             });
         }

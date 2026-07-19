@@ -5,8 +5,6 @@
 # https://rabbit-sql.com/documents/xql-file-manager
 
 files:
-#  foo: !path [ main, a.xql ]
-#  bar: main/b.xql
 
 #constants:
 
