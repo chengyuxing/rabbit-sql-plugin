@@ -286,7 +286,7 @@ public class MapperGenerateDialog extends DialogWrapper {
                         var template = FileTemplateManager.getInstance(project).getInternalTemplate(tmpName);
                         var paramMeta = new XQLMapperConfig.XQLParamMeta();
                         paramMeta.setLombok(simpleEntity.getLombok());
-                        paramMeta.setLombok(simpleEntity.getLombok());
+                        paramMeta.setComment(simpleEntity.getComment());
                         paramMeta.setClassName(entry.getKey());
                         var params = new LinkedHashMap<String, XQLMapperConfig.XQLParam>();
                         simpleEntity.getParameters().forEach(p -> {
