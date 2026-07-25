@@ -53,6 +53,9 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
     private void addLineMarker(String sqlRef, PsiElement sourceElement, Collection<? super RelatedItemLineMarkerInfo<?>> result) {
         if (SQL_NAME_PATTERN.matcher(sqlRef).matches()) {
             sqlRef = sqlRef.substring(1);
+            if (sourceElement == null) {
+                return;
+            }
             var xqlFileManager = XQLConfigManager.getInstance(sourceElement.getProject()).getActiveXqlFileManager(sourceElement);
             if (Objects.nonNull(xqlFileManager) && xqlFileManager.contains(sqlRef)) {
                 var sqlRefParts = StringUtil.extraSqlReference(sqlRef);
@@ -122,23 +125,19 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
             return null;
         }
         var psiMethodAnnoAttr = PsiUtil.getMethodAnnoValue((PsiIdentifier) sourceElement, XQL.class.getName(), "value");
-        if (Objects.nonNull(psiMethodAnnoAttr)) {
-            var attrValue = PsiUtil.getAnnoTextValue(psiMethodAnnoAttr);
-            // @XQL(type = Type.insert)
-            // int addGuest(DataRow dataRow);
-            if (StringUtils.isEmpty(attrValue)) {
-                return Pair.of("&" + XQLFileManager.encodeSqlReference(psiAlias, sourceElement.getText()), sourceElement);
-
-                // @XQL("queryGuests")
-                // Stream<Guest> queryGuests(Map<String, Object> args);
-            } else {
-                return Pair.of("&" + XQLFileManager.encodeSqlReference(psiAlias, attrValue), PsiTreeUtil.findChildOfType(psiMethodAnnoAttr, PsiJavaTokenImpl.class));
-            }
-
+        if (psiMethodAnnoAttr == null) {
             // List<DataRow> queryGuests(Map<String, Object> args);
-        } else {
             return Pair.of("&" + XQLFileManager.encodeSqlReference(psiAlias, sourceElement.getText()), sourceElement);
         }
+        var attrValue = PsiUtil.getAnnoTextValue(psiMethodAnnoAttr);
+        // @XQL(type = Type.insert)
+        // int addGuest(DataRow dataRow);
+        if (StringUtils.isEmpty(attrValue)) {
+            return Pair.of("&" + XQLFileManager.encodeSqlReference(psiAlias, sourceElement.getText()), sourceElement);
+        }
+        // @XQL("queryGuests")
+        // Stream<Guest> queryGuests(Map<String, Object> args);
+        return Pair.of("&" + XQLFileManager.encodeSqlReference(psiAlias, attrValue), PsiTreeUtil.findChildOfType(psiMethodAnnoAttr, PsiJavaTokenImpl.class));
     }
 
     protected Pair<String, PsiElement> handlerSqlRef(PsiElement sourceElement) {
