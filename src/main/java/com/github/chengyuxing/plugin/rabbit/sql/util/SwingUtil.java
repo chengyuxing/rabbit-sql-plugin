@@ -14,6 +14,7 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
@@ -133,6 +134,23 @@ public class SwingUtil {
             var result = findNode(childNode, predicate);
             if (Objects.nonNull(result)) {
                 return result;
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends NodeData> T findParentObjectUntil(TreeNode node, Class<T> objectClass) {
+        if (node == null) return null;
+        if (node instanceof DefaultMutableTreeNode dmtn && dmtn.getUserObject().getClass() == objectClass)
+            return (T) dmtn.getUserObject();
+        var currentnode = node;
+        while (Objects.nonNull(currentnode.getParent())) {
+            if (currentnode.getParent() instanceof XqlTreeNode xqlFileTreeNode) {
+                if (xqlFileTreeNode.getUserObject().getClass() == objectClass) {
+                    return (T) xqlFileTreeNode.getUserObject();
+                }
+                currentnode = xqlFileTreeNode;
             }
         }
         return null;
