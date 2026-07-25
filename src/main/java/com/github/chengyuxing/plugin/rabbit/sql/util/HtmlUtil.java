@@ -4,56 +4,51 @@ import com.github.chengyuxing.common.script.lexer.RabbitScriptLexer;
 import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.Constants;
 import com.github.chengyuxing.sql.util.SqlHighlighter;
+import com.intellij.openapi.util.text.StringUtil;
 import org.intellij.lang.annotations.Language;
 
 public class HtmlUtil {
-    public static final String IDENTIFIER = "ij-rabbit-sql-hls";
-
     public static String highlightSql(String sqlString) {
         var sql = safeEscape(sqlString);
-        var highlighted = SqlHighlighter.highlight(sql, (tag, content) -> switch (tag) {
-            case FUNCTION -> span(content, Color.FUNCTION);
-            case KEYWORD -> span(content, Color.KEYWORD);
-            case NUMBER -> span(content, Color.NUMBER);
-            case POSTGRESQL_FUNCTION_BODY_SYMBOL, SINGLE_QUOTE_STRING -> span(content, Color.STRING);
-            case ASTERISK -> span(content, Color.HIGHLIGHT);
-            case LINE_COMMENT -> {
-                var nc = content;
-                var isAnno = true;
-                for (var k : RabbitScriptLexer.DIRECTIVES) {
-                    if (StringUtils.containsIgnoreCase(nc, ">" + k + "</")) {
-                        isAnno = false;
-                        break;
+        var highlighted = SqlHighlighter.highlight(sql, c -> StringUtil.stripHtml(c, true),
+                (tag, content) -> switch (tag) {
+                    case FUNCTION -> span(content, Color.FUNCTION);
+                    case KEYWORD -> span(content, Color.KEYWORD);
+                    case NUMBER -> span(content, Color.NUMBER);
+                    case POSTGRESQL_FUNCTION_BODY_SYMBOL -> span(content, Color.STRING);
+                    case QUOTE_STRING -> {
+                        if (content.startsWith("'")) {
+                            yield span(content, Color.STRING);
+                        }
+                        yield content;
                     }
-                }
-                if (isAnno) {
-                    nc = removeStyles(nc);
-                }
-                yield span(nc, Color.ANNOTATION);
-            }
-            case BLOCK_COMMENT -> span(removeStyles(content), Color.ANNOTATION);
-            case NAMED_PARAMETER -> code(content, Color.LIGHT);
-            case OTHER -> {
-                if (StringUtils.equalsAny(content, Constants.XQL_DIRECTIVE_KEYWORDS) || StringUtils.equalsAny(content, Constants.XQL_VALUE_KEYWORDS)) {
-                    yield span(content, Color.KEYWORD);
-                }
-                var maybeKeyword = content;
-                var pos = 0;
-                if (content.startsWith("--")) {
-                    maybeKeyword = content.substring(2);
-                    pos = 2;
-                }
-                if (StringUtils.equalsAnyIgnoreCase(maybeKeyword, RabbitScriptLexer.DIRECTIVES)) {
-                    yield content.substring(0, pos) + span(maybeKeyword, Color.HIGHLIGHT);
-                }
-                yield content;
-            }
-        });
+                    case ASTERISK -> span(content, Color.HIGHLIGHT);
+                    case LINE_COMMENT,
+                         BLOCK_COMMENT -> span(StringUtil.stripHtml(content, true), Color.ANNOTATION);
+                    case RABBIT_SCRIPT_COMMENT,
+                         INLINE_TEMPLATE_COMMENT,
+                         METADATA_DEFINE_COMMENT -> span(content, Color.ANNOTATION);
+                    case NAMED_PARAMETER -> code(content, Color.LIGHT);
+                    case OTHER -> {
+                        if (StringUtils.equalsAny(content, Constants.XQL_DIRECTIVE_KEYWORDS) || StringUtils.equalsAny(content, Constants.XQL_VALUE_KEYWORDS)) {
+                            yield span(content, Color.KEYWORD);
+                        }
+                        if (SqlHighlighter.METADATA_NAME_PATTERN.matcher(content).matches()) {
+                            yield "@" + span(content.substring(1), Color.LIGHT);
+                        }
+                        var maybeKeyword = content;
+                        var pos = 0;
+                        if (content.startsWith("--")) {
+                            maybeKeyword = content.substring(2);
+                            pos = 2;
+                        }
+                        if (StringUtils.equalsAnyIgnoreCase(maybeKeyword, RabbitScriptLexer.DIRECTIVES)) {
+                            yield content.substring(0, pos) + span(maybeKeyword, Color.HIGHLIGHT);
+                        }
+                        yield content;
+                    }
+                });
         return pre(highlighted, Color.EMPTY);
-    }
-
-    public static String removeStyles(String content) {
-        return content.replaceAll("(<[a-z]+\\s+" + IDENTIFIER + "\\s+style=\")[^\"]+(\">)", "$1$2");
     }
 
     public static String pre(String s, Color color, String... styles) {
@@ -70,7 +65,7 @@ public class HtmlUtil {
 
     public static String wrap(String tag, String content, Color color, String... styles) {
         var colorAttr = color.getCode().isEmpty() ? "" : "color:" + color.getCode();
-        return String.format("<%1$s %5$s style=\"%2$s;%4$s\">%3$s</%1$s>", tag, colorAttr, content, String.join(";", styles), IDENTIFIER);
+        return String.format("<%1$s style=\"%2$s;%4$s\">%3$s</%1$s>", tag, colorAttr, content, String.join(";", styles));
     }
 
     public static String safeEscape(String s) {
