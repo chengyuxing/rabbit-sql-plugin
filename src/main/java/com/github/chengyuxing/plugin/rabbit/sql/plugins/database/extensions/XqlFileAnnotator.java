@@ -42,6 +42,7 @@ public class XqlFileAnnotator implements Annotator {
         }
 
         highlightInlineTemplate(holder, element, comment);
+        highlightMetadata(holder, element, comment);
 
         final String prefix = comment.substring(2);
         final String clearPrefix = prefix.trim();
@@ -57,7 +58,7 @@ public class XqlFileAnnotator implements Annotator {
                 .textAttributes(DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
                 .create();
         // highlight directives starts with #
-        TextRange prefixRange = TextRange.from(element.getTextRange().getStartOffset() + comment.indexOf(tag), +tag.length());
+        var prefixRange = TextRange.from(element.getTextRange().getStartOffset() + comment.indexOf(tag), +tag.length());
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                 .range(prefixRange)
                 .textAttributes(DefaultLanguageHighlighterColors.METADATA)
@@ -80,7 +81,7 @@ public class XqlFileAnnotator implements Annotator {
             while (m.find()) {
                 int offset = m.start("keyword");
                 if (offset != -1) {
-                    TextRange range = TextRange.from(element.getTextRange().getStartOffset() + offset, keyword.length());
+                    var range = TextRange.from(element.getTextRange().getStartOffset() + offset, keyword.length());
                     holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                             .range(range)
                             .textAttributes(DefaultLanguageHighlighterColors.KEYWORD)
@@ -96,7 +97,7 @@ public class XqlFileAnnotator implements Annotator {
             while (m.find()) {
                 int offset = m.start("key");
                 if (offset != -1) {
-                    TextRange range = TextRange.from(element.getTextRange().getStartOffset() + offset, m.group("key").length());
+                    var range = TextRange.from(element.getTextRange().getStartOffset() + offset, m.group("key").length());
                     holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                             .range(range)
                             .textAttributes(DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
@@ -108,11 +109,11 @@ public class XqlFileAnnotator implements Annotator {
 
     private static void highlightInlineTemplate(AnnotationHolder holder, PsiElement element, String content) {
         Matcher m = XQLFileManager.INLINE_TEMPLATE_BEGIN_PATTERN.matcher(content);
-        if (m.find()) {
+        if (m.matches()) {
             String key = m.group("key");
             int offset = m.start("key");
             if (offset != -1) {
-                TextRange range = TextRange.from(element.getTextRange().getStartOffset() + offset, key.length());
+                var range = TextRange.from(element.getTextRange().getStartOffset() + offset, key.length());
                 holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                         .range(range)
                         .textAttributes(DefaultLanguageHighlighterColors.METADATA)
@@ -121,6 +122,21 @@ public class XqlFileAnnotator implements Annotator {
         }
     }
 
+    private static void highlightMetadata(AnnotationHolder holder, PsiElement element, String content) {
+        Matcher m = XQLFileManager.META_DATA_PATTERN.matcher(content);
+        if (m.matches()) {
+            String name = m.group("name");
+            int offset = m.start("name");
+            if (offset != -1) {
+                var range = TextRange.from(element.getTextRange().getStartOffset() + offset, name.length());
+                holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                        .range(range)
+                        .textAttributes(DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
+                        .create();
+            }
+            highlightIdentifier(holder, element, content);
+        }
+    }
 
     private static void highlightIdentifier(AnnotationHolder holder, PsiElement element, String content) {
         Matcher varM = Constants.VAR_PATTERN.matcher(content);
