@@ -10,9 +10,9 @@ import com.github.chengyuxing.sql.util.SqlGenerator;
 import com.github.chengyuxing.sql.util.SqlUtils;
 
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.github.chengyuxing.common.util.StringUtils.scan;
 
 public class RabbitScriptParamParser {
     private final SqlGenerator sqlGenerator;
@@ -62,25 +62,6 @@ public class RabbitScriptParamParser {
             prop = name.substring(idx);
         }
         return Pair.of(key, prop);
-    }
-
-    private static void scan(
-            String text,
-            Pattern p,
-            BiConsumer<String, Boolean> consumer // true = matched
-    ) {
-        Matcher m = p.matcher(text);
-        int lastEnd = 0;
-        while (m.find()) {
-            if (m.start() > lastEnd) {
-                consumer.accept(text.substring(lastEnd, m.start()), false);
-            }
-            consumer.accept(m.group(), true);
-            lastEnd = m.end();
-        }
-        if (lastEnd < text.length()) {
-            consumer.accept(text.substring(lastEnd), false);
-        }
     }
 
     private void appendToken(StringJoiner sb, Token token) {

@@ -5,6 +5,8 @@ import com.github.chengyuxing.plugin.rabbit.sql.common.XQLConfigManager;
 import com.github.chengyuxing.plugin.rabbit.sql.file.XqlIcons;
 import com.github.chengyuxing.plugin.rabbit.sql.util.ProjectFileUtil;
 import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+import com.github.chengyuxing.sql.XQLFileManager;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
@@ -19,6 +21,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class XqlNameReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
     private static final Logger log = Logger.getInstance(XqlNameReference.class);
@@ -89,20 +94,27 @@ public class XqlNameReference extends PsiReferenceBase<PsiElement> implements Ps
         if (config == null) {
             return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
         }
+        List<LookupElement> lookupElements = new ArrayList<>();
         var xqlFileManager = config.getXqlFileManager();
-        return xqlFileManager.names()
-                .stream()
-                .map(name -> {
-                    var description = xqlFileManager.getSqlObject(name).getDescription();
-                    var alias = StringUtil.extraSqlReference(name).getItem1();
-                    var resource = xqlFileManager.getResource(alias);
-                    var filename = FileResource.getFileName(resource.getFilename(), true);
-                    var icon = ProjectFileUtil.isLocalFileUri(resource.getFilename()) ? XqlIcons.XQL_FILE_ITEM : XqlIcons.XQL_FILE_ITEM_REMOTE;
-                    return LookupElementBuilder.create(name)
-                            .withIcon(icon)
-                            .withTypeText(filename)
-                            .withTailText(" " + description)
-                            .withCaseSensitivity(true);
-                }).toArray();
+        xqlFileManager.getResources().forEach((alias, resource) -> {
+            for (Map.Entry<String, XQLFileManager.Sql> entry : resource.getEntry().entrySet()) {
+                String sqlName = entry.getKey();
+                XQLFileManager.Sql sql = entry.getValue();
+                if (sqlName.startsWith("${")) {
+                    continue;
+                }
+                var filename = FileResource.getFileName(resource.getFilename(), true);
+                var icon = ProjectFileUtil.isLocalFileUri(resource.getFilename())
+                        ? XqlIcons.XQL_FILE_ITEM
+                        : XqlIcons.XQL_FILE_ITEM_REMOTE;
+                var lookup = LookupElementBuilder.create(XQLFileManager.encodeSqlReference(alias, sqlName))
+                        .withIcon(icon)
+                        .withTypeText(filename)
+                        .withTailText(" " + sql.getDescription())
+                        .withCaseSensitivity(true);
+                lookupElements.add(lookup);
+            }
+        });
+        return lookupElements.toArray(new LookupElement[0]);
     }
 }
