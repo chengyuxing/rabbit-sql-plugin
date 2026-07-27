@@ -147,6 +147,8 @@ public class XQLMapperTemplateData {
                 }
                 if (StringUtils.equalsAny(method.getSqlType(), SqlStatementType.procedure.name(), SqlStatementType.function.name())) {
                     state.setHasProcedure(true);
+                } else if (Objects.equals(method.getSqlType(), SqlStatementType.batch.name())) {
+                    state.setHasBatch(true);
                 }
             };
 
@@ -348,6 +350,7 @@ public class XQLMapperTemplateData {
         private Boolean hasProcedure = false;
         private Boolean hasIPageable = false;
         private Boolean hasPagedResource = false;
+        private Boolean hasBatch = false;
 
         public Boolean getHasStream() {
             return hasStream;
@@ -395,6 +398,14 @@ public class XQLMapperTemplateData {
 
         public void setHasSet(Boolean hasSet) {
             this.hasSet = hasSet;
+        }
+
+        public Boolean getHasBatch() {
+            return hasBatch;
+        }
+
+        public void setHasBatch(Boolean hasBatch) {
+            this.hasBatch = hasBatch;
         }
     }
 

@@ -1,5 +1,10 @@
 package com.github.chengyuxing.plugin.rabbit.sql.ui.types;
 
+import com.github.chengyuxing.common.DataRow;
+import com.github.chengyuxing.sql.PagedResource;
+import com.github.chengyuxing.sql.page.IPageable;
+import com.github.chengyuxing.sql.types.BatchResult;
+
 public enum XQLJavaType {
     List("List", "<T>"),
     Set("Set", "<T>"),
@@ -13,6 +18,7 @@ public enum XQLJavaType {
     Long("Long", ""),
     Double("Double", ""),
     Boolean("Boolean", ""),
+    BatchResult(BatchResult.class.getSimpleName(), ""),
 
     Map("Map", "<String, ?>"),
     DataRow(DataRow.class.getSimpleName(), ""),

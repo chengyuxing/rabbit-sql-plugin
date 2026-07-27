@@ -16,6 +16,9 @@ import com.github.chengyuxing.sql.annotation.*;
 #if($state.hasProceudre)
 import com.github.chengyuxing.sql.types.Param;
 #end
+#if($state.hasBatch)
+import com.github.chengyuxing.sql.types.BatchResult;
+#end
 #if($baki)
 import com.github.chengyuxing.sql.spring.autoconfigure.mapping.Baki;
 #end
@@ -71,20 +74,19 @@ public interface ${mapperInterfaceName} {
      *
 #end
 #if($method.parameters.size() > 0)
-#if($method.paramType == "@Arg")
+#if($method.paramType == "Object" && $method.sqlType != "batch")
 #foreach($param in $method.parameters)
      * @param $param.name $param.comment
 #end
-#elseif($method.paramType == "Map")
+#elseif($method.paramType == "Map" || $method.paramType == "Object")
      * @param args <ul>
 #foreach($param in $method.parameters)
      *             <li>{@code $param.name}#if($param.comment.trim() != "") ($param.comment)#end</li>
 #end
      *             </ul>
 #else
-     * @param ${method.paramType.toLowerCase()} #if($method.paramClassComment)$method.paramClassComment
+     * @param #if($method.sqlType != "batch")${method.paramType.toLowerCase()}#{else}args#{end} #if($method.paramClassComment)$method.paramClassComment
 #end
-
 #end
 #end
      * @return {@code ${method.returnType.replace("<","[").replace(">","]")}}
@@ -105,7 +107,10 @@ public interface ${mapperInterfaceName} {
 #if($method.parameters.size() == 0)
     $method.returnType ${method.name}();
 #else
-#if($method.paramType == "@Arg")
+#if($method.sqlType == "batch")
+    $method.returnType ${method.name}(Iterable<#if($method.paramType == "Object")?#{elseif}($method.paramType == "Map")Map<String, ?>#{else}$method.paramType#end> args);
+#else
+#if($method.paramType == "Object")
     $method.returnType ${method.name}(
 #foreach($param in $method.parameters)
             @Arg("$param.name") #if($isMethodProc)Param#{else}$param.type#end $param.name#if(!$foreach.last),
@@ -114,9 +119,10 @@ public interface ${mapperInterfaceName} {
     );
 #else
 #if($method.paramType == "Map")
-    $method.returnType ${method.name}(Map<String, #if($isMethodProc)Param#{else}Object#end> args);
+    $method.returnType ${method.name}(Map<String, #if($isMethodProc)Param#{else}?#end> args);
 #else
     $method.returnType ${method.name}($method.paramType ${method.paramType.toLowerCase()});
+#end
 #end
 #end
 #end
