@@ -449,7 +449,7 @@ public class MapperGenerateForm extends JPanel {
                                 myPramType = className;
                             }
                         }
-                        if (myPramType == null && !StringUtils.isEmpty(xqlMethod.getParamType())) {
+                        if (!StringUtils.isEmpty(xqlMethod.getParamType())) {
                             myPramType = xqlMethod.getParamType().equals("@Arg")
                                     ? XQLJavaType.Object.getValue()
                                     : xqlMethod.getParamType();
