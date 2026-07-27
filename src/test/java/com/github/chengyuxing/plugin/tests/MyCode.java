@@ -5,11 +5,9 @@ import com.github.chengyuxing.common.io.FileResource;
 import com.github.chengyuxing.common.script.pipe.IPipe;
 import com.github.chengyuxing.common.util.ReflectUtils;
 import com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig;
-import com.github.chengyuxing.plugin.rabbit.sql.util.ClassFileLoader;
-import com.github.chengyuxing.plugin.rabbit.sql.util.RabbitScriptParamParser;
-import com.github.chengyuxing.plugin.rabbit.sql.util.SimpleJavaCompiler;
-import com.github.chengyuxing.plugin.rabbit.sql.util.StringUtil;
+import com.github.chengyuxing.plugin.rabbit.sql.util.*;
 import com.github.chengyuxing.sql.Args;
+import com.github.chengyuxing.sql.annotation.SqlStatementType;
 import com.github.chengyuxing.sql.util.SqlGenerator;
 import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
@@ -146,5 +144,13 @@ public class MyCode {
         parser.parse();
         var params = parser.getParamsMap();
         System.out.println(params);
+    }
+
+    @Test
+    public void testHtml() {
+        var html = HtmlUtil.code("cyx", HtmlUtil.Color.HIGHLIGHT);
+        html = HtmlUtil.toHtml(html);
+        System.out.println(html);
+        System.out.println(com.intellij.openapi.util.text.StringUtil.stripHtml(html,true));
     }
 }
