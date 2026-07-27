@@ -51,6 +51,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
     private ActionPopupMenu pipeMenu;
     private ActionPopupMenu constantMenu;
     private ActionPopupMenu propertyMenu;
+    private ActionPopupMenu folderMenu;
 
     private Tree tree;
     private final Map<TreePath, Boolean> treeExpandedState = new HashMap<>();
@@ -99,6 +100,7 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
         pipeMenu = createPipePopMenu(tree);
         constantMenu = createConstantPopMenu(tree);
         propertyMenu = createPropertyPopMenu(tree);
+        folderMenu = createFolderPopMenu(tree);
 
         AtomicReference<Point> pointRef = new AtomicReference<>();
         tree.addKeyListener(new KeyAdapter() {
@@ -208,9 +210,14 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                     }
                     if (source instanceof Constant) {
                         constantMenu.getComponent().show(tree, e.getX(), e.getY());
+                        return;
                     }
                     if (source instanceof Property) {
                         propertyMenu.getComponent().show(tree, e.getX(), e.getY());
+                        return;
+                    }
+                    if (source instanceof Folder) {
+                        folderMenu.getComponent().show(tree, e.getX(), e.getY());
                     }
                 }
             }
@@ -462,6 +469,18 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
             public AnAction @NotNull [] getChildren(@Nullable AnActionEvent anActionEvent) {
                 return new AnAction[]{
                         new ModifyPropertyAction(tree)
+                };
+            }
+        });
+    }
+
+    private ActionPopupMenu createFolderPopMenu(Tree tree) {
+        return actionManager.createActionPopupMenu(ActionPlaces.POPUP, new ActionGroup() {
+
+            @Override
+            public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
+                return new AnAction[]{
+                        new GeneralNewAction(tree)
                 };
             }
         });
