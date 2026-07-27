@@ -5,7 +5,10 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.TypeUtil;
 import com.github.chengyuxing.sql.XQLFileManager;
 import com.github.chengyuxing.sql.annotation.PageableConfig;
 import com.intellij.openapi.diagnostic.Logger;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.introspector.PropertyUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,7 +27,13 @@ public class XQLMapperConfig {
 
     public static XQLMapperConfig load(Path path) {
         if (Files.exists(path)) {
-            var yaml = new Yaml();
+            var propertyUtils = new PropertyUtils();
+            propertyUtils.setSkipMissingProperties(true);
+
+            var constructor = new Constructor(new LoaderOptions());
+            constructor.setPropertyUtils(propertyUtils);
+
+            var yaml = new Yaml(constructor);
             try {
                 return yaml.loadAs(Files.newInputStream(path), XQLMapperConfig.class);
             } catch (IOException e) {

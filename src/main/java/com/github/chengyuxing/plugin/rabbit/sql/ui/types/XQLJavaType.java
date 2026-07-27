@@ -5,18 +5,18 @@ public enum XQLJavaType {
     Set("Set", "<T>"),
     Stream("Stream", "<T>"),
     Optional("Optional", "<T>"),
-    PagedResource("PagedResource", "<T>"),
+    PagedResource(PagedResource.class.getSimpleName(), "<T>"),
     GenericT("<T>", ""),
-    IPageable("IPageable", ""),
+    IPageable(IPageable.class.getSimpleName(), ""),
     String("String", ""),
     Integer("Integer", ""),
     Long("Long", ""),
     Double("Double", ""),
     Boolean("Boolean", ""),
 
-    Map("Map", "<String, Object>"),
-    DataRow("DataRow", ""),
-    MultiArgs("@Arg", "");
+    Map("Map", "<String, ?>"),
+    DataRow(DataRow.class.getSimpleName(), ""),
+    Object("Object", "");
 
     private final String value;
     private final String generic;

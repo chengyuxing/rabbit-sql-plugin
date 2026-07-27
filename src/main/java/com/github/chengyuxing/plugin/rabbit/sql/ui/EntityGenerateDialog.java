@@ -103,7 +103,7 @@ public class EntityGenerateDialog extends DialogWrapper {
         if (!FULLY_CLASS_PATTERN.matcher(myForm.getFullyClassName()).matches()) {
             myForm.selectConfigTab();
             message.setVisible(true);
-            message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.entityGen.error.classname", myForm.getFullyClassName()), HtmlUtil.Color.WARNING)));
+            message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("classname.invalid", myForm.getFullyClassName()), HtmlUtil.Color.WARNING)));
             return;
         }
 

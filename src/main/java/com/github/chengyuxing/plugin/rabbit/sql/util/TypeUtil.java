@@ -41,10 +41,13 @@ public class TypeUtil {
     }
 
     public static String replaceGenericT(String returnType, String genericType) {
+        var myGenericType = Objects.equals(XQLJavaType.Map.getValue(), genericType)
+                ? XQLJavaType.Map.toString()
+                : genericType;
         if (returnType.equals(XQLJavaType.GenericT.getValue())) {
-            return genericType;
+            return myGenericType;
         }
-        return returnType.replace(XQLJavaType.GenericT.getValue(), "<" + genericType + ">");
+        return returnType.replace(XQLJavaType.GenericT.getValue(), "<" + myGenericType + ">");
     }
 
     public static String returnTypeName(String returnType, String genericType) {
@@ -124,7 +127,7 @@ public class TypeUtil {
             }
         }
 
-        if (method.getReturnType().equals(XQLJavaType.PagedResource.getValue()) || method.getReturnType().startsWith(XQLJavaType.PagedResource.getValue() + "<")) {
+        if (method.getReturnType().equals(XQLJavaType.IPageable.getValue()) || method.getReturnType().startsWith(XQLJavaType.PagedResource.getValue() + "<")) {
             newParams.add(new XQLMapperTemplateData.Parameter(config.getPageKey(), int.class.getSimpleName(), MessageBundle.message("page.number")));
             newParams.add(new XQLMapperTemplateData.Parameter(config.getSizeKey(), int.class.getSimpleName(), MessageBundle.message("page.size")));
         }

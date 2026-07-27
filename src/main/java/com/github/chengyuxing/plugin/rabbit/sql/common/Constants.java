@@ -2,6 +2,7 @@ package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.github.chengyuxing.common.script.ast.impl.KeyExpressionParser;
 import com.github.chengyuxing.common.script.lang.ForContextProperty;
+import com.github.chengyuxing.common.script.lang.TokenType;
 import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.sql.XQLFileManager;
 
@@ -17,7 +18,7 @@ public final class Constants {
     public static final Path JAVA_SOURCE_ROOT = Path.of("src", "main", "java");
     public static final Path CONFIG_PATH = RESOURCES_ROOT.resolve(CONFIG_NAME);
     public static final Pattern CONFIG_PATTERN = Pattern.compile("xql-file-manager(-[a-zA-Z0-9_]+)?\\.yml");
-    public static final String[] XQL_DIRECTIVE_KEYWORDS = new String[]{"of", "as", "throw"};
+    public static final String[] XQL_DIRECTIVE_KEYWORDS = new String[]{TokenType.FOR_OF.name(), TokenType.FOR_PROPERTY_AS.name(), TokenType.CHECK_THROW.name()};
     public static final String[] FOR_PROPERTIES = new String[]{
             ForContextProperty.first.name(),
             ForContextProperty.index.name(),
@@ -26,7 +27,12 @@ public final class Constants {
             ForContextProperty.even.name()
     };
     public static final String FOR_PROPERTIES_REGEXP = String.join("|", FOR_PROPERTIES);
-    public static final String[] XQL_VALUE_KEYWORDS = new String[]{"blank", "null", "true", "false"};
+    public static final String[] XQL_VALUE_KEYWORDS = new String[]{
+            com.github.chengyuxing.common.script.lang.Constants.BLANK,
+            com.github.chengyuxing.common.script.lang.Constants.NULL,
+            com.github.chengyuxing.common.script.lang.Constants.TRUE,
+            com.github.chengyuxing.common.script.lang.Constants.FALSE
+    };
     public static final Pattern PACKAGE_PATTERN = Pattern.compile("[a-zA-Z]\\w*(\\.[a-zA-Z]\\w*)*");
     public static final Pattern FULLY_CLASS_PATTERN = Pattern.compile("[a-zA-Z]\\w*(\\.[a-zA-Z]\\w*)+");
     public static final Pattern VAR_PATTERN = Pattern.compile("(?<var>:" + KeyExpressionParser.EXPRESSION_PATTERN.pattern() + "|" + StringUtils.NUMBER_PATTERN.pattern() + "|'(''|[^'])*'|\"(\"\"|[^\"])*\")(\\s|\\W|$)");

@@ -36,9 +36,12 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.BiConsumer;
 
+import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.FULLY_CLASS_PATTERN;
 import static com.github.chengyuxing.plugin.rabbit.sql.common.Constants.PACKAGE_PATTERN;
 import static com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig.ParamSource.GENERATED;
 import static com.github.chengyuxing.plugin.rabbit.sql.common.XQLMapperConfig.ParamSource.USER;
+import static com.github.chengyuxing.plugin.rabbit.sql.ui.components.MapperGenerateForm.GENERIC_TYPES;
+import static com.github.chengyuxing.plugin.rabbit.sql.ui.components.MapperGenerateForm.PARAM_TYPES;
 
 public class MapperGenerateDialog extends DialogWrapper {
     private final static Logger log = Logger.getInstance(MapperGenerateDialog.class);
@@ -100,14 +103,12 @@ public class MapperGenerateDialog extends DialogWrapper {
 
         if (!PACKAGE_PATTERN.matcher(packageName).matches()) {
             myForm.selectConfigTab();
-            this.message.setVisible(true);
-            this.message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("package.invalid.message", packageName), HtmlUtil.Color.WARNING)));
+            setMessage(MessageBundle.message("package.invalid.message", packageName));
             return;
         }
         if (myForm.getPageKey().isEmpty() || myForm.getSizeKey().isEmpty()) {
             myForm.selectConfigTab();
-            this.message.setVisible(true);
-            this.message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("ui.dialog.mapperGen.error.pageSize"), HtmlUtil.Color.WARNING)));
+            setMessage(MessageBundle.message("ui.dialog.mapperGen.error.pageSize"));
             return;
         }
 
@@ -116,75 +117,84 @@ public class MapperGenerateDialog extends DialogWrapper {
         var isSame = Objects.equals(mapperConfig.getPackageName(), myForm.getPackage());
         if (!Files.exists(absFilename) || isSame) {
             doSaveConfiguration(mapperClass, absFilename);
-            dispose();
             return;
         }
-        this.message.setVisible(true);
-        this.message.setText(HtmlUtil.toHtml(HtmlUtil.span(MessageBundle.message("overwrite.error.exists"), HtmlUtil.Color.WARNING)));
+        setMessage(MessageBundle.message("overwrite.error.exists"));
         this.message.setToolTipText(MessageBundle.message("overwrite.error.exists.tooltip", mapperClass));
     }
 
     private void doSaveConfiguration(String mapperClass, Path absFile) {
+        final var paramTypes4overwrite = new HashSet<String>();
+        final var methodsCache = mapperConfig.getMethods();
+        for (Vector<?> row : myForm.getData()) {
+            var methodName = row.get(0).toString();
+            var inputParamType = row.get(3).toString().trim();
+            var inputReturnGenericType = row.get(5).toString().trim();
+
+            if (!isValidParamType(inputParamType)) {
+                setMessage(MessageBundle.message("classname.invalid", inputParamType));
+                return;
+            }
+            if (!isValidReturnGenericType(inputReturnGenericType)) {
+                setMessage(MessageBundle.message("classname.invalid", inputReturnGenericType));
+                return;
+            }
+
+            var exists = methodsCache.get(methodName);
+            var inputParamSource = detectParamSource(inputParamType, exists);
+
+            var newMapperMethod = new XQLMapperConfig.XQLMethod();
+            newMapperMethod.setEnable((Boolean) row.get(6));
+            newMapperMethod.setSqlType(row.get(2).toString());
+            newMapperMethod.setParamSource(inputParamSource);
+            newMapperMethod.setParamType(inputParamType);
+            newMapperMethod.setReturnType((XQLMapperConfig.ReturnType) row.get(4));
+            newMapperMethod.setReturnGenericType(inputReturnGenericType);
+
+            if (exists != null) {
+                var paramMeta = exists.getParamMeta();
+                if (paramMeta != null) {
+                    newMapperMethod.setParamMeta(paramMeta);
+                }
+            }
+            methodsCache.put(methodName, newMapperMethod);
+
+            // excludes Map, @Args
+            if (isUserCustomClass(inputParamType) && inputParamSource == GENERATED) {
+                paramTypes4overwrite.add(inputParamType);
+            }
+        }
+
+        mapperConfig.setPackageName(myForm.getPackage());
+        mapperConfig.setPageKey(myForm.getPageKey());
+        mapperConfig.setSizeKey(myForm.getSizeKey());
+
+        var baki = myForm.getBaki();
+        if (baki != null) {
+            var bakiBean = baki;
+            if (bakiBean.isEmpty()) {
+                bakiBean = "baki";
+            }
+            mapperConfig.setBaki(bakiBean);
+        }
+
+        // remove sqls if cache contains the changed sql name.
+        methodsCache.entrySet().removeIf(e -> {
+            var resource = xqlFileManager.getResource(alias);
+            if (Objects.nonNull(resource)) {
+                return !resource.getEntry().containsKey(e.getKey());
+            }
+            return true;
+        });
+
+        dispose();
         ProgressManager.getInstance().run(new Task.Backgroundable(project, MessageBundle.message("ui.dialog.mapperGen.ok.progress"), false) {
             private final Set<Path> refreshFiles = new HashSet<>();
             private final StringJoiner generated = new StringJoiner(", ");
-            private final Set<String> paramTypes4overwrite = new HashSet<>();
 
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 indicator.setIndeterminate(true);
-
-                mapperConfig.setPackageName(myForm.getPackage());
-                mapperConfig.setPageKey(myForm.getPageKey());
-                mapperConfig.setSizeKey(myForm.getSizeKey());
-
-                var baki = myForm.getBaki();
-                if (baki != null) {
-                    var bakiBean = baki;
-                    if (bakiBean.isEmpty()) {
-                        bakiBean = "baki";
-                    }
-                    mapperConfig.setBaki(bakiBean);
-                }
-
-                var methodsCache = mapperConfig.getMethods();
-
-                myForm.getData().forEach(row -> {
-                    var methodName = row.get(0).toString();
-                    var exists = methodsCache.get(methodName);
-                    var inputParamType = row.get(3).toString().trim();
-                    var inputParamSource = detectParamSource(inputParamType, exists);
-
-                    var newMapperMethod = new XQLMapperConfig.XQLMethod();
-                    newMapperMethod.setEnable((Boolean) row.get(6));
-                    newMapperMethod.setSqlType(row.get(2).toString());
-                    newMapperMethod.setParamSource(inputParamSource);
-                    newMapperMethod.setParamType(inputParamType);
-                    newMapperMethod.setReturnType((XQLMapperConfig.ReturnType) row.get(4));
-                    newMapperMethod.setReturnGenericType(row.get(5).toString().trim());
-
-                    if (exists != null) {
-                        var paramMeta = exists.getParamMeta();
-                        if (paramMeta != null) {
-                            newMapperMethod.setParamMeta(paramMeta);
-                        }
-                    }
-                    methodsCache.put(methodName, newMapperMethod);
-
-                    // excludes Map, @Args
-                    if (isUserCustomClass(inputParamType) && inputParamSource == GENERATED) {
-                        paramTypes4overwrite.add(inputParamType);
-                    }
-                });
-                // remove sqls if cache contains the changed sql name.
-                methodsCache.entrySet().removeIf(e -> {
-                    var resource = xqlFileManager.getResource(alias);
-                    if (Objects.nonNull(resource)) {
-                        return !resource.getEntry().containsKey(e.getKey());
-                    }
-                    return true;
-                });
-
                 try {
                     mapperConfig.saveTo(configPath);
 
@@ -235,8 +245,27 @@ public class MapperGenerateDialog extends DialogWrapper {
         });
     }
 
+    private void setMessage(String message) {
+        this.message.setVisible(true);
+        this.message.setText(HtmlUtil.toHtml(HtmlUtil.span(message, HtmlUtil.Color.WARNING)));
+    }
+
+    private boolean isValidParamType(String s) {
+        if (PARAM_TYPES.contains(s)) {
+            return true;
+        }
+        return FULLY_CLASS_PATTERN.matcher(s).matches();
+    }
+
+    private boolean isValidReturnGenericType(String s) {
+        if (GENERIC_TYPES.contains(s)) {
+            return true;
+        }
+        return FULLY_CLASS_PATTERN.matcher(s).matches();
+    }
+
     private boolean isUserCustomClass(String input) {
-        return !MapperGenerateForm.PARAM_TYPES.contains(input);
+        return !PARAM_TYPES.contains(input);
     }
 
     private XQLMapperConfig.ParamSource detectParamSource(String inputParamType, XQLMapperConfig.XQLMethod exists) {

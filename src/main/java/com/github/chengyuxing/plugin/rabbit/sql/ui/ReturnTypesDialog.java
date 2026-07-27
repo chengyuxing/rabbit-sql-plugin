@@ -14,9 +14,9 @@ public class ReturnTypesDialog extends DialogWrapper {
     private final ReturnTypesForm returnTypesForm;
     private final Consumer<XQLMapperConfig.ReturnType> doOkAction;
 
-    public ReturnTypesDialog(@Nullable Project project, String method, XQLMapperConfig.ReturnType selected, Consumer<XQLMapperConfig.ReturnType> doOkAction) {
+    public ReturnTypesDialog(@Nullable Project project, String sqlType, String method, XQLMapperConfig.ReturnType selected, Consumer<XQLMapperConfig.ReturnType> doOkAction) {
         super(project, true);
-        this.returnTypesForm = new ReturnTypesForm(selected, checked -> setOKActionEnabled(checked != 0));
+        this.returnTypesForm = new ReturnTypesForm(sqlType, selected, checked -> setOKActionEnabled(checked != 0));
         this.doOkAction = doOkAction;
         setTitle(MessageBundle.message("ui.dialog.returnType.title", method));
         init();
