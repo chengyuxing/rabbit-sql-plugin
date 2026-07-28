@@ -350,7 +350,8 @@ public class MapperGenerateForm extends JPanel {
                 select * from cte;
                 """);
         var method = HtmlUtil.pre("""
-                @PageableConfig(disableDefaultPageSql = {"length", "index"}, pageHelper = org.example.MyPagehelper.class)
+                <code style="color:#BBB529">@CountQuery</code>("queryUsersCustomPageCount") <span style="color:#7B7E84">// It's required for @PageableConfig</span>
+                <code style="color:#BBB529">@PageableConfig</code>(disableDefaultPageSql = {"length", "index"}, pageHelper = org.example.MyPagehelper.class)
                 PagedResource&lt;DataRow&gt; queryUsersCustomPage(Map&lt;String, Object&gt;);
                 """, HtmlUtil.Color.EMPTY);
         var content = StringUtils.FMT.format(html,
