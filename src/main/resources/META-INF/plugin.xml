@@ -46,7 +46,7 @@
     <h3>Springboot</h3>
     <ol>
         <li>Create a new maven project;</li>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 5.3.13+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 5.3.14+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -55,7 +55,7 @@
     <h3>Other Java Projects</h3>
     <ol>
         <li>Create a new maven project.</li>
-        <li>Add dependency <strong>rabbit-sql 10.3.12+</strong> to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 10.3.13+</strong> to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -79,6 +79,35 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.59</h3>
+            <ul>
+                <li>Support <code>rabbit-sql 10.3.13</code> and <code>rabbit-sql-spring-boot-starter 5.3.14</code></li>
+                <li>New action: <b>New</b> 'constant', 'pipe' for XQL File Manager node</li>
+                <li>New action: <b>Remove...</b> for 'XQL file', 'SQL object', 'pipe', 'constant' nodes</li>
+                <li>New action: <b>Open definition</b> for 'Pipe node' to navigate to the Java file</li>
+                <li>New action: <b>Edit...</b> for 'constant', 'charset', 'named-param-prefix' nodes</li>
+                <li>Force reload action optimized</li>
+                <li>Project startup and reindex to trigger XQL config loading optimized</li>
+                <li>XQL Mapper generate config dialog SQL type param type and return type add constraint rules</li>
+                <li>XQL Mapper generate add support generate batch execute method</li>
+                <li>Add XQL file metadata var line highlight</li>
+                <li>XQL tree view add support display registered pipe class</li>
+                <li>XQL tree add support show/edit config's all properties nodes</li>
+                <li>XQL tree node loading and data struct optimized</li>
+                <li>XQL file Add support highlight inline template name</li>
+                <li>XQL template(inline) add support declare and usages navigation</li>
+                <li>XQL SQL name suggestions exclude the template key name</li>
+                <li>File Template format optimized</li>
+                <li>Action <b>Configure Params</b>: entity class auto generate optimized</li>
+                <li>Action <b>Selected opened file</b> fixed not located correct node bug.</li>
+                <li><b>XQL Mapper generator</b> add support auto generate custom Java file for 'returnType', 'paramType' and 'pageHelperProvider'</li>
+                <li>Fixed Intention action: <b>create XQL fragment</b> by literal not work</li>
+                <li>Fixed <b>New XQL</b> dialog input preview display bug</li>
+                <li>Fixed XQL navigation error in XQL Mapper interface</li>
+                <li>Remove Kotlin source folder detection</li>
+                <li>Some dialog form UI optimized</li>
+                <li>Some code and logic optimized</li>
+            </ul>
             <h3>2.4.58</h3>
             <ul>
                 <li>Support <code>rabbit-sql-spring-boot-starter 5.3.13</code></li>

@@ -4,14 +4,14 @@ plugins {
 }
 
 group = "com.github.chengyuxing"
-version = "2.4.58.231-262"
+version = "2.4.59.231-262"
 
 repositories {
     mavenLocal()
     mavenCentral()
 }
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:10.3.12") {
+    implementation("com.github.chengyuxing:rabbit-sql:10.3.13") {
         exclude("org.slf4j", "slf4j-api")
     }
     testImplementation("junit:junit:4.13.2")
@@ -29,7 +29,6 @@ intellij {
             "com.intellij.java",
             "com.intellij.spring",
             "org.jetbrains.kotlin",
-            //"org.jetbrains.plugins.yaml"
         )
     )
 }
