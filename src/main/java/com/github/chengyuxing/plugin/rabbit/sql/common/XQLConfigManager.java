@@ -388,10 +388,6 @@ public final class XQLConfigManager implements Disposable {
             fire(false);
         }
 
-        public void silentFire() {
-            fire(true);
-        }
-
         public SqlGenerator getSqlGenerator() {
             return xqlFileManager.getSqlGenerator();
         }

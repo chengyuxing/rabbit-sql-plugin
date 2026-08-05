@@ -38,7 +38,7 @@ public class XqlFileChangeListener implements BulkFileListener {
     public void after(@NotNull List<? extends @NotNull VFileEvent> events) {
         Set<VirtualFile> affectedFiles = new HashSet<>();
         for (var event : events) {
-            log.debug("event: " + event);
+            log.warn("event: " + event);
             if (event instanceof VFileCreateEvent e) {
                 processMatched(e.getFile(), affectedFiles::add);
             } else if (event instanceof VFileDeleteEvent e) {
@@ -93,6 +93,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                             if (config.isValid()) {
                                 config.fire();
                                 xqlConfigManager.add(projectVf.toNioPath(), config);
+                                log.warn("config fired by YML changed:" + fileName);
                             }
                         }
                     }
@@ -115,7 +116,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                 if (Objects.nonNull(projectVf) && projectVf.exists()) {
                     var configs = xqlConfigManager.getConfigs(projectVf.toNioPath());
                     if (Objects.nonNull(configs)) {
-                        log.debug("find project: " + projectVf + " configs.");
+                        log.warn("find project: " + projectVf + " config");
                         new HashSet<>(configs).forEach(config -> {
                             if (config.isValid()) {
                                 var configured = config.getOriginalXqlFiles().contains(xqlPath);
@@ -126,6 +127,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                                 // other file name change matched configured files
                                 if (configured) {
                                     config.fire();
+                                    log.warn("config fired by registered XQL changed: " + xqlPath);
                                 } else {
                                     // filename changed which not included in config files.
                                     new HashSet<>(config.getOriginalXqlFiles()).forEach(cfgPath -> {
@@ -133,6 +135,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                                             var p = Path.of(URI.create(cfgPath));
                                             if (cfgPath.isEmpty() || !Files.exists(p)) {
                                                 config.fire();
+                                                log.warn("config fired by other XQL changed: " + xqlPath);
                                             }
                                         }
                                     });
