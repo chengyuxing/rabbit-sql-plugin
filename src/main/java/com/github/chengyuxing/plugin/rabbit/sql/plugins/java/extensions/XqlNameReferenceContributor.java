@@ -36,7 +36,7 @@ public class XqlNameReferenceContributor extends PsiReferenceContributor {
                 return PsiReference.EMPTY_ARRAY;
             }
             var sqlPath = value.substring(1);
-            if (StringUtils.isBlank(sqlPath)) {
+            if (StringUtils.isEmpty(sqlPath)) {
                 return PsiReference.EMPTY_ARRAY;
             }
             var property = new TextRange(2, value.length() + 1);
@@ -51,7 +51,7 @@ public class XqlNameReferenceContributor extends PsiReferenceContributor {
                 return PsiReference.EMPTY_ARRAY;
             }
             var sqlName = PsiUtil.getAnnoTextValue(psiAttrValue);
-            if (StringUtils.isEmpty(sqlName)) {
+            if (StringUtils.isBlank(sqlName)) {
                 return PsiReference.EMPTY_ARRAY;
             }
             var alias = PsiUtil.getXQLMapperAlias(element);

@@ -67,7 +67,7 @@ public class JavaUtil {
                         var annoAttr = PsiUtil.getMethodAnnoValue(psiMethod, CountQuery.class.getName(), "value");
                         if (Objects.nonNull(annoAttr)) {
                             var cQAttrValue = PsiUtil.getAnnoTextValue(annoAttr);
-                            if (!StringUtils.isEmpty(cQAttrValue)) {
+                            if (!StringUtils.isBlank(cQAttrValue)) {
                                 if (Objects.equals(sqlRef, "&" + XQLFileManager.encodeSqlReference(psiAlias, cQAttrValue))) {
                                     psiElements.add(annoAttr);
                                 }

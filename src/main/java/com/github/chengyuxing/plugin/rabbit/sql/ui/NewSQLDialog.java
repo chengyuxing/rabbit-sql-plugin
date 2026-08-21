@@ -79,7 +79,7 @@ public class NewSQLDialog extends DialogWrapper {
             dispose();
             WriteCommandAction.runWriteCommandAction(project, MessageBundle.message("command.modify", sqlFileVf.getName()), null, () -> {
                 var sqlFragment = "\n/*[" + name + "]*/";
-                if (!StringUtils.isBlank(desc)) {
+                if (!StringUtils.isEmpty(desc)) {
                     sqlFragment += "\n/*#" + desc + "#*/";
                 }
                 sqlFragment += "\n\n;\n";

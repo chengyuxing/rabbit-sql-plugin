@@ -109,7 +109,7 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
         var annoAttr = PsiUtil.getMethodAnnoValue((PsiIdentifier) sourceElement, CountQuery.class.getName(), "value");
         if (Objects.nonNull(annoAttr)) {
             var cQAttrValue = PsiUtil.getAnnoTextValue(annoAttr);
-            if (!StringUtils.isEmpty(cQAttrValue)) {
+            if (!StringUtils.isBlank(cQAttrValue)) {
                 return Pair.of("&" + XQLFileManager.encodeSqlReference(psiAlias, cQAttrValue), PsiTreeUtil.findChildOfType(annoAttr, PsiJavaTokenImpl.class));
             }
         }
@@ -132,7 +132,7 @@ public class GotoXqlDefinition extends RelatedItemLineMarkerProvider {
         var attrValue = PsiUtil.getAnnoTextValue(psiMethodAnnoAttr);
         // @XQL(type = Type.insert)
         // int addGuest(DataRow dataRow);
-        if (StringUtils.isEmpty(attrValue)) {
+        if (StringUtils.isBlank(attrValue)) {
             return Pair.of("&" + XQLFileManager.encodeSqlReference(psiAlias, sourceElement.getText()), sourceElement);
         }
         // @XQL("queryGuests")

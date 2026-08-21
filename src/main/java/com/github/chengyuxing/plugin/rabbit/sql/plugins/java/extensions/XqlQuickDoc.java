@@ -63,8 +63,8 @@ public class XqlQuickDoc extends AbstractDocumentationProvider {
 
                 var doc = DEFINITION_START + HtmlUtil.wrap("span", element.getText(), HtmlUtil.Color.EMPTY);
 
-                if (!StringUtils.isBlank(sqlDescription)) {
-                    if (!StringUtils.isBlank(fileDescription)) {
+                if (!StringUtils.isEmpty(sqlDescription)) {
+                    if (!StringUtils.isEmpty(fileDescription)) {
                         sqlDescription = fileDescription + ": " + sqlDescription;
                     }
                     doc += HtmlUtil.pre(sqlDescription, HtmlUtil.Color.LIGHT);

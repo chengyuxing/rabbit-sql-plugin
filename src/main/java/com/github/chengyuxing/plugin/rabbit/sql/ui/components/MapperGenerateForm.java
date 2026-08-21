@@ -434,7 +434,7 @@ public class MapperGenerateForm extends JPanel {
 
                     var xqlMethod = this.mapperConfig.getMethods().get(sqlName);
                     if (Objects.nonNull(xqlMethod)) {
-                        if (!StringUtils.isEmpty(xqlMethod.getSqlType()) && SQL_TYPES.contains(xqlMethod.getSqlType())) {
+                        if (!StringUtils.isBlank(xqlMethod.getSqlType()) && SQL_TYPES.contains(xqlMethod.getSqlType())) {
                             sqlType = xqlMethod.getSqlType();
                         }
                         if (xqlMethod.getReturnType() != null &&
@@ -446,11 +446,11 @@ public class MapperGenerateForm extends JPanel {
                         String myPramType = null;
                         if (Objects.nonNull(paramMeta)) {
                             var className = paramMeta.getClassName();
-                            if (!StringUtils.isEmpty(className)) {
+                            if (!StringUtils.isBlank(className)) {
                                 myPramType = className;
                             }
                         }
-                        if (!StringUtils.isEmpty(xqlMethod.getParamType())) {
+                        if (!StringUtils.isBlank(xqlMethod.getParamType())) {
                             myPramType = xqlMethod.getParamType().equals("@Arg")
                                     ? XQLJavaType.Object.getValue()
                                     : xqlMethod.getParamType();
@@ -459,7 +459,7 @@ public class MapperGenerateForm extends JPanel {
                             paramType = myPramType;
                         }
 
-                        if (!StringUtils.isEmpty(xqlMethod.getReturnGenericType())) {
+                        if (!StringUtils.isBlank(xqlMethod.getReturnGenericType())) {
                             returnGenericType = xqlMethod.getReturnGenericType();
                         }
                         enable = ValueUtils.coalesceNonNull(xqlMethod.getEnable(), true);
