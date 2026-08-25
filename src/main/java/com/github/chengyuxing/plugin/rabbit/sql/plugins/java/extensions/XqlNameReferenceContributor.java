@@ -36,7 +36,7 @@ public class XqlNameReferenceContributor extends PsiReferenceContributor {
                 return PsiReference.EMPTY_ARRAY;
             }
             var sqlPath = value.substring(1);
-            if (StringUtils.isEmpty(sqlPath)) {
+            if (StringUtils.isBlank(sqlPath)) {
                 return PsiReference.EMPTY_ARRAY;
             }
             var property = new TextRange(2, value.length() + 1);
