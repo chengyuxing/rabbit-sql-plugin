@@ -270,12 +270,13 @@ public class ProjectFileUtil {
     public static void openJavaFile(Project project, Module module, String className) {
         JavaPsiFacade facade = JavaPsiFacade.getInstance(project);
         var scope = module == null
-                ? GlobalSearchScope.allScope(project)
-                : GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
-        ApplicationManager.getApplication().runReadAction(() -> {
-            PsiClass psiClass = facade.findClass(className, scope);
-            if (psiClass == null) return;
+                ? GlobalSearchScope.projectScope(project)
+                : GlobalSearchScope.moduleRuntimeScope(module, false);
+        var psiClass = ApplicationManager.getApplication()
+                .runReadAction((Computable<PsiClass>) () -> facade.findClass(className, scope)
+                );
+        if (psiClass != null) {
             psiClass.navigate(true);
-        });
+        }
     }
 }
