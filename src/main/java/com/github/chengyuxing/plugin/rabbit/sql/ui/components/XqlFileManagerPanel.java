@@ -13,6 +13,7 @@ import com.github.chengyuxing.plugin.rabbit.sql.util.*;
 import com.intellij.icons.AllIcons;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
@@ -162,7 +163,8 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                     if (node.getUserObject() instanceof SqlFragment sqlFragment) {
                         var sqlPath = sqlFragment.config().getXqlFileManager().getResource(sqlFragment.xqlAlias()).getFilename();
                         if (ProjectFileUtil.isLocalFileUri(sqlPath)) {
-                            PsiUtil.navigate2xqlFile(sqlFragment.xqlAlias(), sqlFragment.sqlName(), sqlFragment.config());
+                            ApplicationManager.getApplication().runWriteAction(() ->
+                                    PsiUtil.navigate2xqlFile(sqlFragment.xqlAlias(), sqlFragment.sqlName(), sqlFragment.config()));
                         } else {
                             NotificationUtil.showMessage(project, MessageBundle.message("ui.xqlFileManagerPanel.xql.parse.warning"), NotificationType.WARNING);
                         }
@@ -170,7 +172,8 @@ public class XqlFileManagerPanel extends SimpleToolWindowPanel {
                     }
                     if (node.getUserObject() instanceof PipeName pipeName) {
                         var module = ModuleUtil.findModuleForFile(pipeName.config().getConfigVfs(), project);
-                        ProjectFileUtil.openJavaFile(project, module, pipeName.className());
+                        ApplicationManager.getApplication().invokeLater(() ->
+                                ProjectFileUtil.openJavaFile(project, module, pipeName.className()));
                     }
                 }
             }

@@ -272,11 +272,10 @@ public class ProjectFileUtil {
         var scope = module == null
                 ? GlobalSearchScope.projectScope(project)
                 : GlobalSearchScope.moduleRuntimeScope(module, false);
-        var psiClass = ApplicationManager.getApplication()
-                .runReadAction((Computable<PsiClass>) () -> facade.findClass(className, scope)
-                );
-        if (psiClass != null) {
+        ApplicationManager.getApplication().runReadAction(() -> {
+            PsiClass psiClass = facade.findClass(className, scope);
+            if (psiClass == null) return;
             psiClass.navigate(true);
-        }
+        });
     }
 }
