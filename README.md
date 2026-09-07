@@ -7,7 +7,7 @@
 
 Language: English | [简体中文](README.chs.md)
 
-IDEA 2020.3.* - 2026.2.* is required.
+IDEA 2020.3.* - 2026.3.* is required.
 
 - Support the identification of xql(`.xql`) file type.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).

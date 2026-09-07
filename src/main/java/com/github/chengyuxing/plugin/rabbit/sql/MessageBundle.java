@@ -9,7 +9,7 @@ public class MessageBundle extends DynamicBundle {
     private static final MessageBundle instance = new MessageBundle();
 
     public MessageBundle() {
-        super("messages.MessageBundle");
+        super(MessageBundle.class, "messages.MessageBundle");
     }
 
     public static String message(@NotNull @NonNls @PropertyKey(resourceBundle = "messages.MessageBundle") String key, Object... params) {

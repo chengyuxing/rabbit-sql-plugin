@@ -81,6 +81,7 @@
         <![CDATA[
             <h3>2.4.62</h3>
             <ul>
+                <li>Compatible with IDEA 2026.3</li>
                 <li>Fixed XQL File Manager panel tree node double-click navigation bug at idea 2026.2.2</li>
             </ul>
             <h3>2.4.61</h3>
