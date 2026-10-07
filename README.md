@@ -9,6 +9,8 @@ Language: English | [简体中文](README.chs.md)
 
 IDEA 2023.1.* - 2026.3.* is required.
 
+Current release: **2.4.63.231-263**. Bundled libraries: **rabbit-sql 10.3.20** and **rabbit-common 3.2.12**.
+
 - Support the identification of xql(`.xql`) file type.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
 - Support quick look sql definition by name(e.g: `&my.users`).
@@ -20,6 +22,14 @@ IDEA 2023.1.* - 2026.3.* is required.
 - Create `xql-file-manager.yml` in `/src/main/resources` and register xql file to enable some features above.
 - **ToolBar menu**: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd>.
 
+## 2.4.63 release notes
+
+- Bundle rabbit-sql 10.3.20 and rabbit-common 3.2.12; recommend starter 5.3.21.
+- Reload compiled pipe classes from Maven and Gradle outputs, and refresh registered `.xql` and `.sql` files.
+- Isolate dynamic SQL consoles and database execution sessions between files.
+- Preserve the active configuration on reload and use snapshots for concurrent reads.
+- Improve mapper output paths, notification scheduling and project shutdown handling.
+
 ## Installation
 
 - Installing from IDEA plugin marketplace:
@@ -30,7 +40,7 @@ IDEA 2023.1.* - 2026.3.* is required.
 
 ## Getting Started
 
-1. Add dependency **rabbit-sql 10.3.16+** to your project;
+1. Add dependency **rabbit-sql 10.3.20** (recommended) to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 4. Configure [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
@@ -38,13 +48,12 @@ IDEA 2023.1.* - 2026.3.* is required.
 
 ### Springboot support
 
-1. Add dependency **rabbit-sql-spring-boot-starter 5.3.17+** to your project;
+1. Add dependency **rabbit-sql-spring-boot-starter 5.3.21** (recommended) to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 
-> Press <kbd>Ctrl</kbd> + <kbd>s</kbd> or <kbd>Tools</kbd> > <kbd>Reload XQL File Manager</kbd> to update sql resource cache when you modify the `xql` file or `xql-file-manager.yml` ;
->
-> :warning: Plugin only parse xql file.
+> Press <kbd>Ctrl</kbd> + <kbd>s</kbd> or <kbd>Tools</kbd> > <kbd>Reload XQL File Manager</kbd> to update sql resource cache when you modify a registered `.xql` or `.sql` file, or `xql-file-manager.yml` ;
+
 
 Get more information from [Rabbit-sql](https://github.com/chengyuxing/rabbit-sql) homepage
 and [Springboot support document](https://github.com/chengyuxing/rabbit-sql-spring-boot-starter).
@@ -52,9 +61,9 @@ and [Springboot support document](https://github.com/chengyuxing/rabbit-sql-spri
 
 ## Developer build
 
-Before building with unpublished core fixes, run `mvn install -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true` in the matching rabbit-sql source checkout. This plugin uses `mavenLocal()` and bundles rabbit-sql 10.3.19.
+Before building with unpublished core versions, run `mvn install -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true` first in the rabbit-common 3.2.12 source checkout, then in the rabbit-sql 10.3.20 checkout. This plugin uses `mavenLocal()` and bundles both libraries.
 
-Use JDK 17 to run `./gradlew test buildPlugin` in this project. The plugin ZIP is written to `build/distributions`.
+Use JDK 17 to run `./gradlew test buildPlugin` in this project. The plugin ZIP is written to `build/distributions/rabbit-sql-plugin-2.4.63.231-263.zip`.
 
 [badge:homepage]:https://img.shields.io/badge/plugin%20homepage-rabbit--sql-success
 [badge:version]:https://img.shields.io/jetbrains/plugin/v/21403
