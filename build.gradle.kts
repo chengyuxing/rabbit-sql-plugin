@@ -11,7 +11,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    implementation("com.github.chengyuxing:rabbit-sql:10.3.16") {
+    implementation("com.github.chengyuxing:rabbit-sql:10.3.19") {
         exclude("org.slf4j", "slf4j-api")
     }
     testImplementation("junit:junit:4.13.2")

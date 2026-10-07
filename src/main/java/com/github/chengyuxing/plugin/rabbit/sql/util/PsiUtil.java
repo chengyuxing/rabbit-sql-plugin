@@ -69,7 +69,7 @@ public class PsiUtil {
                 if (Objects.nonNull(vf) && vf.exists()) {
                     var filename = vf.getName();
                     var ext = vf.getExtension();
-                    if (Objects.equals(ext, "xql")) {
+                    if (ProjectFileUtil.isXqlFileExtension(ext)) {
                         fileDocumentManager.saveDocument(doc);
                         continue;
                     }

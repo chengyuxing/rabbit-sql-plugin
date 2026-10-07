@@ -5,6 +5,7 @@ import com.intellij.database.console.JdbcConsole;
 import com.intellij.database.console.session.DatabaseSessionManager;
 import com.intellij.database.dataSource.DatabaseConnectionPoint;
 import com.intellij.database.dataSource.LocalDataSourceManager;
+import com.intellij.database.editor.DatabaseEditorHelper;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
@@ -76,23 +77,13 @@ public final class DatasourceManager implements Disposable {
                     if (!Objects.equals(id, DatabaseId.of(ds.getName(), ds.getUniqueId()))) {
                         continue;
                     }
-                    var console = JdbcConsole.getActiveConsoles(project)
-                            .stream()
-                            .filter(c -> c.getDataSource() == ds)
-                            .findFirst()
-                            .map(c -> {
-                                var session = c.getSession();
-                                session.setAutoCommit(false);
-                                session.setTitle(MessageBundle.message("jdbc.session.title"));
-                                return c;
-                            }).orElseGet(() -> {
-                                var session = DatabaseSessionManager.getSession(project, (DatabaseConnectionPoint) cfg, "Rabbit-SQL-Plugin");
-                                session.setAutoCommit(false);
-                                return JdbcConsole.newConsole(project)
-                                        .fromDataSource(ds)
-                                        .useSession(session)
-                                        .build();
-                            });
+                    var session = DatabaseSessionManager.openSession(project, (DatabaseConnectionPoint) cfg, MessageBundle.message("jdbc.session.title"));
+                    session.setAutoCommit(false);
+                    var console = JdbcConsole.newConsole(project)
+                            .forFile(DatabaseEditorHelper.createNewConsoleVirtualFile(ds))
+                            .fromDataSource(ds)
+                            .useSession(session)
+                            .build();
                     consoles.put(id, console);
                     break;
                 }
@@ -116,6 +107,7 @@ public final class DatasourceManager implements Disposable {
         @Override
         public void close() {
             consoles.forEach((i, c) -> c.dispose());
+            consoles.clear();
         }
     }
 }

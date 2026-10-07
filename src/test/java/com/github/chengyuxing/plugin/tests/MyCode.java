@@ -115,7 +115,8 @@ public class MyCode {
     @Test
     public void testYml2() {
         var yml = new Yaml();
-        var c = yml.loadAs(new FileResource("file:///Users/chengyuxing/IdeaProjects/rabbit-sql-quick-start/src/main/resources/xqls/home.xql.mappers").getInputStream(), XQLMapperConfig.class);
+        var c = yml.loadAs("baki: baki\npackageName: example.mapper\n", XQLMapperConfig.class);
+        org.junit.Assert.assertEquals("example.mapper", c.getPackageName());
         System.out.println(c);
     }
 

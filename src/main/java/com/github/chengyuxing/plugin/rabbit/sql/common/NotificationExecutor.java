@@ -1,17 +1,18 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class NotificationExecutor implements AutoCloseable {
     private final ScheduledExecutorService service;
     private final long delay;
     private final Consumer<Set<Message>> consumer;
-    private final AtomicReference<ScheduledFuture<?>> currentRef = new AtomicReference<>();
-    private final Set<Message> messages = ConcurrentHashMap.newKeySet();
+    private ScheduledFuture<?> current;
+    private long generation;
+    private final Set<Message> messages = new LinkedHashSet<>();
 
     public NotificationExecutor(Consumer<Set<Message>> consumer, long delay) {
         this.delay = delay;
@@ -20,34 +21,40 @@ public class NotificationExecutor implements AutoCloseable {
     }
 
     public void show(Message message) {
-        messages.add(message);
-        trigger();
+        show(Set.of(message));
     }
 
-    public void show(Collection<Message> messages) {
-        this.messages.addAll(messages);
-        trigger();
-    }
-
-    void trigger() {
-        var current = this.currentRef.get();
-        if (current != null && (!current.isCancelled() || !current.isDone())) {
-            current.cancel(false);
-            currentRef.set(null);
+    public synchronized void show(Collection<Message> messages) {
+        if (service.isShutdown() || messages.isEmpty()) {
+            return;
         }
-        var newCurrent = service.schedule(() -> {
-            consumer.accept(messages);
+        this.messages.addAll(messages);
+        if (current != null) {
+            current.cancel(false);
+        }
+        long scheduledGeneration = ++generation;
+        current = service.schedule(() -> flush(scheduledGeneration), delay, TimeUnit.MILLISECONDS);
+    }
+
+    private void flush(long scheduledGeneration) {
+        Set<Message> batch;
+        synchronized (this) {
+            if (service.isShutdown() || scheduledGeneration != generation) {
+                return;
+            }
+            current = null;
+            batch = Set.copyOf(messages);
             messages.clear();
-        }, delay, TimeUnit.MILLISECONDS);
-        currentRef.set(newCurrent);
+        }
+        if (!batch.isEmpty()) {
+            consumer.accept(batch);
+        }
     }
 
     @Override
-    public void close() {
-        try {
-            service.shutdownNow();
-            messages.clear();
-        } catch (Exception ignore) {
-        }
+    public synchronized void close() {
+        service.shutdownNow();
+        current = null;
+        messages.clear();
     }
 }

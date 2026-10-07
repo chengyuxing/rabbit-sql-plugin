@@ -39,7 +39,7 @@ public final class XQLConfigManager implements Disposable {
     private static final Logger log = Logger.getInstance(XQLConfigManager.class);
 
     private final Project project;
-    private final Map<Path, Set<Config>> configMap = new ConcurrentHashMap<>();
+    private final Map<Path, Set<Config>> configMap = new HashMap<>();
     private final NotificationExecutor notificationExecutor;
 
     public static XQLConfigManager getInstance(Project project) {
@@ -54,38 +54,45 @@ public final class XQLConfigManager implements Disposable {
                 , 1500);
     }
 
-    public void add(Path module, Config config) {
+    public synchronized void add(Path module, Config config) {
         if (module == null) {
             return;
         }
-        var configs = configMap.get(module);
-        if (configs == null) {
-            configs = new ArrayListValueSet<>();
-            configMap.put(module, configs);
+        var configs = configMap.computeIfAbsent(module, key -> new ArrayListValueSet<>());
+        var old = configs.stream().filter(config::equals).findFirst().orElse(null);
+        if (old != null) {
+            config.setActive(old.isActive());
+        } else if (configs.stream().anyMatch(Config::isActive)) {
+            config.setActive(false);
         }
         configs.add(config);
     }
 
-    public Map<Path, Set<Config>> getConfigMap() {
-        return configMap;
+    public synchronized Map<Path, Set<Config>> getConfigMap() {
+        Map<Path, Set<Config>> snapshot = new LinkedHashMap<>();
+        configMap.forEach((module, configs) -> snapshot.put(module, getConfigs(module)));
+        return Collections.unmodifiableMap(snapshot);
     }
 
-    public Set<Config> getConfigs(Path module) {
+    public synchronized Set<Config> getConfigs(Path module) {
         if (module == null) {
             return Set.of();
         }
-        var configs = getConfigMap().get(module);
-        return Objects.nonNull(configs) ? configs : Set.of();
+        var configs = configMap.get(module);
+        return configs == null ? Set.of() : Collections.unmodifiableSet(new LinkedHashSet<>(configs));
     }
 
-    public void toggleActive(Config _config) {
+    public synchronized void toggleActive(Config _config) {
         var configs = getConfigs(_config.getModulePath());
+        if (!configs.contains(_config)) {
+            return;
+        }
         for (var config : configs) {
-            config.setActive(config == _config);
+            config.setActive(config.equals(_config));
         }
     }
 
-    public Config getActiveConfig(Path module) {
+    public synchronized Config getActiveConfig(Path module) {
         var configs = getConfigs(module);
         for (var config : configs) {
             if (config.isActive()) {
@@ -114,7 +121,7 @@ public final class XQLConfigManager implements Disposable {
         return null;
     }
 
-    public void cleanup() {
+    public synchronized void cleanup() {
         var configs = configMap;
         var projectPath = ProjectFileUtil.getProjectPath(project);
         configs.entrySet().removeIf(entry -> {
@@ -136,18 +143,22 @@ public final class XQLConfigManager implements Disposable {
     }
 
     @Override
-    public void dispose() {
+    public synchronized void dispose() {
         notificationExecutor.close();
         configMap.clear();
     }
 
     public abstract class PluginXQLFileManager extends XQLFileManager {
-        private final Path classesPath;
+        private final Path[] classesPaths;
 
         private volatile Map<String, String> errorAlias = new LinkedHashMap<>();
 
         public PluginXQLFileManager(Path modulePath) {
-            this.classesPath = modulePath.resolve(Path.of("target", "classes"));
+            this.classesPaths = new Path[]{
+                    modulePath.resolve("target/classes"),
+                    modulePath.resolve("build/classes/java/main"),
+                    modulePath.resolve("build/classes/kotlin/main")
+            };
         }
 
         protected abstract String messagePrefix();
@@ -172,7 +183,7 @@ public final class XQLConfigManager implements Disposable {
                     continue;
                 }
                 String ext = fr.getFilenameExtension();
-                if (ext != null && (ext.equals("sql") || ext.equals("xql"))) {
+                if (ProjectFileUtil.isXqlFileExtension(ext)) {
                     try {
                         Resource old = oldResources.get(alias);
                         if (old != null
@@ -216,31 +227,18 @@ public final class XQLConfigManager implements Disposable {
             ClassLoader pluginClassLoader = this.getClass().getClassLoader();
             try {
                 currentThread.setContextClassLoader(pluginClassLoader);
-                ClassFileLoader loader = ClassFileLoader.of(pluginClassLoader, classesPath);
+                ClassFileLoader loader = ClassFileLoader.of(pluginClassLoader, classesPaths);
                 Map<String, IPipe<?>> newPipeInstances = new HashMap<>();
-                Map<String, IPipe<?>> oldPipeInstances = this.getPipeInstances();
                 for (Map.Entry<String, String> e : getPipes().entrySet()) {
                     var pipeName = e.getKey();
                     var pipeClassName = e.getValue();
-
-                    IPipe<?> old = oldPipeInstances.get(pipeName);
-                    if (old != null) {
-                        newPipeInstances.put(pipeName, old);
-                    } else {
-                        var pipeClassPath = classesPath.resolve(pipeClassName.replace(".", "/") + ".class");
-                        if (!Files.exists(pipeClassPath)) {
-                            notificationExecutor.show(Message.warning(MessageBundle.message("xql.config.manager.loadPipe.notExists", messagePrefix(), pipeClassPath)));
-                            continue;
-                        }
-                        try {
-                            var pipeClass = loader.findClass(pipeClassName);
-                            if (pipeClass == null) {
-                                continue;
-                            }
-                            newPipeInstances.put(pipeName, (IPipe<?>) ReflectUtils.getInstance(pipeClass));
-                        } catch (Throwable ex) {
-                            notificationExecutor.show(Message.warning(MessageBundle.message("xql.config.manager.loadPipe.error", messagePrefix(), pipeClassName, ex.getMessage())));
-                        }
+                    try {
+                        var pipeClass = loader.loadClass(pipeClassName);
+                        newPipeInstances.put(pipeName, (IPipe<?>) ReflectUtils.getInstance(pipeClass));
+                    } catch (ClassNotFoundException ex) {
+                        notificationExecutor.show(Message.warning(MessageBundle.message("xql.config.manager.loadPipe.notExists", messagePrefix(), pipeClassName)));
+                    } catch (Throwable ex) {
+                        notificationExecutor.show(Message.warning(MessageBundle.message("xql.config.manager.loadPipe.error", messagePrefix(), pipeClassName, ex.getMessage())));
                     }
                 }
                 return newPipeInstances;
@@ -261,13 +259,13 @@ public final class XQLConfigManager implements Disposable {
         // src/main/resources
         private final Path resourcesRoot;
 
-        private VirtualFile configVfs;
-        private Path configPath;
+        private volatile VirtualFile configVfs;
+        private volatile Path configPath;
 
         private final XQLFileManagerConfig xqlFileManagerConfig;
         private final PluginXQLFileManager xqlFileManager;
         private final Set<String> originalXqlFiles;
-        private boolean active = false;
+        private volatile boolean active = false;
 
         public Config(VirtualFile moduleVfs) {
             this.modulePath = moduleVfs.toNioPath();
@@ -285,7 +283,7 @@ public final class XQLConfigManager implements Disposable {
             };
         }
 
-        public void setConfigVfs(VirtualFile configVfs) {
+        public synchronized void setConfigVfs(VirtualFile configVfs) {
             this.configVfs = configVfs;
             if (Objects.nonNull(this.configVfs)) {
                 this.configPath = this.configVfs.toNioPath();
@@ -293,7 +291,7 @@ public final class XQLConfigManager implements Disposable {
             }
         }
 
-        Set<Message> initXqlFileManager() {
+        synchronized Set<Message> initXqlFileManager() {
             if (!isValid()) {
                 return Set.of();
             }
@@ -301,11 +299,11 @@ public final class XQLConfigManager implements Disposable {
             Set<Message> warnings = new LinkedHashSet<>();
             try {
                 // source user project xql files
-                xqlFileManagerConfig.loadYaml(new FileResource(configPath.toUri().toString()));
-                if (xqlFileManagerConfig.getFiles().isEmpty()) {
-                    return Set.of();
-                }
-                xqlFileManagerConfig.copyStateTo(xqlFileManager);
+                var loadedConfig = new XQLFileManagerConfig();
+                loadedConfig.loadYaml(new FileResource(configPath.toUri().toString()));
+                loadedConfig.copyStateTo(xqlFileManagerConfig);
+                loadedConfig.copyStateTo(xqlFileManager);
+                originalXqlFiles.clear();
                 var newFiles = new LinkedHashMap<String, String>();
                 for (Map.Entry<String, String> e : xqlFileManager.getFiles().entrySet()) {
                     var alias = e.getKey();
@@ -328,8 +326,6 @@ public final class XQLConfigManager implements Disposable {
                 xqlFileManager.setFiles(newFiles);
                 xqlFileManager.init();
                 successes.add(Message.info(MessageBundle.message("xql.config.manager.loadXql.success", messagePrefix())));
-            } catch (ConcurrentModificationException e) {
-                log.warn(e);
             } catch (Exception e) {
                 warnings.add(Message.error(MessageBundle.message("xql.config.manager.loadXql.error", messagePrefix(), e.getMessage())));
                 log.warn(e);
@@ -392,8 +388,10 @@ public final class XQLConfigManager implements Disposable {
             return xqlFileManager.getSqlGenerator();
         }
 
-        public XQLFileManagerConfig getXqlFileManagerConfig() {
-            return xqlFileManagerConfig;
+        public synchronized XQLFileManagerConfig getXqlFileManagerConfig() {
+            var snapshot = new XQLFileManagerConfig();
+            xqlFileManagerConfig.copyStateTo(snapshot);
+            return snapshot;
         }
 
         public PluginXQLFileManager getXqlFileManager() {
@@ -489,7 +487,7 @@ public final class XQLConfigManager implements Disposable {
         }
 
         @Override
-        public void close() {
+        public synchronized void close() {
             xqlFileManager.close();
             originalXqlFiles.clear();
         }

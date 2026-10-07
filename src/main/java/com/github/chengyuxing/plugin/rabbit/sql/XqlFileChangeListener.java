@@ -64,7 +64,7 @@ public class XqlFileChangeListener implements BulkFileListener {
             consumer.accept(vf);
             return;
         }
-        if (Objects.equals(vf.getExtension(), "xql")) {
+        if (ProjectFileUtil.isXqlFileExtension(vf.getExtension())) {
             consumer.accept(vf);
             return;
         }
@@ -101,7 +101,7 @@ public class XqlFileChangeListener implements BulkFileListener {
                 requireUpdate = true;
                 continue;
             }
-            if (fileName.endsWith(".xql")) {
+            if (ProjectFileUtil.isXqlFileExtension(vf.getExtension())) {
                 var xqlPath = vf.toNioPath().toUri().toString();
                 var validXqlVf = vf;
                 // file is deleted.

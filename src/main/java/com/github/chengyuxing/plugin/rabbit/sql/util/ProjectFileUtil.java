@@ -88,6 +88,10 @@ public class ProjectFileUtil {
         return vf.toNioPath();
     }
 
+    public static boolean isXqlFileExtension(String extension) {
+        return "xql".equals(extension) || "sql".equals(extension);
+    }
+
     public static boolean isXqlFileManagerConfig(String name) {
         return Constants.CONFIG_PATTERN.matcher(name).matches();
     }

@@ -34,8 +34,9 @@ public class XQLMapperConfig {
             constructor.setPropertyUtils(propertyUtils);
 
             var yaml = new Yaml(constructor);
-            try {
-                return yaml.loadAs(Files.newInputStream(path), XQLMapperConfig.class);
+            try (var input = Files.newInputStream(path)) {
+                var config = yaml.loadAs(input, XQLMapperConfig.class);
+                return config == null ? new XQLMapperConfig() : config;
             } catch (IOException e) {
                 log.warn(e);
             }
@@ -43,15 +44,11 @@ public class XQLMapperConfig {
         return new XQLMapperConfig();
     }
 
-    public void saveTo(Path path) {
+    public void saveTo(Path path) throws IOException {
         var yaml = new Yaml();
-        try {
-            var result = yaml.dumpAsMap(this);
-            result = "# Rabbit SQL plugin - XQL mapper generate configuration - DO NOT MODIFY\n\n" + result;
-            Files.writeString(path, result, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            log.warn(e);
-        }
+        var result = yaml.dumpAsMap(this);
+        result = "# Rabbit SQL plugin - XQL mapper generate configuration - DO NOT MODIFY\n\n" + result;
+        Files.writeString(path, result, StandardCharsets.UTF_8);
     }
 
     public static Path getDefaultPath(XQLConfigManager.Config config, XQLFileManager.Resource resource) {
@@ -141,7 +138,7 @@ public class XQLMapperConfig {
 
         public void setParamType(String paramType) {
             this.paramType = paramType;
-            if (this.paramMeta == null && TypeUtil.getUserEntity(paramType) != null) {
+            if (this.paramMeta == null && paramType != null && TypeUtil.getUserEntity(paramType) != null) {
                 this.paramMeta = new XQLParamMeta();
                 this.paramMeta.setClassName(paramType);
             }

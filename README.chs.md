@@ -7,7 +7,7 @@
 
 语言: [English](README.md) | 简体中文
 
-IDEA 版本兼容 2020.3.* - 2026.3.* 。
+IDEA 版本兼容 2023.1.* - 2026.3.* 。
 
 - 支持识别 xql（`.xql`） 文件类型；
 - 支持动态sql表达式脚本 live templates（例如：`xql:if`）；
@@ -48,6 +48,12 @@ IDEA 版本兼容 2020.3.* - 2026.3.* 。
 从 [rabbit-sql](https://github.com/chengyuxing/rabbit-sql) 主页
 和 [Springboot 支持文档](https://github.com/chengyuxing/rabbit-sql-spring-boot-starter) 获取更多的帮助信息。
 
+
+## 开发构建
+
+使用尚未发布的核心修复时，先在对应的 rabbit-sql 源码目录执行 `mvn install -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true`。插件通过 `mavenLocal()` 使用本地依赖，内置 rabbit-sql 10.3.19。
+
+在本项目中使用 JDK 17 执行 `./gradlew test buildPlugin`，插件 ZIP 输出到 `build/distributions`。
 
 [badge:homepage]:https://img.shields.io/badge/plugin%20homepage-rabbit--sql-success
 [badge:version]:https://img.shields.io/jetbrains/plugin/v/21403

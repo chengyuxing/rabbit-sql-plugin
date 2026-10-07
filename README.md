@@ -7,7 +7,7 @@
 
 Language: English | [简体中文](README.chs.md)
 
-IDEA 2020.3.* - 2026.3.* is required.
+IDEA 2023.1.* - 2026.3.* is required.
 
 - Support the identification of xql(`.xql`) file type.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
@@ -49,6 +49,12 @@ IDEA 2020.3.* - 2026.3.* is required.
 Get more information from [Rabbit-sql](https://github.com/chengyuxing/rabbit-sql) homepage
 and [Springboot support document](https://github.com/chengyuxing/rabbit-sql-spring-boot-starter).
 
+
+## Developer build
+
+Before building with unpublished core fixes, run `mvn install -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true` in the matching rabbit-sql source checkout. This plugin uses `mavenLocal()` and bundles rabbit-sql 10.3.19.
+
+Use JDK 17 to run `./gradlew test buildPlugin` in this project. The plugin ZIP is written to `build/distributions`.
 
 [badge:homepage]:https://img.shields.io/badge/plugin%20homepage-rabbit--sql-success
 [badge:version]:https://img.shields.io/jetbrains/plugin/v/21403

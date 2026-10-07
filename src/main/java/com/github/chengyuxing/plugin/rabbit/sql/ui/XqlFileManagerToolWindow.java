@@ -38,6 +38,9 @@ public class XqlFileManagerToolWindow implements ToolWindowFactory, DumbAware {
     }
 
     public static void getXqlFileManagerPanel(Project project, Consumer<XqlFileManagerPanel> consumer) {
+        if (project.isDisposed()) {
+            return;
+        }
         var tlm = ToolWindowManager.getInstance(project).getToolWindow(MessageBundle.message("ui.toolWindow.title"));
         if (Objects.isNull(tlm)) {
             return;
