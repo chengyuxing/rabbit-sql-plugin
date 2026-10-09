@@ -9,7 +9,7 @@ Language: English | [简体中文](README.chs.md)
 
 IDEA 2023.1.* - 2026.3.* is required.
 
-Current release: **2.4.63.231-263**. Bundled libraries: **rabbit-sql 10.3.20** and **rabbit-common 3.2.12**.
+Current release: **2.4.64.231-263**. Bundled libraries: **rabbit-sql 10.3.21** and **rabbit-common 3.2.13**.
 
 - Support the identification of xql(`.xql`) file type.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
@@ -21,6 +21,11 @@ Current release: **2.4.63.231-263**. Bundled libraries: **rabbit-sql 10.3.20** a
 - Support sql name suggestions auto complete in java string literal where start with `"&"`.
 - Create `xql-file-manager.yml` in `/src/main/resources` and register xql file to enable some features above.
 - **ToolBar menu**: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd>.
+
+## 2.4.64 release notes
+
+- Bundle rabbit-sql 10.3.21 and rabbit-common 3.2.13; recommend starter 5.3.22.
+- Include core updates for entity primary-key lookup, date mapping and conversion, and SQL log highlighting.
 
 ## 2.4.63 release notes
 
@@ -40,7 +45,7 @@ Current release: **2.4.63.231-263**. Bundled libraries: **rabbit-sql 10.3.20** a
 
 ## Getting Started
 
-1. Add dependency **rabbit-sql 10.3.20** (recommended) to your project;
+1. Add dependency **rabbit-sql 10.3.21** (recommended) to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 4. Configure [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
@@ -48,7 +53,7 @@ Current release: **2.4.63.231-263**. Bundled libraries: **rabbit-sql 10.3.20** a
 
 ### Springboot support
 
-1. Add dependency **rabbit-sql-spring-boot-starter 5.3.21** (recommended) to your project;
+1. Add dependency **rabbit-sql-spring-boot-starter 5.3.22** (recommended) to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 
@@ -61,9 +66,9 @@ and [Springboot support document](https://github.com/chengyuxing/rabbit-sql-spri
 
 ## Developer build
 
-Before building with unpublished core versions, run `mvn install -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true` first in the rabbit-common 3.2.12 source checkout, then in the rabbit-sql 10.3.20 checkout. This plugin uses `mavenLocal()` and bundles both libraries.
+Before building with unpublished core versions, run `mvn install -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true` first in the rabbit-common 3.2.13 source checkout, then in the rabbit-sql 10.3.21 checkout. This plugin uses `mavenLocal()` and bundles both libraries.
 
-Use JDK 17 to run `./gradlew test buildPlugin` in this project. The plugin ZIP is written to `build/distributions/rabbit-sql-plugin-2.4.63.231-263.zip`.
+Use JDK 17 to run `./gradlew test buildPlugin` in this project. The plugin ZIP is written to `build/distributions/rabbit-sql-plugin-2.4.64.231-263.zip`.
 
 [badge:homepage]:https://img.shields.io/badge/plugin%20homepage-rabbit--sql-success
 [badge:version]:https://img.shields.io/jetbrains/plugin/v/21403
