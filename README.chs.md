@@ -9,7 +9,7 @@
 
 IDEA 版本兼容 2023.1.* - 2026.3.* 。
 
-当前版本：**2.4.64.231-263**。内置依赖：**rabbit-sql 10.3.21** 和 **rabbit-common 3.2.13**。
+当前版本：**2.4.65.231-263**。内置依赖：**rabbit-sql 10.3.22** 和 **rabbit-common 3.2.14**。
 
 - 支持识别 xql（`.xql`） 文件类型；
 - 支持动态sql表达式脚本 live templates（例如：`xql:if`）；
@@ -21,6 +21,11 @@ IDEA 版本兼容 2023.1.* - 2026.3.* 。
 - java文件中字符串字面量以 `&` 开头支持sql名自动完成提示建议；
 - 在 `/src/main/resources` 目录下创建文件 `xql-file-manager.yml` 并配置xql文件可以开启支持以上全部功能；
 - **工具栏菜单**: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd>。
+
+## 2.4.65 更新说明
+
+- 内置 rabbit-sql 10.3.22、rabbit-common 3.2.14，推荐搭配 starter 5.3.23。
+- 同步时间字符串兼容修复：支持空格分隔的带偏移时间，保留文本提取中的完整偏移量，并继续严格校验公共类型转换的输入。
 
 ## 2.4.64 更新说明
 
@@ -44,7 +49,7 @@ IDEA 版本兼容 2023.1.* - 2026.3.* 。
 
 ## 开始使用
 
-1. 项目中引入 **rabbit-sql 10.3.21**（推荐）；
+1. 项目中引入 **rabbit-sql 10.3.22**（推荐）；
 2. 在源文件根目录: `.../src/main/resources/` 下创建 `xql-file-manager.yml`；
 3. 为属性: `files` 配置你的xql文件；
 4. 配置 [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
@@ -52,7 +57,7 @@ IDEA 版本兼容 2023.1.* - 2026.3.* 。
 
 ### Springboot支持
 
-1. 项目中引入 **rabbit-sql-spring-boot-starter 5.3.22**（推荐）；
+1. 项目中引入 **rabbit-sql-spring-boot-starter 5.3.23**（推荐）；
 2. 在源文件根目录: `.../src/main/resources/` 下创建 `xql-file-manager.yml`；
 3. 为属性: `files` 配置你的xql文件；
 
@@ -65,7 +70,7 @@ IDEA 版本兼容 2023.1.* - 2026.3.* 。
 
 ## 开发构建
 
-使用尚未发布的核心版本时，先在 rabbit-common 3.2.13 源码目录、再在 rabbit-sql 10.3.21 源码目录执行 `mvn install -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true`。插件通过 `mavenLocal()` 使用本地依赖，并内置这两个库。
+使用尚未发布的核心版本时，先在 rabbit-common 3.2.14 源码目录、再在 rabbit-sql 10.3.22 源码目录执行 `mvn install -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true`。插件通过 `mavenLocal()` 使用本地依赖，并内置这两个库。
 
 在本项目中使用 JDK 17 执行 `./gradlew test buildPlugin`，插件 ZIP 输出到 `build/distributions`。
 
