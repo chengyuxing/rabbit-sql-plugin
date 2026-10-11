@@ -9,7 +9,7 @@
 
 IDEA 版本兼容 2023.1.* - 2026.3.* 。
 
-当前版本：**2.4.65.231-263**。内置依赖：**rabbit-sql 10.3.22** 和 **rabbit-common 3.2.14**。
+当前版本：**2.4.66.231-263**。内置依赖：**rabbit-sql 10.3.22** 和 **rabbit-common 3.2.14**。
 
 - 支持识别 xql（`.xql`） 文件类型；
 - 支持动态sql表达式脚本 live templates（例如：`xql:if`）；
@@ -21,6 +21,10 @@ IDEA 版本兼容 2023.1.* - 2026.3.* 。
 - java文件中字符串字面量以 `&` 开头支持sql名自动完成提示建议；
 - 在 `/src/main/resources` 目录下创建文件 `xql-file-manager.yml` 并配置xql文件可以开启支持以上全部功能；
 - **工具栏菜单**: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd>。
+
+## 2.4.66 更新说明
+
+- 修复 IDEA 数据库表重命名引发的插件异常：XQL 文件监听器忽略非本地虚拟文件事件，保留本地 SQL 文件的自动重载。
 
 ## 2.4.65 更新说明
 

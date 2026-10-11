@@ -79,6 +79,10 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.66</h3>
+            <ul>
+                <li>Fix errors when renaming database tables in IDEA by ignoring non-local virtual file events in the XQL file listener; preserve automatic reloads for local SQL files.</li>
+            </ul>
             <h3>2.4.65</h3>
         <ul>
             <li>Bundle <code>rabbit-sql 10.3.22</code> and <code>rabbit-common 3.2.14</code>; recommend <code>rabbit-sql-spring-boot-starter 5.3.23</code>.</li>

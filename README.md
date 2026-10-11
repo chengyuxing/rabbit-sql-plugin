@@ -9,7 +9,7 @@ Language: English | [简体中文](README.chs.md)
 
 IDEA 2023.1.* - 2026.3.* is required.
 
-Current release: **2.4.65.231-263**. Bundled libraries: **rabbit-sql 10.3.22** and **rabbit-common 3.2.14**.
+Current release: **2.4.66.231-263**. Bundled libraries: **rabbit-sql 10.3.22** and **rabbit-common 3.2.14**.
 
 - Support the identification of xql(`.xql`) file type.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
@@ -21,6 +21,10 @@ Current release: **2.4.65.231-263**. Bundled libraries: **rabbit-sql 10.3.22** a
 - Support sql name suggestions auto complete in java string literal where start with `"&"`.
 - Create `xql-file-manager.yml` in `/src/main/resources` and register xql file to enable some features above.
 - **ToolBar menu**: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd>.
+
+## 2.4.66 release notes
+
+- Fix errors when renaming database tables in IDEA: ignore non-local virtual file events in the XQL file listener while preserving automatic reloads for local SQL files.
 
 ## 2.4.65 release notes
 
@@ -73,7 +77,7 @@ and [Springboot support document](https://github.com/chengyuxing/rabbit-sql-spri
 
 Before building with unpublished core versions, run `mvn install -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true` first in the rabbit-common 3.2.14 source checkout, then in the rabbit-sql 10.3.22 checkout. This plugin uses `mavenLocal()` and bundles both libraries.
 
-Use JDK 17 to run `./gradlew test buildPlugin` in this project. The plugin ZIP is written to `build/distributions/rabbit-sql-plugin-2.4.65.231-263.zip`.
+Use JDK 17 to run `./gradlew test buildPlugin` in this project. The plugin ZIP is written to `build/distributions/rabbit-sql-plugin-2.4.66.231-263.zip`.
 
 [badge:homepage]:https://img.shields.io/badge/plugin%20homepage-rabbit--sql-success
 [badge:version]:https://img.shields.io/jetbrains/plugin/v/21403

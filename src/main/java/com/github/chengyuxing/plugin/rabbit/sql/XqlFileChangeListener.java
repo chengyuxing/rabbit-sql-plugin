@@ -53,13 +53,17 @@ public class XqlFileChangeListener implements BulkFileListener {
                 processMatched(e.getFile(), affectedFiles::add);
             }
         }
-        DumbService.getInstance(project).runWhenSmart(() -> {
-            handlerAffectedFiles(affectedFiles);
-        });
+        if (!affectedFiles.isEmpty()) {
+            DumbService.getInstance(project).runWhenSmart(() -> {
+                handlerAffectedFiles(affectedFiles);
+            });
+        }
     }
 
     private void processMatched(VirtualFile vf, Consumer<VirtualFile> consumer) {
-        if (vf == null) return;
+        // Database and other non-local VFS files can also be named .sql, but have no disk path.
+        // Deleted local files still need to trigger configuration reloads.
+        if (vf == null || !vf.isInLocalFileSystem()) return;
         if (ProjectFileUtil.isXqlFileManagerConfig(vf.getName())) {
             consumer.accept(vf);
             return;

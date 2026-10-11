@@ -1,19 +1,50 @@
 package com.github.chengyuxing.plugin.rabbit.sql.common;
 
+import com.github.chengyuxing.plugin.rabbit.sql.XqlFileChangeListener;
 import com.github.chengyuxing.plugin.rabbit.sql.util.PsiUtil;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent;
 import com.intellij.testFramework.HeavyPlatformTestCase;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.PlatformTestUtil;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
+import java.util.List;
 
 public class XqlFileChangeListenerTest extends HeavyPlatformTestCase {
+    public void testNonLocalVirtualFileEventsAreIgnored() {
+        var listener = new XqlFileChangeListener(getProject());
+        for (String name : List.of("table.sql", "query.xql", "xql-file-manager.yml", "schema")) {
+            var file = new LightVirtualFile(name) {
+                @Override
+                public boolean isDirectory() {
+                    return "schema".equals(name);
+                }
+
+                @Override
+                public Path toNioPath() {
+                    fail("Non-local virtual files must not be mapped to a disk path");
+                    throw new UnsupportedOperationException("No disk path");
+                }
+            };
+            assertFalse(file.isInLocalFileSystem());
+            listener.after(List.of(
+                    new VFilePropertyChangeEvent(null, file, VirtualFile.PROP_NAME,
+                            "old_" + name, name, false),
+                    new VFileContentChangeEvent(null, file, 0, 1, false),
+                    new VFileDeleteEvent(null, file, false)));
+        }
+    }
+
     public void testRegisteredSqlChangesReloadAndUnsavedSqlIsSavedByManualReload() throws Exception {
         Path modulePath = Path.of(getProject().getProjectFilePath()).getParent();
         var module = VfsUtil.createDirectories(modulePath.toString());
