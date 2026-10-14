@@ -47,7 +47,7 @@ public class NewPipeDialog extends DialogWrapper {
         this.project = project;
         this.config = config;
         this.form = new NewPipeForm();
-        this.form.setMessage(formatPath("<IPipe>"));
+        this.form.setMessage(formatPath("MyPipe"));
         this.form.setInputChanged(p -> {
             var nameInvalid = !p.getItem2().matches("[a-zA-Z]\\w*");
             var packageInvalid = !PACKAGE_PATTERN.matcher(p.getItem1()).matches();
