@@ -37,13 +37,13 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
         try {
             var sqlName = PsiUtil.getJvmLangLiteral(element);
-            if (Objects.isNull(sqlName)) {
+            if (sqlName == null || !SQL_NAME_PATTERN.matcher(sqlName).matches()) {
                 return;
             }
             var xqlConfigManager = XQLConfigManager.getInstance(project);
             var config = xqlConfigManager.getActiveConfig(element);
             var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(element);
-            if (Objects.isNull(xqlFileManager)) {
+            if (xqlFileManager == null || xqlFileManager.contains(sqlName.substring(1))) {
                 return;
             }
             var sqlRefParts = StringUtil.extraSqlReference(sqlName.substring(1));
@@ -70,6 +70,9 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
 
             // do append xql fragment
             var sqlFile = resource.getFilename();
+            if (!ProjectFileUtil.isLocalFileUri(sqlFile)) {
+                return;
+            }
             var sqlFileVf = VirtualFileManager.getInstance().findFileByNioPath(Path.of(URI.create(sqlFile)));
             if (Objects.isNull(sqlFileVf)) {
                 return;
@@ -103,7 +106,7 @@ public class NewXqlIfNotExists extends PsiElementBaseIntentionAction implements 
             String sqlName = sqlRef.substring(1);
             var xqlConfigManager = XQLConfigManager.getInstance(project);
             var xqlFileManager = xqlConfigManager.getActiveXqlFileManager(element);
-            if (Objects.nonNull(xqlFileManager)) {
+            if (xqlFileManager != null && !xqlFileManager.contains(sqlName)) {
                 var alias = XQLFileManager.decodeSqlReference(sqlName).getItem1();
                 var resource = xqlFileManager.getResource(alias);
                 return resource == null || ProjectFileUtil.isLocalFileUri(resource.getFilename());

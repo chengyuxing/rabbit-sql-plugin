@@ -46,7 +46,7 @@
     <h3>Springboot</h3>
     <ol>
         <li>Create a new maven project;</li>
-        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 5.3.24</strong> (recommended) to your project;</li>
+        <li>Add dependency <strong>rabbit-sql-spring-boot-starter 5.3.25</strong> (recommended) to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -55,7 +55,7 @@
     <h3>Other Java Projects</h3>
     <ol>
         <li>Create a new maven project.</li>
-        <li>Add dependency <strong>rabbit-sql 10.3.23</strong> (recommended) to your project;</li>
+        <li>Add dependency <strong>rabbit-sql 10.3.24</strong> (recommended) to your project;</li>
         <li>Create <code>xql-file-manager.yml</code> in resources root: <code>.../src/main/resources/</code>;<br/>
         ( <kbd>Toolwindow</kbd> &gt; <kbd>XQL File Manager</kbd> &gt; <kbd>Module(Mouse Right click)</kbd> &gt; <kbd>New</kbd> )
         </li>
@@ -79,6 +79,12 @@
 
     <change-notes>
         <![CDATA[
+            <h3>2.4.68</h3>
+            <ul>
+                <li>Fix <kbd>Smart create/append xql...</kbd> appearing for existing SQL fragments. Offer creation only for a missing alias or fragment, including references with <code>^count</code> or <code>^page</code> modifiers.</li>
+                <li>Recheck fragment existence before invoking the action to prevent duplicate appends; only append to local XQL files.</li>
+                <li>Bundle <code>rabbit-sql 10.3.24</code> and <code>rabbit-common 3.2.16</code>; recommend <code>rabbit-sql-spring-boot-starter 5.3.25</code>.</li>
+            </ul>
             <h3>2.4.67</h3>
             <ul>
                 <li>Bundle <code>rabbit-sql 10.3.23</code> and <code>rabbit-common 3.2.15</code>; recommend <code>rabbit-sql-spring-boot-starter 5.3.24</code>.</li>
