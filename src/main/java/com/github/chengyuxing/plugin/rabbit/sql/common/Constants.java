@@ -2,7 +2,6 @@ package com.github.chengyuxing.plugin.rabbit.sql.common;
 
 import com.github.chengyuxing.common.script.ast.impl.KeyExpressionParser;
 import com.github.chengyuxing.common.script.lang.ForContextProperty;
-import com.github.chengyuxing.common.script.lang.TokenType;
 import com.github.chengyuxing.common.util.StringUtils;
 import com.github.chengyuxing.sql.XQLFileManager;
 
@@ -18,7 +17,7 @@ public final class Constants {
     public static final Path JAVA_SOURCE_ROOT = Path.of("src", "main", "java");
     public static final Path CONFIG_PATH = RESOURCES_ROOT.resolve(CONFIG_NAME);
     public static final Pattern CONFIG_PATTERN = Pattern.compile("xql-file-manager(-[a-zA-Z0-9_]+)?\\.yml");
-    public static final String[] XQL_DIRECTIVE_KEYWORDS = new String[]{TokenType.FOR_OF.name(), TokenType.FOR_PROPERTY_AS.name(), TokenType.CHECK_THROW.name()};
+    public static final String[] XQL_DIRECTIVE_KEYWORDS = new String[]{"of", "as", "throw"};
     public static final String[] FOR_PROPERTIES = new String[]{
             ForContextProperty.first.name(),
             ForContextProperty.index.name(),
