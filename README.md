@@ -9,7 +9,7 @@ Language: English | [简体中文](README.chs.md)
 
 IDEA 2023.1.* - 2026.3.* is required.
 
-Current release: **2.4.68.231-263**. Bundled libraries: **rabbit-sql 10.3.24** and **rabbit-common 3.2.16**.
+Current release: **2.4.69.231-263**. Bundled libraries: **rabbit-sql 10.3.25** and **rabbit-common 3.2.16**.
 
 - Support the identification of xql(`.xql`) file type.
 - Support dynamic sql expression script live templates(e.g: `xql:if`).
@@ -21,6 +21,11 @@ Current release: **2.4.68.231-263**. Bundled libraries: **rabbit-sql 10.3.24** a
 - Support sql name suggestions auto complete in java string literal where start with `"&"`.
 - Create `xql-file-manager.yml` in `/src/main/resources` and register xql file to enable some features above.
 - **ToolBar menu**: <kbd>File</kbd> > <kbd>New</kbd> > <kbd>XQL File</kbd> | <kbd>XQL File Manager</kbd>.
+
+## 2.4.69 release notes
+
+- Fixed XQL script keywords `of` / `as` / `throw` highlighting not work.
+- Bundle rabbit-sql 10.3.25 and rabbit-common 3.2.16; recommend starter 5.3.26.
 
 ## 2.4.68 release notes
 
@@ -66,7 +71,7 @@ Current release: **2.4.68.231-263**. Bundled libraries: **rabbit-sql 10.3.24** a
 
 ## Getting Started
 
-1. Add dependency **rabbit-sql 10.3.24** (recommended) to your project;
+1. Add dependency **rabbit-sql 10.3.25** (recommended) to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 4. Configure [XQLFileManager](https://github.com/chengyuxing/rabbit-sql#XQLFileManager);
@@ -74,7 +79,7 @@ Current release: **2.4.68.231-263**. Bundled libraries: **rabbit-sql 10.3.24** a
 
 ### Springboot support
 
-1. Add dependency **rabbit-sql-spring-boot-starter 5.3.25** (recommended) to your project;
+1. Add dependency **rabbit-sql-spring-boot-starter 5.3.26** (recommended) to your project;
 2. Create `xql-file-manager.yml` in source root: `.../src/main/resources/`;
 3. Register your xql files on property: `files`;
 
